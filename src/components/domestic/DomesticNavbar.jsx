@@ -29,11 +29,11 @@ export default function DomesticNavbar({ darkMode, setDarkMode, showBack = false
       <div className="max-w-7xl mx-auto px-6 lg:px-10 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center">
-          <img
-            src={GLADEX_LOGO}
-            alt="Gladex Travel and Tours Corp."
-            className="h-10 w-auto object-contain hidden"
-            style={{ filter: "drop-shadow(0 2px 10px rgba(255,140,0,0.3))" }} />
+          
+
+
+
+          
           
         </Link>
 
