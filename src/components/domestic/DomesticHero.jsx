@@ -1,59 +1,68 @@
+const GLADEX_LOGO = "https://media.base44.com/images/public/6a0d6115eb14182fe3684619/ed2488356_5ecc9b2cd_Untitled-design-75.png";
+
 export default function DomesticHero({ onBrowse, darkMode }) {
   const panels = [
-    "https://images.unsplash.com/photo-1518509562904-e7ef99cdce2b?w=700&q=85&fit=crop",
-    "https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=700&q=85&fit=crop",
-    "https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=700&q=85&fit=crop",
-    "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=700&q=85&fit=crop",
+    "https://images.unsplash.com/photo-1518509562904-e7ef99cdce2b?w=800&q=85&fit=crop&crop=center",
+    "https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=800&q=85&fit=crop&crop=center",
+    "https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=800&q=85&fit=crop&crop=center",
+    "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=85&fit=crop&crop=center",
   ];
 
   return (
     <section className="relative w-full overflow-hidden" style={{ height: "100vh", minHeight: "600px" }}>
-      {/* Multi-panel bg */}
-      <div className="absolute inset-0 grid grid-cols-4">
+      {/* Multi-panel bg — 4 equal columns, each pre-loaded as img for reliability */}
+      <div className="absolute inset-0 flex">
         {panels.map((src, i) => (
-          <div
-            key={i}
-            className="relative overflow-hidden"
-            style={{ backgroundImage: `url('${src}')`, backgroundSize: "cover", backgroundPosition: "center" }}
-          />
+          <div key={i} className="flex-1 relative overflow-hidden">
+            <img
+              src={src}
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover"
+              loading="eager"
+            />
+          </div>
         ))}
       </div>
 
       {/* Cinematic overlay */}
       <div className="absolute inset-0" style={{
-        background: "linear-gradient(180deg, rgba(5,5,5,0.55) 0%, rgba(5,5,5,0.35) 40%, rgba(5,5,5,0.8) 100%)"
+        background: "linear-gradient(180deg, rgba(5,5,5,0.52) 0%, rgba(5,5,5,0.28) 35%, rgba(5,5,5,0.75) 100%)"
       }} />
+
+      {/* Vertical dividers between panels */}
+      <div className="absolute inset-0 flex pointer-events-none">
+        {[1,2,3].map((i) => (
+          <div key={i} className="flex-1 border-r" style={{ borderColor: "rgba(255,140,0,0.12)" }} />
+        ))}
+        <div className="flex-1" />
+      </div>
 
       {/* Orange bottom line */}
       <div className="absolute bottom-0 left-0 right-0 h-[2px]" style={{ background: "#FF8C00" }} />
 
-      {/* Gladex logo center top (subtle) */}
+      {/* Hero Content */}
       <div className="relative h-full flex flex-col items-center justify-center text-center px-6">
+        {/* Logo centered above headline */}
+        <img
+          src={GLADEX_LOGO}
+          alt="Gladex Travel and Tours Corp."
+          className="h-14 md:h-16 w-auto object-contain mb-8"
+          style={{ filter: "drop-shadow(0 2px 20px rgba(255,140,0,0.5)) brightness(1.1)" }}
+        />
+
         <h1
-          className="font-black text-white uppercase leading-none mb-3"
-          style={{ fontSize: "clamp(2.8rem, 9vw, 8rem)", letterSpacing: "0.06em", textShadow: "0 4px 40px rgba(0,0,0,0.6)" }}
+          className="font-black text-white uppercase leading-none mb-4"
+          style={{ fontSize: "clamp(2.4rem, 8vw, 7rem)", letterSpacing: "0.05em", textShadow: "0 4px 40px rgba(0,0,0,0.7)" }}
         >
           EXPLORE THE PHILIPPINES
         </h1>
         <p
-          className="max-w-xl text-sm md:text-base font-light tracking-wider leading-relaxed mb-10 uppercase"
-          style={{ color: "rgba(255,255,255,0.65)" }}
+          className="max-w-xl text-sm md:text-base font-light tracking-wider leading-relaxed uppercase"
+          style={{ color: "rgba(255,255,255,0.6)" }}
         >
           Discover premium domestic destinations across the beautiful Philippines<br className="hidden md:block" />
           with cinematic travel experiences.
         </p>
-
-        {/* CTA */}
-        <button
-          onClick={onBrowse}
-          className="inline-flex items-center gap-3 px-10 py-4 rounded-full font-bold text-sm tracking-[0.15em] uppercase text-white transition-all duration-300 hover:scale-105"
-          style={{ background: "#FF8C00", boxShadow: "0 8px 36px rgba(255,140,0,0.5)" }}
-        >
-          Browse Destinations
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-          </svg>
-        </button>
 
         {/* Scroll indicator */}
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
