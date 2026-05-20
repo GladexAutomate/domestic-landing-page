@@ -49,12 +49,7 @@ export default function DomesticNavbar({ darkMode, setDarkMode, showBack = false
             </Link>
           ) : (
             <>
-              <Link
-                to="/"
-                className={`text-sm font-medium tracking-widest uppercase transition-colors hover:text-[#FF8C00] hidden sm:block ${darkMode ? "text-white/60" : "text-[#0F172A]/60"}`}
-              >
-                All Destinations
-              </Link>
+              
             </>
           )}
 
