@@ -1,112 +1,73 @@
-export default function DomesticHero({ onBrowse }) {
+export default function DomesticHero({ onBrowse, darkMode }) {
+  // Multi-panel Philippine images
+  const panels = [
+    "https://images.unsplash.com/photo-1518509562904-e7ef99cdce2b?w=800&q=85&fit=crop",
+    "https://images.unsplash.com/photo-1563911302283-d2bc129e7570?w=800&q=85&fit=crop",
+    "https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?w=800&q=85&fit=crop",
+    "https://images.unsplash.com/photo-1504214208698-ea1916a2195a?w=800&q=85&fit=crop",
+  ];
+
   return (
-    <section
-      className="relative w-full overflow-hidden"
-      style={{ height: "100vh", minHeight: "640px" }}
-    >
-      {/* Background Image */}
-      <div
-        className="absolute inset-0 bg-cover bg-center transition-transform duration-[8000ms] ease-out scale-105"
-        style={{
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1518509562904-e7ef99cdce2b?w=1920&q=90&fit=crop')",
-        }}
-      />
-
-      {/* Gradient Overlay — deep dark at top and bottom, lighter in center */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(180deg, rgba(15,23,42,0.55) 0%, rgba(15,23,42,0.25) 40%, rgba(15,23,42,0.55) 75%, rgba(15,23,42,0.82) 100%)",
-        }}
-      />
-
-      {/* Decorative kinetic line — bottom of hero */}
-      <div
-        className="absolute bottom-0 left-0 right-0 h-[1px]"
-        style={{ background: "rgba(255,107,0,0.35)" }}
-      />
-
-      {/* Hero Content */}
-      <div className="relative h-full flex flex-col items-center justify-center text-center px-6">
-        {/* Pre-label */}
-        <div className="flex items-center gap-3 mb-6">
-          <div className="h-[1px] w-12" style={{ background: "#FF6B00" }} />
-          <span
-            className="text-xs font-semibold tracking-[0.3em] uppercase"
-            style={{ color: "#FF6B00" }}
+    <section className="relative w-full overflow-hidden" style={{ height: "100vh", minHeight: "640px" }}>
+      {/* Multi-panel background grid */}
+      <div className="absolute inset-0 grid grid-cols-4">
+        {panels.map((src, i) => (
+          <div
+            key={i}
+            className="relative overflow-hidden"
+            style={{
+              backgroundImage: `url('${src}')`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
           >
-            Gladex Philippines
-          </span>
-          <div className="h-[1px] w-12" style={{ background: "#FF6B00" }} />
-        </div>
+            <div className="absolute inset-0" style={{
+              background: "linear-gradient(180deg, rgba(10,10,10,0.2) 0%, rgba(10,10,10,0.5) 100%)"
+            }} />
+          </div>
+        ))}
+      </div>
 
-        {/* Main Headline */}
-        <h1 className="font-black text-white leading-none mb-2"
-          style={{ fontSize: "clamp(2.8rem, 8vw, 7rem)", letterSpacing: "-0.02em" }}>
-          Explore the Philippines
-        </h1>
+      {/* Main cinematic overlay */}
+      <div className="absolute inset-0" style={{
+        background: "linear-gradient(180deg, rgba(10,10,10,0.45) 0%, rgba(10,10,10,0.3) 40%, rgba(10,10,10,0.75) 100%)"
+      }} />
+
+      {/* Orange accent line bottom */}
+      <div className="absolute bottom-0 left-0 right-0 h-[2px]" style={{ background: "#FF8C00" }} />
+
+      {/* Content */}
+      <div className="relative h-full flex flex-col items-center justify-center text-center px-6">
         <h1
-          className="font-black leading-none mb-8"
-          style={{
-            fontSize: "clamp(2.8rem, 8vw, 7rem)",
-            letterSpacing: "-0.02em",
-            color: "#FF6B00",
-          }}
+          className="font-black text-white uppercase leading-none mb-4"
+          style={{ fontSize: "clamp(3rem, 10vw, 8rem)", letterSpacing: "0.04em", textShadow: "0 4px 32px rgba(0,0,0,0.5)" }}
         >
-          in Style
+          EXPLORE THE PHILIPPINES
         </h1>
-
-        {/* Subtext */}
-        <p
-          className="max-w-xl text-base md:text-lg font-light leading-relaxed mb-12"
-          style={{ color: "rgba(248,250,252,0.82)" }}
-        >
-          Curated domestic travel packages across the Philippines.
-          <br className="hidden md:block" />
-          Book your dream trip today.
+        <p className="max-w-xl text-sm md:text-base font-light leading-relaxed mb-10 uppercase tracking-widest"
+          style={{ color: "rgba(248,250,252,0.7)" }}>
+          Discover premium domestic destinations across the beautiful Philippines<br className="hidden md:block" />
+          with cinematic travel experiences.
         </p>
 
         {/* CTA */}
         <button
           onClick={onBrowse}
-          className="group relative inline-flex items-center gap-3 px-10 py-4 rounded-full font-semibold text-sm tracking-[0.1em] uppercase text-white overflow-hidden transition-all duration-300 hover:shadow-2xl hover:scale-105"
-          style={{
-            background: "#FF6B00",
-            boxShadow: "0 8px 32px rgba(255,107,0,0.4)",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = "#e05c00";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = "#FF6B00";
-          }}
+          className="inline-flex items-center gap-3 px-10 py-4 rounded-full font-bold text-sm tracking-[0.15em] uppercase text-white transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+          style={{ background: "#FF8C00", boxShadow: "0 8px 32px rgba(255,140,0,0.45)" }}
         >
           Browse Destinations
-          <svg
-            className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2.5}
-          >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
           </svg>
         </button>
 
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
-          <span
-            className="text-[10px] font-semibold tracking-[0.35em] uppercase"
-            style={{ color: "rgba(248,250,252,0.55)" }}
-          >
-            Scroll
-          </span>
-          <div
-            className="scroll-pulse w-2.5 h-2.5 rounded-full"
-            style={{ background: "#FF6B00" }}
-          />
+        {/* Scroll indicator */}
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3">
+          <div className="w-8 h-12 rounded-full border-2 border-white/40 flex items-start justify-center pt-2">
+            <div className="scroll-pulse w-1.5 h-3 rounded-full" style={{ background: "#FF8C00" }} />
+          </div>
+          <span className="text-[10px] font-semibold tracking-[0.35em] uppercase text-white/50">SCROLL</span>
         </div>
       </div>
     </section>

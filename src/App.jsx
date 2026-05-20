@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 // Add page imports here
 import Domestic from "./pages/Domestic";
+import DestinationPreview from "./pages/DestinationPreview";
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -37,6 +38,7 @@ const AuthenticatedApp = () => {
       {/* Add your page Route elements here */}
       <Route path="/" element={<Domestic />} />
       <Route path="/domestic" element={<Domestic />} />
+      <Route path="/destination/:slug" element={<DestinationPreview />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

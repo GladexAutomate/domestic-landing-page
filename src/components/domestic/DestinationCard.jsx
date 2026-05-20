@@ -1,98 +1,87 @@
-export default function DestinationCard({ delay, visible }) {
+import { Link } from "react-router-dom";
+
+// Cinematic gradient backgrounds per card (cycles)
+const GRADIENTS = [
+  "linear-gradient(135deg, #0d1b2a 0%, #1a3a5c 50%, #0d1b2a 100%)",
+  "linear-gradient(135deg, #1a0a00 0%, #3d1a00 50%, #1a0800 100%)",
+  "linear-gradient(135deg, #0a1628 0%, #0d3347 50%, #0a1220 100%)",
+  "linear-gradient(135deg, #141008 0%, #2d2000 50%, #101008 100%)",
+  "linear-gradient(135deg, #001a0d 0%, #003320 50%, #001a0a 100%)",
+];
+
+export default function DestinationCard({ destination, delay, visible, darkMode }) {
+  const gradIdx = destination.name.charCodeAt(0) % GRADIENTS.length;
+
   return (
-    <div
-      className={`card-animate group relative rounded-2xl overflow-hidden cursor-pointer`}
-      style={{
-        animationDelay: visible ? `${delay}ms` : "9999s",
-        animationPlayState: visible ? "running" : "paused",
-        opacity: visible ? undefined : 0,
-        height: "360px",
-        background: "linear-gradient(135deg, #1E293B 0%, #0F172A 100%)",
-        boxShadow: "0 4px 24px rgba(15,23,42,0.12)",
-      }}
-    >
-      {/* Placeholder shimmer background */}
+    <Link to={`/destination/${destination.slug}`}>
       <div
-        className="absolute inset-0"
+        className="card-animate group relative rounded-xl overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.03] hover:z-10"
         style={{
-          background:
-            "linear-gradient(135deg, #1e293b 0%, #162032 40%, #1a2840 70%, #0f172a 100%)",
+          animationDelay: visible ? `${delay}ms` : "9999s",
+          animationPlayState: visible ? "running" : "paused",
+          opacity: visible ? undefined : 0,
+          height: "200px",
+          background: GRADIENTS[gradIdx],
+          boxShadow: darkMode
+            ? "0 4px 20px rgba(0,0,0,0.6)"
+            : "0 4px 20px rgba(0,0,0,0.15)",
         }}
-      />
-
-      {/* Subtle texture overlay */}
-      <div
-        className="absolute inset-0 opacity-20"
-        style={{
-          backgroundImage:
-            "radial-gradient(ellipse at 30% 20%, rgba(0,180,216,0.25) 0%, transparent 60%), radial-gradient(ellipse at 70% 80%, rgba(255,107,0,0.12) 0%, transparent 50%)",
+        onMouseEnter={(e) => {
+          e.currentTarget.style.boxShadow = "0 8px 40px rgba(255,140,0,0.3)";
         }}
-      />
+        onMouseLeave={(e) => {
+          e.currentTarget.style.boxShadow = darkMode
+            ? "0 4px 20px rgba(0,0,0,0.6)"
+            : "0 4px 20px rgba(0,0,0,0.15)";
+        }}
+      >
+        {/* Subtle shimmer overlay */}
+        <div className="absolute inset-0 opacity-30" style={{
+          backgroundImage: "radial-gradient(ellipse at 30% 20%, rgba(0,140,255,0.2) 0%, transparent 60%), radial-gradient(ellipse at 70% 80%, rgba(255,140,0,0.15) 0%, transparent 50%)"
+        }} />
 
-      {/* Decorative line accent */}
-      <div
-        className="absolute top-0 left-0 right-0 h-[2px]"
-        style={{ background: "rgba(255,107,0,0.25)" }}
-      />
+        {/* Orange top line */}
+        <div className="absolute top-0 left-0 right-0 h-[2px] opacity-60 group-hover:opacity-100 transition-opacity" style={{ background: "#FF8C00" }} />
 
-      {/* Content */}
-      <div className="absolute inset-0 flex flex-col justify-between p-5">
-        {/* Top — Badge */}
-        <div className="flex items-start justify-between">
-          <span
-            className="badge-pulse inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold tracking-[0.18em] uppercase text-white"
-            style={{
-              background: "#FF6B00",
-              backdropFilter: "blur(8px)",
-              boxShadow: "0 2px 12px rgba(255,107,0,0.35)",
-            }}
-          >
-            Domestic
-          </span>
-        </div>
+        {/* Content */}
+        <div className="absolute inset-0 flex flex-col justify-between p-3.5">
+          {/* Top */}
+          <div>
+            <p className="text-[9px] font-bold tracking-[0.25em] uppercase mb-1" style={{ color: "rgba(255,140,0,0.85)" }}>
+              Philippines
+            </p>
+            <h3 className="text-white font-black text-sm leading-tight" style={{ textShadow: "0 2px 8px rgba(0,0,0,0.5)" }}>
+              {destination.name}
+            </h3>
+            <p className="text-[10px] font-light mt-1 leading-snug" style={{ color: "rgba(255,255,255,0.5)" }}>
+              {destination.tagline}
+            </p>
+          </div>
 
-        {/* Bottom — Info */}
-        <div>
-          {/* Country label */}
-          <p
-            className="text-[10px] font-semibold tracking-[0.25em] uppercase mb-1.5"
-            style={{ color: "rgba(255,107,0,0.9)" }}
-          >
-            Philippines
-          </p>
-
-          {/* Destination name placeholder */}
-          <h3 className="text-white font-bold text-xl mb-1 leading-tight tracking-tight">
-            Destination Name
-          </h3>
-
-          {/* Duration placeholder */}
-          <p
-            className="text-sm font-light mb-4"
-            style={{ color: "rgba(248,250,252,0.55)" }}
-          >
-            X Days / X Nights
-          </p>
-
-          {/* Decorative divider */}
-          <div
-            className="w-8 h-[1px] mb-4"
-            style={{ background: "rgba(255,107,0,0.4)" }}
-          />
-
-          {/* On Request Ghost Button */}
-          <button
-            className="ghost-btn w-full py-2.5 rounded-full border-2 text-white text-xs font-semibold tracking-[0.15em] uppercase transition-all duration-300"
-            style={{
-              borderColor: "rgba(255,107,0,0.7)",
-              color: "rgba(255,255,255,0.85)",
-            }}
-            onClick={(e) => e.preventDefault()}
-          >
-            <span>On Request</span>
-          </button>
+          {/* Bottom — View Preview button */}
+          <div className="flex items-center justify-between">
+            <span
+              className="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-[0.12em] uppercase transition-colors group-hover:text-[#FF8C00]"
+              style={{ color: "rgba(255,255,255,0.7)" }}
+            >
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" fillOpacity="0.2" />
+                <polygon points="10,8 16,12 10,16" fill="currentColor" />
+              </svg>
+              VIEW PREVIEW
+            </span>
+            {/* Play circle */}
+            <div
+              className="w-7 h-7 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110"
+              style={{ background: "rgba(255,140,0,0.15)", border: "1.5px solid rgba(255,140,0,0.4)" }}
+            >
+              <svg className="w-3 h-3 ml-0.5" fill="#FF8C00" viewBox="0 0 24 24">
+                <polygon points="8,5 19,12 8,19" />
+              </svg>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
