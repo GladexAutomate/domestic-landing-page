@@ -3,7 +3,7 @@ const GLADEX_LOGO = "https://media.base44.com/images/public/6a0d6115eb14182fe368
 const PANELS = [
   {
     name: "Boracay",
-    src: "https://www.pexels.com/photo/coconut-tree-near-body-of-water-11686011/",
+    src: "https://images.unsplash.com/photo-1573548842355-73bb50e50323?w=1200&q=90&fit=crop",
   },
   {
     name: "El Nido",
