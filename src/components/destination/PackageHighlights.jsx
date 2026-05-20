@@ -25,13 +25,13 @@ const HIGHLIGHTS = [
   )},
 ];
 
-export default function PackageHighlights({ darkMode }) {
+export default function PackageHighlights({ darkMode, noPadding }) {
   const bg = darkMode ? "bg-[#111]" : "bg-white";
   const textPrimary = darkMode ? "text-white" : "text-[#0F172A]";
   const cardBg = darkMode ? "bg-[#1a1a1a] border-white/8" : "bg-white border-gray-100";
 
   return (
-    <section className={`py-20 px-6 ${bg}`}>
+    <section className={noPadding ? "" : `py-20 px-6 ${bg}`}>
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-center gap-3 mb-4">
           <div className="h-[1px] w-10" style={{ background: "#FF8C00" }} />

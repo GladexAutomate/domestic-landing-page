@@ -5,9 +5,9 @@ const RATES = [
   { label: "Downpayment", price: "TBD", note: "To confirm your booking", highlight: true },
 ];
 
-export default function PackageRates({ destination }) {
+export default function PackageRates({ destination, noPadding }) {
   return (
-    <section className="py-20 px-6" style={{ background: "#0a0a0a" }}>
+    <section className={noPadding ? "" : "py-20 px-6"} style={noPadding ? {} : { background: "#0a0a0a" }}>
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-center gap-3 mb-4">
           <div className="h-[1px] w-10" style={{ background: "#FF8C00" }} />

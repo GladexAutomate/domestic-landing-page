@@ -1,10 +1,10 @@
-export default function ItinerarySection({ destination, darkMode }) {
+export default function ItinerarySection({ destination, darkMode, noPadding }) {
   const bg = darkMode ? "bg-[#0a0a0a]" : "bg-white";
   const textPrimary = darkMode ? "text-white" : "text-[#0F172A]";
   const cardBorder = darkMode ? "border-white/6" : "border-gray-100";
 
   return (
-    <section className={`py-20 px-6 ${bg}`}>
+    <section className={noPadding ? "" : `py-20 px-6 ${bg}`}>
       <div className="max-w-3xl mx-auto">
         <div className="flex items-center justify-center gap-3 mb-4">
           <div className="h-[1px] w-10" style={{ background: "#FF8C00" }} />

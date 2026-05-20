@@ -52,12 +52,12 @@ function AccordionItem({ title, content, darkMode }) {
   );
 }
 
-export default function RequirementsNotes({ darkMode }) {
+export default function RequirementsNotes({ darkMode, noPadding }) {
   const bg = darkMode ? "bg-[#0a0a0a]" : "bg-white";
   const textPrimary = darkMode ? "text-white" : "text-[#0F172A]";
 
   return (
-    <section className={`py-20 px-6 ${bg}`}>
+    <section className={noPadding ? "" : `py-20 px-6 ${bg}`}>
       <div className="max-w-3xl mx-auto">
         <div className="flex items-center justify-center gap-2 mb-4">
           <svg className="w-4 h-4" fill="#FF8C00" viewBox="0 0 24 24">

@@ -1,9 +1,9 @@
-export default function VideoPreviewSection({ destination, darkMode }) {
+export default function VideoPreviewSection({ destination, darkMode, noPadding }) {
   const bg = darkMode ? "bg-[#0a0a0a]" : "bg-white";
   const textPrimary = darkMode ? "text-white" : "text-[#0F172A]";
 
   return (
-    <section className={`py-14 px-6 ${bg}`}>
+    <section className={noPadding ? "" : `py-14 px-6 ${bg}`}>
       <div className="max-w-2xl mx-auto text-center">
         <div className="flex items-center justify-center gap-3 mb-4">
           <div className="h-[1px] w-10" style={{ background: "#FF8C00" }} />
