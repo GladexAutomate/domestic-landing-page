@@ -1,8 +1,8 @@
 export const DESTINATIONS = [
   {
     name: "Boracay", slug: "boracay", tagline: "World-famous white beach paradise",
-    image: "https://images.unsplash.com/photo-1518509562904-e7ef99cdce2b?w=600&q=80&fit=crop",
-    hero: "https://images.unsplash.com/photo-1518509562904-e7ef99cdce2b?w=1400&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1519046904884-53103b34b206?w=1200&q=90&fit=crop",
+    hero: "https://images.unsplash.com/photo-1519046904884-53103b34b206?w=1200&q=90&fit=crop",
     itinerary: ["White Beach sunrise walk", "Island hopping tour", "Snorkeling at Crystal Cove", "Sunset at Willy's Rock", "Night market at D'Mall", "Paraw sailing experience", "Puka Shell Beach visit"],
   },
   {
@@ -19,14 +19,14 @@ export const DESTINATIONS = [
   },
   {
     name: "Bacolod", slug: "bacolod", tagline: "The City of Smiles awaits you",
-    image: "https://images.unsplash.com/photo-1580902394724-b08ff9066f4c?w=600&q=80&fit=crop",
-    hero: "https://images.unsplash.com/photo-1580902394724-b08ff9066f4c?w=1400&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1483683804023-6ccdb62f86ef?w=1200&q=90&fit=crop",
+    hero: "https://images.unsplash.com/photo-1483683804023-6ccdb62f86ef?w=1200&q=90&fit=cropp",
     itinerary: ["Ruins of Talisay (The Taj Mahal of Negros)", "Masskara Festival Museum", "Mambukal Resort hot springs", "Silay Heritage Houses tour", "Bacolod Public Plaza", "Chicken Inasal food tour", "San Sebastian Cathedral"],
   },
   {
     name: "Bohol", slug: "bohol", tagline: "Chocolate Hills and tarsier wonders",
-    image: "https://images.unsplash.com/photo-1573408301185-9519f94816b5?w=600&q=80&fit=crop",
-    hero: "https://images.unsplash.com/photo-1573408301185-9519f94816b5?w=1400&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1200&q=90&fit=crop",
+    hero: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1200&q=90&fit=crop",
     itinerary: ["Chocolate Hills viewpoint at sunrise", "Philippine Tarsier Sanctuary", "Loboc River lunch cruise", "Baclayon Church", "Panglao Island beaches", "Hinagdanan Cave", "Blood Compact Shrine"],
   },
   {
@@ -67,8 +67,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Dinagat", slug: "dinagat", tagline: "Untouched island beauty",
-    image: "https://images.unsplash.com/photo-1540202404-a2f29d47d2e4?w=600&q=80&fit=crop",
-    hero: "https://images.unsplash.com/photo-1540202404-a2f29d47d2e4?w=1400&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=90&fit=crop",
+    hero: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=90&fit=crop",
     itinerary: ["Tinago Falls hike", "Basilisa coastline boat tour", "Cagdianao Heritage Trail", "Loreto limestone cave exploration", "San Jose Bay island hopping", "Balite Beach sunset", "Sohoton-style sea caves tour"],
   },
   {
@@ -121,8 +121,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Ilo-Ilo", slug: "ilo-ilo", tagline: "Heritage, culture, and breathtaking coastlines",
-    image: "https://images.unsplash.com/photo-1580902394724-b08ff9066f4c?w=600&q=80&fit=crop",
-    hero: "https://images.unsplash.com/photo-1580902394724-b08ff9066f4c?w=1400&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1200&q=90&fit=crop",
+    hero: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1200&q=90&fit=crop",
     itinerary: ["Molo Church & Mansion heritage walk", "Miag-ao Church UNESCO site", "Guimaras Island mango farm tour", "Dinagyang Festival cultural immersion", "Smallville nightlife district", "Iloilo River Esplanade sunset", "La Paz Batchoy food tour"],
   },
   {
@@ -181,8 +181,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Zamboanga", slug: "zamboanga", tagline: "Asia's Latin city by the sea",
-    image: "https://images.unsplash.com/photo-1540202404-a2f29d47d2e4?w=600&q=80&fit=crop",
-    hero: "https://images.unsplash.com/photo-1540202404-a2f29d47d2e4?w=1400&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1521295121783-8a321d551ad2?w=1200&q=90&fit=crop",
+    hero: "https://images.unsplash.com/photo-1521295121783-8a321d551ad2?w=1200&q=90&fit=crop",
     itinerary: ["Great Santa Cruz Island pink sand beach", "Little Santa Cruz Island birdwatching", "Fort Pilar Shrine heritage tour", "Rio Hondo Water Village cultural walk", "Paseo del Mar boardwalk sunset", "Vinta boat race festival", "Yakan weaving handicraft village"],
   },
   {
