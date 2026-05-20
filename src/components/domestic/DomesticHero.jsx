@@ -15,7 +15,7 @@ const PANELS = [
   },
   {
     name: "Batanes",
-    src: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=90&fit=crop",
+    src: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1200&q=90&fit=crop",
   },
   {
     name: "Coron",
