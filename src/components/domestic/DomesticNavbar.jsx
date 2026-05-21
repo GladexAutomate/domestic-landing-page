@@ -27,14 +27,15 @@ export default function DomesticNavbar({ darkMode, setDarkMode, showBack = false
       }}>
       
       <div className="max-w-7xl mx-auto px-6 lg:px-10 h-16 flex items-center justify-between">
-        {/* Logo */}
+        {/* Logo — only shown on destination pages (showBack=true), hidden on home */}
         <Link to="/" className="flex items-center">
-          
-
-
-
-          
-          
+          {showBack && (
+            <img
+              src={GLADEX_LOGO}
+              alt="Gladex"
+              className="h-9 w-auto object-contain"
+            />
+          )}
         </Link>
 
         {/* Right side */}

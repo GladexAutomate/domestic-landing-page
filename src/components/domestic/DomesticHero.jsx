@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+
 const GLADEX_LOGO = "https://media.base44.com/images/public/6a0d6115eb14182fe3684619/ed2488356_5ecc9b2cd_Untitled-design-75.png";
 
 const PANELS = [
@@ -24,6 +26,9 @@ const PANELS = [
 ];
 
 export default function DomesticHero({ onBrowse }) {
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => { const t = setTimeout(() => setLoaded(true), 100); return () => clearTimeout(t); }, []);
+
   return (
     <section className="relative w-full overflow-hidden" style={{ height: "100vh", minHeight: "600px" }}>
 
@@ -57,28 +62,40 @@ export default function DomesticHero({ onBrowse }) {
       {/* Centered content */}
       <div className="relative h-full flex flex-col items-center justify-center text-center px-6">
 
-        {/* Gladex Logo */}
+        {/* Gladex Logo — floats down */}
         <img
           src={GLADEX_LOGO}
           alt="Gladex Travel and Tours"
-          className="h-12 md:h-16 w-auto object-contain mb-8"
-          style={{ filter: "drop-shadow(0 2px 16px rgba(0,0,0,0.7)) brightness(1.1)" }}
+          className="h-12 md:h-16 w-auto object-contain mb-8 transition-all duration-700"
+          style={{
+            filter: "drop-shadow(0 2px 16px rgba(0,0,0,0.7)) brightness(1.1)",
+            opacity: loaded ? 1 : 0,
+            transform: loaded ? "translateY(0)" : "translateY(-20px)",
+          }}
         />
 
         <h1
-          className="font-black text-white uppercase leading-none mb-4"
+          className="font-black text-white uppercase leading-none mb-4 transition-all duration-700"
           style={{
             fontSize: "clamp(2.6rem, 8vw, 7.5rem)",
             letterSpacing: "0.06em",
-            textShadow: "0 2px 30px rgba(0,0,0,0.8), 0 0 60px rgba(0,0,0,0.4)"
+            textShadow: "0 2px 30px rgba(0,0,0,0.8), 0 0 60px rgba(0,0,0,0.4)",
+            transitionDelay: "0.2s",
+            opacity: loaded ? 1 : 0,
+            transform: loaded ? "translateY(0)" : "translateY(24px)",
           }}
         >
           EXPLORE THE PHILIPPINES
         </h1>
 
         <p
-          className="max-w-lg text-sm md:text-base font-light tracking-wider leading-relaxed"
-          style={{ color: "rgba(255,255,255,0.7)", textShadow: "0 1px 8px rgba(0,0,0,0.6)" }}
+          className="max-w-lg text-sm md:text-base font-light tracking-wider leading-relaxed transition-all duration-700"
+          style={{
+            color: "rgba(255,255,255,0.7)",
+            textShadow: "0 1px 8px rgba(0,0,0,0.6)",
+            transitionDelay: "0.4s",
+            opacity: loaded ? 1 : 0,
+          }}
         >
           Discover premium domestic destinations across the beautiful Philippines<br className="hidden md:block" />
           with cinematic travel experiences.
