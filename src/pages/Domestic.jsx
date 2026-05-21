@@ -16,7 +16,7 @@ export default function Domestic() {
 
   return (
     <div className={darkMode ? "dark" : ""}>
-      <div className="font-poppins bg-white dark:bg-[#0a0a0a] min-h-screen transition-colors duration-300">
+      <div className="font-poppins bg-background dark:bg-[#0a0a0a] min-h-screen transition-colors duration-300">
         <DomesticNavbar darkMode={darkMode} setDarkMode={setDarkMode} />
         <DomesticHero darkMode={darkMode} />
         <div ref={destinationsRef}>

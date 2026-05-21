@@ -18,9 +18,9 @@ export default function DomesticNavbar({ darkMode, setDarkMode, showBack = false
       style={{
         backdropFilter: "none",
         WebkitBackdropFilter: "none",
-        backgroundColor: scrolled ?
-        darkMode ? "rgba(10,10,10,0.94)" : "rgba(255,255,255,0.94)" :
-        "transparent",
+        backgroundColor: scrolled
+          ? darkMode ? "rgba(10,10,10,0.94)" : "rgba(255,255,255,0.94)"
+          : "rgba(0,0,0,0)",
         borderBottom: scrolled ?
         darkMode ? "1px solid rgba(255,140,0,0.12)" : "1px solid rgba(0,0,0,0.07)" :
         "none"
