@@ -49,7 +49,7 @@ export default function DomesticHero({ onBrowse }) {
 
       {/* Bottom-only dark gradient for text readability */}
       <div
-        className="absolute inset-0 pointer-events-none"
+        className="absolute inset-0 pointer-events-none z-0"
         style={{
           background: "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.05) 45%, rgba(0,0,0,0.72) 100%)"
         }}
@@ -65,7 +65,7 @@ export default function DomesticHero({ onBrowse }) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3, duration: 0.7 }}
         whileHover={{ scale: 1.06, y: -2 }}
-        className="absolute top-6 left-6 z-20 cursor-pointer"
+        className="absolute top-6 left-6 z-50 cursor-pointer"
         title="Back to Main Page"
       >
         <img
