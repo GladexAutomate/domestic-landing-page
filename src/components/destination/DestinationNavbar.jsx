@@ -37,14 +37,6 @@ export default function DestinationNavbar({ darkMode, setDarkMode }) {
 
         {/* Right side */}
         <div className="flex items-center gap-3">
-          {/* GROUP TOUR badge */}
-          <span
-            className="px-3 py-1 rounded-full text-[11px] font-black tracking-widest uppercase"
-            style={{ border: "1.5px solid #FF8C00", color: "#FF8C00", background: "rgba(255,140,0,0.06)" }}
-          >
-            GROUP TOUR
-          </span>
-
           {/* All Destinations back link */}
           <Link
             to="/"
