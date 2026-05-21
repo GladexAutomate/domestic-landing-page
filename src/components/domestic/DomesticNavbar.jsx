@@ -16,8 +16,8 @@ export default function DomesticNavbar({ darkMode, setDarkMode, showBack = false
     <nav
       className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
       style={{
-        backdropFilter: scrolled ? "blur(14px)" : "none",
-        WebkitBackdropFilter: scrolled ? "blur(14px)" : "none",
+        backdropFilter: "none",
+        WebkitBackdropFilter: "none",
         backgroundColor: scrolled ?
         darkMode ? "rgba(10,10,10,0.94)" : "rgba(255,255,255,0.94)" :
         "transparent",

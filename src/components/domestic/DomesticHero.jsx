@@ -32,12 +32,12 @@ export default function DomesticHero({ onBrowse }) {
     <section className="relative w-full overflow-hidden" style={{ height: "100vh", minHeight: "600px" }}>
 
       {/* 5-panel background */}
-      <div className="absolute inset-0 flex">
+      <div className="absolute inset-0 flex" style={{ gap: 0 }}>
         {PANELS.map((panel, i) => (
           <div
             key={i}
             className="relative flex-1 overflow-hidden group"
-            style={{ borderRight: i < PANELS.length - 1 ? "1px solid rgba(255,255,255,0.12)" : "none" }}
+            style={{ margin: 0, padding: 0, border: "none" }}
           >
             <div
               className="absolute inset-0 bg-cover bg-center transition-transform duration-[6000ms] ease-out group-hover:scale-110"
