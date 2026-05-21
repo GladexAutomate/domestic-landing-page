@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-const GLADEX_LOGO = "https://media.base44.com/images/public/6a0d6ad01d34ead888ecdd6f/5ecc9b2cd_Untitled-design-75.png";
+const GLADEX_LOGO = "https://media.base44.com/images/public/6a0d6115eb14182fe3684619/ed2488356_5ecc9b2cd_Untitled-design-75.png";
 
 export default function DestinationNavbar({ darkMode, setDarkMode }) {
   const [scrolled, setScrolled] = useState(false);
@@ -30,8 +30,8 @@ export default function DestinationNavbar({ darkMode, setDarkMode }) {
           <img
             src={GLADEX_LOGO}
             alt="Gladex Travel and Tours"
-            className="h-14 w-auto object-contain transition-all duration-300"
-            style={{ filter: "drop-shadow(0 0 16px rgba(255,140,0,0.5))" }}
+            className="h-9 w-auto object-contain"
+            style={{ filter: scrolled ? "none" : "drop-shadow(0 1px 8px rgba(0,0,0,0.5))" }}
           />
         </Link>
 
