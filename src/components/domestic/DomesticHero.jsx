@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-
-const GLADEX_LOGO = "https://media.base44.com/images/public/6a0d6115eb14182fe3684619/ed2488356_5ecc9b2cd_Untitled-design-75.png";
+import { motion } from "framer-motion";
 
 const PANELS = [
   {
@@ -52,27 +51,35 @@ export default function DomesticHero({ onBrowse }) {
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: "linear-gradient(180deg, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.05) 45%, rgba(0,0,0,0.72) 100%)"
+          background: "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.05) 45%, rgba(0,0,0,0.72) 100%)"
         }}
       />
 
       {/* Orange bottom line */}
       <div className="absolute bottom-0 left-0 right-0 h-[2px]" style={{ background: "#FF8C00" }} />
 
-      {/* Centered content */}
-      <div className="relative h-full flex flex-col items-center justify-center text-center px-6">
-
-        {/* Gladex Logo — floats down */}
+      {/* Upper-left logo */}
+      <motion.a
+        href="https://voyage-view-go.base44.app"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3, duration: 0.7 }}
+        whileHover={{ scale: 1.06, y: -2 }}
+        className="absolute top-6 left-6 z-20 cursor-pointer"
+        title="Back to Main Page"
+      >
         <img
-          src={GLADEX_LOGO}
-          alt="Gladex Travel and Tours"
-          className="h-12 md:h-16 w-auto object-contain mb-8 transition-all duration-700"
+          src="https://media.base44.com/images/public/6a0d6ad01d34ead888ecdd6f/5ecc9b2cd_Untitled-design-75.png"
+          alt="Gladex Travel and Tours Corp."
+          className="h-14 w-auto object-contain transition-all duration-300"
           style={{
-            filter: "drop-shadow(0 2px 16px rgba(0,0,0,0.7)) brightness(1.1)",
-            opacity: loaded ? 1 : 0,
-            transform: loaded ? "translateY(0)" : "translateY(-20px)",
+            filter: "drop-shadow(0 0 16px rgba(255,140,0,0.5))",
           }}
         />
+      </motion.a>
+
+      {/* Centered content */}
+      <div className="relative h-full flex flex-col items-center justify-center text-center px-6">
 
         <h1
           className="font-black text-white uppercase leading-none mb-4 transition-all duration-700"
