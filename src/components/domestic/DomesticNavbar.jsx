@@ -1,29 +1,16 @@
-import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 const GLADEX_LOGO = "https://media.base44.com/images/public/6a0d6115eb14182fe3684619/ed2488356_5ecc9b2cd_Untitled-design-75.png";
 
 export default function DomesticNavbar({ darkMode, setDarkMode, showBack = false }) {
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   return (
     <nav
-      className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
+      className="fixed top-0 left-0 right-0 z-50"
       style={{
+        background: "transparent",
         backdropFilter: "none",
         WebkitBackdropFilter: "none",
-        backgroundColor: scrolled ?
-        darkMode ? "rgba(10,10,10,0.94)" : "rgba(255,255,255,0.94)" :
-        "transparent",
-        borderBottom: scrolled ?
-        darkMode ? "1px solid rgba(255,140,0,0.12)" : "1px solid rgba(0,0,0,0.07)" :
-        "none"
+        border: "none",
       }}>
       
       <div className="max-w-7xl mx-auto px-6 lg:px-10 h-16 flex items-center justify-between">
