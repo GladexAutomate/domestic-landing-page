@@ -21,23 +21,21 @@ export default function DestinationCard({ destination, delay, visible, darkMode 
           style={{ backgroundImage: `url('${destination.image}')` }}
         />
         {/* Dark overlay */}
-        <div className="absolute inset-0 transition-opacity duration-300"
-          style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.6) 60%, rgba(0,0,0,0.85) 100%)" }}
+        <div
+          className="absolute inset-0 transition-opacity duration-300"
+          style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.55) 55%, rgba(0,0,0,0.85) 100%)" }}
         />
-        {/* Orange top line */}
+        {/* Orange top accent on hover */}
         <div className="absolute top-0 left-0 right-0 h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: "#FF8C00" }} />
 
         {/* Content */}
         <div className="absolute inset-0 flex flex-col justify-end p-3.5">
-          <p className="text-[9px] font-bold tracking-[0.25em] uppercase mb-0.5" style={{ color: "rgba(255,140,0,0.9)" }}>
-            Philippines
-          </p>
-          <h3 className="text-white font-black text-sm leading-tight mb-1">
+          <h3 className="text-white font-black text-sm leading-tight mb-1.5">
             {destination.name}
           </h3>
           {/* VIEW PREVIEW row */}
-          <div className="flex items-center justify-between mt-1">
-            <span className="text-[10px] font-bold tracking-[0.12em] uppercase text-white/60 group-hover:text-[#FF8C00] transition-colors">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-bold tracking-[0.12em] uppercase text-white/50 group-hover:text-[#FF8C00] transition-colors">
               VIEW PREVIEW
             </span>
             <div
