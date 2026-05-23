@@ -29,7 +29,7 @@ export default function PackageDetails({ destination, darkMode }) {
         className={`rounded-xl p-6 transition-all duration-700 ${cardBg}`}
         style={{ border: `1px solid ${cardBorder}`, boxShadow: darkMode ? "none" : "0 2px 16px rgba(0,0,0,0.05)", opacity: vis1 ? 1 : 0, transform: vis1 ? "translateY(0)" : "translateY(24px)" }}
       >
-        <SectionHeading label="Package" />
+        <SectionHeading label="Package Details" />
         <p className={`text-xl font-bold ${textPrimary}`}>{destination.package}</p>
         {destination.videoUrl && (
           <a href={destination.videoUrl} target="_blank" rel="noopener noreferrer"
@@ -47,7 +47,7 @@ export default function PackageDetails({ destination, darkMode }) {
         className={`rounded-xl p-6 transition-all duration-700 ${cardBg}`}
         style={{ border: `1px solid ${cardBorder}`, boxShadow: darkMode ? "none" : "0 2px 16px rgba(0,0,0,0.05)", opacity: vis2 ? 1 : 0, transform: vis2 ? "translateY(0)" : "translateY(24px)", transitionDelay: "0.1s" }}
       >
-        <SectionHeading label="Hotel Options & Rates" />
+        <SectionHeading label="Rooms &amp; Rates" />
         <div className="space-y-4">
           {destination.hotelCategories?.map((cat, i) => (
             <div key={i} className="rounded-lg p-4" style={{ background: sectionBg, border: `1px solid ${cardBorder}` }}>
@@ -76,7 +76,7 @@ export default function PackageDetails({ destination, darkMode }) {
           className={`rounded-xl p-6 transition-all duration-700 ${cardBg}`}
           style={{ border: `1px solid ${cardBorder}`, boxShadow: darkMode ? "none" : "0 2px 16px rgba(0,0,0,0.05)", opacity: vis3 ? 1 : 0, transform: vis3 ? "translateY(0)" : "translateY(24px)", transitionDelay: "0.2s" }}
         >
-          <SectionHeading label="Optional Tours" />
+          <SectionHeading label="Optional Add-Ons" />
           <div className="space-y-4">
             {destination.optionalTours.map((tour, i) => (
               <div key={i} className="rounded-lg p-4" style={{ background: sectionBg, border: `1px solid ${cardBorder}` }}>
@@ -92,7 +92,7 @@ export default function PackageDetails({ destination, darkMode }) {
       {/* Important Notes */}
       {destination.notes?.length > 0 && (
         <div className={`rounded-xl p-6 ${cardBg}`} style={{ border: `1px solid ${cardBorder}`, boxShadow: darkMode ? "none" : "0 2px 16px rgba(0,0,0,0.05)" }}>
-          <SectionHeading label="Important Notes" />
+          <SectionHeading label="Important" />
           <ul className="space-y-2">
             {destination.notes.map((note, i) => (
               <li key={i} className="flex items-start gap-2.5">

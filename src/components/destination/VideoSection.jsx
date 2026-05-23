@@ -4,17 +4,20 @@ export default function VideoSection({ destination }) {
   const [ref, visible] = useScrollReveal();
 
   return (
-    <section style={{ background: "#000", padding: "64px 24px" }}>
+    <section style={{ background: "#111", padding: "72px 24px" }}>
       {/* Header */}
       <div className="text-center mb-10">
         <div className="flex items-center justify-center gap-3 mb-4">
-          <div className="h-[1px] w-10" style={{ background: "#FF8C00" }} />
+          <div className="h-[1px] w-12" style={{ background: "#FF8C00" }} />
           <span className="text-[11px] font-bold tracking-[0.3em] uppercase" style={{ color: "#FF8C00" }}>
             Official Travel Preview
           </span>
-          <div className="h-[1px] w-10" style={{ background: "#FF8C00" }} />
+          <div className="h-[1px] w-12" style={{ background: "#FF8C00" }} />
         </div>
-        <h2 className="font-black text-white text-3xl md:text-4xl mb-3">
+        <h2
+          className="font-black text-white mb-3"
+          style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)", fontStyle: "italic", letterSpacing: "-0.02em" }}
+        >
           Experience {destination.name}
         </h2>
         <p className="text-sm font-light max-w-md mx-auto" style={{ color: "rgba(255,255,255,0.45)" }}>
@@ -26,10 +29,7 @@ export default function VideoSection({ destination }) {
       <div
         ref={ref}
         className="max-w-4xl mx-auto transition-all duration-700"
-        style={{
-          opacity: visible ? 1 : 0,
-          transform: visible ? "translateY(0)" : "translateY(32px)",
-        }}
+        style={{ opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(32px)" }}
       >
         <div
           className="relative w-full rounded-2xl overflow-hidden"
@@ -37,32 +37,31 @@ export default function VideoSection({ destination }) {
             background: "#1a1a1a",
             border: "1px solid rgba(255,255,255,0.08)",
             aspectRatio: "16/9",
+            boxShadow: "0 24px 80px rgba(0,0,0,0.7)",
           }}
         >
           {destination.slug === "boracay" ? (
-            /* Boracay — actual Google Drive video embed */
             <iframe
               src="https://drive.google.com/file/d/1THzQAagycyXm8UYNztawslG7G_2Ak_J3/preview"
               className="absolute inset-0 w-full h-full"
               style={{ border: "none" }}
               allow="autoplay; fullscreen"
               allowFullScreen
-              title={`Experience ${destination.name}`}
+              title="Experience Boracay"
             />
           ) : (
-            /* Placeholder — coming soon */
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-center px-6">
-                <div className="relative mx-auto mb-6" style={{ width: "64px", height: "64px" }}>
+                <div className="relative mx-auto mb-6" style={{ width: "72px", height: "72px" }}>
                   <div
                     className="absolute inset-0 rounded-full"
                     style={{ background: "rgba(255,140,0,0.15)", animation: "ping 2s cubic-bezier(0,0,0.2,1) infinite" }}
                   />
                   <div
-                    className="relative w-16 h-16 rounded-full flex items-center justify-center"
-                    style={{ background: "rgba(255,255,255,0.1)", border: "1.5px solid rgba(255,255,255,0.2)" }}
+                    className="relative w-[72px] h-[72px] rounded-full flex items-center justify-center"
+                    style={{ background: "rgba(255,255,255,0.08)", border: "1.5px solid rgba(255,255,255,0.2)" }}
                   >
-                    <svg className="w-7 h-7 ml-1" fill="rgba(255,255,255,0.75)" viewBox="0 0 24 24">
+                    <svg className="w-8 h-8 ml-1" fill="rgba(255,255,255,0.7)" viewBox="0 0 24 24">
                       <polygon points="8,5 19,12 8,19" />
                     </svg>
                   </div>
@@ -84,9 +83,7 @@ export default function VideoSection({ destination }) {
       </div>
 
       <style>{`
-        @keyframes ping {
-          75%, 100% { transform: scale(2); opacity: 0; }
-        }
+        @keyframes ping { 75%, 100% { transform: scale(2); opacity: 0; } }
         @keyframes staytunedPulse {
           0%, 100% { box-shadow: 0 0 0 0 rgba(255,140,0,0); }
           50% { box-shadow: 0 0 0 6px rgba(255,140,0,0.15); }

@@ -24,7 +24,7 @@ export default function InclusionsExclusionsSection({ destination, darkMode }) {
             <div className="h-[1px] w-10" style={{ background: "#FF8C00" }} />
           </div>
           <h2 className="font-black text-3xl md:text-4xl" style={{ color: darkMode ? "#fff" : "#0F172A" }}>
-            Inclusions & Exclusions
+            Inclusions &amp; Exclusions
           </h2>
         </div>
 
@@ -49,6 +49,7 @@ export default function InclusionsExclusionsSection({ destination, darkMode }) {
                 Included ✅
               </h3>
             </div>
+
             <ul className="space-y-2.5">
               {destination.inclusions?.map((item, i) => (
                 <li
