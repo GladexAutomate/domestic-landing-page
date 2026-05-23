@@ -32,45 +32,54 @@ export default function VideoSection({ destination }) {
         }}
       >
         <div
-          className="relative w-full rounded-2xl overflow-hidden flex items-center justify-center"
+          className="relative w-full rounded-2xl overflow-hidden"
           style={{
             background: "#1a1a1a",
             border: "1px solid rgba(255,255,255,0.08)",
             aspectRatio: "16/9",
-            minHeight: "320px",
           }}
         >
-          <div className="text-center px-6">
-            {/* Pulsing play button */}
-            <div className="relative mx-auto mb-6" style={{ width: "64px", height: "64px" }}>
-              <div
-                className="absolute inset-0 rounded-full"
-                style={{
-                  background: "rgba(255,140,0,0.15)",
-                  animation: "ping 2s cubic-bezier(0,0,0.2,1) infinite",
-                }}
-              />
-              <div
-                className="relative w-16 h-16 rounded-full flex items-center justify-center"
-                style={{ background: "rgba(255,255,255,0.1)", border: "1.5px solid rgba(255,255,255,0.2)" }}
-              >
-                <svg className="w-7 h-7 ml-1" fill="rgba(255,255,255,0.75)" viewBox="0 0 24 24">
-                  <polygon points="8,5 19,12 8,19" />
-                </svg>
+          {destination.slug === "boracay" ? (
+            /* Boracay — actual Google Drive video embed */
+            <iframe
+              src="https://drive.google.com/file/d/1THzQAagycyXm8UYNztawslG7G_2Ak_J3/preview"
+              className="absolute inset-0 w-full h-full"
+              style={{ border: "none" }}
+              allow="autoplay; fullscreen"
+              allowFullScreen
+              title={`Experience ${destination.name}`}
+            />
+          ) : (
+            /* Placeholder — coming soon */
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="text-center px-6">
+                <div className="relative mx-auto mb-6" style={{ width: "64px", height: "64px" }}>
+                  <div
+                    className="absolute inset-0 rounded-full"
+                    style={{ background: "rgba(255,140,0,0.15)", animation: "ping 2s cubic-bezier(0,0,0.2,1) infinite" }}
+                  />
+                  <div
+                    className="relative w-16 h-16 rounded-full flex items-center justify-center"
+                    style={{ background: "rgba(255,255,255,0.1)", border: "1.5px solid rgba(255,255,255,0.2)" }}
+                  >
+                    <svg className="w-7 h-7 ml-1" fill="rgba(255,255,255,0.75)" viewBox="0 0 24 24">
+                      <polygon points="8,5 19,12 8,19" />
+                    </svg>
+                  </div>
+                </div>
+                <h3 className="text-white font-bold text-lg mb-2">Official Travel Preview Coming Soon</h3>
+                <p className="text-sm max-w-xs mx-auto mb-6" style={{ color: "rgba(255,255,255,0.4)" }}>
+                  We&apos;re preparing an exclusive cinematic preview of {destination.name}. Stay tuned.
+                </p>
+                <button
+                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-bold tracking-[0.15em] uppercase transition-all hover:bg-[#FF8C00] hover:text-white"
+                  style={{ border: "1.5px solid #FF8C00", color: "#FF8C00", background: "transparent", animation: "staytunedPulse 3s ease-in-out infinite" }}
+                >
+                  + STAY TUNED
+                </button>
               </div>
             </div>
-
-            <h3 className="text-white font-bold text-lg mb-2">Official Travel Preview Coming Soon</h3>
-            <p className="text-sm max-w-xs mx-auto mb-6" style={{ color: "rgba(255,255,255,0.4)" }}>
-              We&apos;re preparing an exclusive cinematic preview of {destination.name}. Stay tuned.
-            </p>
-            <button
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-bold tracking-[0.15em] uppercase transition-all hover:bg-[#FF8C00] hover:text-white"
-              style={{ border: "1.5px solid #FF8C00", color: "#FF8C00", background: "transparent", animation: "staytunedPulse 3s ease-in-out infinite" }}
-            >
-              + STAY TUNED
-            </button>
-          </div>
+          )}
         </div>
       </div>
 
