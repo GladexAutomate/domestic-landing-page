@@ -43,6 +43,18 @@ export default function DomesticHero({ onBrowse }) {
               className="absolute inset-0 bg-cover bg-center transition-transform duration-[6000ms] ease-out group-hover:scale-110"
               style={{ backgroundImage: `url('${panel.src}')`, backgroundSize: "cover", backgroundPosition: "center" }}
             />
+            {/* Per-panel dark overlay */}
+            <div className="absolute inset-0" style={{ background: "rgba(0,0,0,0.35)" }} />
+
+            {/* Destination name at bottom of panel */}
+            <div className="absolute bottom-8 left-0 right-0 flex justify-center">
+              <span
+                className="text-[10px] font-bold tracking-[0.2em] uppercase"
+                style={{ color: "rgba(255,255,255,0.7)" }}
+              >
+                {panel.name}
+              </span>
+            </div>
           </div>
         ))}
       </div>
@@ -79,7 +91,7 @@ export default function DomesticHero({ onBrowse }) {
       </motion.a>
 
       {/* Centered content */}
-      <div className="relative h-full flex flex-col items-center justify-center text-center px-6">
+      <div className="relative h-full flex flex-col items-center justify-center text-center px-6 z-10">
 
         <h1
           className="font-black text-white uppercase leading-none mb-4 transition-all duration-700"
@@ -96,16 +108,26 @@ export default function DomesticHero({ onBrowse }) {
         </h1>
 
         <p
-          className="max-w-lg text-sm md:text-base font-light tracking-wider leading-relaxed transition-all duration-700"
+          className="max-w-lg text-sm md:text-base font-light tracking-wider leading-relaxed mb-3 transition-all duration-700"
           style={{
             color: "rgba(255,255,255,0.7)",
             textShadow: "0 1px 8px rgba(0,0,0,0.6)",
+            transitionDelay: "0.3s",
+            opacity: loaded ? 1 : 0,
+          }}
+        >
+          DISCOVER PREMIUM DOMESTIC DESTINATIONS
+        </p>
+
+        <p
+          className="text-[11px] font-semibold tracking-[0.35em] uppercase transition-all duration-700"
+          style={{
+            color: "rgba(255,255,255,0.45)",
             transitionDelay: "0.4s",
             opacity: loaded ? 1 : 0,
           }}
         >
-          Discover premium domestic destinations across the beautiful Philippines<br className="hidden md:block" />
-          with cinematic travel experiences.
+          DOMESTIC
         </p>
 
         {/* Scroll indicator */}
