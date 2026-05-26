@@ -24,7 +24,22 @@ export default function PackageDetails({ destination, darkMode }) {
     <div className="max-w-4xl mx-auto space-y-8">
 
       {/* Package Name */}
-    
+      <div
+        ref={ref1}
+        className={`rounded-xl p-6 transition-all duration-700 ${cardBg}`}
+        style={{ border: `1px solid ${cardBorder}`, boxShadow: darkMode ? "none" : "0 2px 16px rgba(0,0,0,0.05)", opacity: vis1 ? 1 : 0, transform: vis1 ? "translateY(0)" : "translateY(24px)" }}
+      >
+        <SectionHeading label="Package Details" />
+        <p className={`text-xl font-bold ${textPrimary}`}>{destination.package}</p>
+        {destination.videoUrl && (
+          <a href={destination.videoUrl} target="_blank" rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 mt-3 text-sm font-semibold hover:opacity-80 transition-opacity"
+            style={{ color: "#FF8C00" }}>
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19" /></svg>
+            
+          </a>
+        )}
+      </div>
 
       {/* Hotel Options */}
       <div
