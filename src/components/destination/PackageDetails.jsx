@@ -20,26 +20,33 @@ export default function PackageDetails({ destination, darkMode }) {
   const [ref2, vis2] = useScrollReveal();
   const [ref3, vis3] = useScrollReveal();
 
+const SectionHeading = ({ label }) => (
+  <div className="flex items-center justify-center gap-3 mb-6">
+    <div
+      className="h-[1px] w-8"
+      style={{ background: "#FF8C00" }}
+    />
+
+    <span
+      className="text-[11px] font-bold tracking-[0.3em] uppercase text-center"
+      style={{ color: "#FF8C00" }}
+    >
+      {label}
+    </span>
+
+    <div
+      className="h-[1px] w-8"
+      style={{
+        background: darkMode
+          ? "rgba(255,255,255,0.07)"
+          : "#e5e7eb",
+      }}
+    />
+  </div>
+);
+
   return (
     <div className="max-w-4xl mx-auto space-y-8">
-
-      {/* Package Name */}
-      <div
-        ref={ref1}
-        className={`rounded-xl p-6 transition-all duration-700 ${cardBg}`}
-        style={{ border: `1px solid ${cardBorder}`, boxShadow: darkMode ? "none" : "0 2px 16px rgba(0,0,0,0.05)", opacity: vis1 ? 1 : 0, transform: vis1 ? "translateY(0)" : "translateY(24px)" }}>
-        
-        <SectionHeading label="Package Details" />
-        <p className={`text-xl font-bold ${textPrimary}`}>{destination.package}</p>
-        {destination.videoUrl &&
-        <a href={destination.videoUrl} target="_blank" rel="noopener noreferrer"
-        className="inline-flex items-center gap-2 mt-3 text-sm font-semibold hover:opacity-80 transition-opacity"
-        style={{ color: "#FF8C00" }}>
-            
-            
-          </a>
-        }
-      </div>
 
       {/* Hotel Options */}
       <div
