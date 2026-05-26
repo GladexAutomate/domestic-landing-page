@@ -35,7 +35,7 @@ export default function PackageDetails({ destination, darkMode }) {
         <a href={destination.videoUrl} target="_blank" rel="noopener noreferrer"
         className="inline-flex items-center gap-2 mt-3 text-sm font-semibold hover:opacity-80 transition-opacity"
         style={{ color: "#FF8C00" }}>
-            <svg className="w-4 h-4 hidden" fill="currentColor" viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19" /></svg>
+            
             
           </a>
         }
