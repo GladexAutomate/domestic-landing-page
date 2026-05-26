@@ -114,10 +114,10 @@ export default function DestinationPreview() {
       <VideoSection destination={destination} />
 
       {/* EXTRA GRAY SPACE */}
-      <div className="h-24 bg-[#f9fafb]" />
+      <div className="h-24 bg-[##F5F5F5]" />
 
       {/* HOTEL OPTIONS, OPTIONAL TOURS, NOTES */}
-      <section className="py-28 px-14 bg-[#f9fafb]">
+      <section className="py-14 px-6 bg-[#f9fafb]">
         <PackageDetails destination={destination} darkMode={false} />
       </section>
 
