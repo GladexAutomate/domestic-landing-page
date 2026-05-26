@@ -31,20 +31,20 @@ export default function DestinationPreview() {
           className="absolute inset-0 bg-cover bg-center"
           style={{
             backgroundImage: `url('${heroImage}')`,
-            animation: "kenburns 12s ease-out forwards",
-          }}
-        />
+            animation: "kenburns 12s ease-out forwards"
+          }} />
+        
         {/* Gradient — heavier at bottom where text sits */}
         <div
           className="absolute inset-0"
-          style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.1) 35%, rgba(0,0,0,0.65) 70%, rgba(0,0,0,0.82) 100%)" }}
-        />
+          style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.1) 35%, rgba(0,0,0,0.65) 70%, rgba(0,0,0,0.82) 100%)" }} />
+        
 
         {/* Centered text — lower half of hero */}
         <div
           className="relative h-full flex flex-col items-center justify-end text-center px-6 pb-20 transition-all duration-1000"
-          style={{ opacity: heroLoaded ? 1 : 0, transform: heroLoaded ? "translateY(0)" : "translateY(20px)" }}
-        >
+          style={{ opacity: heroLoaded ? 1 : 0, transform: heroLoaded ? "translateY(0)" : "translateY(20px)" }}>
+          
           {/* Label */}
           <div className="flex items-center gap-3 mb-4">
             <div className="h-[1px] w-12" style={{ background: "#FF8C00" }} />
@@ -64,9 +64,9 @@ export default function DestinationPreview() {
               textShadow: "0 4px 40px rgba(0,0,0,0.5)",
               opacity: heroLoaded ? 1 : 0,
               transform: heroLoaded ? "translateY(0)" : "translateY(16px)",
-              transition: "opacity 0.8s 0.2s, transform 0.8s 0.2s",
-            }}
-          >
+              transition: "opacity 0.8s 0.2s, transform 0.8s 0.2s"
+            }}>
+            
             Experience {destination.name}
           </h1>
 
@@ -84,9 +84,9 @@ export default function DestinationPreview() {
             style={{
               color: "rgba(255,255,255,0.65)",
               opacity: heroLoaded ? 1 : 0,
-              transition: "opacity 0.8s 0.45s",
-            }}
-          >
+              transition: "opacity 0.8s 0.45s"
+            }}>
+            
             {destination.tagline}
           </p>
         </div>
@@ -114,7 +114,7 @@ export default function DestinationPreview() {
       <VideoSection destination={destination} />
 
       {/* EXTRA GRAY SPACE */}
-      <div className="h-24 bg-[#F5F5F5]" />
+      <div className="h-24 bg-[#F5F5F5] hidden" />
 
       {/* HOTEL OPTIONS, OPTIONAL TOURS, NOTES */}
       <section className="py-14 px-6 bg-[#f9fafb]">
@@ -145,8 +145,8 @@ export default function DestinationPreview() {
         <Link
           to="/"
           className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full font-bold text-sm tracking-wide uppercase text-white transition-all hover:scale-105 hover:shadow-2xl"
-          style={{ background: "#FF8C00", boxShadow: "0 8px 28px rgba(255,140,0,0.4)", animation: "ctaPulse 3s ease-in-out infinite" }}
-        >
+          style={{ background: "#FF8C00", boxShadow: "0 8px 28px rgba(255,140,0,0.4)", animation: "ctaPulse 3s ease-in-out infinite" }}>
+          
           ← Back to All Destinations
         </Link>
       </section>
@@ -161,6 +161,6 @@ export default function DestinationPreview() {
           50% { box-shadow: 0 8px 40px rgba(255,140,0,0.7); }
         }
       `}</style>
-    </div>
-  );
+    </div>);
+
 }
