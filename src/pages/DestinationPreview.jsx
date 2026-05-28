@@ -6,6 +6,7 @@ import VideoSection from "@/components/destination/VideoSection";
 import ItinerarySection from "@/components/destination/ItinerarySection";
 import InclusionsExclusionsSection from "@/components/destination/InclusionsExclusionsSection";
 import PackageDetails from "@/components/destination/PackageDetails";
+import NotesSection from "@/components/destination/NotesSection";
 
 export default function DestinationPreview() {
   const { slug } = useParams();
@@ -123,6 +124,9 @@ export default function DestinationPreview() {
 
       {/* INCLUSIONS & EXCLUSIONS */}
       <InclusionsExclusionsSection destination={destination} darkMode={false} />
+
+      {/* NOTES & REQUIREMENTS */}
+      <NotesSection destination={destination} darkMode={false} />
 
       {/* ITINERARY */}
       <ItinerarySection destination={destination} darkMode={false} />
