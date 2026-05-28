@@ -37,7 +37,7 @@ export default function DomesticDestinations({ darkMode }) {
             letterSpacing: "-0.02em",
           }}
         >
-          Where Do You Want To Go?
+           DESTINATIONS
         </h2>
         <p
           className="text-center text-sm font-light max-w-lg mx-auto mb-14"
