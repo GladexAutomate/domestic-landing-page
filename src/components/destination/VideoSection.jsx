@@ -55,9 +55,9 @@ export default function VideoSection({ destination }) {
         >
           {hasVideo ? (
             <>
-              {/* Embedded video iframe */}
+              {/* Embedded video iframe — autoplay appended after cover click */}
               <iframe
-                src={videoData.embedUrl}
+                src={playing ? `${videoData.embedUrl}&autoplay=1` : videoData.embedUrl}
                 className="absolute inset-0 w-full h-full"
                 style={{ border: "none" }}
                 allow="autoplay; fullscreen"
