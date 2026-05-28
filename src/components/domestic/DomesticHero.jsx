@@ -58,8 +58,8 @@ export default function DomesticHero({ darkMode, setDarkMode }) {
 
       {/* Upper-left logo */}
       <a
-        href="https://voyage-view-go.base44.app"
-        className="absolute top-6 left-6 z-50 cursor-pointer transition-all duration-300 hover:scale-105"
+  href="https://voyage-view-go.base44.app"
+  className="fixed top-6 left-6 z-50 cursor-pointer transition-all duration-300 hover:scale-105"
         title="Back to Main Page"
         style={{ opacity: loaded ? 1 : 0, transform: loaded ? "translateY(0)" : "translateY(-12px)", transition: "opacity 0.7s 0.3s, transform 0.7s 0.3s" }}
       >
