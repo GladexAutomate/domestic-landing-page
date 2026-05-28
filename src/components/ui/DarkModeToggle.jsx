@@ -3,7 +3,8 @@ import { motion } from "framer-motion";
 
 export default function DarkModeToggle({ darkMode, setDarkMode }) {
   return (
-    <div className="fixed top-4 right-5 z-50 flex items-center gap-2">
+    <div
+  className="fixed top-6 right-6 z-50 flex items-center gap-2">
       <span
         className="text-[10px] font-bold tracking-widest uppercase hidden sm:block select-none"
         style={{ color: darkMode ? "#A0A0A0" : "#888888" }}
