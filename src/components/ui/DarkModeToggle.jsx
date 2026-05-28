@@ -1,38 +1,38 @@
-export default function DarkModeToggle({ darkMode, setDarkMode }) {
+import { Moon, Sun } from "lucide-react";
+import { useTheme } from "../lib/ThemeContext";
+import { motion } from "framer-motion";
+
+export default function ThemeToggle() {
+  const { isDark, setIsDark } = useTheme();
+
   return (
-    <div className="fixed top-5 right-5 z-[999] flex items-center gap-2.5">
+    <div className="fixed top-4 right-5 z-50 flex items-center gap-2">
       <span
-        className="text-[11px] font-bold tracking-[0.2em] uppercase select-none transition-colors duration-300"
-        style={{ color: darkMode ? "rgba(255,255,255,0.75)" : "rgba(0,0,0,0.4)" }}
+        className="font-body text-[10px] font-bold tracking-widest uppercase hidden sm:block"
+        style={{ color: isDark ? "#A0A0A0" : "#888888" }}
       >
-        {darkMode ? "DARK" : "LIGHT"}
+        {isDark ? "DARK" : "LIGHT"}
       </span>
       <button
-        onClick={() => setDarkMode(!darkMode)}
-        className="relative flex-shrink-0 transition-all duration-300 hover:scale-105 focus:outline-none"
+        onClick={() => setIsDark(!isDark)}
+        aria-label="Toggle theme"
+        className="relative w-12 h-6 rounded-full transition-all duration-300 focus:outline-none"
         style={{
-          width: "42px",
-          height: "24px",
-          borderRadius: "12px",
-          background: darkMode ? "#FF8C00" : "rgba(0,0,0,0.2)",
-          boxShadow: darkMode
-            ? "0 0 12px rgba(255,140,0,0.5), inset 0 1px 3px rgba(0,0,0,0.2)"
-            : "inset 0 1px 3px rgba(0,0,0,0.25)",
-          transition: "background 0.3s ease, box-shadow 0.3s ease",
+          backgroundColor: isDark ? "#FF8C00" : "#D0D0D0",
+          boxShadow: isDark ? "0 0 10px rgba(255,140,0,0.4)" : "none",
         }}
-        aria-label="Toggle dark mode"
       >
-        {/* Knob */}
-        <span
-          className="absolute top-[3px] block rounded-full bg-white shadow-sm"
-          style={{
-            width: "18px",
-            height: "18px",
-            left: darkMode ? "21px" : "3px",
-            transition: "left 0.28s cubic-bezier(0.4, 0, 0.2, 1)",
-            boxShadow: "0 1px 4px rgba(0,0,0,0.3)",
-          }}
-        />
+        <motion.div
+          animate={{ x: isDark ? 24 : 2 }}
+          transition={{ type: "spring", stiffness: 500, damping: 30 }}
+          className="absolute top-1 w-4 h-4 rounded-full flex items-center justify-center bg-white"
+        >
+          {isDark ? (
+            <Moon className="w-2.5 h-2.5" style={{ color: "#FF8C00" }} />
+          ) : (
+            <Sun className="w-2.5 h-2.5 text-yellow-500" />
+          )}
+        </motion.div>
       </button>
     </div>
   );
