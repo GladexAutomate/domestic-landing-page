@@ -36,7 +36,7 @@ export default function DomesticHero({ darkMode, setDarkMode }) {
               <span
                 className="text-[10px] font-bold tracking-[0.25em] uppercase transition-all duration-300 group-hover:text-[#FF8C00]"
                 style={{
-                  color: "rgba(255,255,255,0.9)",
+                  color: "rgba(255,255,255,1)",
                   textShadow: "0 1px 4px rgba(0,0,0,0.8)",
                 }}
               >
