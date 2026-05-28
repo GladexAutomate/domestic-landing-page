@@ -119,9 +119,17 @@ export default function DomesticHero({ darkMode, setDarkMode }) {
           className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 transition-all duration-700"
           style={{ transitionDelay: "0.6s", opacity: loaded ? 1 : 0 }}
         >
-          <div className="w-7 h-11 rounded-full border-2 border-white/30 flex items-start justify-center pt-2">
-            <div className="scroll-pulse w-1.5 h-2.5 rounded-full" style={{ background: "#FF8C00" }} />
-          </div>
+<div className="w-6 h-10 rounded-full border-2 border-white/40 flex items-start justify-center pt-1.5">
+          <motion.div
+            animate={{ y: [0, 10, 0] }}
+            transition={{
+              duration: 1.6,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="w-1 h-2.5 rounded-full bg-white/60"
+          />
+        </div>
           <span className="text-[10px] font-semibold tracking-[0.4em] uppercase text-white/40">SCROLL</span>
         </div>
       </div>
