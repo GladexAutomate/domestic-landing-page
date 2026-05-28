@@ -106,7 +106,7 @@ export default function DomesticHero({ darkMode, setDarkMode }) {
         <p
           className="mt-3 text-[11px] font-semibold tracking-[0.4em] uppercase transition-all duration-700"
           style={{
-            color: "rgba(255, 255, 255, 1)",
+            color: "rgba(255, 255, 255, 0.4)",
             transitionDelay: "0.45s",
             opacity: loaded ? 1 : 0,
           }}
