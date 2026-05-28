@@ -1,7 +1,20 @@
+import { useState } from "react";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
+
+// Map slug → { driveEmbedUrl, coverImage }
+const VIDEO_DATA = {
+  boracay: {
+    embedUrl: "https://drive.google.com/file/d/1THzQAagycyXm8UYNztawslG7G_2Ak_J3/preview",
+    cover: "https://images.unsplash.com/photo-1519046904884-53103b34b206?w=1200&q=85&fit=crop",
+  },
+};
 
 export default function VideoSection({ destination }) {
   const [ref, visible] = useScrollReveal();
+  const [playing, setPlaying] = useState(false);
+
+  const videoData = VIDEO_DATA[destination.slug];
+  const hasVideo = !!videoData;
 
   return (
     <section style={{ background: "#111", padding: "72px 24px" }}>
@@ -40,16 +53,81 @@ export default function VideoSection({ destination }) {
             boxShadow: "0 24px 80px rgba(0,0,0,0.7)",
           }}
         >
-          {destination.slug === "boracay" ? (
-            <iframe
-              src="https://drive.google.com/file/d/1THzQAagycyXm8UYNztawslG7G_2Ak_J3/preview"
-              className="absolute inset-0 w-full h-full"
-              style={{ border: "none" }}
-              allow="autoplay; fullscreen"
-              allowFullScreen
-              title="Experience Boracay"
-            />
+          {hasVideo ? (
+            <>
+              {/* Embedded video iframe */}
+              <iframe
+                src={videoData.embedUrl}
+                className="absolute inset-0 w-full h-full"
+                style={{ border: "none" }}
+                allow="autoplay; fullscreen"
+                allowFullScreen
+                title={`Experience ${destination.name}`}
+              />
+
+              {/* Block the Google Drive top-right pop-out button */}
+              <div
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  right: 0,
+                  width: "60px",
+                  height: "48px",
+                  background: "#1a1a1a",
+                  pointerEvents: "all",
+                  zIndex: 20,
+                }}
+              />
+
+              {/* Static cover — shown until user clicks play */}
+              {!playing && (
+                <div
+                  className="absolute inset-0 flex items-center justify-center cursor-pointer"
+                  style={{ zIndex: 10 }}
+                  onClick={() => setPlaying(true)}
+                >
+                  {/* Cover image */}
+                  <img
+                    src={videoData.cover}
+                    alt={`${destination.name} preview cover`}
+                    className="absolute inset-0 w-full h-full object-cover"
+                    draggable={false}
+                  />
+
+                  {/* Dark vignette */}
+                  <div
+                    className="absolute inset-0"
+                    style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.45) 100%)" }}
+                  />
+
+                  {/* Branded play button */}
+                  <div className="relative flex flex-col items-center gap-3">
+                    <div className="relative" style={{ width: 72, height: 72 }}>
+                      <div
+                        className="absolute inset-0 rounded-full"
+                        style={{ background: "rgba(255,140,0,0.3)", animation: "ping 2s cubic-bezier(0,0,0.2,1) infinite" }}
+                      />
+                      <div
+                        className="relative w-[72px] h-[72px] rounded-full flex items-center justify-center transition-transform hover:scale-110"
+                        style={{ background: "#FF8C00", boxShadow: "0 0 32px rgba(255,140,0,0.5)" }}
+                      >
+                        <svg className="w-8 h-8 ml-1" fill="white" viewBox="0 0 24 24">
+                          <polygon points="8,5 19,12 8,19" />
+                        </svg>
+                      </div>
+                    </div>
+                    <span
+                      className="text-[11px] font-bold tracking-[0.25em] uppercase"
+                      style={{ color: "rgba(255,255,255,0.85)", textShadow: "0 1px 6px rgba(0,0,0,0.8)" }}
+                    >
+                      WATCH PREVIEW
+                    </span>
+                  </div>
+                </div>
+              )}
+            </>
           ) : (
+            /* No video uploaded — original placeholder, unchanged */
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-center px-6">
                 <div className="relative mx-auto mb-6" style={{ width: "72px", height: "72px" }}>
