@@ -1,19 +1,24 @@
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 // Shows: Package name, Hotel options, Optional tours, Important notes
-export default function PackageDetails({ destination, darkMode }) {
+export default function PackageDetails({ destination, darkMode, centerPackageTitle = false }) {
   const textPrimary = darkMode ? "text-white" : "text-[#0F172A]";
   const textMuted = darkMode ? "text-white/60" : "text-[#64748B]";
   const cardBg = darkMode ? "bg-[#1a1a1a]" : "bg-white";
   const cardBorder = darkMode ? "rgba(255,255,255,0.07)" : "#e5e7eb";
   const sectionBg = darkMode ? "#141414" : "#f9fafb";
 
-  const SectionHeading = ({ label }) =>
-  <div className="flex items-center gap-3 mb-6">
-      <div className="h-[1px] w-8" style={{ background: "#FF8C00" }} />
-      <span className="text-[11px] font-bold tracking-[0.3em] uppercase" style={{ color: "#FF8C00" }}>{label}</span>
-      <div className="h-[1px] flex-1" style={{ background: darkMode ? "rgba(255,255,255,0.07)" : "#e5e7eb" }} />
-    </div>;
+  const SectionHeading = ({ label, centered = false }) => centered
+    ? <div className="flex items-center justify-center gap-3 mb-6">
+        <div className="h-[1px] flex-1" style={{ background: darkMode ? "rgba(255,255,255,0.07)" : "#e5e7eb" }} />
+        <span className="text-[11px] font-bold tracking-[0.3em] uppercase" style={{ color: "#FF8C00" }}>{label}</span>
+        <div className="h-[1px] flex-1" style={{ background: darkMode ? "rgba(255,255,255,0.07)" : "#e5e7eb" }} />
+      </div>
+    : <div className="flex items-center gap-3 mb-6">
+        <div className="h-[1px] w-8" style={{ background: "#FF8C00" }} />
+        <span className="text-[11px] font-bold tracking-[0.3em] uppercase" style={{ color: "#FF8C00" }}>{label}</span>
+        <div className="h-[1px] flex-1" style={{ background: darkMode ? "rgba(255,255,255,0.07)" : "#e5e7eb" }} />
+      </div>;
 
 
   const [ref1, vis1] = useScrollReveal();
@@ -29,8 +34,8 @@ export default function PackageDetails({ destination, darkMode }) {
         className={`rounded-xl p-6 transition-all duration-700 ${cardBg}`}
         style={{ border: `1px solid ${cardBorder}`, boxShadow: darkMode ? "none" : "0 2px 16px rgba(0,0,0,0.05)", opacity: vis1 ? 1 : 0, transform: vis1 ? "translateY(0)" : "translateY(24px)" }}>
         
-        <SectionHeading label="Package Details" />
-        <p className={`text-xl font-bold ${textPrimary}`}>{destination.package}</p>
+        <SectionHeading label="Package Details" centered={centerPackageTitle} />
+        <p className={`text-xl font-bold ${textPrimary} ${centerPackageTitle ? "text-center" : ""}`}>{destination.package}</p>
         {destination.videoUrl &&
         <a href={destination.videoUrl} target="_blank" rel="noopener noreferrer"
         className="inline-flex items-center gap-2 mt-3 text-sm font-semibold hover:opacity-80 transition-opacity"

@@ -118,7 +118,7 @@ export default function DestinationPreview() {
 
       {/* HOTEL OPTIONS, OPTIONAL TOURS, NOTES */}
       <section className="py-14 px-6 bg-[#f9fafb]">
-        <PackageDetails destination={destination} darkMode={false} />
+        <PackageDetails destination={destination} darkMode={false} centerPackageTitle={true} />
       </section>
 
       {/* INCLUSIONS & EXCLUSIONS */}
