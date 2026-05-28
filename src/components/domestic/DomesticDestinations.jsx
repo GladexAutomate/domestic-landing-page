@@ -23,12 +23,12 @@ export default function DomesticDestinations({ darkMode }) {
     >
       <div className="max-w-7xl mx-auto">
         {/* Section Label */}
-        <div className="flex items-center justify-center gap-4 mb-4">
-          <div className="h-[1px] w-16" style={{ background: "rgba(255,140,0,0.5)" }} />
-          <span className="text-xs font-semibold tracking-[0.3em] uppercase" style={{ color: "#FF8C00" }}>
-            — DOMESTIC DESTINATIONS —
+        <div className="flex items-center justify-center gap-3 mb-4">
+          <div className="h-[1px] w-16" style={{ background: "#FF8C00" }} />
+          <span className="text-[11px] font-bold tracking-[0.35em] uppercase" style={{ color: "#FF8C00" }}>
+            DOMESTIC
           </span>
-          <div className="h-[1px] w-16" style={{ background: "rgba(255,140,0,0.5)" }} />
+          <div className="h-[1px] w-16" style={{ background: "#FF8C00" }} />
         </div>
         <h2
           className="text-center font-black text-4xl md:text-5xl mb-3"
