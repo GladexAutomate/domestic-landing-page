@@ -17,7 +17,7 @@ export default function InclusionsExclusionsSection({ destination, darkMode }) {
   const textPrimary = darkMode ? "#fff" : "#0F172A";
 
   return (
-    <section className="relative py-20 px-6 overflow-hidden" style={{ background: sectionBg }}>
+    <section className="relative py-14 sm:py-20 px-4 sm:px-6 overflow-hidden" style={{ background: sectionBg }}>
       {/* Ambient glow */}
       <div
         className="absolute inset-0 pointer-events-none"
@@ -28,7 +28,7 @@ export default function InclusionsExclusionsSection({ destination, darkMode }) {
         {/* Header */}
         <div
           ref={headRef}
-          className="text-center mb-12 transition-all duration-700"
+          className="text-center mb-8 sm:mb-12 transition-all duration-700"
           style={{ opacity: headVisible ? 1 : 0, transform: headVisible ? "translateY(0)" : "translateY(24px)" }}
         >
           <div className="flex items-center justify-center gap-4 mb-4">
@@ -54,7 +54,7 @@ export default function InclusionsExclusionsSection({ destination, darkMode }) {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
           {/* Included */}
           <div
             ref={leftRef}
@@ -80,17 +80,17 @@ export default function InclusionsExclusionsSection({ destination, darkMode }) {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                   </svg>
                 </div>
-                <div>
+                <div className="min-w-0">
                   <h3 className="font-bold text-sm" style={{ color: textPrimary }}>Included</h3>
                   <span className="text-xs" style={{ color: "#22c55e" }}>✅ {destination.inclusions?.length || 0} items</span>
                 </div>
               </div>
 
-              <ul className="space-y-3">
+              <ul className="space-y-2.5">
                 {destination.inclusions?.map((item, i) => (
                   <li
                     key={i}
-                    className="flex items-start gap-3 text-sm transition-all duration-500"
+                    className="flex items-start gap-2.5 text-xs sm:text-sm transition-all duration-500"
                     style={{
                       color: textMuted,
                       opacity: leftVisible ? 1 : 0,
@@ -103,7 +103,7 @@ export default function InclusionsExclusionsSection({ destination, darkMode }) {
                     >
                       ✓
                     </span>
-                    <span className="leading-relaxed">{item}</span>
+                    <span className="leading-relaxed break-words min-w-0">{item}</span>
                   </li>
                 ))}
               </ul>
@@ -124,8 +124,8 @@ export default function InclusionsExclusionsSection({ destination, darkMode }) {
           >
             <div className="h-[2px]" style={{ background: "linear-gradient(90deg, transparent, rgba(239,68,68,0.6), transparent)" }} />
 
-            <div className="p-6">
-              <div className="flex items-center gap-3 mb-6">
+            <div className="p-4 sm:p-6">
+              <div className="flex items-center gap-3 mb-5">
                 <div
                   className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
                   style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)" }}
@@ -140,11 +140,11 @@ export default function InclusionsExclusionsSection({ destination, darkMode }) {
                 </div>
               </div>
 
-              <ul className="space-y-3">
+              <ul className="space-y-2.5">
                 {destination.exclusions?.map((item, i) => (
                   <li
                     key={i}
-                    className="flex items-start gap-3 text-sm transition-all duration-500"
+                    className="flex items-start gap-2.5 text-xs sm:text-sm transition-all duration-500"
                     style={{
                       color: textMuted,
                       opacity: rightVisible ? 1 : 0,
@@ -157,7 +157,7 @@ export default function InclusionsExclusionsSection({ destination, darkMode }) {
                     >
                       ✗
                     </span>
-                    <span className="leading-relaxed">{item}</span>
+                    <span className="leading-relaxed break-words min-w-0">{item}</span>
                   </li>
                 ))}
               </ul>

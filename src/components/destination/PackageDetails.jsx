@@ -58,25 +58,27 @@ function HotelCard({ cat, index, darkMode }) {
       {/* Header — clickable */}
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left transition-colors duration-200"
+        className="w-full flex items-start justify-between px-4 py-3.5 text-left transition-colors duration-200 gap-3"
         style={{ background: expanded ? "rgba(255,140,0,0.04)" : "transparent" }}
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-start gap-2.5 min-w-0">
           <div
-            className="w-2 h-2 rounded-full flex-shrink-0"
+            className="w-2 h-2 rounded-full flex-shrink-0 mt-1.5"
             style={{ background: expanded ? "#FF8C00" : (darkMode ? "rgba(255,255,255,0.2)" : "#CBD5E1"), boxShadow: expanded ? "0 0 8px rgba(255,140,0,0.6)" : "none" }}
           />
-          <span className="font-bold text-sm tracking-wide uppercase" style={{ color: expanded ? "#FF8C00" : textPrimary }}>
-            {cat.label}
-          </span>
-          {cat.note && (
-            <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: darkMode ? "rgba(255,255,255,0.06)" : "#f1f5f9", color: textMuted }}>
-              {cat.note}
+          <div className="min-w-0">
+            <span className="font-bold text-sm tracking-wide uppercase leading-snug break-words" style={{ color: expanded ? "#FF8C00" : textPrimary }}>
+              {cat.label}
             </span>
-          )}
+            {cat.note && (
+              <span className="block text-xs mt-0.5 px-2 py-0.5 rounded-full w-fit" style={{ background: darkMode ? "rgba(255,255,255,0.06)" : "#f1f5f9", color: textMuted }}>
+                {cat.note}
+              </span>
+            )}
+          </div>
         </div>
         <div
-          className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300"
+          className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 mt-0.5"
           style={{ background: expanded ? "rgba(255,140,0,0.15)" : (darkMode ? "rgba(255,255,255,0.06)" : "#f1f5f9"), transform: expanded ? "rotate(180deg)" : "rotate(0deg)" }}
         >
           <svg className="w-3 h-3" fill="none" stroke={expanded ? "#FF8C00" : textMuted} strokeWidth={2.5} viewBox="0 0 24 24">
@@ -88,24 +90,24 @@ function HotelCard({ cat, index, darkMode }) {
       {/* Body */}
       <div
         className="overflow-hidden transition-all duration-500"
-        style={{ maxHeight: expanded ? "600px" : "0px", opacity: expanded ? 1 : 0 }}
+        style={{ maxHeight: expanded ? "800px" : "0px", opacity: expanded ? 1 : 0 }}
       >
-        <div className="px-5 pb-5">
+        <div className="px-4 pb-4">
           {cat.hotels && (
-            <p className="text-sm mb-4 leading-relaxed" style={{ color: textMuted }}>
+            <p className="text-xs sm:text-sm mb-4 leading-relaxed break-words" style={{ color: textMuted }}>
               {cat.hotels}
             </p>
           )}
           {cat.rates?.length > 0 && (
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 gap-2">
               {cat.rates.map((r, j) => (
                 <div
                   key={j}
-                  className="flex flex-col gap-0.5 rounded-lg p-3"
+                  className="flex flex-col gap-0.5 rounded-lg p-2.5 sm:p-3"
                   style={{ background: innerBg, border: `1px solid ${borderColor}` }}
                 >
-                  <span className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: textMuted }}>{r.label}</span>
-                  <span className="text-sm font-black" style={{ color: "#FF8C00" }}>{r.price}</span>
+                  <span className="text-[9px] sm:text-[10px] uppercase tracking-wider font-semibold leading-tight break-words" style={{ color: textMuted }}>{r.label}</span>
+                  <span className="text-xs sm:text-sm font-black leading-snug break-all" style={{ color: "#FF8C00" }}>{r.price}</span>
                 </div>
               ))}
             </div>
@@ -126,7 +128,7 @@ function OptionalTourCard({ tour, darkMode }) {
   return (
     <div
       ref={ref}
-      className="group rounded-xl p-5 transition-all duration-700 hover:border-[rgba(255,140,0,0.3)]"
+      className="group rounded-xl p-4 transition-all duration-700 hover:border-[rgba(255,140,0,0.3)]"
       style={{
         background: cardBg,
         border: `1px solid ${borderColor}`,
@@ -135,17 +137,22 @@ function OptionalTourCard({ tour, darkMode }) {
         transform: visible ? "translateY(0)" : "translateY(20px)",
       }}
     >
-      <div className="flex items-start justify-between gap-3 mb-2">
-        <p className="font-bold text-sm leading-snug" style={{ color: textPrimary }}>{tour.name}</p>
+      <div className="flex flex-col gap-2 mb-2">
+        <p className="font-bold text-sm leading-snug break-words" style={{ color: textPrimary }}>{tour.name}</p>
         <span
-          className="text-xs font-black flex-shrink-0 px-2.5 py-1 rounded-full"
-          style={{ background: "rgba(255,140,0,0.1)", color: "#FF8C00", border: "1px solid rgba(255,140,0,0.2)" }}
+          className="text-xs font-black self-start px-2.5 py-1 rounded-full break-words max-w-full"
+          style={{ background: "rgba(255,140,0,0.1)", color: "#FF8C00", border: "1px solid rgba(255,140,0,0.2)", wordBreak: "break-word" }}
         >
           {tour.price?.split("|")[0]?.trim()}
         </span>
+        {tour.price?.includes("|") && (
+          <span className="text-[10px]" style={{ color: textMuted }}>
+            {tour.price.split("|").slice(1).join("|").trim()}
+          </span>
+        )}
       </div>
       {tour.details && (
-        <p className="text-xs leading-relaxed" style={{ color: textMuted }}>{tour.details}</p>
+        <p className="text-xs leading-relaxed break-words" style={{ color: textMuted }}>{tour.details}</p>
       )}
     </div>
   );
@@ -158,12 +165,12 @@ export default function PackageDetails({ destination, darkMode, centerPackageTit
   const cardBorder = darkMode ? "rgba(255,255,255,0.07)" : "#e5e7eb";
 
   return (
-    <div className="max-w-4xl mx-auto space-y-10">
+    <div className="max-w-4xl mx-auto space-y-6 sm:space-y-10">
 
       {/* Package Name */}
       <AnimatedCard delay={0}>
         <div
-          className="rounded-2xl p-7 relative overflow-hidden"
+          className="rounded-2xl p-5 sm:p-7 relative overflow-hidden"
           style={{
             background: cardBg,
             border: `1px solid ${cardBorder}`,
@@ -176,8 +183,8 @@ export default function PackageDetails({ destination, darkMode, centerPackageTit
           <SectionLabel text="Package Details" centered={centerPackageTitle} />
 
           <p
-            className={`font-black text-xl md:text-2xl leading-snug ${centerPackageTitle ? "text-center" : ""}`}
-            style={{ color: textPrimary, letterSpacing: "-0.02em" }}
+            className={`font-black leading-snug break-words ${centerPackageTitle ? "text-center" : ""}`}
+            style={{ color: textPrimary, letterSpacing: "-0.02em", fontSize: "clamp(1rem, 3.5vw, 1.5rem)" }}
           >
             {destination.package}
           </p>
@@ -202,7 +209,7 @@ export default function PackageDetails({ destination, darkMode, centerPackageTit
       {destination.hotelCategories?.length > 0 && (
         <AnimatedCard delay={0.08}>
           <div
-            className="rounded-2xl p-7 relative overflow-hidden"
+            className="rounded-2xl p-5 sm:p-7 relative overflow-hidden"
             style={{
               background: cardBg,
               border: `1px solid ${cardBorder}`,
@@ -236,7 +243,7 @@ export default function PackageDetails({ destination, darkMode, centerPackageTit
       {destination.optionalTours?.length > 0 && (
         <AnimatedCard delay={0.12}>
           <div
-            className="rounded-2xl p-7 relative overflow-hidden"
+            className="rounded-2xl p-5 sm:p-7 relative overflow-hidden"
             style={{
               background: cardBg,
               border: `1px solid ${cardBorder}`,
@@ -245,7 +252,7 @@ export default function PackageDetails({ destination, darkMode, centerPackageTit
           >
             <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: "linear-gradient(90deg, transparent, #FF8C00, transparent)" }} />
             <SectionLabel text="Optional Add-Ons" />
-            <div className="grid md:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {destination.optionalTours.map((tour, i) => (
                 <OptionalTourCard key={i} tour={tour} darkMode={darkMode} />
               ))}
@@ -258,7 +265,7 @@ export default function PackageDetails({ destination, darkMode, centerPackageTit
       {destination.notes?.length > 0 && (
         <AnimatedCard delay={0.16}>
           <div
-            className="rounded-2xl p-7 relative overflow-hidden"
+            className="rounded-2xl p-5 sm:p-7 relative overflow-hidden"
             style={{
               background: darkMode ? "rgba(20,14,4,0.85)" : "rgba(255,251,245,0.95)",
               border: `1px solid ${darkMode ? "rgba(255,140,0,0.15)" : "rgba(255,140,0,0.2)"}`,

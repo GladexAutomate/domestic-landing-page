@@ -157,17 +157,17 @@ export default function DestinationPreview() {
       >
         <div className="absolute top-0 left-0 right-0 h-[1px]" style={{ background: "linear-gradient(90deg, transparent, rgba(255,140,0,0.3), transparent)" }} />
         <div
-          className="max-w-5xl mx-auto px-6 py-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6 transition-all duration-700"
+          className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4 sm:gap-6 transition-all duration-700"
           style={{ opacity: packageLoaded ? 1 : 0, transform: packageLoaded ? "translateY(0)" : "translateY(16px)" }}
         >
-          <div>
+          <div className="min-w-0">
             <h2
-              className="font-black mb-2 transition-colors duration-500"
-              style={{ color: textPrimary, fontSize: "clamp(1.3rem, 3vw, 2rem)", letterSpacing: "-0.02em", lineHeight: 1.2 }}
+              className="font-black mb-2 transition-colors duration-500 break-words"
+              style={{ color: textPrimary, fontSize: "clamp(1.1rem, 3.5vw, 2rem)", letterSpacing: "-0.02em", lineHeight: 1.3 }}
             >
               {destination.package}
             </h2>
-            <div className="flex items-center gap-3 flex-wrap">
+            <div className="flex items-center gap-2 flex-wrap">
               <span
                 className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full"
                 style={{ background: "rgba(255,140,0,0.1)", color: "#FF8C00", border: "1px solid rgba(255,140,0,0.2)" }}
@@ -196,7 +196,7 @@ export default function DestinationPreview() {
       <VideoSection destination={destination} darkMode={darkMode} />
 
       {/* ─── PACKAGE DETAILS / RATES / TOURS ─────────────────── */}
-      <section className="py-20 px-6 transition-colors duration-500" style={{ background: sectionBg2 }}>
+      <section className="py-14 sm:py-20 px-4 sm:px-6 transition-colors duration-500" style={{ background: sectionBg2 }}>
         <PackageDetails destination={destination} darkMode={darkMode} centerPackageTitle={true} />
       </section>
 
@@ -211,7 +211,7 @@ export default function DestinationPreview() {
 
       {/* ─── CTA FOOTER ──────────────────────────────────────── */}
       <section
-        className="relative py-24 px-6 text-center overflow-hidden transition-colors duration-500"
+        className="relative py-16 sm:py-24 px-4 sm:px-6 text-center overflow-hidden transition-colors duration-500"
         style={{ background: ctaBg }}
       >
         <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(255,140,0,0.06) 0%, transparent 70%)" }} />
@@ -236,7 +236,7 @@ export default function DestinationPreview() {
 
           <Link
             to="/"
-            className="inline-flex items-center gap-3 px-10 py-4 rounded-full font-bold text-sm tracking-widest uppercase text-white transition-all duration-300 hover:scale-105 active:scale-95"
+            className="inline-flex items-center gap-2 sm:gap-3 px-7 sm:px-10 py-3.5 sm:py-4 rounded-full font-bold text-xs sm:text-sm tracking-widest uppercase text-white transition-all duration-300 hover:scale-105 active:scale-95"
             style={{
               background: "linear-gradient(135deg, #FF8C00 0%, #FF6B00 100%)",
               boxShadow: "0 8px 40px rgba(255,140,0,0.35), 0 0 0 1px rgba(255,255,255,0.1)",
