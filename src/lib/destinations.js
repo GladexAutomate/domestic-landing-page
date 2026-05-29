@@ -1,8 +1,8 @@
 export const DESTINATIONS = [
   {
     name: "Boracay", slug: "boracay", tagline: "World-famous white beach paradise",
-    image: "https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1519046904884-53103b34b206?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1483683804023-6ccdb62f86ef?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1483683804023-6ccdb62f86ef?w=1600&q=90&fit=crop",
     videoUrl: "https://bit.ly/GDX-BORACAY-VID",
     package: "3D2N Boracay Land Arrangement",
     hotelCategories: [
@@ -25,8 +25,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Bantayan", slug: "bantayan", tagline: "Pristine island escape in Cebu",
-    image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1558748467-1028cdcb150a?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1558748467-1028cdcb150a?w=1600&q=90&fit=crop",
     package: "3D2N Bantayan Land Arrangement",
     hotelCategories: [
       { label: "Budget", hotels: "Arnold's Hotel, Anaya Beach Resort, Coucou Lodge (no breakfast)", rates: [{ label: "5 Pax", price: "₱3,499/person" }, { label: "Quad Share", price: "₱4,299/person" }, { label: "Triple Share", price: "₱5,499/person" }, { label: "Twin Share", price: "₱6,799/person" }, { label: "Solo", price: "₱12,499" }, { label: "Sneak-in Child (0–9 yrs)", price: "₱3,199" }] },
@@ -44,8 +44,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Batanes", slug: "batanes", tagline: "The rugged beauty of the northernmost isles",
-    image: "https://images.unsplash.com/photo-1470770903676-69b98201ea1c?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1470770903676-69b98201ea1c?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1594350853058-6cb5c6c728d6?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1594350853058-6cb5c6c728d6?w=1600&q=90&fit=crop",
     videoUrl: "https://bit.ly/GDX-BATANES-VID",
     package: "3D2N Batanes Land Arrangement",
     hotelCategories: [
@@ -65,8 +65,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Bacolod", slug: "bacolod", tagline: "The City of Smiles awaits you",
-    image: "https://images.unsplash.com/photo-1596895111956-bf1cf0599ce5?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1596895111956-bf1cf0599ce5?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1601000234047-d9308ea1ed51?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1601000234047-d9308ea1ed51?w=1600&q=90&fit=crop",
     package: "3D2N Bacolod Land Arrangement",
     hotelCategories: [
       { label: "Budget", note: "No Breakfast", hotels: "Ong Bun Pension House, Pension Bacolod", rates: [{ label: "5 Pax", price: "₱2,599/person" }, { label: "Quad Share", price: "₱2,999/person" }, { label: "Triple Share", price: "₱3,499/person" }, { label: "Twin Share", price: "₱3,799/person" }, { label: "Solo", price: "₱6,499" }, { label: "Sneak-in Child (4–9 yrs)", price: "₱2,533" }] },
@@ -85,8 +85,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Bohol", slug: "bohol", tagline: "Chocolate Hills and tarsier wonders",
-    image: "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1667823506151-836beb11723d?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1667823506151-836beb11723d?w=1600&q=90&fit=crop",
     videoUrl: "https://bit.ly/GDX-BOHOL-VID",
     package: "3D2N Bohol Land Arrangement",
     hotelCategories: [
@@ -112,8 +112,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Cebu", slug: "cebu", tagline: "Queen City of the South",
-    image: "https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1592303071869-882ab783e4ef?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1592303071869-882ab783e4ef?w=1600&q=90&fit=crop",
     videoUrl: "https://bit.ly/GDX-CEBU-VID",
     package: "3D2N Cebu Land Arrangement",
     hotelCategories: [
@@ -140,8 +140,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Camiguin", slug: "camiguin", tagline: "Island born of fire, surrounded by sea",
-    image: "https://images.unsplash.com/photo-1559494007-9f5847c49d94?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1559494007-9f5847c49d94?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1555590858-be28a58c2688?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1555590858-be28a58c2688?w=1600&q=90&fit=crop",
     videoUrl: "https://bit.ly/GDX-CAMIGUIN-VID",
     package: "3D2N Camiguin Land Arrangement",
     hotelCategories: [
@@ -161,8 +161,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Northern Mindanao", slug: "northern-mindanao", tagline: "Gateway to the heart of Mindanao",
-    image: "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1736776256317-0896951a4dc9?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1736776256317-0896951a4dc9?w=1600&q=90&fit=crop",
     videoUrl: "https://bit.ly/GDX-NORTHERN-MINDANAO-VID",
     package: "5D4N Northern Mindanao Land Arrangement — CDO + Bukidnon + Camiguin",
     hotelCategories: [
@@ -188,8 +188,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Coron", slug: "coron", tagline: "Crystal lagoons and legendary shipwrecks",
-    image: "https://images.unsplash.com/photo-1596178065887-1198b6148b2b?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1596178065887-1198b6148b2b?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1542533382-b42a59d8bd39?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1542533382-b42a59d8bd39?w=1600&q=90&fit=crop",
     videoUrl: "https://bit.ly/GDX-CORON-VID",
     package: "3D2N Coron Land Arrangement",
     hotelCategories: [
@@ -221,8 +221,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Cagayan de Oro", slug: "cagayan-de-oro", tagline: "The City of Golden Friendship",
-    image: "https://images.unsplash.com/photo-1505775561242-727b7fba20f0?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1505775561242-727b7fba20f0?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1565565915331-293fd8113954?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1565565915331-293fd8113954?w=1600&q=90&fit=crop",
     videoUrl: "https://bit.ly/GDX-CDO-VID",
     package: "3D2N Cagayan de Oro Land Arrangement",
     hotelCategories: [
@@ -242,8 +242,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Davao", slug: "davao", tagline: "The King City of the South",
-    image: "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1565113218386-934429f84cc2?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1565113218386-934429f84cc2?w=1600&q=90&fit=crop",
     videoUrl: "https://bit.ly/GDX-DAVAO-VID",
     package: "3D2N Davao Land Arrangement",
     hotelCategories: [
@@ -271,8 +271,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Dinagat", slug: "dinagat", tagline: "Untouched island beauty",
-    image: "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=1600&q=90&fit=crop",
-    hero: "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1564425229770-faa6486ce562?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1564425229770-faa6486ce562?w=1600&q=90&fit=crop",
     videoUrl: "https://bit.ly/GDX-DINAGAT-VID",
     package: "4D3N Dinagat Island Land Arrangement",
     hotelCategories: [
@@ -342,8 +342,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Port Barton", slug: "port-barton", tagline: "Palawan's hidden cinematic gem",
-    image: "https://images.unsplash.com/photo-1504214208698-ea1916a2195a?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1504214208698-ea1916a2195a?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1697135756100-7b610c8fe92e?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1697135756100-7b610c8fe92e?w=1600&q=90&fit=crop",
     videoUrl: "https://bit.ly/GDX-PORT-BARTON-VID",
     package: "3D2N Port Barton Land Arrangement",
     hotelCategories: [
@@ -390,8 +390,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Manila", slug: "manila", tagline: "The pearl of the Orient Seas",
-    image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=600&q=80&fit=crop",
-    hero: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1400&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1519101739220-83f6a14852ca?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1519101739220-83f6a14852ca?w=1600&q=90&fit=crop",
     package: "3D2N Manila Land Arrangement",
     hotelCategories: [
       { label: "Budget", hotels: "Hotel Kimberly, Tiara Oriental Hotel, My Space Hotel and Dormitory, The Selah Garden Hotel, Selah Pods Hotel, Selah Lofts Hotel", rates: [{ label: "Triple Share", price: "₱4,599/person" }, { label: "Twin Share", price: "₱5,699/person" }, { label: "Solo", price: "₱10,599" }] },
@@ -411,8 +411,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Siargao", slug: "siargao", tagline: "The surfing capital of the Philippines",
-    image: "https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1559099078-8ab4ed4eefed?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1559099078-8ab4ed4eefed?w=1600&q=90&fit=crop",
     videoUrl: "https://bit.ly/GDX-SIARGAO-VID",
     package: "3D2N Siargao Land Arrangement",
     hotelCategories: [
@@ -505,8 +505,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Puerto Princesa", slug: "puerto-princesa", tagline: "Home of the Underground River",
-    image: "https://images.unsplash.com/photo-1516690561799-46d8f74f9abf?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1516690561799-46d8f74f9abf?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1602587921225-3cca658d31bb?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1602587921225-3cca658d31bb?w=1600&q=90&fit=crop",
     videoUrl: "https://bit.ly/GDX-PPS-VID",
     package: "3D2N Puerto Princesa Land Arrangement",
     hotelCategories: [
@@ -533,8 +533,8 @@ export const DESTINATIONS = [
   },
   {
     name: "El Nido", slug: "el-nido", tagline: "Limestone cliffs and emerald lagoons",
-    image: "https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1695051702427-1c24ce3682e7?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1695051702427-1c24ce3682e7?w=1600&q=90&fit=crop",
     videoUrl: "https://bit.ly/GDX-ELNIDO-VID",
     package: "3D2N El Nido Land Arrangement",
     hotelCategories: [
@@ -593,8 +593,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Dumaguete", slug: "dumaguete", tagline: "The city of gentle people",
-    image: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=600&q=80&fit=crop",
-    hero: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=1400&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1558260963-fd8436b4be0a?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1558260963-fd8436b4be0a?w=1600&q=90&fit=crop",
     videoUrl: "https://bit.ly/GDX-DUMAGUETE-VID",
     package: "3D2N Dumaguete Land Arrangement",
     hotelCategories: [
@@ -614,8 +614,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Siquijor", slug: "siquijor", tagline: "The mystical island of fire",
-    image: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1590133076213-ef3cc4b1a70b?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1590133076213-ef3cc4b1a70b?w=1600&q=90&fit=crop",
     videoUrl: "https://bit.ly/GDX-SIQUIJOR-VID",
     package: "3D2N Siquijor Land Arrangement",
     hotelCategories: [
