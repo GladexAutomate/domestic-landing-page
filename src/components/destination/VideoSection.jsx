@@ -2,6 +2,7 @@ import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 const VIDEO_EMBEDS = {
   boracay: "https://drive.google.com/file/d/1THzQAagycyXm8UYNztawslG7G_2Ak_J3/preview",
+  cebu: "https://drive.google.com/file/d/1ad6Nwx84ASOIqOqkYzkQsKDhzQGEC3Ro/preview",
 };
 
 function getEmbedUrl(destination) {
