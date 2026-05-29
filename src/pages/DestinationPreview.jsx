@@ -11,6 +11,7 @@ import NotesSection from "@/components/destination/NotesSection";
 export default function DestinationPreview() {
   const { slug } = useParams();
   const [heroLoaded, setHeroLoaded] = useState(false);
+  const [packageLoaded, setPackageLoaded] = useState(false);
 
   const destination = DESTINATIONS.find((d) => d.slug === slug) || DESTINATIONS[0];
   const heroImage = destination.hero;
@@ -18,153 +19,314 @@ export default function DestinationPreview() {
   useEffect(() => {
     window.scrollTo(0, 0);
     setHeroLoaded(false);
-    setTimeout(() => setHeroLoaded(true), 80);
+    setPackageLoaded(false);
+    const t1 = setTimeout(() => setHeroLoaded(true), 80);
+    const t2 = setTimeout(() => setPackageLoaded(true), 400);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [slug]);
 
   return (
-    <div className="font-poppins min-h-screen bg-white">
+    <div className="font-poppins min-h-screen" style={{ background: "#0a0a0a" }}>
       <DestinationNavbar />
 
-      {/* HERO — full viewport height, image fills, text centered in lower half */}
-      <section className="relative overflow-hidden" style={{ height: "100vh", minHeight: "500px" }}>
-        {/* Ken Burns bg */}
+      {/* ─── HERO ─────────────────────────────────────────────── */}
+      <section className="relative overflow-hidden" style={{ height: "100vh", minHeight: "560px" }}>
+        {/* Ken Burns background */}
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
             backgroundImage: `url('${heroImage}')`,
-            animation: "kenburns 12s ease-out forwards"
-          }} />
-        
-        {/* Gradient — heavier at bottom where text sits */}
+            animation: "heroKenBurns 14s ease-out forwards",
+          }}
+        />
+
+        {/* Multi-layer gradient overlay for cinematic depth */}
         <div
           className="absolute inset-0"
-          style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.1) 35%, rgba(0,0,0,0.65) 70%, rgba(0,0,0,0.82) 100%)" }} />
-        
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.1) 30%, rgba(0,0,0,0.55) 65%, rgba(0,0,0,0.88) 100%)",
+          }}
+        />
+        {/* Side vignettes */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(90deg, rgba(0,0,0,0.3) 0%, transparent 25%, transparent 75%, rgba(0,0,0,0.3) 100%)",
+          }}
+        />
+        {/* Orange accent glow at bottom */}
+        <div
+          className="absolute bottom-0 left-0 right-0"
+          style={{
+            height: "200px",
+            background:
+              "linear-gradient(to top, rgba(255,140,0,0.06) 0%, transparent 100%)",
+          }}
+        />
 
-        {/* Centered text — lower half of hero */}
+        {/* Animated bottom border */}
+        <div
+          className="absolute bottom-0 left-0 right-0 h-[2px]"
+          style={{ background: "linear-gradient(90deg, transparent 0%, #FF8C00 30%, #FF6B00 50%, #FF8C00 70%, transparent 100%)" }}
+        />
+
+        {/* Center content */}
         <div
           className="relative h-full flex flex-col items-center justify-end text-center px-6 pb-20 transition-all duration-1000"
-          style={{ opacity: heroLoaded ? 1 : 0, transform: heroLoaded ? "translateY(0)" : "translateY(20px)" }}>
-          
-          {/* Label */}
-          <div className="flex items-center gap-3 mb-4">
-            <div className="h-[1px] w-12" style={{ background: "#FF8C00" }} />
-            <span className="text-[11px] font-bold tracking-[0.35em] uppercase" style={{ color: "#FF8C00" }}>
+          style={{ opacity: heroLoaded ? 1 : 0, transform: heroLoaded ? "translateY(0)" : "translateY(20px)" }}
+        >
+          {/* Floating label */}
+          <div
+            className="flex items-center gap-3 mb-5"
+            style={{ opacity: heroLoaded ? 1 : 0, transition: "opacity 1s 0.3s" }}
+          >
+            <div
+              className="h-[1px]"
+              style={{ width: "48px", background: "linear-gradient(90deg, transparent, #FF8C00)" }}
+            />
+            <span
+              className="text-[10px] font-bold tracking-[0.45em] uppercase"
+              style={{ color: "#FF8C00", letterSpacing: "0.45em" }}
+            >
               Official Travel Preview
             </span>
-            <div className="h-[1px] w-12" style={{ background: "#FF8C00" }} />
+            <div
+              className="h-[1px]"
+              style={{ width: "48px", background: "linear-gradient(90deg, #FF8C00, transparent)" }}
+            />
           </div>
 
-          {/* Title */}
+          {/* Main title */}
           <h1
-            className="font-black text-white mb-3"
+            className="font-black text-white mb-4"
             style={{
-              fontSize: "clamp(2.8rem, 8vw, 6rem)",
-              letterSpacing: "-0.02em",
-              lineHeight: 1.05,
-              textShadow: "0 4px 40px rgba(0,0,0,0.5)",
+              fontSize: "clamp(3rem, 9vw, 7rem)",
+              letterSpacing: "-0.03em",
+              lineHeight: 1.0,
+              textShadow: "0 4px 60px rgba(0,0,0,0.6)",
+              fontStyle: "italic",
               opacity: heroLoaded ? 1 : 0,
-              transform: heroLoaded ? "translateY(0)" : "translateY(16px)",
-              transition: "opacity 0.8s 0.2s, transform 0.8s 0.2s"
-            }}>
-            
+              transform: heroLoaded ? "translateY(0)" : "translateY(20px)",
+              transition: "opacity 0.9s 0.2s, transform 0.9s 0.2s",
+            }}
+          >
             Experience {destination.name}
           </h1>
 
-          {/* Location */}
-          <div className="flex items-center gap-1.5 mb-3">
-            <svg className="w-4 h-4" fill="#FF8C00" viewBox="0 0 24 24">
-              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z" />
-            </svg>
-            <span className="text-sm font-semibold" style={{ color: "rgba(255,255,255,0.85)" }}>Philippines</span>
+          {/* Location pill */}
+          <div
+            className="flex items-center gap-2 mb-4"
+            style={{ opacity: heroLoaded ? 1 : 0, transition: "opacity 0.8s 0.45s" }}
+          >
+            <div
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full"
+              style={{
+                background: "rgba(255,255,255,0.1)",
+                border: "1px solid rgba(255,255,255,0.15)",
+                backdropFilter: "blur(8px)",
+              }}
+            >
+              <svg className="w-3.5 h-3.5" fill="#FF8C00" viewBox="0 0 24 24">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z" />
+              </svg>
+              <span className="text-xs font-semibold" style={{ color: "rgba(255,255,255,0.9)" }}>
+                Philippines
+              </span>
+            </div>
           </div>
 
           {/* Tagline */}
           <p
-            className="text-sm font-light max-w-sm"
+            className="text-sm font-light max-w-sm mx-auto"
             style={{
-              color: "rgba(255,255,255,0.65)",
+              color: "rgba(255,255,255,0.55)",
+              lineHeight: 1.7,
+              letterSpacing: "0.03em",
               opacity: heroLoaded ? 1 : 0,
-              transition: "opacity 0.8s 0.45s"
-            }}>
-            
+              transition: "opacity 0.8s 0.55s",
+            }}
+          >
             {destination.tagline}
           </p>
-        </div>
-      </section>
 
-      {/* PACKAGE INFO BAR — white strip below hero */}
-      <section className="bg-white border-b border-gray-100">
-        <div className="max-w-5xl mx-auto px-6 py-8 flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-          <div>
-            <h2 className="font-black text-2xl md:text-3xl text-[#0F172A] mb-1">{destination.package}</h2>
-            <div className="flex items-center gap-3 flex-wrap">
-              <span className="flex items-center gap-1.5 text-sm font-medium text-[#FF8C00]">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                  <rect x="3" y="4" width="18" height="18" rx="2" />
-                  <path d="M16 2v4M8 2v4M3 10h18" />
-                </svg>
-                {destination.itinerary?.length ? `${destination.itinerary.length} Days` : "Multi-Day"} Package
-              </span>
+          {/* Scroll indicator */}
+          <div
+            className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+            style={{ opacity: heroLoaded ? 0.6 : 0, transition: "opacity 1s 1.2s" }}
+          >
+            <div
+              className="w-6 h-10 rounded-full flex items-start justify-center pt-1.5"
+              style={{ border: "1.5px solid rgba(255,255,255,0.3)" }}
+            >
+              <div
+                style={{ width: "4px", height: "10px", borderRadius: "2px", background: "rgba(255,255,255,0.7)", animation: "heroScrollDot 1.8s ease-in-out infinite" }}
+              />
             </div>
           </div>
         </div>
       </section>
 
-      {/* VIDEO SECTION */}
-      <VideoSection destination={destination} />
+      {/* ─── PACKAGE INFO BAR ────────────────────────────────── */}
+      <section
+        className="relative"
+        style={{
+          background: "linear-gradient(180deg, #000 0%, #0d0d0d 100%)",
+          borderBottom: "1px solid rgba(255,255,255,0.06)",
+        }}
+      >
+        {/* subtle top glow */}
+        <div
+          className="absolute top-0 left-0 right-0 h-[1px]"
+          style={{ background: "linear-gradient(90deg, transparent, rgba(255,140,0,0.3), transparent)" }}
+        />
+        <div
+          className="max-w-5xl mx-auto px-6 py-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6 transition-all duration-700"
+          style={{ opacity: packageLoaded ? 1 : 0, transform: packageLoaded ? "translateY(0)" : "translateY(16px)" }}
+        >
+          <div>
+            <h2
+              className="font-black text-white mb-2"
+              style={{
+                fontSize: "clamp(1.3rem, 3vw, 2rem)",
+                letterSpacing: "-0.02em",
+                lineHeight: 1.2,
+              }}
+            >
+              {destination.package}
+            </h2>
+            <div className="flex items-center gap-3 flex-wrap">
+              <span
+                className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full"
+                style={{
+                  background: "rgba(255,140,0,0.1)",
+                  color: "#FF8C00",
+                  border: "1px solid rgba(255,140,0,0.2)",
+                }}
+              >
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <rect x="3" y="4" width="18" height="18" rx="2" />
+                  <path d="M16 2v4M8 2v4M3 10h18" />
+                </svg>
+                {destination.itinerary?.length ? `${destination.itinerary.length} Days` : "Multi-Day"} Package
+              </span>
+              <span
+                className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full"
+                style={{
+                  background: "rgba(255,255,255,0.06)",
+                  color: "rgba(255,255,255,0.6)",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                }}
+              >
+                🇵🇭 Philippines
+              </span>
+            </div>
+          </div>
 
-      {/* EXTRA GRAY SPACE */}
-      
-
-      {/* HOTEL OPTIONS, OPTIONAL TOURS, NOTES */}
-      <section className="py-14 px-6 bg-[#f9fafb]">
-        <PackageDetails destination={destination} darkMode={false} centerPackageTitle={true} />
+          <div className="text-right">
+            <p className="text-xs uppercase tracking-widest font-semibold mb-1" style={{ color: "rgba(255,255,255,0.3)" }}>
+              Travel Dates
+            </p>
+            <p className="text-sm font-medium" style={{ color: "rgba(255,255,255,0.7)" }}>
+              Inquire for available dates
+            </p>
+          </div>
+        </div>
       </section>
 
-      {/* INCLUSIONS & EXCLUSIONS */}
-      <InclusionsExclusionsSection destination={destination} darkMode={false} />
+      {/* ─── VIDEO SECTION ───────────────────────────────────── */}
+      <VideoSection destination={destination} />
 
-      {/* NOTES & REQUIREMENTS */}
-      <NotesSection destination={destination} darkMode={false} />
+      {/* ─── PACKAGE DETAILS / RATES / TOURS ─────────────────── */}
+      <section
+        className="py-20 px-6"
+        style={{ background: "linear-gradient(180deg, #0d0d0d 0%, #111 100%)" }}
+      >
+        <PackageDetails destination={destination} darkMode={true} centerPackageTitle={true} />
+      </section>
 
-      {/* ITINERARY */}
-      <ItinerarySection destination={destination} darkMode={false} />
+      {/* ─── INCLUSIONS & EXCLUSIONS ──────────────────────────── */}
+      <InclusionsExclusionsSection destination={destination} darkMode={true} />
 
-      {/* CTA FOOTER */}
-      <section className="py-16 px-6 text-center bg-[#F5F5F5]">
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <div className="h-[1px] w-10" style={{ background: "#FF8C00" }} />
-          <span className="text-[11px] font-bold tracking-[0.3em] uppercase" style={{ color: "#FF8C00" }}>
-            — Ready to Explore? —
-          </span>
-          <div className="h-[1px] w-10" style={{ background: "#FF8C00" }} />
+      {/* ─── NOTES ───────────────────────────────────────────── */}
+      <NotesSection destination={destination} darkMode={true} />
+
+      {/* ─── ITINERARY ───────────────────────────────────────── */}
+      <ItinerarySection destination={destination} darkMode={true} />
+
+      {/* ─── CTA FOOTER ──────────────────────────────────────── */}
+      <section
+        className="relative py-24 px-6 text-center overflow-hidden"
+        style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #000 100%)" }}
+      >
+        {/* Ambient glow */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ background: "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(255,140,0,0.06) 0%, transparent 70%)" }}
+        />
+        {/* Top border */}
+        <div
+          className="absolute top-0 left-0 right-0 h-[1px]"
+          style={{ background: "linear-gradient(90deg, transparent, rgba(255,140,0,0.3), transparent)" }}
+        />
+
+        <div className="relative z-10">
+          <div className="flex items-center justify-center gap-4 mb-5">
+            <div className="h-[1px] w-12" style={{ background: "linear-gradient(90deg, transparent, #FF8C00)" }} />
+            <span className="text-[10px] font-bold tracking-[0.4em] uppercase" style={{ color: "#FF8C00" }}>
+              Ready to Explore?
+            </span>
+            <div className="h-[1px] w-12" style={{ background: "linear-gradient(90deg, #FF8C00, transparent)" }} />
+          </div>
+
+          <h2
+            className="font-black text-white mb-4"
+            style={{
+              fontSize: "clamp(1.8rem, 5vw, 3.2rem)",
+              letterSpacing: "-0.03em",
+              fontStyle: "italic",
+              lineHeight: 1.1,
+            }}
+          >
+            Discover More Destinations
+          </h2>
+          <p className="text-sm font-light max-w-sm mx-auto mb-10" style={{ color: "rgba(255,255,255,0.4)", lineHeight: 1.8 }}>
+            Browse our full collection of Philippine travel experiences.
+          </p>
+
+          <Link
+            to="/"
+            className="inline-flex items-center gap-3 px-10 py-4 rounded-full font-bold text-sm tracking-widest uppercase text-white transition-all duration-300 hover:scale-105 active:scale-95"
+            style={{
+              background: "linear-gradient(135deg, #FF8C00 0%, #FF6B00 100%)",
+              boxShadow: "0 8px 40px rgba(255,140,0,0.35), 0 0 0 1px rgba(255,255,255,0.1)",
+              letterSpacing: "0.15em",
+              animation: "ctaGlow 3s ease-in-out infinite",
+            }}
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+            </svg>
+            Back to All Destinations
+          </Link>
         </div>
-        <h2 className="font-black text-3xl md:text-4xl mb-3 text-[#0F172A]">
-          Discover More Destinations
-        </h2>
-        <p className="text-sm font-light max-w-sm mx-auto mb-8 text-[#64748B]">
-          Browse our full collection of Philippine travel packages.
-        </p>
-        <Link
-          to="/"
-          className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full font-bold text-sm tracking-wide uppercase text-white transition-all hover:scale-105 hover:shadow-2xl"
-          style={{ background: "#FF8C00", boxShadow: "0 8px 28px rgba(255,140,0,0.4)", animation: "ctaPulse 3s ease-in-out infinite" }}>
-          
-          ← Back to All Destinations
-        </Link>
       </section>
 
       <style>{`
-        @keyframes kenburns {
+        @keyframes heroKenBurns {
           from { transform: scale(1); }
-          to { transform: scale(1.06); }
+          to { transform: scale(1.08); }
         }
-        @keyframes ctaPulse {
-          0%, 100% { box-shadow: 0 8px 28px rgba(255,140,0,0.4); }
-          50% { box-shadow: 0 8px 40px rgba(255,140,0,0.7); }
+        @keyframes heroScrollDot {
+          0%, 100% { transform: translateY(0); opacity: 0.6; }
+          50% { transform: translateY(8px); opacity: 1; }
+        }
+        @keyframes ctaGlow {
+          0%, 100% { box-shadow: 0 8px 40px rgba(255,140,0,0.35), 0 0 0 1px rgba(255,255,255,0.1); }
+          50% { box-shadow: 0 12px 60px rgba(255,140,0,0.55), 0 0 0 1px rgba(255,255,255,0.15); }
         }
       `}</style>
-    </div>);
-
+    </div>
+  );
 }
