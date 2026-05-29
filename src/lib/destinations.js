@@ -271,8 +271,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Dinagat", slug: "dinagat", tagline: "Untouched island beauty",
-    image: "https://images.unsplash.com/photo-1504109586057-7a2ae83d1338?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1504109586057-7a2ae83d1338?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=1600&q=90&fit=crop",
+    hero: "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=1600&q=90&fit=crop",
     videoUrl: "https://bit.ly/GDX-DINAGAT-VID",
     package: "4D3N Dinagat Island Land Arrangement",
     hotelCategories: [
