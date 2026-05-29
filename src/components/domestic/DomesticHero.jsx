@@ -103,17 +103,27 @@ export default function DomesticHero({ darkMode, setDarkMode }) {
           DISCOVER PREMIUM DOMESTIC DESTINATIONS
         </p>
 
-        {/* DOMESTIC label */}
-        <p
-          className="mt-3 text-[11px] font-semibold tracking-[0.4em] uppercase transition-all duration-700"
-          style={{
-            color: "rgba(255, 255, 255, 0.4)",
-            transitionDelay: "0.45s",
-            opacity: loaded ? 1 : 0,
-          }}
-        >
-          DOMESTIC
-        </p>
+       {/* DOMESTIC label */}
+<div
+  className="mt-3 flex items-center justify-center gap-4 transition-all duration-700"
+  style={{
+    transitionDelay: "0.45s",
+    opacity: loaded ? 1 : 0,
+  }}
+>
+  <div className="h-px w-12 bg-white/30" />
+
+  <p
+    className="text-[11px] font-semibold tracking-[0.4em] uppercase"
+    style={{
+      color: "rgba(255, 255, 255, 0.4)",
+    }}
+  >
+    DOMESTIC
+  </p>
+
+  <div className="h-px w-12 bg-white/30" />
+</div>
 
         {/* Scroll indicator */}
         <div
