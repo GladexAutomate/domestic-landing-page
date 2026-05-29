@@ -1,7 +1,4 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
-
-const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80&fit=crop";
 
 export default function DestinationCard({
   destination,
@@ -9,8 +6,6 @@ export default function DestinationCard({
   visible,
   darkMode,
 }) {
-  const [imgSrc, setImgSrc] = useState(destination.image);
-
   return (
     <Link to={`/destination/${destination.slug}`}>
       <div
@@ -35,16 +30,10 @@ export default function DestinationCard({
         }}
       >
         {/* Background image */}
-        <img
-          src={imgSrc}
-          onError={() => setImgSrc(FALLBACK_IMAGE)}
-          alt=""
-          className="sr-only"
-        />
         <div
           className="absolute inset-0 bg-cover bg-center transition-all duration-500 group-hover:scale-110 group-hover:-translate-y-2"
           style={{
-            backgroundImage: `url('${imgSrc}')`,
+            backgroundImage: `url('${destination.image}')`,
           }}
         />
 
