@@ -25,8 +25,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Bantayan", slug: "bantayan", tagline: "Pristine island escape in Cebu",
-    image: "https://images.unsplash.com/photo-1491457218635-f57b6ecf0e10?w=600&q=80&fit=crop",
-    hero: "https://images.unsplash.com/photo-1491457218635-f57b6ecf0e10?w=1400&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=600&q=80&fit=crop",
+    hero: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1400&q=90&fit=crop",
     package: "3D2N Bantayan Land Arrangement",
     hotelCategories: [
       { label: "Budget", hotels: "Arnold's Hotel, Anaya Beach Resort, Coucou Lodge (no breakfast)", rates: [{ label: "5 Pax", price: "₱3,499/person" }, { label: "Quad Share", price: "₱4,299/person" }, { label: "Triple Share", price: "₱5,499/person" }, { label: "Twin Share", price: "₱6,799/person" }, { label: "Solo", price: "₱12,499" }, { label: "Sneak-in Child (0–9 yrs)", price: "₱3,199" }] },
@@ -307,8 +307,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Bukidnon", slug: "bukidnon", tagline: "The highland paradise of Mindanao",
-    image: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=600&q=80&fit=crop",
-    hero: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=1400&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=600&q=80&fit=crop",
+    hero: "https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=1400&q=90&fit=crop",
     videoUrl: "https://bit.ly/GDX-BUKIDNON-VID",
     package: "3D2N Bukidnon Land Arrangement",
     hotelCategories: [
@@ -325,8 +325,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Leyte", slug: "leyte", tagline: "Historic shores and lush landscapes",
-    image: "https://images.unsplash.com/photo-1439853949212-36589f9def1b?w=600&q=80&fit=crop",
-    hero: "https://images.unsplash.com/photo-1439853949212-36589f9def1b?w=1400&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&q=80&fit=crop",
+    hero: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1400&q=90&fit=crop",
     package: "Leyte — Kalanggaman Island (2 Days 1 Night)",
     hotelCategories: [
       { label: "Rates by Group Size", hotels: "", rates: [{ label: "12 Pax", price: "₱3,999/person" }, { label: "11 Pax", price: "₱4,099/person" }, { label: "10 Pax", price: "₱4,299/person" }, { label: "9 Pax", price: "₱4,399/person" }, { label: "8 Pax", price: "₱4,599/person" }, { label: "7 Pax", price: "₱4,899/person" }, { label: "6 Pax", price: "₱5,199/person" }, { label: "5 Pax", price: "₱5,699/person" }, { label: "4 Pax", price: "₱6,599/person" }, { label: "3 Pax", price: "₱8,099/person" }, { label: "2 Pax", price: "₱11,099/person" }, { label: "Child 1–6 yrs", price: "FREE (sharing food at mainland)" }, { label: "Child 7–11 yrs", price: "₱1,420" }, { label: "Child 12–17 yrs", price: "Less ₱100 from rate" }] },
@@ -483,8 +483,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Balabac", slug: "balabac", tagline: "Palawan's last frontier",
-    image: "https://images.unsplash.com/photo-1518476133289-aa9e4d5c8a7e?w=600&q=80&fit=crop",
-    hero: "https://images.unsplash.com/photo-1518476133289-aa9e4d5c8a7e?w=1400&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1439130490301-25e322d88054?w=600&q=80&fit=crop",
+    hero: "https://images.unsplash.com/photo-1439130490301-25e322d88054?w=1400&q=90&fit=crop",
     package: "4D3N Balabac Land Arrangement",
     hotelCategories: [
       { label: "Budget (PPS Night)", hotels: "Las Residencias B&B, Royale Parc Hotel, Casa Belina, Casañas Suites w/ Pool", rates: [{ label: "5 Pax", price: "₱13,899/person" }, { label: "Quad Share", price: "₱14,799/person" }, { label: "Triple Share", price: "₱14,899/person" }, { label: "Twin Share", price: "₱15,099/person" }, { label: "Solo", price: "₱16,799" }, { label: "Sneak-in Child (5–7 yrs)", price: "₱9,100" }] },
@@ -505,8 +505,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Puerto Princesa", slug: "puerto-princesa", tagline: "Home of the Underground River",
-    image: "https://images.unsplash.com/photo-1518209391544-5d2d466d88a8?w=600&q=80&fit=crop",
-    hero: "https://images.unsplash.com/photo-1518209391544-5d2d466d88a8?w=1400&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=600&q=80&fit=crop",
+    hero: "https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=1400&q=90&fit=crop",
     videoUrl: "https://bit.ly/GDX-PPS-VID",
     package: "3D2N Puerto Princesa Land Arrangement",
     hotelCategories: [
