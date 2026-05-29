@@ -36,8 +36,8 @@ export default function DomesticHero() {
     <section
       className="relative w-full overflow-hidden"
       style={{
-        height: "100vh",
-        minHeight: "720px",
+        height: "100svh",
+        minHeight: "620px",
       }}
     >
       {/* Background Panels */}
@@ -94,12 +94,12 @@ export default function DomesticHero() {
             />
 
             {/* Panel Name */}
-            <div className="absolute bottom-5 left-0 right-0 text-center">
+            <div className="absolute bottom-5 left-2 right-2 text-center">
               <span
                 className="
-                  text-[9px]
+                  text-[8px] md:text-[9px]
                   font-bold
-                  tracking-[0.35em]
+                  tracking-[0.22em]
                   uppercase
                   transition-all duration-300
                   group-hover:text-[#FF8C00]
@@ -170,14 +170,15 @@ export default function DomesticHero() {
               font-black
               uppercase
               text-white
-              tracking-tight
-              leading-[0.88]
+              leading-none
+              mb-4
               transition-all duration-700
             "
             style={{
-              fontSize: "clamp(4rem, 9vw, 9rem)",
+              fontSize: "clamp(52px, 9vw, 120px)",
+              letterSpacing: "0.06em",
               textShadow:
-                "0 8px 30px rgba(0,0,0,0.6)",
+                "0 2px 40px rgba(0,0,0,0.7)",
               opacity: loaded ? 1 : 0,
               transform: loaded
                 ? "translateY(0)"
@@ -193,7 +194,7 @@ export default function DomesticHero() {
         {/* Subtitle */}
         <p
           className="
-            mt-6
+            mt-4
             text-xs md:text-sm
             uppercase
             tracking-[0.28em]
