@@ -36,8 +36,8 @@ export default function DomesticHero() {
     <section
       className="relative w-full overflow-hidden"
       style={{
-        height: "100svh",
-        minHeight: "620px",
+        height: "100vh",
+        minHeight: "680px",
       }}
     >
       {/* Background Panels */}
@@ -69,7 +69,7 @@ export default function DomesticHero() {
               }}
             />
 
-            {/* Glow Overlay */}
+            {/* Hover Glow */}
             <div
               className="
                 absolute inset-0
@@ -93,14 +93,17 @@ export default function DomesticHero() {
               }}
             />
 
-            {/* Panel Name */}
-            <div className="absolute bottom-5 left-2 right-2 text-center">
+            {/* Panel Label */}
+            <div className="absolute bottom-5 left-0 right-0 flex justify-center px-1">
               <span
                 className="
-                  text-[8px] md:text-[9px]
+                  text-[7px]
+                  sm:text-[8px]
+                  md:text-[9px]
                   font-bold
                   tracking-[0.22em]
                   uppercase
+                  whitespace-nowrap
                   transition-all duration-300
                   group-hover:text-[#FF8C00]
                 "
@@ -109,14 +112,14 @@ export default function DomesticHero() {
                   textShadow: "0 2px 8px rgba(0,0,0,0.95)",
                 }}
               >
-                {panel.name.toUpperCase()}
+                {panel.name}
               </span>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Main cinematic overlay */}
+      {/* Main Overlay */}
       <div
         className="absolute inset-0 z-0"
         style={{
@@ -125,7 +128,7 @@ export default function DomesticHero() {
         }}
       />
 
-      {/* Orange bottom line */}
+      {/* Bottom Orange Line */}
       <div
         className="absolute bottom-0 left-0 right-0 h-[2px]"
         style={{
@@ -137,7 +140,8 @@ export default function DomesticHero() {
       <a
         href="https://voyage-view-go.base44.app"
         className="
-          fixed top-6 left-6 z-50
+          fixed top-4 left-4 md:top-6 md:left-6
+          z-50
           transition-all duration-300
           hover:scale-105
         "
@@ -153,7 +157,7 @@ export default function DomesticHero() {
         <img
           src="https://media.base44.com/images/public/6a0d6ad01d34ead888ecdd6f/5ecc9b2cd_Untitled-design-75.png"
           alt="Gladex Travel and Tours Corp."
-          className="h-14 w-auto object-contain"
+          className="h-10 md:h-14 w-auto object-contain"
           style={{
             filter:
               "drop-shadow(0 0 20px rgba(255,140,0,0.55))",
@@ -162,23 +166,22 @@ export default function DomesticHero() {
       </a>
 
       {/* Hero Content */}
-      <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">
-        {/* Main Heading */}
-        <div className="max-w-6xl mx-auto">
+      <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-5">
+        <div className="w-full max-w-[1200px] mx-auto">
+          {/* Main Title */}
           <h1
             className="
               font-black
               uppercase
               text-white
-              leading-none
-              mb-4
+              leading-[0.9]
               transition-all duration-700
             "
             style={{
-              fontSize: "clamp(52px, 9vw, 120px)",
-              letterSpacing: "0.06em",
+              fontSize: "clamp(3.2rem, 8vw, 7.5rem)",
+              letterSpacing: "0.03em",
               textShadow:
-                "0 2px 40px rgba(0,0,0,0.7)",
+                "0 8px 30px rgba(0,0,0,0.6)",
               opacity: loaded ? 1 : 0,
               transform: loaded
                 ? "translateY(0)"
@@ -189,69 +192,73 @@ export default function DomesticHero() {
             <br />
             PHILIPPINES
           </h1>
-        </div>
 
-        {/* Subtitle */}
-        <p
-          className="
-            mt-4
-            text-xs md:text-sm
-            uppercase
-            tracking-[0.28em]
-            font-light
-            transition-all duration-700
-          "
-          style={{
-            color: "rgba(255,255,255,0.78)",
-            textShadow: "0 1px 12px rgba(0,0,0,0.7)",
-            transitionDelay: "0.25s",
-            opacity: loaded ? 1 : 0,
-            transform: loaded
-              ? "translateY(0)"
-              : "translateY(20px)",
-          }}
-        >
-          Discover Premium Domestic Destinations
-        </p>
-
-        {/* DOMESTIC label */}
-        <div
-          className="
-            mt-5
-            flex items-center justify-center gap-5
-            transition-all duration-700
-          "
-          style={{
-            transitionDelay: "0.4s",
-            opacity: loaded ? 1 : 0,
-            transform: loaded
-              ? "translateY(0)"
-              : "translateY(16px)",
-          }}
-        >
-          <div className="h-px w-16 bg-white/30" />
-
-          <span
+          {/* Subtitle */}
+          <p
             className="
+              mt-5
               text-[11px]
-              font-semibold
-              tracking-[0.45em]
+              sm:text-xs
+              md:text-sm
               uppercase
+              tracking-[0.22em]
+              md:tracking-[0.28em]
+              font-light
+              transition-all duration-700
             "
             style={{
-              color: "rgba(255,255,255,0.45)",
+              color: "rgba(255,255,255,0.78)",
+              textShadow: "0 1px 12px rgba(0,0,0,0.7)",
+              transitionDelay: "0.25s",
+              opacity: loaded ? 1 : 0,
+              transform: loaded
+                ? "translateY(0)"
+                : "translateY(20px)",
             }}
           >
-            Domestic
-          </span>
+            Discover Premium Domestic Destinations
+          </p>
 
-          <div className="h-px w-16 bg-white/30" />
+          {/* Domestic Label */}
+          <div
+            className="
+              mt-5
+              flex items-center justify-center gap-3 md:gap-5
+              transition-all duration-700
+            "
+            style={{
+              transitionDelay: "0.4s",
+              opacity: loaded ? 1 : 0,
+              transform: loaded
+                ? "translateY(0)"
+                : "translateY(16px)",
+            }}
+          >
+            <div className="h-px w-10 md:w-16 bg-white/30" />
+
+            <span
+              className="
+                text-[9px]
+                md:text-[11px]
+                font-semibold
+                tracking-[0.35em]
+                uppercase
+              "
+              style={{
+                color: "rgba(255,255,255,0.45)",
+              }}
+            >
+              Domestic
+            </span>
+
+            <div className="h-px w-10 md:w-16 bg-white/30" />
+          </div>
         </div>
 
         {/* Scroll Indicator */}
         <div
           className="
-            absolute bottom-10 left-1/2
+            absolute bottom-8 md:bottom-10 left-1/2
             -translate-x-1/2
             flex flex-col items-center gap-2
             transition-all duration-700
@@ -273,7 +280,7 @@ export default function DomesticHero() {
             />
           </div>
 
-          <span className="text-[10px] font-semibold tracking-[0.4em] uppercase text-white/40">
+          <span className="text-[9px] md:text-[10px] font-semibold tracking-[0.35em] uppercase text-white/40">
             Scroll
           </span>
         </div>
