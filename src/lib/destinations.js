@@ -439,8 +439,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Samal", slug: "samal", tagline: "Island Garden City of Samal",
-    image: "https://images.unsplash.com/photo-1548574505-5e239809ee19?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1548574505-5e239809ee19?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1600&q=90&fit=crop",
     package: "3D2N Samal Land Arrangement",
     hotelCategories: [
       { label: "Budget", hotels: "Cavanico Il Mare", rates: [{ label: "5 Pax", price: "₱3,899/person" }, { label: "Quad Share", price: "₱4,499/person" }, { label: "Triple Share", price: "₱5,799/person" }, { label: "Twin Share", price: "₱7,199/person" }, { label: "Solo", price: "₱13,699" }, { label: "Sneak-in Child (3–4 yrs)", price: "₱3,599" }] },
@@ -577,8 +577,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Mt. Apo", slug: "mt-apo", tagline: "The roof of the Philippines",
-    image: "https://images.unsplash.com/photo-1663777049185-91101c4d743e?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1663777049185-91101c4d743e?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1600&q=90&fit=crop",
     package: "2D1N Mt. Apo via Kapatagan Trail",
     hotelCategories: [
       { label: "Rates by Group Size", hotels: "", rates: [{ label: "10 Pax", price: "₱6,499/person" }, { label: "9 Pax", price: "₱6,699/person" }, { label: "8 Pax", price: "₱6,999/person" }, { label: "7 Pax", price: "₱7,499/person" }, { label: "6 Pax", price: "₱7,999/person" }, { label: "5 Pax", price: "₱8,499/person" }, { label: "4 Pax", price: "₱9,999/person" }, { label: "3 Pax", price: "₱10,499/person" }, { label: "2 Pax", price: "₱12,999/person" }] },
