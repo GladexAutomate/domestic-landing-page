@@ -1,8 +1,8 @@
 export const DESTINATIONS = [
   {
     name: "Boracay", slug: "boracay", tagline: "World-famous white beach paradise",
-    image: "https://images.unsplash.com/photo-1483683804023-6ccdb62f86ef?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1483683804023-6ccdb62f86ef?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1574421624183-fa5b6250d896?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1574421624183-fa5b6250d896?w=1600&q=90&fit=crop",
     videoUrl: "https://bit.ly/GDX-BORACAY-VID",
     package: "3D2N Boracay Land Arrangement",
     hotelCategories: [
@@ -25,8 +25,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Bantayan", slug: "bantayan", tagline: "Pristine island escape in Cebu",
-    image: "https://images.unsplash.com/photo-1558748467-1028cdcb150a?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1558748467-1028cdcb150a?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1587778664930-45604c017803?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1587778664930-45604c017803?w=1600&q=90&fit=crop",
     package: "3D2N Bantayan Land Arrangement",
     hotelCategories: [
       { label: "Budget", hotels: "Arnold's Hotel, Anaya Beach Resort, Coucou Lodge (no breakfast)", rates: [{ label: "5 Pax", price: "₱3,499/person" }, { label: "Quad Share", price: "₱4,299/person" }, { label: "Triple Share", price: "₱5,499/person" }, { label: "Twin Share", price: "₱6,799/person" }, { label: "Solo", price: "₱12,499" }, { label: "Sneak-in Child (0–9 yrs)", price: "₱3,199" }] },
@@ -44,8 +44,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Batanes", slug: "batanes", tagline: "The rugged beauty of the northernmost isles",
-    image: "https://images.unsplash.com/photo-1594350853058-6cb5c6c728d6?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1594350853058-6cb5c6c728d6?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1582625053958-fb011f611c54?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1582625053958-fb011f611c54?w=1600&q=90&fit=crop",
     videoUrl: "https://bit.ly/GDX-BATANES-VID",
     package: "3D2N Batanes Land Arrangement",
     hotelCategories: [
@@ -65,8 +65,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Bacolod", slug: "bacolod", tagline: "The City of Smiles awaits you",
-    image: "https://images.unsplash.com/photo-1601000234047-d9308ea1ed51?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1601000234047-d9308ea1ed51?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1530968033775-2c92736b131e?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1530968033775-2c92736b131e?w=1600&q=90&fit=crop",
     package: "3D2N Bacolod Land Arrangement",
     hotelCategories: [
       { label: "Budget", note: "No Breakfast", hotels: "Ong Bun Pension House, Pension Bacolod", rates: [{ label: "5 Pax", price: "₱2,599/person" }, { label: "Quad Share", price: "₱2,999/person" }, { label: "Triple Share", price: "₱3,499/person" }, { label: "Twin Share", price: "₱3,799/person" }, { label: "Solo", price: "₱6,499" }, { label: "Sneak-in Child (4–9 yrs)", price: "₱2,533" }] },
@@ -85,8 +85,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Bohol", slug: "bohol", tagline: "Chocolate Hills and tarsier wonders",
-    image: "https://images.unsplash.com/photo-1667823506151-836beb11723d?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1667823506151-836beb11723d?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1708353234006-5f1a3f92a63a?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1708353234006-5f1a3f92a63a?w=1600&q=90&fit=crop",
     videoUrl: "https://bit.ly/GDX-BOHOL-VID",
     package: "3D2N Bohol Land Arrangement",
     hotelCategories: [
@@ -112,8 +112,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Cebu", slug: "cebu", tagline: "Queen City of the South",
-    image: "https://images.unsplash.com/photo-1592303071869-882ab783e4ef?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1592303071869-882ab783e4ef?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1598258710957-db8614c2881e?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1598258710957-db8614c2881e?w=1600&q=90&fit=crop",
     videoUrl: "https://bit.ly/GDX-CEBU-VID",
     package: "3D2N Cebu Land Arrangement",
     hotelCategories: [
@@ -140,8 +140,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Camiguin", slug: "camiguin", tagline: "Island born of fire, surrounded by sea",
-    image: "https://images.unsplash.com/photo-1555590858-be28a58c2688?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1555590858-be28a58c2688?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1551521021-d929e606badc?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1551521021-d929e606badc?w=1600&q=90&fit=crop",
     videoUrl: "https://bit.ly/GDX-CAMIGUIN-VID",
     package: "3D2N Camiguin Land Arrangement",
     hotelCategories: [
@@ -161,8 +161,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Northern Mindanao", slug: "northern-mindanao", tagline: "Gateway to the heart of Mindanao",
-    image: "https://images.unsplash.com/photo-1736776256317-0896951a4dc9?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1736776256317-0896951a4dc9?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1601000234047-d9308ea1ed51?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1601000234047-d9308ea1ed51?w=1600&q=90&fit=crop",
     videoUrl: "https://bit.ly/GDX-NORTHERN-MINDANAO-VID",
     package: "5D4N Northern Mindanao Land Arrangement — CDO + Bukidnon + Camiguin",
     hotelCategories: [
@@ -188,8 +188,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Coron", slug: "coron", tagline: "Crystal lagoons and legendary shipwrecks",
-    image: "https://images.unsplash.com/photo-1542533382-b42a59d8bd39?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1542533382-b42a59d8bd39?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1758782551880-14550b8ded5e?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1758782551880-14550b8ded5e?w=1600&q=90&fit=crop",
     videoUrl: "https://bit.ly/GDX-CORON-VID",
     package: "3D2N Coron Land Arrangement",
     hotelCategories: [
@@ -242,8 +242,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Davao", slug: "davao", tagline: "The King City of the South",
-    image: "https://images.unsplash.com/photo-1565113218386-934429f84cc2?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1565113218386-934429f84cc2?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1548574505-5e239809ee19?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1548574505-5e239809ee19?w=1600&q=90&fit=crop",
     videoUrl: "https://bit.ly/GDX-DAVAO-VID",
     package: "3D2N Davao Land Arrangement",
     hotelCategories: [
@@ -271,8 +271,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Dinagat", slug: "dinagat", tagline: "Untouched island beauty",
-    image: "https://images.unsplash.com/photo-1564425229770-faa6486ce562?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1564425229770-faa6486ce562?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1521650559166-6b588715bc62?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1521650559166-6b588715bc62?w=1600&q=90&fit=crop",
     videoUrl: "https://bit.ly/GDX-DINAGAT-VID",
     package: "4D3N Dinagat Island Land Arrangement",
     hotelCategories: [
@@ -325,8 +325,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Leyte", slug: "leyte", tagline: "Historic shores and lush landscapes",
-    image: "https://images.unsplash.com/photo-1473448912268-2022ce9509d8?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1473448912268-2022ce9509d8?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1736776256319-50153ce32dfc?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1736776256319-50153ce32dfc?w=1600&q=90&fit=crop",
     package: "Leyte — Kalanggaman Island (2 Days 1 Night)",
     hotelCategories: [
       { label: "Rates by Group Size", hotels: "", rates: [{ label: "12 Pax", price: "₱3,999/person" }, { label: "11 Pax", price: "₱4,099/person" }, { label: "10 Pax", price: "₱4,299/person" }, { label: "9 Pax", price: "₱4,399/person" }, { label: "8 Pax", price: "₱4,599/person" }, { label: "7 Pax", price: "₱4,899/person" }, { label: "6 Pax", price: "₱5,199/person" }, { label: "5 Pax", price: "₱5,699/person" }, { label: "4 Pax", price: "₱6,599/person" }, { label: "3 Pax", price: "₱8,099/person" }, { label: "2 Pax", price: "₱11,099/person" }, { label: "Child 1–6 yrs", price: "FREE (sharing food at mainland)" }, { label: "Child 7–11 yrs", price: "₱1,420" }, { label: "Child 12–17 yrs", price: "Less ₱100 from rate" }] },
@@ -342,8 +342,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Port Barton", slug: "port-barton", tagline: "Palawan's hidden cinematic gem",
-    image: "https://images.unsplash.com/photo-1697135756100-7b610c8fe92e?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1697135756100-7b610c8fe92e?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1753482774950-e5bed05896a0?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1753482774950-e5bed05896a0?w=1600&q=90&fit=crop",
     videoUrl: "https://bit.ly/GDX-PORT-BARTON-VID",
     package: "3D2N Port Barton Land Arrangement",
     hotelCategories: [
@@ -369,8 +369,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Legazpi", slug: "legazpi", tagline: "In the shadow of Mayon Volcano",
-    image: "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1663777049185-91101c4d743e?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1663777049185-91101c4d743e?w=1600&q=90&fit=crop",
     package: "3D2N Legazpi Land Arrangement",
     hotelCategories: [
       { label: "Budget", hotels: "Aurelle Inn, Thirdy Tourist Inn, Casita De Gloria Hometel", rates: [{ label: "5 Pax", price: "₱3,499/person" }, { label: "Quad Share", price: "₱3,599/person" }, { label: "Triple Share", price: "₱4,099/person" }, { label: "Twin Share", price: "₱4,399/person" }, { label: "Solo", price: "₱7,999" }, { label: "Sneak-in Child (6–12 yrs)", price: "₱1,869" }] },
@@ -390,8 +390,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Manila", slug: "manila", tagline: "The pearl of the Orient Seas",
-    image: "https://images.unsplash.com/photo-1519101739220-83f6a14852ca?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1519101739220-83f6a14852ca?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1599272585578-03bfc70032b5?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1599272585578-03bfc70032b5?w=1600&q=90&fit=crop",
     package: "3D2N Manila Land Arrangement",
     hotelCategories: [
       { label: "Budget", hotels: "Hotel Kimberly, Tiara Oriental Hotel, My Space Hotel and Dormitory, The Selah Garden Hotel, Selah Pods Hotel, Selah Lofts Hotel", rates: [{ label: "Triple Share", price: "₱4,599/person" }, { label: "Twin Share", price: "₱5,699/person" }, { label: "Solo", price: "₱10,599" }] },
@@ -411,8 +411,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Siargao", slug: "siargao", tagline: "The surfing capital of the Philippines",
-    image: "https://images.unsplash.com/photo-1559099078-8ab4ed4eefed?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1559099078-8ab4ed4eefed?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1741717609409-73ab1cc9a3cd?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1741717609409-73ab1cc9a3cd?w=1600&q=90&fit=crop",
     videoUrl: "https://bit.ly/GDX-SIARGAO-VID",
     package: "3D2N Siargao Land Arrangement",
     hotelCategories: [
@@ -460,8 +460,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Ilo-Ilo", slug: "ilo-ilo", tagline: "Heritage, culture, and breathtaking coastlines",
-    image: "https://images.unsplash.com/photo-1590523741831-ab7e8b8f9c7f?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1590523741831-ab7e8b8f9c7f?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1657690939134-2fc25dfa0cce?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1657690939134-2fc25dfa0cce?w=1600&q=90&fit=crop",
     package: "3D2N Ilo-Ilo Land Arrangement",
     hotelCategories: [
       { label: "Budget", hotels: "Harbor Town Hotel, Ferrymar Hotel, Ong Bun Pension House (no breakfast), GT Hotel Iloilo", rates: [{ label: "Quad Share", price: "₱2,899/person" }, { label: "Triple Share", price: "₱3,699/person" }, { label: "Twin Share", price: "₱4,299/person" }, { label: "Solo", price: "₱7,799" }, { label: "Sneak-in Child (3–6 yrs)", price: "₱1,897" }] },
@@ -483,8 +483,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Balabac", slug: "balabac", tagline: "Palawan's last frontier",
-    image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1753482774869-df2fb3b8c8a2?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1753482774869-df2fb3b8c8a2?w=1600&q=90&fit=crop",
     package: "4D3N Balabac Land Arrangement",
     hotelCategories: [
       { label: "Budget (PPS Night)", hotels: "Las Residencias B&B, Royale Parc Hotel, Casa Belina, Casañas Suites w/ Pool", rates: [{ label: "5 Pax", price: "₱13,899/person" }, { label: "Quad Share", price: "₱14,799/person" }, { label: "Triple Share", price: "₱14,899/person" }, { label: "Twin Share", price: "₱15,099/person" }, { label: "Solo", price: "₱16,799" }, { label: "Sneak-in Child (5–7 yrs)", price: "₱9,100" }] },
@@ -505,8 +505,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Puerto Princesa", slug: "puerto-princesa", tagline: "Home of the Underground River",
-    image: "https://images.unsplash.com/photo-1602587921225-3cca658d31bb?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1602587921225-3cca658d31bb?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1660849259228-603fad947b89?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1660849259228-603fad947b89?w=1600&q=90&fit=crop",
     videoUrl: "https://bit.ly/GDX-PPS-VID",
     package: "3D2N Puerto Princesa Land Arrangement",
     hotelCategories: [
@@ -533,8 +533,8 @@ export const DESTINATIONS = [
   },
   {
     name: "El Nido", slug: "el-nido", tagline: "Limestone cliffs and emerald lagoons",
-    image: "https://images.unsplash.com/photo-1695051702427-1c24ce3682e7?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1695051702427-1c24ce3682e7?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1591049014083-3339a6fe59eb?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1591049014083-3339a6fe59eb?w=1600&q=90&fit=crop",
     videoUrl: "https://bit.ly/GDX-ELNIDO-VID",
     package: "3D2N El Nido Land Arrangement",
     hotelCategories: [
@@ -562,8 +562,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Biliran", slug: "biliran", tagline: "Waterfalls and volcanic hot springs",
-    image: "https://images.unsplash.com/photo-1446329813274-7c9036bd9a1f?w=600&q=80&fit=crop",
-    hero: "https://images.unsplash.com/photo-1446329813274-7c9036bd9a1f?w=1400&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1532053369071-cf1bf28109be?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1532053369071-cf1bf28109be?w=1600&q=90&fit=crop",
     package: "3D2N Biliran — Tres Marias Peak with Ulan-Ulan Falls",
     hotelCategories: [
       { label: "Rates by Group Size", hotels: "", rates: [{ label: "10 Pax", price: "₱3,999/person" }, { label: "9 Pax", price: "₱4,099/person" }, { label: "8 Pax", price: "₱4,299/person" }, { label: "7 Pax", price: "₱4,399/person" }, { label: "6 Pax", price: "₱4,699/person" }, { label: "5 Pax", price: "₱4,699/person" }, { label: "4 Pax", price: "₱4,699/person" }, { label: "3 Pax", price: "₱5,199/person" }, { label: "2 Pax", price: "₱6,299/person" }, { label: "Solo", price: "₱11,199" }] },
@@ -577,8 +577,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Mt. Apo", slug: "mt-apo", tagline: "The roof of the Philippines",
-    image: "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?w=600&q=80&fit=crop",
-    hero: "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?w=1400&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1663777049185-91101c4d743e?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1663777049185-91101c4d743e?w=1600&q=90&fit=crop",
     package: "2D1N Mt. Apo via Kapatagan Trail",
     hotelCategories: [
       { label: "Rates by Group Size", hotels: "", rates: [{ label: "10 Pax", price: "₱6,499/person" }, { label: "9 Pax", price: "₱6,699/person" }, { label: "8 Pax", price: "₱6,999/person" }, { label: "7 Pax", price: "₱7,499/person" }, { label: "6 Pax", price: "₱7,999/person" }, { label: "5 Pax", price: "₱8,499/person" }, { label: "4 Pax", price: "₱9,999/person" }, { label: "3 Pax", price: "₱10,499/person" }, { label: "2 Pax", price: "₱12,999/person" }] },
@@ -593,8 +593,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Dumaguete", slug: "dumaguete", tagline: "The city of gentle people",
-    image: "https://images.unsplash.com/photo-1558260963-fd8436b4be0a?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1558260963-fd8436b4be0a?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1590133076213-ef3cc4b1a70b?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1590133076213-ef3cc4b1a70b?w=1600&q=90&fit=crop",
     videoUrl: "https://bit.ly/GDX-DUMAGUETE-VID",
     package: "3D2N Dumaguete Land Arrangement",
     hotelCategories: [
@@ -614,8 +614,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Siquijor", slug: "siquijor", tagline: "The mystical island of fire",
-    image: "https://images.unsplash.com/photo-1590133076213-ef3cc4b1a70b?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1590133076213-ef3cc4b1a70b?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1473448912268-2022ce9509d8?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1473448912268-2022ce9509d8?w=1600&q=90&fit=crop",
     videoUrl: "https://bit.ly/GDX-SIQUIJOR-VID",
     package: "3D2N Siquijor Land Arrangement",
     hotelCategories: [
@@ -639,8 +639,8 @@ export const DESTINATIONS = [
   },
   {
     name: "General Santos", slug: "general-santos", tagline: "The tuna capital of the Philippines",
-    image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=1600&q=90&fit=crop",
     package: "3D2N General Santos Land Arrangement",
     hotelCategories: [
       { label: "Budget", hotels: "RSG Microtel, Hotel Giorgio, Delle Suites", rates: [{ label: "5 Pax", price: "₱2,899/person" }, { label: "Quad Share", price: "₱3,299/person" }, { label: "Triple Share", price: "₱3,999/person" }, { label: "Twin Share", price: "₱4,599/person" }, { label: "Solo", price: "₱7,899" }, { label: "Sneak-in Child (4–9 yrs)", price: "₱2,539" }] },
@@ -658,8 +658,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Malapascua", slug: "malapascua", tagline: "Where thresher sharks meet paradise",
-    image: "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1573808645321-beaa7ab67839?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1573808645321-beaa7ab67839?w=1600&q=90&fit=crop",
     package: "3D2N Malapascua Land Arrangement",
     hotelCategories: [
       { label: "Budget", hotels: "Mabuhay Thresher Dive Resort", rates: [{ label: "Quad Share", price: "₱4,999/person" }, { label: "Triple Share", price: "₱5,099/person" }, { label: "Twin Share", price: "₱5,399/person" }, { label: "Solo", price: "₱7,799" }] },
@@ -676,8 +676,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Zamboanga", slug: "zamboanga", tagline: "Asia's Latin city by the sea",
-    image: "https://images.unsplash.com/photo-1471922694854-ff1b63b20054?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1471922694854-ff1b63b20054?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1501890664351-4ef399c1524f?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1501890664351-4ef399c1524f?w=1600&q=90&fit=crop",
     package: "3D2N Zamboanga Land Arrangement",
     hotelCategories: [
       { label: "Budget", hotels: "Winzelle Suites, Cityinn Hotel (no breakfast)", rates: [{ label: "Quad Share", price: "₱4,399/person" }, { label: "Triple Share", price: "₱4,899/person" }, { label: "Twin Share", price: "₱4,799/person" }, { label: "Solo", price: "₱6,799" }, { label: "Sneak-in Child (4–9 yrs)", price: "₱3,199" }] },
@@ -695,8 +695,8 @@ export const DESTINATIONS = [
   },
   {
     name: "Basilan", slug: "basilan", tagline: "A hidden gem of the Sulu Archipelago",
-    image: "https://images.unsplash.com/photo-1437622368342-7a3d73a34c8f?w=800&q=85&fit=crop",
-    hero: "https://images.unsplash.com/photo-1437622368342-7a3d73a34c8f?w=1600&q=90&fit=crop",
+    image: "https://images.unsplash.com/photo-1529077008588-5c78008755e7?w=800&q=85&fit=crop",
+    hero: "https://images.unsplash.com/photo-1529077008588-5c78008755e7?w=1600&q=90&fit=crop",
     package: "2D1N Basilan Land Arrangement",
     hotelCategories: [
       { label: "Budget", hotels: "Kasinnahan Hotel", rates: [{ label: "10 Pax", price: "₱8,299/person" }, { label: "9 Pax", price: "₱8,799/person" }, { label: "8 Pax", price: "₱9,099/person" }, { label: "7 Pax", price: "₱9,799/person" }, { label: "6 Pax", price: "₱10,399/person" }, { label: "5 Pax", price: "₱11,699/person" }, { label: "4 Pax", price: "₱13,099/person" }, { label: "3 Pax", price: "₱16,399/person" }, { label: "2 Pax", price: "₱21,499/person" }, { label: "Solo", price: "₱40,499" }, { label: "Child 0–2 yrs", price: "FREE" }, { label: "Child 3–5 yrs", price: "50% less" }, { label: "Child 6 yrs+", price: "Full Payment" }] },
