@@ -99,6 +99,21 @@
   }
 }
 
+/* Global smooth theme transitions */
+*, *::before, *::after {
+  transition-property: background-color, border-color, color, box-shadow;
+  transition-duration: 0.4s;
+  transition-timing-function: ease;
+}
+
+/* Exclude elements that should NOT transition (animations, transforms) */
+[style*="animation"],
+[class*="animate-"],
+[class*="transition-transform"],
+[class*="motion"] {
+  transition-property: background-color, border-color, color, box-shadow;
+}
+
 /* Badge pulse animation */
 @keyframes badge-breathe {
   0%, 100% { opacity: 0.85; }

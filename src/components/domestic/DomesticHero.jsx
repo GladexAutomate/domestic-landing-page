@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import DomesticNavbar from "@/components/domestic/DomesticNavbar";
 
 const PANELS = [
   {
@@ -40,6 +41,7 @@ export default function DomesticHero() {
         minHeight: "500px",
       }}
     >
+      <DomesticNavbar />
       {/* PANELS */}
       <div className="absolute inset-0 flex">
         {PANELS.map((panel, i) => (
