@@ -24,7 +24,7 @@ export default function DestinationPreview() {
     setPackageLoaded(false);
     const t1 = setTimeout(() => setHeroLoaded(true), 80);
     const t2 = setTimeout(() => setPackageLoaded(true), 400);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
+    return () => {clearTimeout(t1);clearTimeout(t2);};
   }, [slug]);
 
   // Theme tokens
@@ -44,8 +44,8 @@ export default function DestinationPreview() {
   return (
     <div
       className="font-poppins min-h-screen transition-colors duration-500"
-      style={{ background: bg }}
-    >
+      style={{ background: bg }}>
+      
       <DestinationNavbar />
 
       {/* ─── HERO ─────────────────────────────────────────────── */}
@@ -55,41 +55,41 @@ export default function DestinationPreview() {
           className="absolute inset-0 bg-cover bg-center"
           style={{
             backgroundImage: `url('${heroImage}')`,
-            animation: "heroKenBurns 14s ease-out forwards",
-          }}
-        />
+            animation: "heroKenBurns 14s ease-out forwards"
+          }} />
+        
         {/* Multi-layer gradient overlay */}
         <div
           className="absolute inset-0"
           style={{
-            background: darkMode
-              ? "linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.1) 30%, rgba(0,0,0,0.55) 65%, rgba(0,0,0,0.88) 100%)"
-              : "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.05) 30%, rgba(0,0,0,0.4) 65%, rgba(0,0,0,0.75) 100%)",
-          }}
-        />
+            background: darkMode ?
+            "linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.1) 30%, rgba(0,0,0,0.55) 65%, rgba(0,0,0,0.88) 100%)" :
+            "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.05) 30%, rgba(0,0,0,0.4) 65%, rgba(0,0,0,0.75) 100%)"
+          }} />
+        
         {/* Side vignettes */}
         <div
           className="absolute inset-0"
           style={{
-            background: "linear-gradient(90deg, rgba(0,0,0,0.25) 0%, transparent 25%, transparent 75%, rgba(0,0,0,0.25) 100%)",
-          }}
-        />
+            background: "linear-gradient(90deg, rgba(0,0,0,0.25) 0%, transparent 25%, transparent 75%, rgba(0,0,0,0.25) 100%)"
+          }} />
+        
         {/* Orange accent glow */}
         <div
           className="absolute bottom-0 left-0 right-0"
-          style={{ height: "200px", background: "linear-gradient(to top, rgba(255,140,0,0.06) 0%, transparent 100%)" }}
-        />
+          style={{ height: "200px", background: "linear-gradient(to top, rgba(255,140,0,0.06) 0%, transparent 100%)" }} />
+        
         {/* Bottom border */}
         <div
           className="absolute bottom-0 left-0 right-0 h-[2px]"
-          style={{ background: "linear-gradient(90deg, transparent 0%, #FF8C00 30%, #FF6B00 50%, #FF8C00 70%, transparent 100%)" }}
-        />
+          style={{ background: "linear-gradient(90deg, transparent 0%, #FF8C00 30%, #FF6B00 50%, #FF8C00 70%, transparent 100%)" }} />
+        
 
         {/* Content */}
         <div
           className="relative h-full flex flex-col items-center justify-end text-center px-6 pb-20 transition-all duration-1000"
-          style={{ opacity: heroLoaded ? 1 : 0, transform: heroLoaded ? "translateY(0)" : "translateY(20px)" }}
-        >
+          style={{ opacity: heroLoaded ? 1 : 0, transform: heroLoaded ? "translateY(0)" : "translateY(20px)" }}>
+          
           <div className="flex items-center gap-3 mb-5" style={{ opacity: heroLoaded ? 1 : 0, transition: "opacity 1s 0.3s" }}>
             <div className="h-[1px]" style={{ width: "48px", background: "linear-gradient(90deg, transparent, #FF8C00)" }} />
             <span className="text-[10px] font-bold tracking-[0.45em] uppercase" style={{ color: "#FF8C00" }}>
@@ -108,17 +108,17 @@ export default function DestinationPreview() {
               fontStyle: "italic",
               opacity: heroLoaded ? 1 : 0,
               transform: heroLoaded ? "translateY(0)" : "translateY(20px)",
-              transition: "opacity 0.9s 0.2s, transform 0.9s 0.2s",
-            }}
-          >
+              transition: "opacity 0.9s 0.2s, transform 0.9s 0.2s"
+            }}>
+            
             Experience {destination.name}
           </h1>
 
           <div className="flex items-center gap-2 mb-4" style={{ opacity: heroLoaded ? 1 : 0, transition: "opacity 0.8s 0.45s" }}>
             <div
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-full"
-              style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.15)", backdropFilter: "blur(8px)" }}
-            >
+              style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.15)", backdropFilter: "blur(8px)" }}>
+              
               <svg className="w-3.5 h-3.5" fill="#FF8C00" viewBox="0 0 24 24">
                 <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z" />
               </svg>
@@ -133,16 +133,16 @@ export default function DestinationPreview() {
               lineHeight: 1.7,
               letterSpacing: "0.03em",
               opacity: heroLoaded ? 1 : 0,
-              transition: "opacity 0.8s 0.55s",
-            }}
-          >
+              transition: "opacity 0.8s 0.55s"
+            }}>
+            
             {destination.tagline}
           </p>
 
           <div
             className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-            style={{ opacity: heroLoaded ? 0.6 : 0, transition: "opacity 1s 1.2s" }}
-          >
+            style={{ opacity: heroLoaded ? 0.6 : 0, transition: "opacity 1s 1.2s" }}>
+            
             <div className="w-6 h-10 rounded-full flex items-start justify-center pt-1.5" style={{ border: "1.5px solid rgba(255,255,255,0.3)" }}>
               <div style={{ width: "4px", height: "10px", borderRadius: "2px", background: "rgba(255,255,255,0.7)", animation: "heroScrollDot 1.8s ease-in-out infinite" }} />
             </div>
@@ -153,41 +153,41 @@ export default function DestinationPreview() {
       {/* ─── PACKAGE INFO BAR ────────────────────────────────── */}
       <section
         className="relative transition-colors duration-500"
-        style={{ background: infoBarBg, borderBottom: `1px solid ${borderColor}` }}
-      >
+        style={{ background: infoBarBg, borderBottom: `1px solid ${borderColor}` }}>
+        
         <div className="absolute top-0 left-0 right-0 h-[1px]" style={{ background: "linear-gradient(90deg, transparent, rgba(255,140,0,0.3), transparent)" }} />
         <div
           className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4 sm:gap-6 transition-all duration-700"
-          style={{ opacity: packageLoaded ? 1 : 0, transform: packageLoaded ? "translateY(0)" : "translateY(16px)" }}
-        >
+          style={{ opacity: packageLoaded ? 1 : 0, transform: packageLoaded ? "translateY(0)" : "translateY(16px)" }}>
+          
           <div className="min-w-0">
             <h2
-              className="font-black mb-2 transition-colors duration-500 break-words"
-              style={{ color: textPrimary, fontSize: "clamp(1.1rem, 3.5vw, 2rem)", letterSpacing: "-0.02em", lineHeight: 1.3 }}
-            >
+              className="font-black mb-2 transition-colors duration-500 break-words hidden"
+              style={{ color: textPrimary, fontSize: "clamp(1.1rem, 3.5vw, 2rem)", letterSpacing: "-0.02em", lineHeight: 1.3 }}>
+              
               {destination.package}
             </h2>
             <div className="flex items-center gap-2 flex-wrap">
               <span
-                className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full"
-                style={{ background: "rgba(255,140,0,0.1)", color: "#FF8C00", border: "1px solid rgba(255,140,0,0.2)" }}
-              >
+                className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full hidden"
+                style={{ background: "rgba(255,140,0,0.1)", color: "#FF8C00", border: "1px solid rgba(255,140,0,0.2)" }}>
+                
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                   <rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" />
                 </svg>
                 {destination.itinerary?.length ? `${destination.itinerary.length} Days` : "Multi-Day"} Package
               </span>
               <span
-                className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full"
-                style={{ background: pillBg, color: pillColor, border: `1px solid ${pillBorder}` }}
-              >
+                className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full hidden"
+                style={{ background: pillBg, color: pillColor, border: `1px solid ${pillBorder}` }}>
+                
                 🇵🇭 Philippines
               </span>
             </div>
           </div>
           <div className="text-right">
-            <p className="text-xs uppercase tracking-widest font-semibold mb-1" style={{ color: textMuted }}>Travel Dates</p>
-            <p className="text-sm font-medium" style={{ color: darkMode ? "rgba(255,255,255,0.7)" : "#374151" }}>Inquire for available dates</p>
+            <p className="text-xs uppercase tracking-widest font-semibold mb-1 hidden" style={{ color: textMuted }}>Travel Dates</p>
+            <p className="text-sm font-medium hidden" style={{ color: darkMode ? "rgba(255,255,255,0.7)" : "#374151" }}>Inquire for available dates</p>
           </div>
         </div>
       </section>
@@ -212,8 +212,8 @@ export default function DestinationPreview() {
       {/* ─── CTA FOOTER ──────────────────────────────────────── */}
       <section
         className="relative py-16 sm:py-24 px-4 sm:px-6 text-center overflow-hidden transition-colors duration-500"
-        style={{ background: ctaBg }}
-      >
+        style={{ background: ctaBg }}>
+        
         <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(255,140,0,0.06) 0%, transparent 70%)" }} />
         <div className="absolute top-0 left-0 right-0 h-[1px]" style={{ background: "linear-gradient(90deg, transparent, rgba(255,140,0,0.3), transparent)" }} />
 
@@ -226,8 +226,8 @@ export default function DestinationPreview() {
 
           <h2
             className="font-black mb-4 transition-colors duration-500"
-            style={{ color: textPrimary, fontSize: "clamp(1.8rem, 5vw, 3.2rem)", letterSpacing: "-0.03em", fontStyle: "italic", lineHeight: 1.1 }}
-          >
+            style={{ color: textPrimary, fontSize: "clamp(1.8rem, 5vw, 3.2rem)", letterSpacing: "-0.03em", fontStyle: "italic", lineHeight: 1.1 }}>
+            
             Discover More Destinations
           </h2>
           <p className="text-sm font-light max-w-sm mx-auto mb-10" style={{ color: textMuted, lineHeight: 1.8 }}>
@@ -241,9 +241,9 @@ export default function DestinationPreview() {
               background: "linear-gradient(135deg, #FF8C00 0%, #FF6B00 100%)",
               boxShadow: "0 8px 40px rgba(255,140,0,0.35), 0 0 0 1px rgba(255,255,255,0.1)",
               letterSpacing: "0.15em",
-              animation: "ctaGlow 3s ease-in-out infinite",
-            }}
-          >
+              animation: "ctaGlow 3s ease-in-out infinite"
+            }}>
+            
             <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
             </svg>
@@ -260,6 +260,6 @@ export default function DestinationPreview() {
           50% { box-shadow: 0 12px 60px rgba(255,140,0,0.55), 0 0 0 1px rgba(255,255,255,0.15); }
         }
       `}</style>
-    </div>
-  );
+    </div>);
+
 }
