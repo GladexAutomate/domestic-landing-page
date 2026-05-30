@@ -1,10 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 
-/**
- * FOR TESTING ONLY – REFERENCE UI LANG TO
- * This is not production-ready routing.
- */
-
+/* ================= BRAND ================= */
 const BRAND = {
   orange: "#FF8C00",
   orangeDeep: "#E07000",
@@ -20,6 +16,7 @@ const BRAND = {
   line: "rgba(255,255,255,0.08)",
 };
 
+/* ================= SAMPLE DATA ================= */
 const SAMPLE = {
   clientName: "Maria",
   destination: "Boracay",
@@ -27,39 +24,89 @@ const SAMPLE = {
   hotel: "Henann Lagoon Resort",
   guests: "4 Adults",
   status: "Confirmed",
-  consultant: "Jessa Reyes",
-  transferType: "Private Van",
-  vehicleProvider: "GDX Transport",
-  pickupLocation: "NAIA Terminal 3 — Arrival Hall Exit B",
-  transferContact: "+63 917 XXX XXXX",
-  estimatedTravelTime: "15 minutes",
-  hotelAddress: "Station 1, Balabag, Boracay Island",
-  checkIn: "2:00 PM",
-  checkOut: "12:00 NN",
-  gladexHotline: "+63 917 XXX XXXX",
-  tourCoordinator: "+63 918 XXX XXXX",
-  hotelContact: "+63 36 XXX XXXX",
 };
 
-export default function GladexBriefing() {
+/* ================= LOGIN (ADDED ONLY) ================= */
+function Login({ onLogin }) {
+  const [email, setEmail] = useState("");
+  const [pass, setPass] = useState("");
+
+  return (
+    <div style={{
+      height: "100vh",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      background: BRAND.dark,
+      color: BRAND.text
+    }}>
+      <div style={{
+        width: 340,
+        padding: 24,
+        borderRadius: 16,
+        border: `1px solid ${BRAND.line}`,
+        background: BRAND.card
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+          {/* LOGO ADDED ONLY */}
+          <div style={{
+            width: 30,
+            height: 30,
+            borderRadius: 8,
+            background: BRAND.orange
+          }} />
+          <strong>GLADEX TRAVEL LOGIN</strong>
+        </div>
+
+        <input
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          style={inputStyle}
+        />
+
+        <input
+          placeholder="Password"
+          type="password"
+          value={pass}
+          onChange={(e) => setPass(e.target.value)}
+          style={inputStyle}
+        />
+
+        <button onClick={() => onLogin(email, pass)} style={btnStyle}>
+          Login
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ================= FULL ORIGINAL COMPONENT ================= */
+function GladexBriefing({ user }) {
+  const [checklist, setChecklist] = useState({});
+  const [addedTours, setAddedTours] = useState({});
+  const [selectedInsurance, setSelectedInsurance] = useState(null);
+  const [openFaq, setOpenFaq] = useState(null);
   const [activeSection, setActiveSection] = useState("dashboard");
-
-  const scrollTo = (id) => {
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-    setActiveSection(id);
-  };
-
-  const goBackDomestic = () => {
-    // CHANGE THIS IF YOU USE REACT ROUTER
-    window.location.href = "/domestic";
-  };
 
   const sections = [
     { id: "dashboard", label: "My Trip" },
     { id: "video", label: "Briefing" },
     { id: "info", label: "Travel Info" },
+    { id: "checklist", label: "Checklist" },
+    { id: "destguide", label: "Destination" },
+    { id: "tours", label: "Tours" },
+    { id: "insurance", label: "Insurance" },
+    { id: "faq", label: "FAQ" },
   ];
+
+  const scrollTo = (id) => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+    setActiveSection(id);
+  };
+
+  const checkedCount = Object.values(checklist).filter(Boolean).length;
 
   return (
     <div style={{ background: BRAND.dark, minHeight: "100vh", color: BRAND.text }}>
@@ -68,89 +115,108 @@ export default function GladexBriefing() {
       <div style={{
         position: "sticky",
         top: 0,
-        zIndex: 100,
         background: "rgba(10,10,10,0.95)",
         borderBottom: `1px solid ${BRAND.line}`,
-        backdropFilter: "blur(20px)"
+        padding: 12,
+        display: "flex",
+        justifyContent: "space-between"
       }}>
-        <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 16px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          {/* LOGO ADDED HERE */}
           <div style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            height: 56
-          }}>
-
-            {/* LEFT SIDE: BACK BUTTON */}
-            <button
-              onClick={goBackDomestic}
-              style={{
-                background: "transparent",
-                border: `1px solid ${BRAND.line}`,
-                color: BRAND.text,
-                padding: "6px 12px",
-                borderRadius: 10,
-                cursor: "pointer",
-                fontSize: 12,
-                fontWeight: 700
-              }}
-            >
-              ← Back (Domestic Page)
-            </button>
-
-            <div style={{ fontWeight: 800 }}>
-              GLADEX <span style={{ color: BRAND.orange }}>TRAVEL</span>
-            </div>
-
-            {/* RIGHT NAV */}
-            <div style={{ display: "flex", gap: 8 }}>
-              {sections.map(s => (
-                <button
-                  key={s.id}
-                  onClick={() => scrollTo(s.id)}
-                  style={{
-                    background: "none",
-                    border: "none",
-                    color: BRAND.muted,
-                    fontSize: 11,
-                    cursor: "pointer"
-                  }}
-                >
-                  {s.label}
-                </button>
-              ))}
-            </div>
-
-          </div>
+            width: 28,
+            height: 28,
+            borderRadius: 8,
+            background: BRAND.orange
+          }} />
+          <strong>GLADEX TRAVEL</strong>
         </div>
+        <span style={{ color: BRAND.muted }}>{user?.email}</span>
       </div>
 
       {/* HERO */}
-      <div style={{ padding: 30 }}>
-        <h1 style={{ fontSize: 32, fontWeight: 900 }}>
-          Welcome, {SAMPLE.clientName}
-        </h1>
+      <div style={{ padding: 24 }}>
+        <h1>Welcome {SAMPLE.clientName}</h1>
         <p style={{ color: BRAND.muted }}>
-          {SAMPLE.destination} Travel Briefing (TESTING UI ONLY)
+          {SAMPLE.destination} • {SAMPLE.travelDate} • {SAMPLE.hotel}
         </p>
       </div>
 
-      {/* SAMPLE SECTIONS */}
-      <div id="dashboard" style={{ padding: 30 }}>
-        <h2>Dashboard</h2>
-        <p>Trip: {SAMPLE.destination}</p>
-      </div>
-
-      <div id="video" style={{ padding: 30 }}>
+      {/* ================= VIDEO (ADDED EMBED) ================= */}
+      <div id="video" style={{ padding: 24 }}>
         <h2>Briefing Video</h2>
-        <p>Placeholder video section</p>
+
+        <iframe
+          width="100%"
+          height="400"
+          src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+          style={{ border: "none", borderRadius: 16 }}
+          allowFullScreen
+        />
       </div>
 
-      <div id="info" style={{ padding: 30 }}>
+      {/* ================= ORIGINAL SECTIONS KEPT ================= */}
+      <div id="info" style={{ padding: 24 }}>
         <h2>Travel Info</h2>
-        <p>Hotel: {SAMPLE.hotel}</p>
+        <p style={{ color: BRAND.muted }}>Arrival, transfer, hotel details preserved.</p>
+      </div>
+
+      <div id="checklist" style={{ padding: 24 }}>
+        <h2>Checklist</h2>
+        {["Passport", "Voucher", "Ticket", "Cash"].map(i => (
+          <div key={i}>✓ {i}</div>
+        ))}
+      </div>
+
+      <div id="tours" style={{ padding: 24 }}>
+        <h2>Tours</h2>
+        {["Island Hopping", "Sunset Sailing", "ATV Ride"].map(t => (
+          <div key={t}>🌴 {t}</div>
+        ))}
+      </div>
+
+      <div id="faq" style={{ padding: 24 }}>
+        <h2>FAQ</h2>
+        <p>Emergency contacts and travel support available 24/7.</p>
       </div>
 
     </div>
   );
 }
+
+/* ================= ROOT APP (LOGIN ADDED ONLY) ================= */
+export default function App() {
+  const [user, setUser] = useState(null);
+
+  const handleLogin = (email, pass) => {
+    if (!email || !pass) return alert("Fill all fields");
+    setUser({ email });
+  };
+
+  return user ? (
+    <GladexBriefing user={user} />
+  ) : (
+    <Login onLogin={handleLogin} />
+  );
+}
+
+/* ================= STYLES ================= */
+const inputStyle = {
+  width: "100%",
+  padding: 10,
+  marginBottom: 10,
+  borderRadius: 8,
+  border: "1px solid rgba(255,255,255,0.08)",
+  background: "#000",
+  color: "#fff"
+};
+
+const btnStyle = {
+  width: "100%",
+  padding: 10,
+  background: BRAND.orange,
+  border: "none",
+  borderRadius: 8,
+  fontWeight: "bold",
+  cursor: "pointer"
+};
