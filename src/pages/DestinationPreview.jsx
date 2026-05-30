@@ -706,7 +706,6 @@ export default function GladexBriefing() {
             </button>
           </div>
         </div>
-
       </div>
     </div>
   );
