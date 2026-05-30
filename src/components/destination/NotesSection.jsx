@@ -31,12 +31,12 @@ export default function NotesSection({ destination, darkMode }) {
             </span>
             <div className="h-[1px] flex-1 max-w-[60px]" style={{ background: "linear-gradient(90deg, rgba(255,140,0,0.5), transparent)" }} />
           </div>
-          <h2
-            className="font-black mb-2 hidden"
-            style={{ color: textPrimary, fontSize: "clamp(1.6rem, 3.5vw, 2.4rem)", letterSpacing: "-0.02em" }}>
-            
-            Requirements &amp; Notes
-          </h2>
+          
+
+
+
+
+          
         </div>
 
         {/* Card */}
@@ -56,47 +56,47 @@ export default function NotesSection({ destination, darkMode }) {
           {/* Top accent strip */}
           <div className="h-[2px]" style={{ background: "linear-gradient(90deg, transparent, rgba(255,140,0,0.7), transparent)" }} />
 
-          <div className="p-7 hidden">
-            {/* Header row */}
-            <div className="flex items-center gap-3 mb-6">
-              <div
-                className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                style={{ background: "rgba(255,140,0,0.12)", border: "1px solid rgba(255,140,0,0.2)" }}>
-                
-                <svg className="w-5 h-5" fill="#FF8C00" viewBox="0 0 24 24">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
-                </svg>
-              </div>
-              <h3 className="font-bold text-base" style={{ color: textPrimary }}>
-                Important Notes
-              </h3>
-            </div>
+          
 
-            <ul className="space-y-3.5">
-              {destination.notes.map((note, i) =>
-              <li
-                key={i}
-                className="flex items-start gap-3 text-sm transition-all duration-500"
-                style={{
-                  color: textMuted,
-                  opacity: visible ? 1 : 0,
-                  transitionDelay: `${0.06 + i * 0.05}s`
-                }}>
-                
-                  <span
-                  className="flex-shrink-0 w-5 h-5 rounded-full mt-0.5 flex items-center justify-center"
-                  style={{ background: "rgba(255,140,0,0.12)", minWidth: "20px" }}>
-                  
-                    <span
-                    className="w-1.5 h-1.5 rounded-full"
-                    style={{ background: "#FF8C00" }} />
-                  
-                  </span>
-                  <span className="leading-relaxed">{note}</span>
-                </li>
-              )}
-            </ul>
-          </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
         </div>
       </div>
     </section>);

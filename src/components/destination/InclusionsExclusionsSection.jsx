@@ -70,44 +70,44 @@ export default function InclusionsExclusionsSection({ destination, darkMode }) {
             {/* Card top strip */}
             <div className="h-[2px]" style={{ background: "linear-gradient(90deg, transparent, rgba(34,197,94,0.6), transparent)" }} />
 
-            <div className="p-6 hidden">
-              <div className="flex items-center gap-3 mb-6">
-                <div
-                  className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                  style={{ background: "rgba(34,197,94,0.12)", border: "1px solid rgba(34,197,94,0.2)" }}>
-                  
-                  <svg className="w-5 h-5" fill="none" stroke="#22c55e" strokeWidth={2.5} viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                  </svg>
-                </div>
-                <div className="min-w-0">
-                  <h3 className="font-bold text-sm" style={{ color: textPrimary }}>Included</h3>
-                  <span className="text-xs" style={{ color: "#22c55e" }}>✅ {destination.inclusions?.length || 0} items</span>
-                </div>
-              </div>
+            
 
-              <ul className="space-y-2.5">
-                {destination.inclusions?.map((item, i) =>
-                <li
-                  key={i}
-                  className="flex items-start gap-2.5 text-xs sm:text-sm transition-all duration-500"
-                  style={{
-                    color: textMuted,
-                    opacity: leftVisible ? 1 : 0,
-                    transitionDelay: `${0.05 + i * 0.04}s`
-                  }}>
-                  
-                    <span
-                    className="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mt-0.5 text-xs font-black"
-                    style={{ background: "rgba(34,197,94,0.1)", color: "#22c55e", minWidth: "20px" }}>
-                    
-                      ✓
-                    </span>
-                    <span className="leading-relaxed break-words min-w-0">{item}</span>
-                  </li>
-                )}
-              </ul>
-            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
           </div>
 
           {/* Not Included */}
@@ -124,44 +124,44 @@ export default function InclusionsExclusionsSection({ destination, darkMode }) {
             
             <div className="h-[2px]" style={{ background: "linear-gradient(90deg, transparent, rgba(239,68,68,0.6), transparent)" }} />
 
-            <div className="p-4 sm:p-6 hidden">
-              <div className="flex items-center gap-3 mb-5">
-                <div
-                  className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                  style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)" }}>
-                  
-                  <svg className="w-5 h-5" fill="none" stroke="#ef4444" strokeWidth={2.5} viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="font-bold text-sm" style={{ color: textPrimary }}>Not Included</h3>
-                  <span className="text-xs" style={{ color: "#ef4444" }}>❌ {destination.exclusions?.length || 0} items</span>
-                </div>
-              </div>
+            
 
-              <ul className="space-y-2.5">
-                {destination.exclusions?.map((item, i) =>
-                <li
-                  key={i}
-                  className="flex items-start gap-2.5 text-xs sm:text-sm transition-all duration-500"
-                  style={{
-                    color: textMuted,
-                    opacity: rightVisible ? 1 : 0,
-                    transitionDelay: `${0.05 + i * 0.04}s`
-                  }}>
-                  
-                    <span
-                    className="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mt-0.5 text-xs font-black"
-                    style={{ background: "rgba(239,68,68,0.1)", color: "#ef4444", minWidth: "20px" }}>
-                    
-                      ✗
-                    </span>
-                    <span className="leading-relaxed break-words min-w-0">{item}</span>
-                  </li>
-                )}
-              </ul>
-            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
           </div>
         </div>
       </div>

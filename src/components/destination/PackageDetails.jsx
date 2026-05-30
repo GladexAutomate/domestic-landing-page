@@ -182,12 +182,12 @@ export default function PackageDetails({ destination, darkMode, centerPackageTit
 
           <SectionLabel text="Package Details" centered={centerPackageTitle} />
 
-          <p
-            className={`font-black leading-snug break-words hidden ${centerPackageTitle ? "text-center" : ""}`}
-            style={{ color: textPrimary, letterSpacing: "-0.02em", fontSize: "clamp(1rem, 3.5vw, 1.5rem)" }}>
-            
-            {destination.package}
-          </p>
+          
+
+
+
+
+          
 
           <div className={`flex items-center gap-3 mt-4 ${centerPackageTitle ? "justify-center" : ""}`}>
             <div className="flex items-center gap-1.5">
@@ -208,85 +208,85 @@ export default function PackageDetails({ destination, darkMode, centerPackageTit
       {/* Hotel Options */}
       {destination.hotelCategories?.length > 0 &&
       <AnimatedCard delay={0.08}>
-          <div
-          className="rounded-2xl p-5 sm:p-7 relative overflow-hidden hidden"
-          style={{
-            background: cardBg,
-            border: `1px solid ${cardBorder}`,
-            boxShadow: darkMode ? "0 4px 24px rgba(0,0,0,0.3)" : "0 4px 24px rgba(0,0,0,0.06)"
-          }}>
           
-            <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: "linear-gradient(90deg, transparent, #FF8C00, transparent)" }} />
 
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <SectionLabel text="Rooms & Rates" />
-              </div>
-            </div>
 
-            <p className="text-sm mb-5" style={{ color: textMuted }}>Select your preferred accommodation category.</p>
 
-            <div className="space-y-3">
-              {destination.hotelCategories.map((cat, i) =>
-            <HotelCard key={i} cat={cat} index={i} darkMode={darkMode} />
-            )}
-            </div>
 
-            <p className="text-[11px] mt-5 leading-relaxed" style={{ color: darkMode ? "rgba(255,255,255,0.25)" : "#94a3b8" }}>
-              * All rates are per person. Subject to availability and change without prior notice.
-            </p>
-          </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
         </AnimatedCard>
       }
 
       {/* Optional Tours */}
       {destination.optionalTours?.length > 0 &&
       <AnimatedCard delay={0.12}>
-          <div
-          className="rounded-2xl p-5 sm:p-7 relative overflow-hidden hidden"
-          style={{
-            background: cardBg,
-            border: `1px solid ${cardBorder}`,
-            boxShadow: darkMode ? "0 4px 24px rgba(0,0,0,0.3)" : "0 4px 24px rgba(0,0,0,0.06)"
-          }}>
           
-            <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: "linear-gradient(90deg, transparent, #FF8C00, transparent)" }} />
-            <SectionLabel text="Optional Add-Ons" />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {destination.optionalTours.map((tour, i) =>
-            <OptionalTourCard key={i} tour={tour} darkMode={darkMode} />
-            )}
-            </div>
-          </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
         </AnimatedCard>
       }
 
       {/* Important Notes */}
       {destination.notes?.length > 0 &&
       <AnimatedCard delay={0.16}>
-          <div
-          className="rounded-2xl p-5 sm:p-7 relative overflow-hidden hidden"
-          style={{
-            background: darkMode ? "rgba(20,14,4,0.85)" : "rgba(255,251,245,0.95)",
-            border: `1px solid ${darkMode ? "rgba(255,140,0,0.15)" : "rgba(255,140,0,0.2)"}`,
-            boxShadow: darkMode ? "0 4px 24px rgba(255,140,0,0.05)" : "0 4px 24px rgba(255,140,0,0.06)"
-          }}>
           
-            <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: "linear-gradient(90deg, transparent, rgba(255,140,0,0.6), transparent)" }} />
-            <SectionLabel text="Important" />
-            <ul className="space-y-3">
-              {destination.notes.map((note, i) =>
-            <li key={i} className="flex items-start gap-3 text-sm" style={{ color: darkMode ? "rgba(255,255,255,0.65)" : "#374151" }}>
-                  <span className="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mt-0.5" style={{ background: "rgba(255,140,0,0.12)" }}>
-                    <svg className="w-3 h-3" fill="#FF8C00" viewBox="0 0 24 24">
-                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
-                    </svg>
-                  </span>
-                  {note}
-                </li>
-            )}
-            </ul>
-          </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
         </AnimatedCard>
       }
     </div>);
