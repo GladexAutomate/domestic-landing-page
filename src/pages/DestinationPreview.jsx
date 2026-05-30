@@ -161,33 +161,33 @@ export default function DestinationPreview() {
           style={{ opacity: packageLoaded ? 1 : 0, transform: packageLoaded ? "translateY(0)" : "translateY(16px)" }}>
           
           <div className="min-w-0">
-            <h2
-              className="font-black mb-2 transition-colors duration-500 break-words hidden"
-              style={{ color: textPrimary, fontSize: "clamp(1.1rem, 3.5vw, 2rem)", letterSpacing: "-0.02em", lineHeight: 1.3 }}>
-              
-              {destination.package}
-            </h2>
+            
+
+
+
+
+            
             <div className="flex items-center gap-2 flex-wrap">
-              <span
-                className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full hidden"
-                style={{ background: "rgba(255,140,0,0.1)", color: "#FF8C00", border: "1px solid rgba(255,140,0,0.2)" }}>
-                
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                  <rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" />
-                </svg>
-                {destination.itinerary?.length ? `${destination.itinerary.length} Days` : "Multi-Day"} Package
-              </span>
-              <span
-                className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full hidden"
-                style={{ background: pillBg, color: pillColor, border: `1px solid ${pillBorder}` }}>
-                
-                🇵🇭 Philippines
-              </span>
+              
+
+
+
+
+
+
+
+              
+              
+
+
+
+
+              
             </div>
           </div>
           <div className="text-right">
-            <p className="text-xs uppercase tracking-widest font-semibold mb-1 hidden" style={{ color: textMuted }}>Travel Dates</p>
-            <p className="text-sm font-medium hidden" style={{ color: darkMode ? "rgba(255,255,255,0.7)" : "#374151" }}>Inquire for available dates</p>
+            
+            
           </div>
         </div>
       </section>

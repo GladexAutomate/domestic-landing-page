@@ -195,9 +195,9 @@ export default function PackageDetails({ destination, darkMode, centerPackageTit
                 <rect x="3" y="4" width="18" height="18" rx="2" />
                 <path d="M16 2v4M8 2v4M3 10h18" fill="none" stroke="#fff" strokeWidth={2} />
               </svg>
-              <span className="text-xs font-semibold hidden" style={{ color: "#FF8C00" }}>
-                {destination.itinerary?.length ? `${destination.itinerary.length} Days` : "Multi-Day"} Package
-              </span>
+              
+
+              
             </div>
             <span className="text-[10px]" style={{ color: textMuted }}>•</span>
             <span className="text-xs" style={{ color: textMuted }}>Philippines</span>
