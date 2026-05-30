@@ -1,229 +1,156 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
-/* =========================
-   YOUR ORIGINAL BRIEFING UI
-   ========================= */
+/**
+ * FOR TESTING ONLY – REFERENCE UI LANG TO
+ * This is not production-ready routing.
+ */
 
-function GladexBriefing({ onLogout }) {
+const BRAND = {
+  orange: "#FF8C00",
+  orangeDeep: "#E07000",
+  orangeGlow: "rgba(255,140,0,0.18)",
+  dark: "#0a0a0a",
+  dark2: "#111111",
+  dark3: "#181818",
+  card: "#141414",
+  cardBorder: "rgba(255,255,255,0.07)",
+  text: "#FFFFFF",
+  muted: "rgba(255,255,255,0.45)",
+  muted2: "rgba(255,255,255,0.25)",
+  line: "rgba(255,255,255,0.08)",
+};
+
+const SAMPLE = {
+  clientName: "Maria",
+  destination: "Boracay",
+  travelDate: "June 15–18, 2026",
+  hotel: "Henann Lagoon Resort",
+  guests: "4 Adults",
+  status: "Confirmed",
+  consultant: "Jessa Reyes",
+  transferType: "Private Van",
+  vehicleProvider: "GDX Transport",
+  pickupLocation: "NAIA Terminal 3 — Arrival Hall Exit B",
+  transferContact: "+63 917 XXX XXXX",
+  estimatedTravelTime: "15 minutes",
+  hotelAddress: "Station 1, Balabag, Boracay Island",
+  checkIn: "2:00 PM",
+  checkOut: "12:00 NN",
+  gladexHotline: "+63 917 XXX XXXX",
+  tourCoordinator: "+63 918 XXX XXXX",
+  hotelContact: "+63 36 XXX XXXX",
+};
+
+export default function GladexBriefing() {
+  const [activeSection, setActiveSection] = useState("dashboard");
+
+  const scrollTo = (id) => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    setActiveSection(id);
+  };
+
+  const goBackDomestic = () => {
+    // CHANGE THIS IF YOU USE REACT ROUTER
+    window.location.href = "/domestic";
+  };
+
+  const sections = [
+    { id: "dashboard", label: "My Trip" },
+    { id: "video", label: "Briefing" },
+    { id: "info", label: "Travel Info" },
+  ];
+
   return (
-    <div style={{ background: "#0a0a0a", minHeight: "100vh", color: "#fff", fontFamily: "Poppins" }}>
+    <div style={{ background: BRAND.dark, minHeight: "100vh", color: BRAND.text }}>
 
-      {/* TOP BAR */}
+      {/* TOP NAV */}
       <div style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        padding: "12px 16px",
-        borderBottom: "1px solid rgba(255,255,255,0.08)",
         position: "sticky",
         top: 0,
-        background: "#0a0a0a",
-        zIndex: 10
+        zIndex: 100,
+        background: "rgba(10,10,10,0.95)",
+        borderBottom: `1px solid ${BRAND.line}`,
+        backdropFilter: "blur(20px)"
       }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 16px" }}>
           <div style={{
-            width: 28,
-            height: 28,
-            borderRadius: 8,
-            background: "linear-gradient(135deg,#FF8C00,#E07000)",
             display: "flex",
             alignItems: "center",
-            justifyContent: "center",
-            fontWeight: 900
+            justifyContent: "space-between",
+            height: 56
           }}>
-            G
-          </div>
-          <strong>GLADEX TRAVEL</strong>
-        </div>
 
-        <button
-          onClick={onLogout}
-          style={{
-            background: "transparent",
-            border: "1px solid rgba(255,255,255,0.2)",
-            color: "#fff",
-            padding: "6px 10px",
-            borderRadius: 8,
-            cursor: "pointer"
-          }}
-        >
-          Logout
-        </button>
+            {/* LEFT SIDE: BACK BUTTON */}
+            <button
+              onClick={goBackDomestic}
+              style={{
+                background: "transparent",
+                border: `1px solid ${BRAND.line}`,
+                color: BRAND.text,
+                padding: "6px 12px",
+                borderRadius: 10,
+                cursor: "pointer",
+                fontSize: 12,
+                fontWeight: 700
+              }}
+            >
+              ← Back (Domestic Page)
+            </button>
+
+            <div style={{ fontWeight: 800 }}>
+              GLADEX <span style={{ color: BRAND.orange }}>TRAVEL</span>
+            </div>
+
+            {/* RIGHT NAV */}
+            <div style={{ display: "flex", gap: 8 }}>
+              {sections.map(s => (
+                <button
+                  key={s.id}
+                  onClick={() => scrollTo(s.id)}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: BRAND.muted,
+                    fontSize: 11,
+                    cursor: "pointer"
+                  }}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+
+          </div>
+        </div>
       </div>
 
       {/* HERO */}
-      <div style={{ padding: 20 }}>
-        <h1>Welcome, Maria 👋</h1>
-        <p style={{ opacity: 0.7 }}>Boracay Travel Briefing is ready</p>
-
-        {/* VIDEO SECTION */}
-        <div style={{
-          marginTop: 20,
-          maxWidth: 320,
-          borderRadius: 20,
-          overflow: "hidden",
-          border: "1px solid rgba(255,140,0,0.2)"
-        }}>
-          <div style={{
-            paddingTop: "177%",
-            position: "relative",
-            background: "#111"
-          }}>
-            <div style={{
-              position: "absolute",
-              inset: 0,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexDirection: "column",
-              gap: 10
-            }}>
-              <div style={{
-                width: 70,
-                height: 70,
-                borderRadius: "50%",
-                background: "rgba(255,140,0,0.15)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: 26
-              }}>
-                ▶
-              </div>
-
-              <p style={{ fontWeight: 700 }}>Boracay Briefing Video</p>
-              <p style={{ fontSize: 12, opacity: 0.6 }}>
-                Arrival • Transfer • Hotel • Tours
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* SIMPLE CONTENT PREVIEW */}
-        <div style={{ marginTop: 30 }}>
-          <h3>Travel Information</h3>
-
-          <ul style={{ opacity: 0.8, fontSize: 14 }}>
-            <li>Arrival Instructions</li>
-            <li>Transfer Details</li>
-            <li>Hotel Check-in</li>
-            <li>Tour Reminders</li>
-            <li>Emergency Contacts</li>
-          </ul>
-        </div>
+      <div style={{ padding: 30 }}>
+        <h1 style={{ fontSize: 32, fontWeight: 900 }}>
+          Welcome, {SAMPLE.clientName}
+        </h1>
+        <p style={{ color: BRAND.muted }}>
+          {SAMPLE.destination} Travel Briefing (TESTING UI ONLY)
+        </p>
       </div>
-    </div>
-  );
-}
 
-/* =========================
-        LOGIN SCREEN
-   ========================= */
-
-export default function App() {
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [form, setForm] = useState({
-    gdx: "",
-    identity: "",
-  });
-
-  const handleLogin = () => {
-    if (!form.gdx || !form.identity) {
-      alert("Enter GDX + Email/Last Name");
-      return;
-    }
-
-    // DEMO ONLY LOGIN (no backend)
-    setLoggedIn(true);
-  };
-
-  if (loggedIn) {
-    return <GladexBriefing onLogout={() => setLoggedIn(false)} />;
-  }
-
-  return (
-    <div style={{
-      height: "100vh",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      background: "#0a0a0a",
-      color: "#fff",
-      fontFamily: "Poppins"
-    }}>
-      <div style={{
-        width: 340,
-        padding: 20,
-        borderRadius: 16,
-        border: "1px solid rgba(255,255,255,0.08)",
-        background: "#111"
-      }}>
-
-        {/* LOGO */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-          <div style={{
-            width: 30,
-            height: 30,
-            borderRadius: 8,
-            background: "linear-gradient(135deg,#FF8C00,#E07000)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontWeight: 900
-          }}>
-            G
-          </div>
-          <strong>GLADEX TRAVEL</strong>
-        </div>
-
-        <h3 style={{ marginBottom: 12 }}>Travel Briefing Portal</h3>
-
-        <input
-          placeholder="GDX Code"
-          value={form.gdx}
-          onChange={(e) => setForm({ ...form, gdx: e.target.value })}
-          style={{
-            width: "100%",
-            padding: 10,
-            marginBottom: 10,
-            borderRadius: 8,
-            border: "1px solid #333",
-            background: "#000",
-            color: "#fff"
-          }}
-        />
-
-        <input
-          placeholder="Email or Last Name"
-          value={form.identity}
-          onChange={(e) => setForm({ ...form, identity: e.target.value })}
-          style={{
-            width: "100%",
-            padding: 10,
-            marginBottom: 16,
-            borderRadius: 8,
-            border: "1px solid #333",
-            background: "#000",
-            color: "#fff"
-          }}
-        />
-
-        <button
-          onClick={handleLogin}
-          style={{
-            width: "100%",
-            padding: 12,
-            borderRadius: 10,
-            border: "none",
-            background: "linear-gradient(135deg,#FF8C00,#E07000)",
-            color: "#fff",
-            fontWeight: 800,
-            cursor: "pointer"
-          }}
-        >
-          Access My Trip
-        </button>
+      {/* SAMPLE SECTIONS */}
+      <div id="dashboard" style={{ padding: 30 }}>
+        <h2>Dashboard</h2>
+        <p>Trip: {SAMPLE.destination}</p>
       </div>
+
+      <div id="video" style={{ padding: 30 }}>
+        <h2>Briefing Video</h2>
+        <p>Placeholder video section</p>
+      </div>
+
+      <div id="info" style={{ padding: 30 }}>
+        <h2>Travel Info</h2>
+        <p>Hotel: {SAMPLE.hotel}</p>
+      </div>
+
     </div>
   );
 }
