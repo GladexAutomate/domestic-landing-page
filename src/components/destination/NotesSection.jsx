@@ -32,7 +32,7 @@ export default function NotesSection({ destination, darkMode }) {
             <div className="h-[1px] flex-1 max-w-[60px]" style={{ background: "linear-gradient(90deg, rgba(255,140,0,0.5), transparent)" }} />
           </div>
           <h2
-            className="font-black mb-2"
+            className="font-black mb-2 hidden"
             style={{ color: textPrimary, fontSize: "clamp(1.6rem, 3.5vw, 2.4rem)", letterSpacing: "-0.02em" }}>
             
             Requirements &amp; Notes
