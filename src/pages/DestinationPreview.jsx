@@ -16,7 +16,7 @@ const BRAND = {
 };
 
 const SAMPLE = {
-  clientName: "Maria",
+  clientName: "Maria", 
   destination: "Boracay",
   travelDate: "June 15–18, 2026",
   hotel: "Henann Lagoon Resort",
@@ -79,7 +79,7 @@ const INSURANCE = [
 
 const FAQS = [
   { q: "What if my flight is delayed?", a: "Contact our Gladex Hotline immediately. Our ground team will coordinate your updated arrival and adjust transfer arrangements accordingly." },
-  { q: "What time is hotel check-in?", a: `Standard check-in is at ${SAMPLE.checkIn}. Early check-in is subject to availability — you may request upon arrival. Check-out is at ${SAMPLE.checkOut}.` },
+  { q: "What time is hotel check-in?", a: `Standard check-in is at 2:00 PM. Early check-in is subject to availability — you may request upon arrival. Check-out is at 12:00 NN.` },
   { q: "What if it rains?", a: "Some outdoor tours may be rescheduled or modified for safety. Our coordinator will advise you on alternatives. Always bring a light raincoat." },
   { q: "Can I add optional tours on-site?", a: "Yes, you may add tours through this portal before departure. On-site availability cannot be guaranteed, and rates may differ." },
   { q: "Who do I contact during emergencies?", a: "Use the Emergency Assistance button in the Emergency Contacts section. Our Gladex Hotline is available 24/7 during your travel dates." },
@@ -154,6 +154,17 @@ function StatusBadge({ label, color = BRAND.orange }) {
 }
 
 export default function GladexBriefing() {
+  // Authentication State
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return localStorage.getItem("gladex_authenticated") === "true";
+  });
+  const [username, setUsername] = useState(() => {
+    return localStorage.getItem("gladex_user_name") || "";
+  });
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  // Existing Component States
   const [checklist, setChecklist] = useState({});
   const [addedTours, setAddedTours] = useState({});
   const [selectedInsurance, setSelectedInsurance] = useState(null);
@@ -177,10 +188,101 @@ export default function GladexBriefing() {
     setActiveSection(id);
   };
 
+  // DEMO LOGIN CHECKER
+  const handleLogin = (e) => {
+    e.preventDefault();
+    
+    // Tinitingnan kung may 'gdx' sa password kahit magkakaiba ang casing
+    const containsGDX = password.toLowerCase().includes("gdx");
+
+    if (username.trim() !== "" && containsGDX) {
+      setIsAuthenticated(true);
+      localStorage.setItem("gladex_authenticated", "true");
+      localStorage.setItem("gladex_user_name", username.trim());
+      setError("");
+    } else {
+      setError("Mali ang Code! Siguraduhing may text na 'GDX' (e.g., GDX2026)");
+    }
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    localStorage.removeItem("gladex_authenticated");
+    localStorage.removeItem("gladex_user_name");
+    setUsername("");
+    setPassword("");
+  };
+
   const checkedCount = Object.values(checklist).filter(Boolean).length;
-
   const totalAdded = Object.keys(addedTours).length;
+  
+  // Dynamic replacement para magamit ang pinasok na demo name
+  const displayName = username || SAMPLE.clientName;
 
+  // 🛡️ SECURITY WALL: KUNG HINDI PARIN AUTHENTICATED, LOGIN FORM LANG ANG IPAPAKITA NG RETURN NA ITO.
+  // MAPIPIGILAN DITO ANG PAGBASA AT PAG-LOAD NG BUONG MAIN CODE DETAILS SA IBABA.
+  if (!isAuthenticated) {
+    return (
+      <div style={{ background: BRAND.dark, minHeight: "100vh", fontFamily: "'Poppins', 'Segoe UI', sans-serif", color: BRAND.text, display: "flex", alignItems: "center", justifyContent: "center", padding: 16 }}>
+        <style>{`
+          @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,800&display=swap');
+          * { box-sizing: border-box; margin: 0; padding: 0; }
+        `}</style>
+        <div style={{ width: "100%", maxWidth: 400, background: BRAND.card, border: `1px solid ${BRAND.cardBorder}`, borderRadius: 20, padding: 32, boxShadow: `0 0 60px ${BRAND.orangeGlow}` }}>
+          
+          {/* Logo Section */}
+          <div style={{ display: "flex", alignItems: "center", gap: 10, justifyContent: "center", marginBottom: 24 }}>
+            <div style={{ width: 36, height: 36, borderRadius: 10, background: `linear-gradient(135deg, ${BRAND.orange}, ${BRAND.orangeDeep})`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <span style={{ fontSize: 16, fontWeight: 900, color: "#fff", fontStyle: "italic" }}>G</span>
+            </div>
+            <span style={{ fontWeight: 800, fontSize: 18, letterSpacing: "-0.03em", color: BRAND.text }}>GLADEX <span style={{ color: BRAND.orange }}>TRAVEL</span></span>
+          </div>
+          
+          <h2 style={{ fontSize: 20, fontWeight: 700, textAlign: "center", marginBottom: 8 }}>Client Portal Login</h2>
+          <p style={{ fontSize: 12, color: BRAND.muted, textAlign: "center", marginBottom: 24 }}>Mangyaring mag-login muna para makita ang iyong travel details</p>
+          
+          <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            <div>
+              <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: BRAND.muted, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6 }}>Full Name</label>
+              <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Kahit anong pangalan (e.g. Juan)" required
+                style={{ width: "100%", padding: "12px 16px", borderRadius: 10, background: BRAND.dark2, border: `1px solid ${BRAND.line}`, color: BRAND.text, fontSize: 13, outline: "none", transition: "border-color 0.2s" }}
+                onFocus={(e) => e.target.style.borderColor = BRAND.orange}
+                onBlur={(e) => e.target.style.borderColor = BRAND.line}
+              />
+            </div>
+            
+            <div>
+              <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: BRAND.muted, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6 }}>GDX Booking Code</label>
+              <input type="text" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Kahit anong code na may 'GDX' (e.g. GDX111)" required
+                style={{ width: "100%", padding: "12px 16px", borderRadius: 10, background: BRAND.dark2, border: `1px solid ${BRAND.line}`, color: BRAND.text, fontSize: 13, outline: "none", transition: "border-color 0.2s" }}
+                onFocus={(e) => e.target.style.borderColor = BRAND.orange}
+                onBlur={(e) => e.target.style.borderColor = BRAND.line}
+              />
+            </div>
+
+            {error && (
+              <p style={{ color: "#ef4444", fontSize: 12, textAlign: "center", margin: "4px 0 0" }}>⚠️ {error}</p>
+            )}
+
+            <button type="submit"
+              style={{ width: "100%", marginTop: 8, padding: "12px 16px", borderRadius: 10, border: "none", background: `linear-gradient(135deg, ${BRAND.orange}, ${BRAND.orangeDeep})`, color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", letterSpacing: "0.04em" }}>
+              Access Dashboard
+            </button>
+          </form>
+          
+          {/* Instructions Box */}
+          <div style={{ marginTop: 24, padding: 12, background: "rgba(255,255,255,0.02)", borderRadius: 10, border: `1px solid ${BRAND.line}` }}>
+            <p style={{ fontSize: 10, color: BRAND.muted, textAlign: "center", marginBottom: 4 }}>💡 Paano pumasok sa Demo:</p>
+            <p style={{ fontSize: 11, color: BRAND.text, textAlign: "center", fontWeight: 500, lineHeight: 1.4 }}>
+              Ilagay ang iyong pangalan at mag-imbento ng code na may salitang <span style={{ color: BRAND.orange }}>GDX</span> (Halimbawa: <span style={{ color: BRAND.orange }}>GDX-DEMO</span>) para ma-redirect ka sa main page.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 🔓 MAIN UI SECTION: Eto naman ang maglo-load kapag tapos na at tama ang pag-login.
   return (
     <div style={{ background: BRAND.dark, minHeight: "100vh", fontFamily: "'Poppins', 'Segoe UI', sans-serif", color: BRAND.text }}>
       <style>{`
@@ -189,7 +291,6 @@ export default function GladexBriefing() {
         ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: #111; } ::-webkit-scrollbar-thumb { background: #333; border-radius: 99px; }
         @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
-        @keyframes shimmer { 0% { background-position: -400px 0; } 100% { background-position: 400px 0; } }
         .tour-card:hover .tour-img { transform: scale(1.05); }
         .tour-card:hover { border-color: rgba(255,140,0,0.3) !important; }
         .nav-btn:hover { background: rgba(255,255,255,0.06) !important; }
@@ -200,10 +301,10 @@ export default function GladexBriefing() {
         .add-btn:hover { background: rgba(255,140,0,0.15) !important; }
       `}</style>
 
-      {/* TOP NAV */}
+      {/* TOP NAV WITH LOGOUT */}
       <div style={{ position: "sticky", top: 0, zIndex: 100, background: "rgba(10,10,10,0.95)", backdropFilter: "blur(20px)", borderBottom: `1px solid ${BRAND.line}` }}>
         <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 16px" }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: 56 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, justifyContent: "space-between", height: 56 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <div style={{ width: 28, height: 28, borderRadius: 8, background: `linear-gradient(135deg, ${BRAND.orange}, ${BRAND.orangeDeep})`, display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <span style={{ fontSize: 12, fontWeight: 900, color: "#fff", fontStyle: "italic" }}>G</span>
@@ -217,6 +318,10 @@ export default function GladexBriefing() {
                   {s.label}
                 </button>
               ))}
+              <button onClick={handleLogout}
+                style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${BRAND.line}`, borderRadius: 6, padding: "4px 10px", marginLeft: 8, cursor: "pointer", fontSize: 10, fontWeight: 700, color: "#ef4444", transition: "all 0.2s", whiteSpace: "nowrap" }}>
+                LOGOUT
+              </button>
             </div>
           </div>
         </div>
@@ -227,7 +332,7 @@ export default function GladexBriefing() {
         <div style={{ maxWidth: 900, margin: "0 auto" }}>
           <SectionLabel text="Your Trip is Confirmed" />
           <h1 style={{ fontSize: "clamp(2rem, 6vw, 3.5rem)", fontWeight: 900, fontStyle: "italic", letterSpacing: "-0.03em", lineHeight: 1.05, marginBottom: 12 }}>
-            Welcome back, <span style={{ color: BRAND.orange }}>{SAMPLE.clientName}!</span>
+            Welcome back, <span style={{ color: BRAND.orange }}>{displayName}!</span>
           </h1>
           <p style={{ color: BRAND.muted, fontSize: 14, lineHeight: 1.7, maxWidth: 520 }}>
             Your <strong style={{ color: BRAND.text }}>{SAMPLE.destination}</strong> travel briefing is ready. Watch the destination video, review your travel details, and explore optional add-ons below.
@@ -242,11 +347,11 @@ export default function GladexBriefing() {
 
       <div style={{ maxWidth: 900, margin: "0 auto", padding: "40px 16px 80px" }}>
 
-        {/* SECTION: PERSONALIZED DASHBOARD */}
+        {/* SECTION: DASHBOARD DETAILS */}
         <div id="dashboard" style={{ animation: "fadeUp 0.6s ease both" }}>
           <SectionLabel text="Personalized Travel Dashboard" />
           <h2 style={{ fontSize: "clamp(1.4rem, 3vw, 2rem)", fontWeight: 800, letterSpacing: "-0.02em", marginBottom: 24 }}>
-            Hi {SAMPLE.clientName}! Your {SAMPLE.destination} Trip Details
+            Hi {displayName}! Your {SAMPLE.destination} Trip Details
           </h2>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16, marginBottom: 24 }}>
             <Card>
@@ -294,7 +399,6 @@ export default function GladexBriefing() {
             Watch your complete orientation before departure. Covers arrival, transfers, hotel check-in, tour reminders, and emergency contacts.
           </p>
 
-          {/* Portrait video player */}
           <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}>
             <div style={{ width: "100%", maxWidth: 340, borderRadius: 20, overflow: "hidden", border: `1px solid ${BRAND.cardBorder}`, background: BRAND.card, boxShadow: `0 0 60px rgba(255,140,0,0.08)`, position: "relative" }}>
               <div style={{ paddingTop: "177.78%", position: "relative", background: `linear-gradient(180deg, #0d0d0d 0%, #1a0f00 100%)` }}>
@@ -306,20 +410,10 @@ export default function GladexBriefing() {
                     <p style={{ fontSize: 16, fontWeight: 800, fontStyle: "italic", marginBottom: 6 }}>Boracay Briefing</p>
                     <p style={{ fontSize: 11, color: BRAND.muted }}>Destination orientation video</p>
                   </div>
-                  <div style={{ position: "absolute", bottom: 20, left: 20, right: 20 }}>
-                    <p style={{ fontSize: 10, color: BRAND.muted2, textAlign: "center", letterSpacing: "0.06em", textTransform: "uppercase" }}>Paste your video embed URL here</p>
-                    <div style={{ height: 1, background: BRAND.line, marginTop: 12 }} />
-                    <div style={{ display: "flex", justifyContent: "space-between", marginTop: 10 }}>
-                      {["Arrival", "Transfer", "Hotel", "Tours", "Emergency"].map(t => (
-                        <span key={t} style={{ fontSize: 8, color: BRAND.muted2, textAlign: "center" }}>{t}</span>
-                      ))}
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
           </div>
-          <p style={{ textAlign: "center", fontSize: 11, color: BRAND.muted2 }}>Portrait orientation · Full briefing included</p>
         </div>
 
         <OrangeDivider />
@@ -331,8 +425,7 @@ export default function GladexBriefing() {
             Everything You Need to Know
           </h2>
           <div style={{ display: "grid", gap: 16 }}>
-
-            {/* Arrival Instructions */}
+            {/* Arrival */}
             <Card>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
                 <div style={{ width: 36, height: 36, borderRadius: 10, background: `rgba(255,140,0,0.12)`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>✈️</div>
@@ -341,76 +434,7 @@ export default function GladexBriefing() {
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                 {[
                   { label: "Before Departure", items: ["Arrive at airport 2–3 hours early", "Prepare all travel documents", "Save digital copies of vouchers"] },
-                  { label: "Upon Arrival", items: ["Follow airport arrival signs", "Collect baggage at carousel", "Proceed per transfer instructions", "Keep mobile available for updates"] },
-                ].map(col => (
-                  <div key={col.label}>
-                    <p style={{ fontSize: 10, fontWeight: 700, color: BRAND.orange, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 10 }}>{col.label}</p>
-                    {col.items.map(item => (
-                      <div key={item} style={{ display: "flex", gap: 8, marginBottom: 6 }}>
-                        <span style={{ color: BRAND.orange, fontSize: 12, flexShrink: 0, marginTop: 1 }}>→</span>
-                        <p style={{ fontSize: 12, color: BRAND.muted, lineHeight: 1.5 }}>{item}</p>
-                      </div>
-                    ))}
-                  </div>
-                ))}
-              </div>
-            </Card>
-
-            {/* Transfer Instructions */}
-            <Card>
-              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-                <div style={{ width: 36, height: 36, borderRadius: 10, background: `rgba(255,140,0,0.12)`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>🚐</div>
-                <p style={{ fontWeight: 800, fontSize: 15 }}>Transfer Instructions</p>
-              </div>
-              <InfoRow label="Transfer Type" value={SAMPLE.transferType} />
-              <InfoRow label="Vehicle Provider" value={SAMPLE.vehicleProvider} />
-              <InfoRow label="Pick-up Location" value={SAMPLE.pickupLocation} />
-              <InfoRow label="Contact Number" value={SAMPLE.transferContact} />
-              <InfoRow label="Est. Travel Time" value={SAMPLE.estimatedTravelTime} />
-              <div style={{ marginTop: 16, padding: 14, background: "rgba(255,140,0,0.05)", borderRadius: 10, border: `1px solid rgba(255,140,0,0.15)` }}>
-                <p style={{ fontSize: 11, fontWeight: 700, color: BRAND.orange, marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.06em" }}>Reminders</p>
-                {["Follow transfer coordinator instructions", "Be ready at designated pick-up area 10 min early", "Notify support immediately if delayed"].map(r => (
-                  <p key={r} style={{ fontSize: 12, color: BRAND.muted, marginBottom: 4, display: "flex", gap: 6 }}><span style={{ color: BRAND.orange }}>·</span>{r}</p>
-                ))}
-              </div>
-            </Card>
-
-            {/* Hotel Check-in */}
-            <Card>
-              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-                <div style={{ width: 36, height: 36, borderRadius: 10, background: `rgba(255,140,0,0.12)`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>🏨</div>
-                <p style={{ fontWeight: 800, fontSize: 15 }}>Hotel Check-in Information</p>
-              </div>
-              <InfoRow label="Hotel" value={SAMPLE.hotel} />
-              <InfoRow label="Address" value={SAMPLE.hotelAddress} />
-              <InfoRow label="Check-in Time" value={SAMPLE.checkIn} />
-              <InfoRow label="Check-out Time" value={SAMPLE.checkOut} />
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 16 }}>
-                <div style={{ padding: 12, background: "rgba(255,255,255,0.03)", borderRadius: 10, border: `1px solid ${BRAND.line}` }}>
-                  <p style={{ fontSize: 10, fontWeight: 700, color: BRAND.orange, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>Requirements</p>
-                  {["Valid ID / Passport", "Hotel Voucher", "Security Deposit (if any)"].map(r => (
-                    <p key={r} style={{ fontSize: 11, color: BRAND.muted, marginBottom: 4 }}>✓ {r}</p>
-                  ))}
-                </div>
-                <div style={{ padding: 12, background: "rgba(255,255,255,0.03)", borderRadius: 10, border: `1px solid ${BRAND.line}` }}>
-                  <p style={{ fontSize: 10, fontWeight: 700, color: BRAND.orange, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>Notes</p>
-                  {["Early check-in subject to availability", "Security deposits may be required", "Keep voucher accessible"].map(n => (
-                    <p key={n} style={{ fontSize: 11, color: BRAND.muted, marginBottom: 4 }}>· {n}</p>
-                  ))}
-                </div>
-              </div>
-            </Card>
-
-            {/* Tour Reminders */}
-            <Card>
-              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-                <div style={{ width: 36, height: 36, borderRadius: 10, background: `rgba(255,140,0,0.12)`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>🗺️</div>
-                <p style={{ fontWeight: 800, fontSize: 15 }}>Tour Reminders</p>
-              </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                {[
-                  { label: "Before the Tour", items: ["Arrive 15 minutes early", "Wear comfortable clothing", "Bring water and sun protection", "Charge all mobile devices"] },
-                  { label: "During the Tour", items: ["Follow guide instructions at all times", "Observe all local regulations", "Secure personal belongings", "Stay with your group"] },
+                  { label: "Upon Arrival", items: ["Follow airport arrival signs", "Collect baggage at carousel", "Proceed per transfer instructions"] },
                 ].map(col => (
                   <div key={col.label}>
                     <p style={{ fontSize: 10, fontWeight: 700, color: BRAND.orange, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 10 }}>{col.label}</p>
@@ -425,6 +449,31 @@ export default function GladexBriefing() {
               </div>
             </Card>
 
+            {/* Transfers */}
+            <Card>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+                <div style={{ width: 36, height: 36, borderRadius: 10, background: `rgba(255,140,0,0.12)`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>🚐</div>
+                <p style={{ fontWeight: 800, fontSize: 15 }}>Transfer Instructions</p>
+              </div>
+              <InfoRow label="Transfer Type" value={SAMPLE.transferType} />
+              <InfoRow label="Vehicle Provider" value={SAMPLE.vehicleProvider} />
+              <InfoRow label="Pick-up Location" value={SAMPLE.pickupLocation} />
+              <InfoRow label="Contact Number" value={SAMPLE.transferContact} />
+              <InfoRow label="Est. Travel Time" value={SAMPLE.estimatedTravelTime} />
+            </Card>
+
+            {/* Hotel */}
+            <Card>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+                <div style={{ width: 36, height: 36, borderRadius: 10, background: `rgba(255,140,0,0.12)`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>🏨</div>
+                <p style={{ fontWeight: 800, fontSize: 15 }}>Hotel Check-in Information</p>
+              </div>
+              <InfoRow label="Hotel" value={SAMPLE.hotel} />
+              <InfoRow label="Address" value={SAMPLE.hotelAddress} />
+              <InfoRow label="Check-in Time" value={SAMPLE.checkIn} />
+              <InfoRow label="Check-out Time" value={SAMPLE.checkOut} />
+            </Card>
+
             {/* Emergency Contacts */}
             <Card>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
@@ -435,275 +484,84 @@ export default function GladexBriefing() {
                 { label: "Gladex Hotline", value: SAMPLE.gladexHotline },
                 { label: "Tour Coordinator", value: SAMPLE.tourCoordinator },
                 { label: "Hotel Contact", value: SAMPLE.hotelContact },
-                { label: "Transfer Provider", value: SAMPLE.transferContact },
               ].map(c => <InfoRow key={c.label} label={c.label} value={c.value} />)}
-              <button style={{ width: "100%", marginTop: 16, padding: "13px 16px", borderRadius: 12, border: "1px solid rgba(239,68,68,0.35)", background: "rgba(239,68,68,0.08)", color: "#ef4444", fontSize: 13, fontWeight: 700, cursor: "pointer", letterSpacing: "0.04em" }}>
-                🆘 Emergency Assistance
-              </button>
-            </Card>
-
-            {/* Do's and Don'ts */}
-            <Card>
-              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-                <div style={{ width: 36, height: 36, borderRadius: 10, background: `rgba(255,140,0,0.12)`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>📋</div>
-                <p style={{ fontWeight: 800, fontSize: 15 }}>Important Do's & Don'ts</p>
-              </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-                <div>
-                  <p style={{ fontSize: 10, fontWeight: 700, color: "#22c55e", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 10 }}>✅ Do's</p>
-                  {["Keep travel documents secure", "Follow all local regulations", "Arrive on time to all activities", "Stay hydrated throughout the trip", "Save all emergency contacts"].map(d => (
-                    <div key={d} style={{ display: "flex", gap: 8, marginBottom: 7 }}>
-                      <span style={{ color: "#22c55e", fontSize: 14, flexShrink: 0 }}>✓</span>
-                      <p style={{ fontSize: 12, color: BRAND.muted, lineHeight: 1.5 }}>{d}</p>
-                    </div>
-                  ))}
-                </div>
-                <div>
-                  <p style={{ fontSize: 10, fontWeight: 700, color: "#ef4444", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 10 }}>❌ Don'ts</p>
-                  {["Leave valuables unattended", "Miss transfer schedules", "Bring prohibited items on tours", "Ignore safety instructions", "Use unauthorized tour providers"].map(d => (
-                    <div key={d} style={{ display: "flex", gap: 8, marginBottom: 7 }}>
-                      <span style={{ color: "#ef4444", fontSize: 14, flexShrink: 0 }}>✗</span>
-                      <p style={{ fontSize: 12, color: BRAND.muted, lineHeight: 1.5 }}>{d}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
             </Card>
           </div>
         </div>
 
         <OrangeDivider />
 
-        {/* SECTION: TRAVEL READINESS CHECKLIST */}
+        {/* SECTION: CHECKLIST */}
         <div id="checklist">
           <SectionLabel text="Travel Readiness Checklist" />
-          <h2 style={{ fontSize: "clamp(1.4rem, 3vw, 2rem)", fontWeight: 800, letterSpacing: "-0.02em", marginBottom: 8 }}>
-            Are You Ready to Go?
-          </h2>
-          <p style={{ color: BRAND.muted, fontSize: 13, marginBottom: 24 }}>
-            Check off each item before your departure day. <span style={{ color: BRAND.orange, fontWeight: 600 }}>{checkedCount}/{CHECKLIST_ITEMS.length} completed</span>
-          </p>
-          <div style={{ height: 4, borderRadius: 99, background: BRAND.line, marginBottom: 24, overflow: "hidden" }}>
-            <div style={{ height: "100%", width: `${(checkedCount / CHECKLIST_ITEMS.length) * 100}%`, background: `linear-gradient(90deg, ${BRAND.orange}, #FF6B00)`, borderRadius: 99, transition: "width 0.4s ease" }} />
-          </div>
+          <h2 style={{ fontSize: "clamp(1.4rem, 3vw, 2rem)", fontWeight: 800, letterSpacing: "-0.02em", marginBottom: 8 }}>Are You Ready to Go?</h2>
+          <p style={{ color: BRAND.muted, fontSize: 13, marginBottom: 24 }}><span style={{ color: BRAND.orange, fontWeight: 600 }}>{checkedCount}/{CHECKLIST_ITEMS.length} completed</span></p>
           <Card>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 4 }}>
               {CHECKLIST_ITEMS.map(item => (
                 <div key={item.id} className="check-item" onClick={() => setChecklist(p => ({ ...p, [item.id]: !p[item.id] }))}
-                  style={{ display: "flex", alignItems: "center", gap: 12, padding: "11px 12px", borderRadius: 10, cursor: "pointer", transition: "all 0.2s", userSelect: "none" }}>
-                  <div style={{ width: 20, height: 20, borderRadius: 6, border: `2px solid ${checklist[item.id] ? BRAND.orange : BRAND.line}`, background: checklist[item.id] ? BRAND.orange : "transparent", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.2s", flexShrink: 0 }}>
+                  style={{ display: "flex", alignItems: "center", gap: 12, padding: "11px 12px", borderRadius: 10, cursor: "pointer", transition: "all 0.2s" }}>
+                  <div style={{ width: 20, height: 20, borderRadius: 6, border: `2px solid ${checklist[item.id] ? BRAND.orange : BRAND.line}`, background: checklist[item.id] ? BRAND.orange : "transparent", display: "flex", alignItems: "center", justifyContent: "center" }}>
                     {checklist[item.id] && <span style={{ fontSize: 10, color: "#000", fontWeight: 900 }}>✓</span>}
                   </div>
-                  <p style={{ fontSize: 12, color: checklist[item.id] ? BRAND.muted : BRAND.text, textDecoration: checklist[item.id] ? "line-through" : "none", transition: "all 0.2s" }}>{item.label}</p>
+                  <span style={{ fontSize: 13, color: checklist[item.id] ? BRAND.text : BRAND.muted, textDecoration: checklist[item.id] ? "line-through opacity(0.5)" : "none" }}>{item.label}</span>
                 </div>
               ))}
             </div>
           </Card>
-
-          {/* What to Bring */}
-          <h3 style={{ fontSize: 16, fontWeight: 800, marginTop: 32, marginBottom: 16 }}>What to Bring</h3>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12 }}>
-            {[
-              { label: "Documents", icon: "📄", items: ["Passport / Valid ID", "Travel Voucher", "Flight Ticket", "Insurance Certificate"] },
-              { label: "Essentials", icon: "💳", items: ["Cash & Credit Card", "Powerbank & Charger", "Medicines", "Mobile Data"] },
-              { label: "Destination Specific", icon: "🏖️", items: ["Beachwear & Slippers", "Sunscreen SPF 50+", "Waterproof Bag", "Light Jacket"] },
-            ].map(cat => (
-              <Card key={cat.label} style={{ padding: 18 }}>
-                <p style={{ fontSize: 18, marginBottom: 8 }}>{cat.icon}</p>
-                <p style={{ fontSize: 11, fontWeight: 700, color: BRAND.orange, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 12 }}>{cat.label}</p>
-                {cat.items.map(i => <p key={i} style={{ fontSize: 12, color: BRAND.muted, marginBottom: 5 }}>· {i}</p>)}
-              </Card>
-            ))}
-          </div>
-
-          {/* Outfit Guide */}
-          <h3 style={{ fontSize: 16, fontWeight: 800, marginTop: 32, marginBottom: 16 }}>Outfit Guide</h3>
-          <div style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 8 }}>
-            {OUTFITS.map(o => (
-              <div key={o.label} style={{ minWidth: 150, padding: 16, borderRadius: 14, background: BRAND.card, border: `1px solid ${BRAND.cardBorder}`, flexShrink: 0 }}>
-                <span style={{ fontSize: 24 }}>{o.icon}</span>
-                <p style={{ fontSize: 12, fontWeight: 700, marginTop: 8, marginBottom: 6 }}>{o.label}</p>
-                <p style={{ fontSize: 11, color: BRAND.muted, lineHeight: 1.5 }}>{o.desc}</p>
-              </div>
-            ))}
-          </div>
         </div>
 
         <OrangeDivider />
 
-        {/* SECTION: DESTINATION GUIDE */}
-        <div id="destguide">
-          <SectionLabel text="Destination Guide" />
-          <h2 style={{ fontSize: "clamp(1.4rem, 3vw, 2rem)", fontWeight: 800, letterSpacing: "-0.02em", marginBottom: 8 }}>
-            Discover {SAMPLE.destination}
-          </h2>
-          <p style={{ color: BRAND.muted, fontSize: 13, marginBottom: 24 }}>Local knowledge curated by the Gladex team.</p>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 14, marginBottom: 24 }}>
-            {DEST_GUIDE.map(g => (
-              <Card key={g.title} style={{ padding: 18 }}>
-                <p style={{ fontSize: 20, marginBottom: 8 }}>{g.icon}</p>
-                <p style={{ fontSize: 12, fontWeight: 700, color: BRAND.orange, textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 12 }}>{g.title}</p>
-                {g.items.map(i => <p key={i} style={{ fontSize: 12, color: BRAND.muted, marginBottom: 5 }}>· {i}</p>)}
-              </Card>
-            ))}
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12 }}>
-            {[
-              { icon: "🌤️", label: "Weather", desc: "April–June: Hot, 30–34°C. Occasional afternoon rain. Light breathable clothing recommended." },
-              { icon: "💱", label: "Currency", desc: "Philippine Peso (PHP). USD exchange available. Bring small bills for beach vendors." },
-              { icon: "🛡️", label: "Safety Tips", desc: "Keep valuables in hotel safe. Watch your bags on the beach. Avoid unlicensed tour operators." },
-            ].map(t => (
-              <div key={t.label} style={{ padding: 16, borderRadius: 14, background: "rgba(255,140,0,0.05)", border: `1px solid rgba(255,140,0,0.12)` }}>
-                <p style={{ fontSize: 20, marginBottom: 6 }}>{t.icon}</p>
-                <p style={{ fontSize: 12, fontWeight: 700, marginBottom: 6 }}>{t.label}</p>
-                <p style={{ fontSize: 11, color: BRAND.muted, lineHeight: 1.6 }}>{t.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <OrangeDivider />
-
-        {/* SECTION: OPTIONAL TOURS */}
+        {/* SECTION: TOURS */}
         <div id="tours">
-          <SectionLabel text="Optional Tours" />
-          <h2 style={{ fontSize: "clamp(1.4rem, 3vw, 2rem)", fontWeight: 800, letterSpacing: "-0.02em", marginBottom: 8 }}>
-            Enhance Your Experience
-          </h2>
-          <p style={{ color: BRAND.muted, fontSize: 13, marginBottom: 24 }}>
-            Curated optional activities for your trip. Add before departure for seamless coordination.
-          </p>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 16 }}>
-            {TOURS.map(tour => (
-              <div key={tour.id} className="tour-card"
-                style={{ borderRadius: 16, overflow: "hidden", background: BRAND.card, border: `1px solid ${BRAND.cardBorder}`, transition: "border-color 0.2s", cursor: "default" }}>
-                <div style={{ height: 180, overflow: "hidden", position: "relative" }}>
-                  <img src={tour.image} alt={tour.name} className="tour-img"
-                    style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.4s ease" }} />
-                  <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 60%)" }} />
-                  <div style={{ position: "absolute", top: 10, left: 10 }}>
-                    <span style={{ fontSize: 10, fontWeight: 700, background: BRAND.orange, color: "#000", padding: "3px 10px", borderRadius: 99, letterSpacing: "0.04em" }}>{tour.tag}</span>
+          <SectionLabel text="Optional Add-ons" />
+          <h2 style={{ fontSize: "clamp(1.4rem, 3vw, 2rem)", fontWeight: 800, letterSpacing: "-0.02em", marginBottom: 24 }}>Explore Optional Tours</h2>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
+            {TOURS.map((tour) => {
+              const isAdded = !!addedTours[tour.id];
+              return (
+                <div key={tour.id} className="tour-card" style={{ background: BRAND.card, border: `1px solid ${isAdded ? BRAND.orange + "40" : BRAND.cardBorder}`, borderRadius: 16, overflow: "hidden", display: "flex", flexDirection: "column" }}>
+                  <div style={{ height: 160, position: "relative" }}>
+                    <img src={tour.image} alt={tour.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                   </div>
-                  <div style={{ position: "absolute", bottom: 10, right: 10 }}>
-                    <span style={{ fontSize: 10, color: "rgba(255,255,255,0.7)", background: "rgba(0,0,0,0.5)", padding: "3px 10px", borderRadius: 99, backdropFilter: "blur(8px)" }}>⏱ {tour.duration}</span>
+                  <div style={{ padding: 20, flexGrow: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                    <h4 style={{ fontSize: 15, fontWeight: 700, marginBottom: 12 }}>{tour.name}</h4>
+                    <button onClick={() => setAddedTours(p => ({ ...p, [tour.id]: !p[tour.id] }))}
+                      style={{ width: "100%", padding: "10px", borderRadius: 10, border: `1px solid ${isAdded ? BRAND.orange : BRAND.line}`, background: isAdded ? BRAND.orangeGlow : "transparent", color: isAdded ? BRAND.orange : BRAND.text, fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+                      {isAdded ? "✓ Added to Inquiry" : "+ Add to Trip Inquiry"}
+                    </button>
                   </div>
                 </div>
-                <div style={{ padding: 16 }}>
-                  <p style={{ fontSize: 14, fontWeight: 800, marginBottom: 8 }}>{tour.name}</p>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 12 }}>
-                    {tour.includes.map(inc => (
-                      <span key={inc} style={{ fontSize: 10, color: BRAND.muted, background: "rgba(255,255,255,0.06)", padding: "3px 8px", borderRadius: 99, border: `1px solid ${BRAND.line}` }}>✓ {inc}</span>
-                    ))}
-                  </div>
-                  <button className="add-btn" onClick={() => setAddedTours(p => ({ ...p, [tour.id]: !p[tour.id] }))}
-                    style={{ width: "100%", padding: "10px", borderRadius: 10, border: `1px solid ${addedTours[tour.id] ? "#22c55e" : BRAND.orange}`, background: addedTours[tour.id] ? "rgba(34,197,94,0.08)" : "rgba(255,140,0,0.08)", color: addedTours[tour.id] ? "#22c55e" : BRAND.orange, fontSize: 12, fontWeight: 700, cursor: "pointer", transition: "all 0.2s" }}>
-                    {addedTours[tour.id] ? "✓ Added to Trip" : "+ Add to Trip"}
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-          {totalAdded > 0 && (
-            <div style={{ marginTop: 20, padding: "14px 20px", borderRadius: 12, background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <p style={{ fontSize: 13, color: "#22c55e", fontWeight: 600 }}>✓ {totalAdded} tour{totalAdded > 1 ? "s" : ""} added to your trip</p>
-              <button style={{ fontSize: 11, color: "#22c55e", background: "none", border: "1px solid rgba(34,197,94,0.3)", padding: "5px 12px", borderRadius: 99, cursor: "pointer", fontWeight: 700 }}>View Cart</button>
-            </div>
-          )}
-        </div>
-
-        <OrangeDivider />
-
-        {/* SECTION: TRAVEL INSURANCE */}
-        <div id="insurance">
-          <SectionLabel text="Travel Insurance Add-On" />
-          <h2 style={{ fontSize: "clamp(1.4rem, 3vw, 2rem)", fontWeight: 800, letterSpacing: "-0.02em", marginBottom: 8 }}>
-            Protect Your Trip Before You Go
-          </h2>
-          <p style={{ color: BRAND.muted, fontSize: 13, lineHeight: 1.7, marginBottom: 24, maxWidth: 560 }}>
-            Travel insurance is optional but highly recommended. Select a plan that fits your needs.
-          </p>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 14, marginBottom: 20 }}>
-            {INSURANCE.map(plan => (
-              <div key={plan.id} className="ins-card" onClick={() => setSelectedInsurance(selectedInsurance === plan.id ? null : plan.id)}
-                style={{ padding: 20, borderRadius: 16, border: `1.5px solid ${selectedInsurance === plan.id ? BRAND.orange : BRAND.cardBorder}`, background: selectedInsurance === plan.id ? "rgba(255,140,0,0.06)" : BRAND.card, cursor: "pointer", transition: "all 0.2s", position: "relative" }}>
-                {plan.recommended && (
-                  <div style={{ position: "absolute", top: -1, right: 16, background: BRAND.orange, color: "#000", fontSize: 9, fontWeight: 900, padding: "3px 10px", borderRadius: "0 0 8px 8px", letterSpacing: "0.06em", textTransform: "uppercase" }}>Recommended</div>
-                )}
-                <p style={{ fontSize: 15, fontWeight: 800, marginBottom: 4 }}>{plan.label}</p>
-                <p style={{ fontSize: 10, color: BRAND.muted, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 14 }}>Travel Insurance</p>
-                {plan.features.map(f => (
-                  <div key={f} style={{ display: "flex", gap: 8, marginBottom: 6 }}>
-                    <span style={{ color: BRAND.orange, fontSize: 12 }}>✓</span>
-                    <p style={{ fontSize: 11, color: BRAND.muted, lineHeight: 1.4 }}>{f}</p>
-                  </div>
-                ))}
-                <div style={{ marginTop: 16, paddingTop: 12, borderTop: `1px solid ${BRAND.line}` }}>
-                  <div style={{ height: 16, width: 16, borderRadius: "50%", border: `2px solid ${selectedInsurance === plan.id ? BRAND.orange : BRAND.line}`, background: selectedInsurance === plan.id ? BRAND.orange : "transparent", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    {selectedInsurance === plan.id && <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#000" }} />}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          {selectedInsurance && (
-            <div style={{ padding: "14px 20px", borderRadius: 12, background: "rgba(255,140,0,0.08)", border: "1px solid rgba(255,140,0,0.25)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <p style={{ fontSize: 13, color: BRAND.orange, fontWeight: 600 }}>
-                ✓ {INSURANCE.find(p => p.id === selectedInsurance)?.label} plan selected
-              </p>
-              <button style={{ fontSize: 11, color: BRAND.orange, background: "none", border: "1px solid rgba(255,140,0,0.3)", padding: "5px 12px", borderRadius: 99, cursor: "pointer", fontWeight: 700 }}>Add to Cart</button>
-            </div>
-          )}
-          <div style={{ marginTop: 16, padding: 16, borderRadius: 12, background: "rgba(255,255,255,0.02)", border: `1px solid ${BRAND.line}` }}>
-            <p style={{ fontSize: 11, color: BRAND.muted, lineHeight: 1.7 }}>
-              Travel insurance covers: <span style={{ color: BRAND.text }}>Medical Emergencies · Trip Delays · Lost Baggage · Flight Interruptions · Unexpected Incidents</span>
-            </p>
+              );
+            })}
           </div>
         </div>
 
         <OrangeDivider />
 
-        {/* SECTION: FAQs */}
+        {/* SECTION: FAQS */}
         <div id="faq">
-          <SectionLabel text="Frequently Asked Questions" />
-          <h2 style={{ fontSize: "clamp(1.4rem, 3vw, 2rem)", fontWeight: 800, letterSpacing: "-0.02em", marginBottom: 24 }}>
-            Got Questions?
-          </h2>
+          <SectionLabel text="FAQ Center" />
+          <h2 style={{ fontSize: "clamp(1.4rem, 3vw, 2rem)", fontWeight: 800, letterSpacing: "-0.02em", marginBottom: 24 }}>Frequently Asked Questions</h2>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            {FAQS.map((faq, i) => (
-              <div key={i} className="faq-item" onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                style={{ borderRadius: 14, border: `1px solid ${openFaq === i ? "rgba(255,140,0,0.25)" : BRAND.cardBorder}`, background: BRAND.card, overflow: "hidden", cursor: "pointer", transition: "border-color 0.2s" }}>
-                <div style={{ padding: "16px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
-                  <p style={{ fontSize: 13, fontWeight: 600, lineHeight: 1.4 }}>{faq.q}</p>
-                  <span style={{ fontSize: 16, color: BRAND.orange, transition: "transform 0.25s", transform: openFaq === i ? "rotate(45deg)" : "none", flexShrink: 0 }}>+</span>
+            {FAQS.map((faq, idx) => {
+              const isOpen = openFaq === idx;
+              return (
+                <div key={idx} className="faq-item" style={{ background: BRAND.card, border: `1px solid ${isOpen ? "rgba(255,140,0,0.15)" : BRAND.cardBorder}`, borderRadius: 12, overflow: "hidden" }}>
+                  <button onClick={() => setOpenFaq(isOpen ? null : idx)}
+                    style={{ width: "100%", padding: "16px 20px", background: "transparent", border: "none", display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer", color: BRAND.text }}>
+                    <span style={{ fontSize: 13, fontWeight: 600 }}>{faq.q}</span>
+                    <span>▼</span>
+                  </button>
+                  {isOpen && (
+                    <div style={{ padding: "0 20px 16px", borderTop: `1px solid ${BRAND.line}`, background: "rgba(255,255,255,0.01)" }}>
+                      <p style={{ fontSize: 12, color: BRAND.muted, lineHeight: 1.6, paddingTop: 12 }}>{faq.a}</p>
+                    </div>
+                  )}
                 </div>
-                {openFaq === i && (
-                  <div style={{ padding: "0 20px 16px", borderTop: `1px solid ${BRAND.line}` }}>
-                    <p style={{ fontSize: 12, color: BRAND.muted, lineHeight: 1.8, paddingTop: 12 }}>{faq.a}</p>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <OrangeDivider />
-
-        {/* FOOTER CTA */}
-        <div style={{ textAlign: "center", padding: "20px 0 40px" }}>
-          <SectionLabel text="All Set?" />
-          <h2 style={{ fontSize: "clamp(1.4rem, 4vw, 2.4rem)", fontWeight: 900, fontStyle: "italic", letterSpacing: "-0.03em", marginBottom: 12 }}>
-            Have an Amazing Trip! 🌴
-          </h2>
-          <p style={{ color: BRAND.muted, fontSize: 13, lineHeight: 1.7, maxWidth: 440, margin: "0 auto 28px" }}>
-            Your Gladex team is always a message away. Safe travels and enjoy your {SAMPLE.destination} adventure!
-          </p>
-          <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-            <button style={{ padding: "12px 28px", borderRadius: 99, background: `linear-gradient(135deg, ${BRAND.orange}, ${BRAND.orangeDeep})`, color: "#fff", fontSize: 12, fontWeight: 800, border: "none", cursor: "pointer", letterSpacing: "0.06em", textTransform: "uppercase" }}>
-              📞 Contact Consultant
-            </button>
-            <button style={{ padding: "12px 28px", borderRadius: 99, background: "transparent", color: BRAND.orange, fontSize: 12, fontWeight: 800, border: `1px solid rgba(255,140,0,0.4)`, cursor: "pointer", letterSpacing: "0.06em", textTransform: "uppercase" }}>
-              ⭐ Rate My Service
-            </button>
+              );
+            })}
           </div>
         </div>
 
