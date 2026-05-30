@@ -183,7 +183,7 @@ export default function PackageDetails({ destination, darkMode, centerPackageTit
           <SectionLabel text="Package Details" centered={centerPackageTitle} />
 
           <p
-            className={`font-black leading-snug break-words ${centerPackageTitle ? "text-center" : ""}`}
+            className={`font-black leading-snug break-words hidden ${centerPackageTitle ? "text-center" : ""}`}
             style={{ color: textPrimary, letterSpacing: "-0.02em", fontSize: "clamp(1rem, 3.5vw, 1.5rem)" }}>
             
             {destination.package}
@@ -209,7 +209,7 @@ export default function PackageDetails({ destination, darkMode, centerPackageTit
       {destination.hotelCategories?.length > 0 &&
       <AnimatedCard delay={0.08}>
           <div
-          className="rounded-2xl p-5 sm:p-7 relative overflow-hidden"
+          className="rounded-2xl p-5 sm:p-7 relative overflow-hidden hidden"
           style={{
             background: cardBg,
             border: `1px solid ${cardBorder}`,
@@ -243,7 +243,7 @@ export default function PackageDetails({ destination, darkMode, centerPackageTit
       {destination.optionalTours?.length > 0 &&
       <AnimatedCard delay={0.12}>
           <div
-          className="rounded-2xl p-5 sm:p-7 relative overflow-hidden"
+          className="rounded-2xl p-5 sm:p-7 relative overflow-hidden hidden"
           style={{
             background: cardBg,
             border: `1px solid ${cardBorder}`,
@@ -265,7 +265,7 @@ export default function PackageDetails({ destination, darkMode, centerPackageTit
       {destination.notes?.length > 0 &&
       <AnimatedCard delay={0.16}>
           <div
-          className="rounded-2xl p-5 sm:p-7 relative overflow-hidden"
+          className="rounded-2xl p-5 sm:p-7 relative overflow-hidden hidden"
           style={{
             background: darkMode ? "rgba(20,14,4,0.85)" : "rgba(255,251,245,0.95)",
             border: `1px solid ${darkMode ? "rgba(255,140,0,0.15)" : "rgba(255,140,0,0.2)"}`,
