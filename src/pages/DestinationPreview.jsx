@@ -4,7 +4,7 @@ import { useTheme } from "@/lib/ThemeContext";
 import DestinationNavbar from "@/components/destination/DestinationNavbar";
 import { 
   Search, ChevronRight, Download, FileText, ArrowLeft, 
-  PlaneLanding, Truck, Hotel, Compass,
+  PlaneLanding, Truck, Hotel, Compass, X,
   CheckSquare, Briefcase, Sparkles, ShieldCheck, ShoppingCart, HelpCircle,
   MessageSquare, Star, Check, Image
 } from "lucide-react";
@@ -22,6 +22,9 @@ export default function DestinationPreview() {
   // Upsell state management
   const [selectedTours, setSelectedTours] = useState({});
   const [selectedInsurance, setSelectedInsurance] = useState(null);
+
+  // Klook-style Lightbox/Modal State para sa pagpapalaki ng litrato
+  const [activePhoto, setActivePhoto] = useState(null);
 
   // Checklist state management
   const [checklist, setChecklist] = useState({
@@ -59,16 +62,15 @@ export default function DestinationPreview() {
       alert("Mangyaring magpasok ng GDX Confirmation Number o Tour Voucher Number.");
       return;
     }
-    // Lalabas lang ang buong dashboard at components kapag nag-search na
     setHasSearched(true);
   };
 
   // Klook-style placeholder experiences photos 
   const experiencePhotos = [
-    { url: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=500&auto=format&fit=crop&q=60", caption: "Crystal Kayak Experience" },
-    { url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500&auto=format&fit=crop&q=60", caption: "White Beach Station 2" },
-    { url: "https://images.unsplash.com/photo-1519046904884-53103b34b206?w=500&auto=format&fit=crop&q=60", caption: "Sunset Paraw Sailing" },
-    { url: "https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=500&auto=format&fit=crop&q=60", caption: "Island Hopping Buffet Lunch" },
+    { url: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=800&auto=format&fit=crop&q=80", caption: "Crystal Kayak Experience" },
+    { url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop&q=80", caption: "White Beach Station 2" },
+    { url: "https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&auto=format&fit=crop&q=80", caption: "Sunset Paraw Sailing" },
+    { url: "https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=800&auto=format&fit=crop&q=80", caption: "Island Hopping Buffet Lunch" },
   ];
 
   return (
@@ -89,7 +91,7 @@ export default function DestinationPreview() {
           </Link>
         </div>
 
-        {/* 1. Welcome Section & Booking Lookup (Ito lang ang unang makikita) */}
+        {/* 1. Welcome Section & Booking Lookup */}
         <section className="border rounded-3xl p-6 md:p-10 shadow-xl text-center mb-8 relative overflow-hidden" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
           <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_60%_50%_at_50%_50%,rgba(255,140,0,0.04)_0%,transparent_70%)]" />
           
@@ -179,8 +181,6 @@ export default function DestinationPreview() {
                 
                 {/* FIXED & ALIGNED SMARTPHONE CONTAINER WITH HIDDEN GOOGLE DRIVE POP-OUT CONTROL */}
                 <div className="w-full max-w-[300px] aspect-[9/16] bg-black rounded-[2.5rem] mx-auto shadow-2xl border-4 border-neutral-800 overflow-hidden relative">
-                  
-                  {/* Outer container cuts off the top bar header components where the pop-out button lives */}
                   <div className="absolute inset-0 top-[-45px] bottom-[-45px] overflow-hidden">
                     <iframe 
                       src="https://drive.google.com/file/d/1THzQAagycyXm8UYNztawslG7G_2Ak_J3/preview" 
@@ -190,14 +190,12 @@ export default function DestinationPreview() {
                       title="Boracay Onboarding Orientation Video"
                     ></iframe>
                   </div>
-                  
-                  {/* Safe glass sheen layer to maintain mockup feeling */}
                   <div className="absolute inset-0 pointer-events-none rounded-[2.3rem] border border-white/5 bg-gradient-to-tr from-transparent via-white/[0.02] to-transparent" />
                 </div>
               </div>
             </section>
 
-            {/* 5. Travel Information Center (Accordions Automatically Expanded) */}
+            {/* 5. Travel Information Center */}
             <section>
               <h3 className="text-base font-bold mb-4 flex items-center gap-2" style={{ color: textPrimary }}>
                 <Compass className="w-4 h-4 text-orange-500" /> Travel Information Center
@@ -315,20 +313,25 @@ export default function DestinationPreview() {
               </div>
             </section>
 
-            {/* KLOOK-STYLE ACTUAL EXPERIENCE PHOTOS CONTAINER */}
+            {/* KLOOK-STYLE SNAPSHOTS SECTION WITH LIGHTBOX ENLARGE */}
             <section className="border rounded-3xl p-6 shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
               <div className="mb-4 flex items-center gap-2">
                 <Image className="w-4 h-4 text-orange-500" />
                 <div>
                   <h3 className="text-xs font-bold uppercase tracking-wider" style={{ color: textPrimary }}>Real Guest Moments & Snapshots</h3>
-                  <p className="text-[11px]" style={{ color: textMuted }}>Actual photos shared directly from our previous travelers on this route.</p>
+                  <p className="text-[11px]" style={{ color: textMuted }}>Click any image block to enlarge view, tracking actual traveler insights on-site.</p>
                 </div>
               </div>
               
-              {/* Klook-Style Responsive Image Mosaic Grid */}
+              {/* Image Grid Container */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {experiencePhotos.map((photo, i) => (
-                  <div key={i} className="group relative overflow-hidden rounded-2xl aspect-square bg-neutral-200 dark:bg-neutral-800 border" style={{ borderColor: borderColor }}>
+                  <div 
+                    key={i} 
+                    onClick={() => setActivePhoto(photo)}
+                    className="group relative overflow-hidden rounded-2xl aspect-square bg-neutral-200 dark:bg-neutral-800 border cursor-zoom-in" 
+                    style={{ borderColor: borderColor }}
+                  >
                     <img 
                       src={photo.url} 
                       alt={photo.caption} 
@@ -526,6 +529,37 @@ export default function DestinationPreview() {
           </div>
         )}
       </main>
+
+      {/* KLOOK-STYLE LIGHTBOX MODAL CONTAINER */}
+      {activePhoto && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-sm p-4 animate-fade-in cursor-zoom-out"
+          onClick={() => setActivePhoto(null)}
+        >
+          {/* Close Trigger Icon */}
+          <button 
+            onClick={() => setActivePhoto(null)}
+            className="absolute top-6 right-6 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition focus:outline-none"
+          >
+            <X className="w-6 h-6" />
+          </button>
+
+          {/* Large Image Frame Block */}
+          <div 
+            className="max-w-3xl w-full flex flex-col items-center gap-4 relative animate-scale-up"
+            onClick={(e) => e.stopPropagation()} // Iwas pagsara kapag mismong picture ang cliniclick
+          >
+            <img 
+              src={activePhoto.url} 
+              alt={activePhoto.caption} 
+              className="max-h-[80vh] w-auto max-w-full rounded-2xl object-contain border border-white/10 shadow-2xl"
+            />
+            <span className="text-xs sm:text-sm text-neutral-300 font-semibold tracking-wide bg-black/40 px-4 py-2 rounded-full border border-white/5">
+              {activePhoto.caption}
+            </span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
