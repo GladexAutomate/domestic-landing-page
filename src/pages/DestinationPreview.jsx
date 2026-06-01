@@ -7,7 +7,7 @@ import {
   PlaneLanding, Truck, Hotel, Compass, PhoneCall, ShieldAlert,
   CheckSquare, Briefcase, Shirt, Plane, Camera, Sunset, Sun,
   Palmtree, Sparkles, ShieldCheck, ShoppingCart, HelpCircle,
-  MessageSquare, Users, Star, ThumbsUp, AlertTriangle, Check
+  MessageSquare, Users, Star, ThumbsUp, AlertTriangle, Check, Image
 } from "lucide-react";
 
 export default function DestinationPreview() {
@@ -16,6 +16,8 @@ export default function DestinationPreview() {
   
   // Simulated lookup matching Fusioo workflow
   const [searchID, setSearchID] = useState("GDX-BOR-2026");
+  
+  // Set to true so everything displays automatically without requiring a click
   const [hasSearched, setHasSearched] = useState(true);
 
   // Upsell state management
@@ -52,6 +54,14 @@ export default function DestinationPreview() {
     });
   };
 
+  // Klook-style placeholder experiences photos 
+  const experiencePhotos = [
+    { url: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=500&auto=format&fit=crop&q=60", caption: "Crystal Kayak Experience" },
+    { url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500&auto=format&fit=crop&q=60", caption: "White Beach Station 2" },
+    { url: "https://images.unsplash.com/photo-1519046904884-53103b34b206?w=500&auto=format&fit=crop&q=60", caption: "Sunset Paraw Sailing" },
+    { url: "https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=500&auto=format&fit=crop&q=60", caption: "Island Hopping Buffet Lunch" },
+  ];
+
   return (
     <div className="font-poppins min-h-screen transition-colors duration-500 pb-24" style={{ background: bg, color: textPrimary }}>
       <DestinationNavbar />
@@ -86,7 +96,7 @@ export default function DestinationPreview() {
           
           <h1 className="text-2xl md:text-4xl font-black mb-3 tracking-tight italic" style={{ color: textPrimary }}>Your Trip Is Confirmed!</h1>
           <p className="text-xs md:text-sm max-w-md mx-auto mb-6 leading-relaxed" style={{ color: textMuted }}>
-            Enter your GDX Confirmation Number or Tour Voucher Number to access your personalized travel briefing, vouchers, reminders, optional tours, and add-ons.
+            Your GDX Confirmation Number or Tour Voucher Number details are displayed automatically below.
           </p>
           
           {/* FIXED SEARCH MODULE BLOCK */}
@@ -159,30 +169,22 @@ export default function DestinationPreview() {
             <section className="border rounded-3xl p-6 md:p-8 shadow-sm text-center relative overflow-hidden" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
               <div className="max-w-md mx-auto">
                 <h3 className="text-base font-bold tracking-tight mb-1" style={{ color: textPrimary }}>Your Destination Video Briefing</h3>
-                <p className="text-xs mb-6" style={{ color: textMuted }}>Review this mandatory structural walkthrough to replace manual live session blocks.</p>
+                <p className="text-xs mb-6" style={{ color: textMuted }}>Review this mandatory onboarding video layout to prepare for your journey.</p>
                 
-                <div className="w-full max-w-[260px] aspect-[9/16] bg-black rounded-[2.2rem] mx-auto shadow-2xl border-4 border-neutral-800 overflow-hidden relative flex flex-col justify-between items-center p-5 text-center">
-                  <div className="w-full flex justify-between items-center text-[8px] text-neutral-400">
-                    <span className="font-bold tracking-wide">● PORTRAIT PRESENTATION</span>
-                    <span className="bg-rose-600 text-white font-black px-1.5 py-0.5 rounded tracking-widest text-[7.5px]">NO CAPTIONS</span>
-                  </div>
-                  
-                  <div className="my-auto flex flex-col items-center">
-                    <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-amber-600 rounded-full flex items-center justify-center cursor-pointer shadow-lg hover:scale-105 transition duration-200">
-                      <Play className="w-5 h-5 text-white fill-white ml-0.5" />
-                    </div>
-                    <span className="text-[11px] font-bold text-neutral-200 mt-4 block">Boracay Onboarding Orientation</span>
-                    <span className="text-[9px] text-neutral-500 block mt-0.5">Duration: 4m 12s</span>
-                  </div>
-
-                  <div className="w-full bg-neutral-800 h-1 rounded-full overflow-hidden mb-2">
-                    <div className="bg-orange-500 w-1/3 h-full"></div>
-                  </div>
+                {/* ENFORCED MOBILE PORTRAIT ORIENTATION LAYOUT EMBEDDING THE USER'S GOOGLE DRIVE STREAM LINK */}
+                <div className="w-full max-w-[280px] aspect-[9/16] bg-black rounded-[2.2rem] mx-auto shadow-2xl border-4 border-neutral-800 overflow-hidden relative flex flex-col justify-between items-center text-center">
+                  <iframe 
+                    src="https://drive.google.com/file/d/1THzQAagycyXm8UYNztawslG7G_2Ak_J3/preview" 
+                    className="w-full h-full border-0 rounded-[2rem]"
+                    allow="autoplay; encrypted-media" 
+                    allowFullScreen
+                    title="Boracay Onboarding Orientation Video"
+                  ></iframe>
                 </div>
               </div>
             </section>
 
-            {/* 5. Travel Information Center (Accordions) */}
+            {/* 5. Travel Information Center (Accordions Automatically Expanded) */}
             <section>
               <h3 className="text-base font-bold mb-4 flex items-center gap-2" style={{ color: textPrimary }}>
                 <Compass className="w-4 h-4 text-orange-500" /> Travel Information Center
@@ -215,7 +217,7 @@ export default function DestinationPreview() {
 
                 {/* Transfer Operations */}
                 <div className="border rounded-2xl overflow-hidden shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
-                  <details className="group">
+                  <details className="group" open>
                     <summary className="flex justify-between items-center font-bold text-xs p-4 cursor-pointer select-none hover:bg-black/5 tracking-wider uppercase" style={{ color: textPrimary }}>
                       <span className="flex items-center gap-2.5"><Truck className="w-4 h-4 text-orange-500" /> Transfer Instructions & Logistics</span>
                     </summary>
@@ -236,7 +238,7 @@ export default function DestinationPreview() {
 
                 {/* Hotel Check In Matrix */}
                 <div className="border rounded-2xl overflow-hidden shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
-                  <details className="group">
+                  <details className="group" open>
                     <summary className="flex justify-between items-center font-bold text-xs p-4 cursor-pointer select-none hover:bg-black/5 tracking-wider uppercase" style={{ color: textPrimary }}>
                       <span className="flex items-center gap-2.5"><Hotel className="w-4 h-4 text-orange-500" /> Hotel Check-In Matrix</span>
                     </summary>
@@ -252,77 +254,6 @@ export default function DestinationPreview() {
                       <p className="mt-2 text-[11px] p-2.5 bg-amber-500/5 rounded-lg border border-amber-500/10 text-amber-500">
                         📌 <strong>Notes:</strong> Early check in is subject to room availability. Incidental security deposits are standardly collected at front desk arrival.
                       </p>
-                    </div>
-                  </details>
-                </div>
-
-                {/* Tour Reminders */}
-                <div className="border rounded-2xl overflow-hidden shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
-                  <details className="group">
-                    <summary className="flex justify-between items-center font-bold text-xs p-4 cursor-pointer select-none hover:bg-black/5 tracking-wider uppercase" style={{ color: textPrimary }}>
-                      <span className="flex items-center gap-2.5"><Compass className="w-4 h-4 text-orange-500" /> Tour Guidelines & Reminders</span>
-                    </summary>
-                    <div className="p-5 pt-0 border-t text-xs text-slate-400 grid sm:grid-cols-2 gap-4" style={{ borderColor: borderColor }}>
-                      <div>
-                        <h5 className="font-bold text-orange-500 mb-1">Before The Tour:</h5>
-                        <p>• Arrive 15 minutes early</p>
-                        <p>• Wear comfortable clothing</p>
-                        <p>• Bring water and sun protection</p>
-                        <p>• Charge mobile devices</p>
-                      </div>
-                      <div>
-                        <h5 className="font-bold text-orange-500 mb-1">During The Tour:</h5>
-                        <p>• Follow guide instructions</p>
-                        <p>• Observe local regulations</p>
-                        <p>• Secure personal belongings</p>
-                      </div>
-                    </div>
-                  </details>
-                </div>
-
-                {/* Emergency Hotlines */}
-                <div className="border rounded-2xl overflow-hidden shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
-                  <details className="group">
-                    <summary className="flex justify-between items-center font-bold text-xs p-4 cursor-pointer select-none hover:bg-black/5 tracking-wider uppercase" style={{ color: textPrimary }}>
-                      <span className="flex items-center gap-2.5"><PhoneCall className="w-4 h-4 text-rose-500" /> Emergency Contacts Support Matrix</span>
-                    </summary>
-                    <div className="p-5 pt-0 border-t text-xs text-slate-400" style={{ borderColor: borderColor }}>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-                        <div className="p-3 border rounded-xl flex justify-between items-center bg-black/5" style={{ borderColor: borderColor }}><span>Gladex Hotline</span><span className="font-bold" style={{ color: textPrimary }}>+63 2 8999 1234</span></div>
-                        <div className="p-3 border rounded-xl flex justify-between items-center bg-black/5" style={{ borderColor: borderColor }}><span>Tour Coordinator</span><span className="font-bold" style={{ color: textPrimary }}>+63 917 111 2233</span></div>
-                        <div className="p-3 border rounded-xl flex justify-between items-center bg-black/5" style={{ borderColor: borderColor }}><span>Hotel Support</span><span className="font-bold" style={{ color: textPrimary }}>+63 36 288 8888</span></div>
-                        <div className="p-3 border rounded-xl flex justify-between items-center bg-black/5" style={{ borderColor: borderColor }}><span>Transfer Provider</span><span className="font-bold" style={{ color: textPrimary }}>+63 918 444 5566</span></div>
-                      </div>
-                      <button className="w-full bg-rose-600/10 hover:bg-rose-600/20 text-rose-500 border border-rose-500/20 font-bold py-3 rounded-xl transition text-xs tracking-widest uppercase flex items-center justify-center gap-2">
-                        <AlertTriangle className="w-4 h-4 animate-pulse" /> Emergency Assistance Trigger
-                      </button>
-                    </div>
-                  </details>
-                </div>
-
-                {/* Do's and Don'ts */}
-                <div className="border rounded-2xl overflow-hidden shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
-                  <details className="group">
-                    <summary className="flex justify-between items-center font-bold text-xs p-4 cursor-pointer select-none hover:bg-black/5 tracking-wider uppercase" style={{ color: textPrimary }}>
-                      <span className="flex items-center gap-2.5"><ShieldAlert className="w-4 h-4 text-orange-500" /> Core Do’s and Don’ts Matrix</span>
-                    </summary>
-                    <div className="p-5 pt-0 border-t text-xs grid sm:grid-cols-2 gap-4" style={{ borderColor: borderColor }}>
-                      <div className="bg-emerald-500/5 p-4 rounded-xl border border-emerald-500/10 text-slate-400">
-                        <h6 className="font-bold text-emerald-500 mb-2">Do's</h6>
-                        <p>☑ Keep travel documents secure</p>
-                        <p>☑ Follow local regulations</p>
-                        <p>☑ Arrive on time</p>
-                        <p>☑ Stay hydrated</p>
-                        <p>☑ Save emergency contacts</p>
-                      </div>
-                      <div className="bg-rose-500/5 p-4 rounded-xl border border-rose-500/10 text-slate-400">
-                        <h6 className="font-bold text-rose-500 mb-2">Don'ts</h6>
-                        <p>☒ Leave valuables unattended</p>
-                        <p>☒ Miss transfer schedules</p>
-                        <p>☒ Bring prohibited items</p>
-                        <p>☒ Ignore safety instructions</p>
-                        <p>☒ Use unauthorized operators</p>
-                      </div>
                     </div>
                   </details>
                 </div>
@@ -371,40 +302,30 @@ export default function DestinationPreview() {
               </div>
             </section>
 
-            {/* 8. Outfit Inspiration Guide */}
-            <section>
-              <h3 className="text-xs font-bold mb-1 uppercase tracking-wider flex items-center gap-2" style={{ color: textPrimary }}>
-                <Shirt className="w-4 h-4 text-orange-500" /> Outfit Inspiration Guide
-              </h3>
-              <p className="text-[11px] mb-4" style={{ color: textMuted }}>Visual layout config styling ideas to scale excitement pre-travel.</p>
-              <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-thin">
-                {[
-                  { name: 'Airport Style', icon: Plane },
-                  { name: 'Tour Layout', icon: Camera },
-                  { name: 'Dinner Vibe', icon: Sunset },
-                  { name: 'Beach Look', icon: Sun },
-                ].map((item, idx) => (
-                  <div key={idx} className="border p-4 rounded-2xl text-center min-w-[140px] flex-1 bg-black/5" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
-                    <div className="w-full h-16 rounded-xl mb-2 flex items-center justify-center opacity-40"><item.icon className="w-5 h-5 text-orange-500" /></div>
-                    <span className="font-bold text-xs" style={{ color: textPrimary }}>{item.name}</span>
+            {/* NEW KLOOK-STYLE ACTUAL EXPERIENCE PHOTOS CONTAINER */}
+            <section className="border rounded-3xl p-6 shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
+              <div className="mb-4 flex items-center gap-2">
+                <Image className="w-4 h-4 text-orange-500" />
+                <div>
+                  <h3 className="text-xs font-bold uppercase tracking-wider" style={{ color: textPrimary }}>Real Guest Moments & Snapshots</h3>
+                  <p className="text-[11px]" style={{ color: textMuted }}>Actual photos shared directly from our previous travelers on this route.</p>
+                </div>
+              </div>
+              
+              {/* Klook-Style Responsive Image Mosaic Grid */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {experiencePhotos.map((photo, i) => (
+                  <div key={i} className="group relative overflow-hidden rounded-2xl aspect-square bg-neutral-200 dark:bg-neutral-800 border" style={{ borderColor: borderColor }}>
+                    <img 
+                      src={photo.url} 
+                      alt={photo.caption} 
+                      className="w-full h-full object-cover group-hover:scale-105 transition duration-300 ease-in-out"
+                    />
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent p-3 pt-6">
+                      <span className="text-[10px] text-white font-medium tracking-tight block">{photo.caption}</span>
+                    </div>
                   </div>
                 ))}
-              </div>
-            </section>
-
-            {/* 9. Destination Intellectual Guide */}
-            <section className="border rounded-3xl p-6 shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
-              <h3 className="text-xs font-bold mb-1 uppercase tracking-wider flex items-center gap-2" style={{ color: textPrimary }}>
-                <Palmtree className="w-4 h-4 text-orange-500" /> Boracay Island Destination Intel
-              </h3>
-              <p className="text-[11px] mb-4" style={{ color: textMuted }}>Local insight configurations pulled for your specific trip context.</p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 text-xs" style={{ color: textMuted }}>
-                <div><span className="font-bold block mb-0.5" style={{ color: textPrimary }}>⭐ Top Places To Visit:</span> White Beach, Puka Shell Beach, Willy's Rock.</div>
-                <div><span className="font-bold block mb-0.5" style={{ color: textPrimary }}>🍽 Food To Taste:</span> Chori Burger, Local Seafood Paluto, Calamansi Muffins.</div>
-                <div><span className="font-bold block mb-0.5" style={{ color: textPrimary }}>📸 Photo Coordinates:</span> Boracay Grotto Keyhole, Sunset Sail Line.</div>
-                <div><span className="font-bold block mb-0.5" style={{ color: textPrimary }}>💡 Core Safety Reminders:</span> E-trikes drive transit. Smoking/eating directly on beachfront paths is strictly prohibited.</div>
-                <div><span className="font-bold block mb-0.5" style={{ color: textPrimary }}>🌤 Weather Frame:</span> Tropical system; averages play out between 28°C and 33°C.</div>
-                <div><span className="font-bold block mb-0.5" style={{ color: textPrimary }}>💵 Currency Context:</span> Philippine Peso (PHP). Cards work at hotels, but micro-stalls prioritize cash.</div>
               </div>
             </section>
 
@@ -567,10 +488,6 @@ export default function DestinationPreview() {
                   <p className="font-bold mb-1" style={{ color: textPrimary }}>❓ What rules govern early property check-in requests?</p>
                   <p>Standard room allocation initializations trigger at 02:00 PM. Early arrival changes remain contingent on clear check-out vacancy spaces.</p>
                 </div>
-                <div>
-                  <p className="font-bold mb-1" style={{ color: textPrimary }}>❓ Are extra insurance plans mandatory?</p>
-                  <p>No, insurance items are voluntary but heavily pushed to protect financial paths against delays or luggage problems.</p>
-                </div>
               </div>
             </section>
 
@@ -591,29 +508,6 @@ export default function DestinationPreview() {
                   <span className="text-[10px] font-bold block mt-2" style={{ color: textPrimary }}>— Client Review, 2026</span>
                 </div>
               </div>
-            </section>
-
-            {/* 15. Rate My Service Segment */}
-            <section className="border rounded-3xl p-6 text-center shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
-              <h3 className="text-sm font-black italic mb-1" style={{ color: textPrimary }}>How Was Your Booking Experience So Far?</h3>
-              <p className="text-xs mb-4" style={{ color: textMuted }}>We constantly tune our automation vectors to give you effortless holiday flows.</p>
-              <div className="flex items-center justify-center gap-2 text-xs font-semibold mb-5 flex-wrap">
-                <span className="border px-3 py-1.5 rounded-xl bg-black/5" style={{ borderColor: borderColor }}>Booking Process Easy?</span>
-                <span className="border px-3 py-1.5 rounded-xl bg-black/5" style={{ borderColor: borderColor }}>Team Responsive?</span>
-                <span className="border px-3 py-1.5 rounded-xl bg-black/5" style={{ borderColor: borderColor }}>Satisfied Overall?</span>
-              </div>
-              <button type="button" onClick={() => alert("Thank you for your rating framework entry!")} className="inline-flex items-center gap-2 border px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-black/5 hover:opacity-80 transition" style={{ borderColor: borderColor, color: textPrimary }}>
-                <ThumbsUp className="w-3.5 h-3.5 text-orange-500" /> Leave A Review
-              </button>
-            </section>
-
-            {/* 16. Referral Actions Module */}
-            <section className="bg-gradient-to-r from-orange-600/10 to-amber-600/10 border rounded-3xl p-6 text-center shadow-sm" style={{ borderColor: borderColor }}>
-              <h3 className="text-sm font-black italic mb-1" style={{ color: textPrimary }}>Know Someone Who Wants To Travel?</h3>
-              <p className="text-xs max-w-sm mx-auto mb-4" style={{ color: textMuted }}>Refer your friends or professional connections to unlock future booking discounts and reward points!</p>
-              <button type="button" onClick={() => alert("Unique tracking link copied to clipboard.")} className="bg-gradient-to-r from-orange-500 to-amber-600 text-white font-bold text-xs uppercase tracking-widest px-6 py-3 rounded-xl transition shadow-sm inline-flex items-center gap-2">
-                <Users className="w-4 h-4" /> Refer A Friend
-              </button>
             </section>
 
           </div>
