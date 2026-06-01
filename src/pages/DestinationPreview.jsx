@@ -1,265 +1,624 @@
 import { useParams, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { DESTINATIONS } from "@/lib/destinations";
 import { useTheme } from "@/lib/ThemeContext";
 import DestinationNavbar from "@/components/destination/DestinationNavbar";
-import VideoSection from "@/components/destination/VideoSection";
-import ItinerarySection from "@/components/destination/ItinerarySection";
-import InclusionsExclusionsSection from "@/components/destination/InclusionsExclusionsSection";
-import PackageDetails from "@/components/destination/PackageDetails";
-import NotesSection from "@/components/destination/NotesSection";
+import { 
+  Search, ChevronRight, Download, FileText, Play, ArrowLeft, 
+  PlaneLanding, Truck, Hotel, Compass, PhoneCall, ShieldAlert,
+  CheckSquare, Briefcase, Shirt, Plane, Camera, Sunset, Sun,
+  Palmtree, Sparkles, ShieldCheck, ShoppingCart, HelpCircle,
+  MessageSquare, Users, Star, ThumbsUp, AlertTriangle, Check
+} from "lucide-react";
 
 export default function DestinationPreview() {
   const { slug } = useParams();
   const { darkMode } = useTheme();
-  const [heroLoaded, setHeroLoaded] = useState(false);
-  const [packageLoaded, setPackageLoaded] = useState(false);
+  
+  // Simulated lookup matching Fusioo workflow
+  const [searchID, setSearchID] = useState("GDX-BOR-2026");
+  const [hasSearched, setHasSearched] = useState(true);
 
-  const destination = DESTINATIONS.find((d) => d.slug === slug) || DESTINATIONS[0];
-  const heroImage = destination.hero;
+  // Upsell state management
+  const [selectedTours, setSelectedTours] = useState({});
+  const [selectedInsurance, setSelectedInsurance] = useState(null);
+
+  // Checklist state management
+  const [checklist, setChecklist] = useState({
+    id: true, voucher: true, flight: false, hotel: false, cash: false, data: false
+  });
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    setHeroLoaded(false);
-    setPackageLoaded(false);
-    const t1 = setTimeout(() => setHeroLoaded(true), 80);
-    const t2 = setTimeout(() => setPackageLoaded(true), 400);
-    return () => {clearTimeout(t1);clearTimeout(t2);};
   }, [slug]);
 
-  // Theme tokens
+  // Theme configuration tokens
   const bg = darkMode ? "#0a0a0a" : "#f8f9fa";
-  const cardBg = darkMode ? "#000" : "#ffffff";
-  const cardBg2 = darkMode ? "#0d0d0d" : "#ffffff";
-  const sectionBg2 = darkMode ? "linear-gradient(180deg, #0d0d0d 0%, #111 100%)" : "linear-gradient(180deg, #f0f2f5 0%, #e8ecf0 100%)";
+  const cardBg = darkMode ? "#000000" : "#ffffff";
   const textPrimary = darkMode ? "#ffffff" : "#0F172A";
   const textMuted = darkMode ? "rgba(255,255,255,0.4)" : "#64748B";
-  const borderColor = darkMode ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.08)";
-  const infoBarBg = darkMode ? "linear-gradient(180deg, #000 0%, #0d0d0d 100%)" : "linear-gradient(180deg, #ffffff 0%, #f5f7fa 100%)";
-  const pillBg = darkMode ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)";
-  const pillColor = darkMode ? "rgba(255,255,255,0.6)" : "#374151";
-  const pillBorder = darkMode ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.1)";
-  const ctaBg = darkMode ? "linear-gradient(180deg, #0a0a0a 0%, #000 100%)" : "linear-gradient(180deg, #f0f2f5 0%, #e8ecf0 100%)";
+  const borderColor = darkMode ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)";
+
+  // Dynamic calculations
+  const tourTotal = Object.values(selectedTours).reduce((sum, item) => sum + item.price, 0);
+  const insuranceTotal = selectedInsurance ? selectedInsurance.price : 0;
+  const overallTotal = tourTotal + insuranceTotal;
+
+  const toggleTour = (id, title, price) => {
+    setSelectedTours(prev => {
+      const next = { ...prev };
+      if (next[id]) { delete next[id]; } 
+      else { next[id] = { title, price }; }
+      return next;
+    });
+  };
 
   return (
-    <div
-      className="font-poppins min-h-screen transition-colors duration-500"
-      style={{ background: bg }}>
-      
+    <div className="font-poppins min-h-screen transition-colors duration-500 pb-24" style={{ background: bg, color: textPrimary }}>
       <DestinationNavbar />
 
-      {/* ─── HERO ─────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden" style={{ height: "100vh", minHeight: "560px" }}>
-        {/* Ken Burns background */}
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage: `url('${heroImage}')`,
-            animation: "heroKenBurns 14s ease-out forwards"
-          }} />
+      {/* Top Banner Context Notification */}
+      <div className="bg-gradient-to-r from-amber-600 to-orange-600 text-white text-[10px] sm:text-xs py-2 px-4 text-center font-bold tracking-wider uppercase shadow-sm">
+        ✨ Automated Travel Onboarding Hub — Available 24/7 After Your Confirmed Payment
+      </div>
+
+      <main className="max-w-4xl mx-auto px-4 mt-8">
         
-        {/* Multi-layer gradient overlay */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background: darkMode ?
-            "linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.1) 30%, rgba(0,0,0,0.55) 65%, rgba(0,0,0,0.88) 100%)" :
-            "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.05) 30%, rgba(0,0,0,0.4) 65%, rgba(0,0,0,0.75) 100%)"
-          }} />
-        
-        {/* Side vignettes */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background: "linear-gradient(90deg, rgba(0,0,0,0.25) 0%, transparent 25%, transparent 75%, rgba(0,0,0,0.25) 100%)"
-          }} />
-        
-        {/* Orange accent glow */}
-        <div
-          className="absolute bottom-0 left-0 right-0"
-          style={{ height: "200px", background: "linear-gradient(to top, rgba(255,140,0,0.06) 0%, transparent 100%)" }} />
-        
-        {/* Bottom border */}
-        <div
-          className="absolute bottom-0 left-0 right-0 h-[2px]"
-          style={{ background: "linear-gradient(90deg, transparent 0%, #FF8C00 30%, #FF6B00 50%, #FF8C00 70%, transparent 100%)" }} />
-        
-
-        {/* Content */}
-        <div
-          className="relative h-full flex flex-col items-center justify-end text-center px-6 pb-20 transition-all duration-1000"
-          style={{ opacity: heroLoaded ? 1 : 0, transform: heroLoaded ? "translateY(0)" : "translateY(20px)" }}>
-          
-          <div className="flex items-center gap-3 mb-5" style={{ opacity: heroLoaded ? 1 : 0, transition: "opacity 1s 0.3s" }}>
-            <div className="h-[1px]" style={{ width: "48px", background: "linear-gradient(90deg, transparent, #FF8C00)" }} />
-            <span className="text-[10px] font-bold tracking-[0.45em] uppercase" style={{ color: "#FF8C00" }}>
-              Official Travel Preview
-            </span>
-            <div className="h-[1px]" style={{ width: "48px", background: "linear-gradient(90deg, #FF8C00, transparent)" }} />
-          </div>
-
-          <h1
-            className="font-black text-white mb-4"
-            style={{
-              fontSize: "clamp(3rem, 9vw, 7rem)",
-              letterSpacing: "-0.03em",
-              lineHeight: 1.0,
-              textShadow: "0 4px 60px rgba(0,0,0,0.6)",
-              fontStyle: "italic",
-              opacity: heroLoaded ? 1 : 0,
-              transform: heroLoaded ? "translateY(0)" : "translateY(20px)",
-              transition: "opacity 0.9s 0.2s, transform 0.9s 0.2s"
-            }}>
-            
-            Experience {destination.name}
-          </h1>
-
-          <div className="flex items-center gap-2 mb-4" style={{ opacity: heroLoaded ? 1 : 0, transition: "opacity 0.8s 0.45s" }}>
-            <div
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full"
-              style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.15)", backdropFilter: "blur(8px)" }}>
-              
-              <svg className="w-3.5 h-3.5" fill="#FF8C00" viewBox="0 0 24 24">
-                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z" />
-              </svg>
-              <span className="text-xs font-semibold text-white/90">Philippines</span>
-            </div>
-          </div>
-
-          <p
-            className="text-sm font-light max-w-sm mx-auto"
-            style={{
-              color: "rgba(255,255,255,0.6)",
-              lineHeight: 1.7,
-              letterSpacing: "0.03em",
-              opacity: heroLoaded ? 1 : 0,
-              transition: "opacity 0.8s 0.55s"
-            }}>
-            
-            {destination.tagline}
-          </p>
-
-          <div
-            className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-            style={{ opacity: heroLoaded ? 0.6 : 0, transition: "opacity 1s 1.2s" }}>
-            
-            <div className="w-6 h-10 rounded-full flex items-start justify-center pt-1.5" style={{ border: "1.5px solid rgba(255,255,255,0.3)" }}>
-              <div style={{ width: "4px", height: "10px", borderRadius: "2px", background: "rgba(255,255,255,0.7)", animation: "heroScrollDot 1.8s ease-in-out infinite" }} />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ─── PACKAGE INFO BAR ────────────────────────────────── */}
-      <section
-        className="relative transition-colors duration-500"
-        style={{ background: infoBarBg, borderBottom: `1px solid ${borderColor}` }}>
-        
-        <div className="absolute top-0 left-0 right-0 h-[1px]" style={{ background: "linear-gradient(90deg, transparent, rgba(255,140,0,0.3), transparent)" }} />
-        <div
-          className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4 sm:gap-6 transition-all duration-700"
-          style={{ opacity: packageLoaded ? 1 : 0, transform: packageLoaded ? "translateY(0)" : "translateY(16px)" }}>
-          
-          <div className="min-w-0">
-            
-
-
-
-
-            
-            <div className="flex items-center gap-2 flex-wrap">
-              
-
-
-
-
-
-
-
-              
-              
-
-
-
-
-              
-            </div>
-          </div>
-          <div className="text-right">
-            
-            
-          </div>
-        </div>
-      </section>
-
-      {/* ─── VIDEO SECTION ───────────────────────────────────── */}
-      <VideoSection destination={destination} darkMode={darkMode} />
-
-      {/* ─── PACKAGE DETAILS / RATES / TOURS ─────────────────── */}
-      <section className="py-14 sm:py-20 px-4 sm:px-6 transition-colors duration-500" style={{ background: sectionBg2 }}>
-        <PackageDetails destination={destination} darkMode={darkMode} centerPackageTitle={true} />
-      </section>
-
-      {/* ─── INCLUSIONS & EXCLUSIONS ──────────────────────────── */}
-      <InclusionsExclusionsSection destination={destination} darkMode={darkMode} />
-
-      {/* ─── NOTES ───────────────────────────────────────────── */}
-      <NotesSection destination={destination} darkMode={darkMode} />
-
-      {/* ─── ITINERARY ───────────────────────────────────────── */}
-      <ItinerarySection destination={destination} darkMode={darkMode} />
-
-      {/* ─── CTA FOOTER ──────────────────────────────────────── */}
-      <section
-        className="relative py-16 sm:py-24 px-4 sm:px-6 text-center overflow-hidden transition-colors duration-500"
-        style={{ background: ctaBg }}>
-        
-        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(255,140,0,0.06) 0%, transparent 70%)" }} />
-        <div className="absolute top-0 left-0 right-0 h-[1px]" style={{ background: "linear-gradient(90deg, transparent, rgba(255,140,0,0.3), transparent)" }} />
-
-        <div className="relative z-10">
-          <div className="flex items-center justify-center gap-4 mb-5">
-            <div className="h-[1px] w-12" style={{ background: "linear-gradient(90deg, transparent, #FF8C00)" }} />
-            <span className="text-[10px] font-bold tracking-[0.4em] uppercase" style={{ color: "#FF8C00" }}>Ready to Explore?</span>
-            <div className="h-[1px] w-12" style={{ background: "linear-gradient(90deg, #FF8C00, transparent)" }} />
-          </div>
-
-          <h2
-            className="font-black mb-4 transition-colors duration-500"
-            style={{ color: textPrimary, fontSize: "clamp(1.8rem, 5vw, 3.2rem)", letterSpacing: "-0.03em", fontStyle: "italic", lineHeight: 1.1 }}>
-            
-            Discover More Destinations
-          </h2>
-          <p className="text-sm font-light max-w-sm mx-auto mb-10" style={{ color: textMuted, lineHeight: 1.8 }}>
-            Browse our full collection of Philippine travel experiences.
-          </p>
-
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 sm:gap-3 px-7 sm:px-10 py-3.5 sm:py-4 rounded-full font-bold text-xs sm:text-sm tracking-widest uppercase text-white transition-all duration-300 hover:scale-105 active:scale-95"
-            style={{
-              background: "linear-gradient(135deg, #FF8C00 0%, #FF6B00 100%)",
-              boxShadow: "0 8px 40px rgba(255,140,0,0.35), 0 0 0 1px rgba(255,255,255,0.1)",
-              letterSpacing: "0.15em",
-              animation: "ctaGlow 3s ease-in-out infinite"
-            }}>
-            
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-            </svg>
-            Back to All Destinations
+        {/* Back Link Row */}
+        <div className="flex justify-end mb-6">
+          <Link to="/" className="text-xs font-bold tracking-widest uppercase transition flex items-center gap-2 border px-4 py-2 rounded-full bg-black/5" style={{ borderColor: borderColor, color: textPrimary }}>
+            <ArrowLeft className="w-3.5 h-3.5 text-orange-500" /> Back to Domestic
           </Link>
         </div>
-      </section>
 
-      <style>{`
-        @keyframes heroKenBurns { from { transform: scale(1); } to { transform: scale(1.08); } }
-        @keyframes heroScrollDot { 0%, 100% { transform: translateY(0); opacity: 0.6; } 50% { transform: translateY(8px); opacity: 1; } }
-        @keyframes ctaGlow {
-          0%, 100% { box-shadow: 0 8px 40px rgba(255,140,0,0.35), 0 0 0 1px rgba(255,255,255,0.1); }
-          50% { box-shadow: 0 12px 60px rgba(255,140,0,0.55), 0 0 0 1px rgba(255,255,255,0.15); }
-        }
-      `}</style>
-    </div>);
+        {/* 1. Welcome Section & Booking Lookup */}
+        <section className="border rounded-3xl p-6 md:p-10 shadow-xl text-center mb-8 relative overflow-hidden" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
+          <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_60%_50%_at_50%_50%,rgba(255,140,0,0.04)_0%,transparent_70%)]" />
+          
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-orange-500"></div>
+            <span className="text-[10px] font-bold tracking-[0.45em] uppercase text-orange-500">Verification Engine</span>
+            <div className="h-[1px] w-12 bg-gradient-to-l from-transparent to-orange-500"></div>
+          </div>
 
+          <span className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 dark:text-emerald-400 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-4 inline-block">
+            Booking Status: Fully Paid & Confirmed
+          </span>
+          
+          <h1 className="text-2xl md:text-4xl font-black mb-3 tracking-tight italic" style={{ color: textPrimary }}>Your Trip Is Confirmed!</h1>
+          <p className="text-xs md:text-sm max-w-md mx-auto mb-6 leading-relaxed" style={{ color: textMuted }}>
+            Enter your GDX Confirmation Number or Tour Voucher Number to access your personalized travel briefing, vouchers, reminders, optional tours, and add-ons.
+          </p>
+          
+          {/* FIXED SEARCH MODULE BLOCK */}
+          <div className="max-w-md mx-auto flex flex-col sm:flex-row gap-2 relative z-10">
+            <div className="relative flex-1">
+              <Search className="w-4 h-4 absolute left-4 top-4 text-slate-400" />
+              <input 
+                type="text" 
+                value={searchID}
+                onChange={(e) => setSearchID(e.target.value)}
+                className="w-full pl-11 pr-4 py-3.5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 font-medium text-sm transition bg-neutral-50 dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800 text-neutral-900 dark:text-neutral-100" 
+                placeholder="Enter GDX Confirmation Number / Tour Voucher Number"
+              />
+            </div>
+            <button 
+              type="button"
+              onClick={() => { 
+                setHasSearched(true); 
+                alert("Real-time lookup refreshed from Fusioo platform data tables."); 
+              }}
+              className="bg-gradient-to-r from-orange-500 to-amber-600 hover:opacity-95 text-white text-xs font-bold uppercase tracking-widest px-6 py-3.5 rounded-xl transition flex items-center justify-center gap-2 shadow-md"
+            >
+              <span>View My Trip</span>
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        </section>
+
+        {hasSearched && (
+          <div className="space-y-8 animate-fade-in">
+            
+            {/* 2 & 3. Personalized Travel Dashboard */}
+            <section className="border rounded-3xl p-6 shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-5 mb-6 gap-4" style={{ borderColor: borderColor }}>
+                <div>
+                  <h2 className="text-xl font-bold flex items-center gap-2" style={{ color: textPrimary }}>Hi Maria! 👋</h2>
+                  <p className="text-xs mt-0.5" style={{ color: textMuted }}>Your automated travel layout is synced directly with live records.</p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <button className="hover:opacity-80 border text-[11px] font-bold px-3 py-2 rounded-xl flex items-center gap-1.5 transition bg-black/5" style={{ borderColor: borderColor, color: textPrimary }}>
+                    <Download className="w-3.5 h-3.5 text-orange-500" /> Download Voucher
+                  </button>
+                  <button className="hover:opacity-80 border text-[11px] font-bold px-3 py-2 rounded-xl flex items-center gap-1.5 transition bg-black/5" style={{ borderColor: borderColor, color: textPrimary }}>
+                    <FileText className="w-3.5 h-3.5 text-orange-500" /> Download Itinerary
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+                <div className="p-3 rounded-xl border bg-black/5" style={{ borderColor: borderColor }}>
+                  <span className="text-[10px] font-bold block uppercase tracking-wider mb-1" style={{ color: textMuted }}>Destination</span>
+                  <span className="font-bold text-sm">Boracay, Philippines</span>
+                </div>
+                <div className="p-3 rounded-xl border bg-black/5" style={{ borderColor: borderColor }}>
+                  <span className="text-[10px] font-bold block uppercase tracking-wider mb-1" style={{ color: textMuted }}>Travel Date</span>
+                  <span className="font-bold text-sm">June 15 to 18, 2026</span>
+                </div>
+                <div className="p-3 rounded-xl border bg-black/5" style={{ borderColor: borderColor }}>
+                  <span className="text-[10px] font-bold block uppercase tracking-wider mb-1" style={{ color: textMuted }}>Accommodations</span>
+                  <span className="font-bold text-sm">Henann Lagoon (4 Adults)</span>
+                </div>
+                <div className="p-3 rounded-xl border bg-black/5" style={{ borderColor: borderColor }}>
+                  <span className="text-[10px] font-bold block uppercase tracking-wider mb-1" style={{ color: textMuted }}>Consultant</span>
+                  <span className="font-bold text-orange-500 text-sm">Agent Roy</span>
+                </div>
+              </div>
+            </section>
+
+            {/* 4. Travel Briefing Video Section */}
+            <section className="border rounded-3xl p-6 md:p-8 shadow-sm text-center relative overflow-hidden" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
+              <div className="max-w-md mx-auto">
+                <h3 className="text-base font-bold tracking-tight mb-1" style={{ color: textPrimary }}>Your Destination Video Briefing</h3>
+                <p className="text-xs mb-6" style={{ color: textMuted }}>Review this mandatory structural walkthrough to replace manual live session blocks.</p>
+                
+                <div className="w-full max-w-[260px] aspect-[9/16] bg-black rounded-[2.2rem] mx-auto shadow-2xl border-4 border-neutral-800 overflow-hidden relative flex flex-col justify-between items-center p-5 text-center">
+                  <div className="w-full flex justify-between items-center text-[8px] text-neutral-400">
+                    <span className="font-bold tracking-wide">● PORTRAIT PRESENTATION</span>
+                    <span className="bg-rose-600 text-white font-black px-1.5 py-0.5 rounded tracking-widest text-[7.5px]">NO CAPTIONS</span>
+                  </div>
+                  
+                  <div className="my-auto flex flex-col items-center">
+                    <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-amber-600 rounded-full flex items-center justify-center cursor-pointer shadow-lg hover:scale-105 transition duration-200">
+                      <Play className="w-5 h-5 text-white fill-white ml-0.5" />
+                    </div>
+                    <span className="text-[11px] font-bold text-neutral-200 mt-4 block">Boracay Onboarding Orientation</span>
+                    <span className="text-[9px] text-neutral-500 block mt-0.5">Duration: 4m 12s</span>
+                  </div>
+
+                  <div className="w-full bg-neutral-800 h-1 rounded-full overflow-hidden mb-2">
+                    <div className="bg-orange-500 w-1/3 h-full"></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* 5. Travel Information Center (Accordions) */}
+            <section>
+              <h3 className="text-base font-bold mb-4 flex items-center gap-2" style={{ color: textPrimary }}>
+                <Compass className="w-4 h-4 text-orange-500" /> Travel Information Center
+              </h3>
+
+              <div className="space-y-3">
+                {/* Arrival Block */}
+                <div className="border rounded-2xl overflow-hidden shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
+                  <details className="group" open>
+                    <summary className="flex justify-between items-center font-bold text-xs p-4 cursor-pointer select-none hover:bg-black/5 tracking-wider uppercase" style={{ color: textPrimary }}>
+                      <span className="flex items-center gap-2.5"><PlaneLanding className="w-4 h-4 text-orange-500" /> Arrival & Airport Instructions</span>
+                    </summary>
+                    <div className="p-5 pt-0 border-t text-xs space-y-4" style={{ borderColor: borderColor, color: textMuted }}>
+                      <div>
+                        <h5 className="font-bold mb-1.5 text-orange-500">Before Departure:</h5>
+                        <p>• Arrive at the airport 2 to 3 hours before departure</p>
+                        <p>• Prepare travel documents</p>
+                        <p>• Save digital copies of vouchers and itinerary</p>
+                      </div>
+                      <div>
+                        <h5 className="font-bold mb-1.5 text-orange-500">Upon Arrival:</h5>
+                        <p>• Follow airport arrival signs</p>
+                        <p>• Collect baggage</p>
+                        <p>• Proceed according to transfer instructions</p>
+                        <p>• Keep your mobile phone available for updates</p>
+                      </div>
+                    </div>
+                  </details>
+                </div>
+
+                {/* Transfer Operations */}
+                <div className="border rounded-2xl overflow-hidden shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
+                  <details className="group">
+                    <summary className="flex justify-between items-center font-bold text-xs p-4 cursor-pointer select-none hover:bg-black/5 tracking-wider uppercase" style={{ color: textPrimary }}>
+                      <span className="flex items-center gap-2.5"><Truck className="w-4 h-4 text-orange-500" /> Transfer Instructions & Logistics</span>
+                    </summary>
+                    <div className="p-5 pt-0 border-t text-xs text-slate-400" style={{ borderColor: borderColor }}>
+                      <div className="p-3 border rounded-xl grid grid-cols-2 gap-3 mb-4 bg-black/5" style={{ borderColor: borderColor }}>
+                        <div><span className="text-[9px] font-bold block uppercase" style={{ color: textMuted }}>Transfer Type</span><span className="font-bold text-xs" style={{ color: textPrimary }}>Sea & Land Transit</span></div>
+                        <div><span className="text-[9px] font-bold block uppercase" style={{ color: textMuted }}>Provider</span><span className="font-bold text-xs" style={{ color: textPrimary }}>Southwest Express</span></div>
+                        <div><span className="text-[9px] font-bold block uppercase" style={{ color: textMuted }}>Pick Up Point</span><span className="font-bold text-xs" style={{ color: textPrimary }}>Caticlan Exit Gate</span></div>
+                        <div><span className="text-[9px] font-bold block uppercase" style={{ color: textMuted }}>Est. Time</span><span className="font-bold text-xs" style={{ color: textPrimary }}>1 hr 30 mins</span></div>
+                      </div>
+                      <h5 className="font-bold mb-1 text-orange-500">Reminders:</h5>
+                      <p>• Follow transfer coordinator instructions</p>
+                      <p>• Be ready at designated pick up area</p>
+                      <p>• Notify support immediately if delayed</p>
+                    </div>
+                  </details>
+                </div>
+
+                {/* Hotel Check In Matrix */}
+                <div className="border rounded-2xl overflow-hidden shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
+                  <details className="group">
+                    <summary className="flex justify-between items-center font-bold text-xs p-4 cursor-pointer select-none hover:bg-black/5 tracking-wider uppercase" style={{ color: textPrimary }}>
+                      <span className="flex items-center gap-2.5"><Hotel className="w-4 h-4 text-orange-500" /> Hotel Check-In Matrix</span>
+                    </summary>
+                    <div className="p-5 pt-0 border-t text-xs text-slate-400" style={{ borderColor: borderColor }}>
+                      <div className="p-3 border rounded-xl grid grid-cols-2 md:grid-cols-4 gap-3 mb-4 bg-black/5" style={{ borderColor: borderColor }}>
+                        <div><span className="text-[9px] font-bold block uppercase" style={{ color: textMuted }}>Hotel</span><span className="font-bold" style={{ color: textPrimary }}>Henann Lagoon</span></div>
+                        <div><span className="text-[9px] font-bold block uppercase" style={{ color: textMuted }}>Address</span><span className="font-bold" style={{ color: textPrimary }}>Station 2, Boracay</span></div>
+                        <div><span className="text-[9px] font-bold block uppercase" style={{ color: textMuted }}>Check In</span><span className="font-bold" style={{ color: textPrimary }}>02:00 PM</span></div>
+                        <div><span className="text-[9px] font-bold block uppercase" style={{ color: textMuted }}>Check Out</span><span className="font-bold" style={{ color: textPrimary }}>12:00 PM</span></div>
+                      </div>
+                      <p className="font-bold text-xs mb-1" style={{ color: textPrimary }}>Requirements:</p>
+                      <p>✔ Valid ID / Passport & Hotel Voucher</p>
+                      <p className="mt-2 text-[11px] p-2.5 bg-amber-500/5 rounded-lg border border-amber-500/10 text-amber-500">
+                        📌 <strong>Notes:</strong> Early check in is subject to room availability. Incidental security deposits are standardly collected at front desk arrival.
+                      </p>
+                    </div>
+                  </details>
+                </div>
+
+                {/* Tour Reminders */}
+                <div className="border rounded-2xl overflow-hidden shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
+                  <details className="group">
+                    <summary className="flex justify-between items-center font-bold text-xs p-4 cursor-pointer select-none hover:bg-black/5 tracking-wider uppercase" style={{ color: textPrimary }}>
+                      <span className="flex items-center gap-2.5"><Compass className="w-4 h-4 text-orange-500" /> Tour Guidelines & Reminders</span>
+                    </summary>
+                    <div className="p-5 pt-0 border-t text-xs text-slate-400 grid sm:grid-cols-2 gap-4" style={{ borderColor: borderColor }}>
+                      <div>
+                        <h5 className="font-bold text-orange-500 mb-1">Before The Tour:</h5>
+                        <p>• Arrive 15 minutes early</p>
+                        <p>• Wear comfortable clothing</p>
+                        <p>• Bring water and sun protection</p>
+                        <p>• Charge mobile devices</p>
+                      </div>
+                      <div>
+                        <h5 className="font-bold text-orange-500 mb-1">During The Tour:</h5>
+                        <p>• Follow guide instructions</p>
+                        <p>• Observe local regulations</p>
+                        <p>• Secure personal belongings</p>
+                      </div>
+                    </div>
+                  </details>
+                </div>
+
+                {/* Emergency Hotlines */}
+                <div className="border rounded-2xl overflow-hidden shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
+                  <details className="group">
+                    <summary className="flex justify-between items-center font-bold text-xs p-4 cursor-pointer select-none hover:bg-black/5 tracking-wider uppercase" style={{ color: textPrimary }}>
+                      <span className="flex items-center gap-2.5"><PhoneCall className="w-4 h-4 text-rose-500" /> Emergency Contacts Support Matrix</span>
+                    </summary>
+                    <div className="p-5 pt-0 border-t text-xs text-slate-400" style={{ borderColor: borderColor }}>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                        <div className="p-3 border rounded-xl flex justify-between items-center bg-black/5" style={{ borderColor: borderColor }}><span>Gladex Hotline</span><span className="font-bold" style={{ color: textPrimary }}>+63 2 8999 1234</span></div>
+                        <div className="p-3 border rounded-xl flex justify-between items-center bg-black/5" style={{ borderColor: borderColor }}><span>Tour Coordinator</span><span className="font-bold" style={{ color: textPrimary }}>+63 917 111 2233</span></div>
+                        <div className="p-3 border rounded-xl flex justify-between items-center bg-black/5" style={{ borderColor: borderColor }}><span>Hotel Support</span><span className="font-bold" style={{ color: textPrimary }}>+63 36 288 8888</span></div>
+                        <div className="p-3 border rounded-xl flex justify-between items-center bg-black/5" style={{ borderColor: borderColor }}><span>Transfer Provider</span><span className="font-bold" style={{ color: textPrimary }}>+63 918 444 5566</span></div>
+                      </div>
+                      <button className="w-full bg-rose-600/10 hover:bg-rose-600/20 text-rose-500 border border-rose-500/20 font-bold py-3 rounded-xl transition text-xs tracking-widest uppercase flex items-center justify-center gap-2">
+                        <AlertTriangle className="w-4 h-4 animate-pulse" /> Emergency Assistance Trigger
+                      </button>
+                    </div>
+                  </details>
+                </div>
+
+                {/* Do's and Don'ts */}
+                <div className="border rounded-2xl overflow-hidden shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
+                  <details className="group">
+                    <summary className="flex justify-between items-center font-bold text-xs p-4 cursor-pointer select-none hover:bg-black/5 tracking-wider uppercase" style={{ color: textPrimary }}>
+                      <span className="flex items-center gap-2.5"><ShieldAlert className="w-4 h-4 text-orange-500" /> Core Do’s and Don’ts Matrix</span>
+                    </summary>
+                    <div className="p-5 pt-0 border-t text-xs grid sm:grid-cols-2 gap-4" style={{ borderColor: borderColor }}>
+                      <div className="bg-emerald-500/5 p-4 rounded-xl border border-emerald-500/10 text-slate-400">
+                        <h6 className="font-bold text-emerald-500 mb-2">Do's</h6>
+                        <p>☑ Keep travel documents secure</p>
+                        <p>☑ Follow local regulations</p>
+                        <p>☑ Arrive on time</p>
+                        <p>☑ Stay hydrated</p>
+                        <p>☑ Save emergency contacts</p>
+                      </div>
+                      <div className="bg-rose-500/5 p-4 rounded-xl border border-rose-500/10 text-slate-400">
+                        <h6 className="font-bold text-rose-500 mb-2">Don'ts</h6>
+                        <p>☒ Leave valuables unattended</p>
+                        <p>☒ Miss transfer schedules</p>
+                        <p>☒ Bring prohibited items</p>
+                        <p>☒ Ignore safety instructions</p>
+                        <p>☒ Use unauthorized operators</p>
+                      </div>
+                    </div>
+                  </details>
+                </div>
+              </div>
+            </section>
+
+            {/* 6 & 7. Checklist & What To Bring Section */}
+            <section className="border rounded-3xl p-6 shadow-sm grid md:grid-cols-2 gap-8" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
+              <div>
+                <h3 className="text-xs font-bold mb-1 uppercase tracking-wider flex items-center gap-2" style={{ color: textPrimary }}>
+                  <CheckSquare className="w-4 h-4 text-orange-500" /> Travel Readiness Checklist
+                </h3>
+                <p className="text-[11px] mb-4" style={{ color: textMuted }}>Interactive setup to complete milestones before departure.</p>
+                <div className="space-y-2 text-xs">
+                  {Object.keys(checklist).map((key) => (
+                    <label key={key} className="flex items-center gap-2.5 p-2.5 border rounded-xl cursor-pointer hover:opacity-80 transition bg-black/5" style={{ borderColor: borderColor }}>
+                      <input 
+                        type="checkbox" 
+                        checked={checklist[key]} 
+                        onChange={() => setChecklist(p => ({ ...p, [key]: !p[key] }))}
+                        className="w-4 h-4 text-orange-500 accent-orange-500 rounded focus:ring-0" 
+                      />
+                      <span style={{ color: textPrimary }}>
+                        {key === 'id' && 'Valid ID / Passport'}
+                        {key === 'voucher' && 'Travel Voucher'}
+                        {key === 'flight' && 'Flight Ticket'}
+                        {key === 'hotel' && 'Hotel Voucher'}
+                        {key === 'cash' && 'Pocket Cash'}
+                        {key === 'data' && 'Mobile Data Connection'}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-xs font-bold mb-1 uppercase tracking-wider flex items-center gap-2" style={{ color: textPrimary }}>
+                  <Briefcase className="w-4 h-4 text-orange-500" /> What To Bring Guide
+                </h3>
+                <p className="text-[11px] mb-4" style={{ color: textMuted }}>Suggested packing categories mapped directly to your itinerary layout.</p>
+                <div className="space-y-3 text-xs" style={{ color: textMuted }}>
+                  <p><strong style={{ color: textPrimary }}>Documents:</strong> Passport, IDs, Travel Voucher, Insurance Certificate, Flight Ticket</p>
+                  <p><strong style={{ color: textPrimary }}>Essentials:</strong> Cash, Cards, Powerbank, Charger, Basic Medicines</p>
+                  <p><strong style={{ color: textPrimary }}>Destination Beach Pack:</strong> Beachwear, Slippers, Sunscreen, Waterproof Dry Bag</p>
+                </div>
+              </div>
+            </section>
+
+            {/* 8. Outfit Inspiration Guide */}
+            <section>
+              <h3 className="text-xs font-bold mb-1 uppercase tracking-wider flex items-center gap-2" style={{ color: textPrimary }}>
+                <Shirt className="w-4 h-4 text-orange-500" /> Outfit Inspiration Guide
+              </h3>
+              <p className="text-[11px] mb-4" style={{ color: textMuted }}>Visual layout config styling ideas to scale excitement pre-travel.</p>
+              <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-thin">
+                {[
+                  { name: 'Airport Style', icon: Plane },
+                  { name: 'Tour Layout', icon: Camera },
+                  { name: 'Dinner Vibe', icon: Sunset },
+                  { name: 'Beach Look', icon: Sun },
+                ].map((item, idx) => (
+                  <div key={idx} className="border p-4 rounded-2xl text-center min-w-[140px] flex-1 bg-black/5" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
+                    <div className="w-full h-16 rounded-xl mb-2 flex items-center justify-center opacity-40"><item.icon className="w-5 h-5 text-orange-500" /></div>
+                    <span className="font-bold text-xs" style={{ color: textPrimary }}>{item.name}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* 9. Destination Intellectual Guide */}
+            <section className="border rounded-3xl p-6 shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
+              <h3 className="text-xs font-bold mb-1 uppercase tracking-wider flex items-center gap-2" style={{ color: textPrimary }}>
+                <Palmtree className="w-4 h-4 text-orange-500" /> Boracay Island Destination Intel
+              </h3>
+              <p className="text-[11px] mb-4" style={{ color: textMuted }}>Local insight configurations pulled for your specific trip context.</p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 text-xs" style={{ color: textMuted }}>
+                <div><span className="font-bold block mb-0.5" style={{ color: textPrimary }}>⭐ Top Places To Visit:</span> White Beach, Puka Shell Beach, Willy's Rock.</div>
+                <div><span className="font-bold block mb-0.5" style={{ color: textPrimary }}>🍽 Food To Taste:</span> Chori Burger, Local Seafood Paluto, Calamansi Muffins.</div>
+                <div><span className="font-bold block mb-0.5" style={{ color: textPrimary }}>📸 Photo Coordinates:</span> Boracay Grotto Keyhole, Sunset Sail Line.</div>
+                <div><span className="font-bold block mb-0.5" style={{ color: textPrimary }}>💡 Core Safety Reminders:</span> E-trikes drive transit. Smoking/eating directly on beachfront paths is strictly prohibited.</div>
+                <div><span className="font-bold block mb-0.5" style={{ color: textPrimary }}>🌤 Weather Frame:</span> Tropical system; averages play out between 28°C and 33°C.</div>
+                <div><span className="font-bold block mb-0.5" style={{ color: textPrimary }}>💵 Currency Context:</span> Philippine Peso (PHP). Cards work at hotels, but micro-stalls prioritize cash.</div>
+              </div>
+            </section>
+
+            {/* 10. Optional Tours */}
+            <section>
+              <div className="mb-4">
+                <h3 className="text-xs font-bold uppercase tracking-wider flex items-center gap-2" style={{ color: textPrimary }}>
+                  <Sparkles className="w-4 h-4 text-orange-500" /> Optional Tours Marketplace
+                </h3>
+                <p className="text-[11px]" style={{ color: textMuted }}>Promote supplementary excursions to grow total contract yield metrics.</p>
+              </div>
+
+              <div className="grid sm:grid-cols-2 gap-4">
+                {/* Tour 1 */}
+                <div className="border rounded-2xl p-5 flex flex-col justify-between shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
+                  <div>
+                    <h4 className="font-bold text-sm" style={{ color: textPrimary }}>Boracay Island Hopping</h4>
+                    <p className="text-[11px] mt-1" style={{ color: textMuted }}>Includes boat tour, snorkeling accessories, and local group buffet lunch blocks.</p>
+                    <span className="text-[10px] block mt-2" style={{ color: textMuted }}>⏱ Duration: 5 Hours</span>
+                  </div>
+                  <div className="flex justify-between items-center mt-5 pt-3 border-t" style={{ borderColor: borderColor }}>
+                    <div>
+                      <span className="text-[9px] uppercase font-bold block" style={{ color: textMuted }}>Add-on Price</span>
+                      <span className="font-black text-orange-500 text-sm">₱999 <span className="text-[10px] font-normal text-slate-500">/ Person</span></span>
+                    </div>
+                    <button 
+                      type="button"
+                      onClick={() => toggleTour('island-hop', 'Boracay Island Hopping', 999)}
+                      className={`text-xs font-bold px-4 py-2 rounded-xl transition border ${selectedTours['island-hop'] ? 'bg-rose-500/10 text-rose-500 border-rose-500/20' : 'bg-orange-500/10 text-orange-500 border-orange-500/20'}`}
+                    >
+                      {selectedTours['island-hop'] ? 'Remove' : 'Add To Trip'}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Tour 2 */}
+                <div className="border rounded-2xl p-5 flex flex-col justify-between shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
+                  <div>
+                    <h4 className="font-bold text-sm" style={{ color: textPrimary }}>Sunset Paraw Sailing</h4>
+                    <p className="text-[11px] mt-1" style={{ color: textMuted }}>Traditional sailboat glide across local signature sunset horizons.</p>
+                    <span className="text-[10px] block mt-2" style={{ color: textMuted }}>⏱ Duration: 1 Hour</span>
+                  </div>
+                  <div className="flex justify-between items-center mt-5 pt-3 border-t" style={{ borderColor: borderColor }}>
+                    <div>
+                      <span className="text-[9px] uppercase font-bold block" style={{ color: textMuted }}>Add-on Price</span>
+                      <span className="font-black text-orange-500 text-sm">₱1,500 <span className="text-[10px] font-normal text-slate-500">/ Sailboat</span></span>
+                    </div>
+                    <button 
+                      type="button"
+                      onClick={() => toggleTour('paraw', 'Sunset Paraw Sailing', 1500)}
+                      className={`text-xs font-bold px-4 py-2 rounded-xl transition border ${selectedTours['paraw'] ? 'bg-rose-500/10 text-rose-500 border-rose-500/20' : 'bg-orange-500/10 text-orange-500 border-orange-500/20'}`}
+                    >
+                      {selectedTours['paraw'] ? 'Remove' : 'Add To Trip'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* 11. Travel Insurance Protection */}
+            <section className="border rounded-3xl p-6 shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
+              <div className="mb-4">
+                <span className="bg-orange-500/10 text-orange-500 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest">Optional Plan</span>
+                <h3 className="text-xs font-bold mt-2 uppercase tracking-wider flex items-center gap-2" style={{ color: textPrimary }}>
+                  <ShieldCheck className="w-4 h-4 text-orange-500" /> Travel Insurance Protection Suite
+                </h3>
+                <p className="text-[11px]" style={{ color: textMuted }}>Optional insurance highly recommended for flight interrupts, accidents, or luggage risks.</p>
+              </div>
+
+              <div className="grid sm:grid-cols-3 gap-3 text-xs">
+                {[
+                  { id: 'basic', title: 'Basic Insurance', price: 399 },
+                  { id: 'std', title: 'Standard Insurance', price: 699, recommended: true },
+                  { id: 'prem', title: 'Premium Insurance', price: 999 }
+                ].map((tier) => (
+                  <div key={tier.id} className={`border p-4 rounded-xl flex flex-col justify-between relative bg-black/5 ${tier.recommended ? 'border-orange-500 bg-orange-500/[0.02]' : ''}`} style={{ borderColor: tier.recommended ? '#FF8C00' : borderColor }}>
+                    {tier.recommended && <span className="bg-orange-500 text-black text-[8px] font-black px-2 py-0.5 rounded absolute -top-2.5 left-4 uppercase tracking-wider">Recommended</span>}
+                    <div>
+                      <span className="font-bold block" style={{ color: textPrimary }}>{tier.title}</span>
+                    </div>
+                    <div className="mt-4 pt-3 border-t flex items-center justify-between" style={{ borderColor: borderColor }}>
+                      <span className="font-black text-sm" style={{ color: textPrimary }}>₱{tier.price}</span>
+                      <button 
+                        type="button"
+                        onClick={() => setSelectedInsurance(selectedInsurance?.id === tier.id ? null : tier)}
+                        className={`font-bold px-3 py-1.5 rounded-lg text-[11px] transition ${selectedInsurance?.id === tier.id ? 'bg-emerald-500 text-black' : 'bg-white/5 border text-orange-500'}`}
+                        style={{ borderColor: borderColor }}
+                      >
+                        {selectedInsurance?.id === tier.id ? 'Active ✓' : 'Add'}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* 12. Dynamic Ledger Checkout Panel */}
+            <section className="border-2 rounded-3xl p-6 shadow-2xl bg-gradient-to-br from-black/20 via-black/40 to-black/10" style={{ borderColor: 'rgba(255,140,0,0.25)' }}>
+              <h3 className="text-xs font-bold uppercase tracking-wider mb-4 flex items-center gap-2" style={{ color: textPrimary }}>
+                <ShoppingCart className="w-4 h-4 text-orange-500" /> Checkout Ledger Total
+              </h3>
+              
+              <div className="border-b pb-4 mb-4 text-xs space-y-2.5" style={{ borderColor: borderColor }}>
+                <div className="flex justify-between items-center text-slate-400">
+                  <span className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-emerald-500" /> Flight & Base Package Assets</span>
+                  <span className="text-emerald-500 font-bold uppercase tracking-widest text-[9px] bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">PAID / SYSTEM MATCHED</span>
+                </div>
+                
+                {Object.values(selectedTours).map((tour, i) => (
+                  <div key={i} className="flex justify-between items-center py-0.5 font-medium animate-fade-in">
+                    <span style={{ color: textPrimary }}>✦ {tour.title} (Add-on Pack)</span>
+                    <span className="font-bold text-orange-500">₱{tour.price.toLocaleString()}</span>
+                  </div>
+                ))}
+
+                {selectedInsurance && (
+                  <div className="flex justify-between items-center py-0.5 font-medium animate-fade-in">
+                    <span style={{ color: textPrimary }}>✦ SafeTravel: {selectedInsurance.title} choice</span>
+                    <span className="font-bold text-orange-500">₱{selectedInsurance.price.toLocaleString()}</span>
+                  </div>
+                )}
+
+                {Object.keys(selectedTours).length === 0 && !selectedInsurance && (
+                  <p className="text-slate-500 italic py-0.5 text-[11px]">No active voluntary add-ons selected currently.</p>
+                )}
+              </div>
+
+              <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-6">
+                <div>
+                  <span className="text-[10px] uppercase tracking-wider block font-bold" style={{ color: textMuted }}>Add-On Balance Due:</span>
+                  <span className="text-2xl font-black tracking-tight italic" style={{ color: textPrimary }}>₱{overallTotal.toLocaleString()}</span>
+                </div>
+                <div className="text-left sm:text-right">
+                  <span className="text-[9px] uppercase font-black block tracking-widest mb-1.5" style={{ color: textMuted }}>Secure Gateways</span>
+                  <div className="flex gap-1 text-[8px] font-bold text-white font-mono">
+                    <span className="bg-white/5 border px-1.5 py-0.5 rounded" style={{ borderColor: borderColor }}>GCASH</span>
+                    <span className="bg-white/5 border px-1.5 py-0.5 rounded" style={{ borderColor: borderColor }}>MAYA</span>
+                    <span className="bg-white/5 border px-1.5 py-0.5 rounded" style={{ borderColor: borderColor }}>CREDIT CARD</span>
+                  </div>
+                </div>
+              </div>
+
+              <button className="w-full bg-gradient-to-r from-orange-500 to-amber-600 hover:opacity-95 text-white font-bold uppercase tracking-widest text-xs py-4 rounded-xl transition shadow-lg flex items-center justify-center gap-2">
+                <span>Proceed To Add-on Checkout</span>
+                <FileText className="w-4 h-4" />
+              </button>
+            </section>
+
+            {/* 13. FAQ Matrix */}
+            <section className="border rounded-3xl p-6 shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
+              <h3 className="text-xs font-bold mb-4 uppercase tracking-wider flex items-center gap-2" style={{ color: textPrimary }}>
+                <HelpCircle className="w-4 h-4 text-orange-500" /> Frequently Asked Questions
+              </h3>
+              <div className="space-y-4 text-xs" style={{ color: textMuted }}>
+                <div className="border-b pb-3" style={{ borderColor: borderColor }}>
+                  <p className="font-bold mb-1" style={{ color: textPrimary }}>❓ What if my flight experiences terminal delays?</p>
+                  <p>Open the Emergency Support hotline accordion matrix directly above and trigger immediate assistance line counters to recalibrate transfer vectors.</p>
+                </div>
+                <div className="border-b pb-3" style={{ borderColor: borderColor }}>
+                  <p className="font-bold mb-1" style={{ color: textPrimary }}>❓ What rules govern early property check-in requests?</p>
+                  <p>Standard room allocation initializations trigger at 02:00 PM. Early arrival changes remain contingent on clear check-out vacancy spaces.</p>
+                </div>
+                <div>
+                  <p className="font-bold mb-1" style={{ color: textPrimary }}>❓ Are extra insurance plans mandatory?</p>
+                  <p>No, insurance items are voluntary but heavily pushed to protect financial paths against delays or luggage problems.</p>
+                </div>
+              </div>
+            </section>
+
+            {/* 14. Customer Testimonials */}
+            <section className="border rounded-3xl p-6 shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
+              <h3 className="text-xs font-bold mb-4 uppercase tracking-wider flex items-center gap-2" style={{ color: textPrimary }}>
+                <MessageSquare className="w-4 h-4 text-orange-500" /> Real Gladex Travel Experiences
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="p-4 border rounded-2xl bg-black/5" style={{ borderColor: borderColor }}>
+                  <div className="flex items-center gap-1 mb-2 text-amber-500"><Star className="w-3.5 h-3.5 fill-amber-500" /><Star className="w-3.5 h-3.5 fill-amber-500" /><Star className="w-3.5 h-3.5 fill-amber-500" /><Star className="w-3.5 h-3.5 fill-amber-500" /><Star className="w-3.5 h-3.5 fill-amber-500" /></div>
+                  <p className="text-xs italic" style={{ color: textMuted }}>"The automated check-in briefing process was effortless. Saved us from a ton of administrative work before arriving in Boracay."</p>
+                  <span className="text-[10px] font-bold block mt-2" style={{ color: textPrimary }}>— Client Review, Boracay Trip</span>
+                </div>
+                <div className="p-4 border rounded-2xl bg-black/5" style={{ borderColor: borderColor }}>
+                  <div className="flex items-center gap-1 mb-2 text-amber-500"><Star className="w-3.5 h-3.5 fill-amber-500" /><Star className="w-3.5 h-3.5 fill-amber-500" /><Star className="w-3.5 h-3.5 fill-amber-500" /><Star className="w-3.5 h-3.5 fill-amber-500" /><Star className="w-3.5 h-3.5 fill-amber-500" /></div>
+                  <p className="text-xs italic" style={{ color: textMuted }}>"Adding extra paraw sailboat activities took seconds. Highly transparent checkout total tracking."</p>
+                  <span className="text-[10px] font-bold block mt-2" style={{ color: textPrimary }}>— Client Review, 2026</span>
+                </div>
+              </div>
+            </section>
+
+            {/* 15. Rate My Service Segment */}
+            <section className="border rounded-3xl p-6 text-center shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
+              <h3 className="text-sm font-black italic mb-1" style={{ color: textPrimary }}>How Was Your Booking Experience So Far?</h3>
+              <p className="text-xs mb-4" style={{ color: textMuted }}>We constantly tune our automation vectors to give you effortless holiday flows.</p>
+              <div className="flex items-center justify-center gap-2 text-xs font-semibold mb-5 flex-wrap">
+                <span className="border px-3 py-1.5 rounded-xl bg-black/5" style={{ borderColor: borderColor }}>Booking Process Easy?</span>
+                <span className="border px-3 py-1.5 rounded-xl bg-black/5" style={{ borderColor: borderColor }}>Team Responsive?</span>
+                <span className="border px-3 py-1.5 rounded-xl bg-black/5" style={{ borderColor: borderColor }}>Satisfied Overall?</span>
+              </div>
+              <button type="button" onClick={() => alert("Thank you for your rating framework entry!")} className="inline-flex items-center gap-2 border px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-black/5 hover:opacity-80 transition" style={{ borderColor: borderColor, color: textPrimary }}>
+                <ThumbsUp className="w-3.5 h-3.5 text-orange-500" /> Leave A Review
+              </button>
+            </section>
+
+            {/* 16. Referral Actions Module */}
+            <section className="bg-gradient-to-r from-orange-600/10 to-amber-600/10 border rounded-3xl p-6 text-center shadow-sm" style={{ borderColor: borderColor }}>
+              <h3 className="text-sm font-black italic mb-1" style={{ color: textPrimary }}>Know Someone Who Wants To Travel?</h3>
+              <p className="text-xs max-w-sm mx-auto mb-4" style={{ color: textMuted }}>Refer your friends or professional connections to unlock future booking discounts and reward points!</p>
+              <button type="button" onClick={() => alert("Unique tracking link copied to clipboard.")} className="bg-gradient-to-r from-orange-500 to-amber-600 text-white font-bold text-xs uppercase tracking-widest px-6 py-3 rounded-xl transition shadow-sm inline-flex items-center gap-2">
+                <Users className="w-4 h-4" /> Refer A Friend
+              </button>
+            </section>
+
+          </div>
+        )}
+      </main>
+    </div>
+  );
 }
