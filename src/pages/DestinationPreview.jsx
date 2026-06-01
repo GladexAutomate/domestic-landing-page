@@ -6,7 +6,7 @@ import {
   Search, ChevronRight, Download, FileText, ArrowLeft, 
   PlaneLanding, Truck, Hotel, Compass, CheckSquare, 
   Briefcase, Sparkles, ShoppingCart, Check, Image as ImageIcon,
-  FileDown, Calendar, MapPin, User
+  FileDown, Calendar, MapPin, User, ShieldCheck, PhoneCall, HelpCircle
 } from "lucide-react";
 
 export default function DestinationPreview() {
@@ -116,7 +116,7 @@ export default function DestinationPreview() {
           </form>
         </section>
 
-        {/* FULL CUSTOMER FLOW: Renders smoothly only after search triggers */}
+        {/* FULL INTEGRATED FLOW FROM PDF & KLOOK FEED */}
         {hasSearched && (
           <div className="space-y-6 sm:space-y-8 animate-[fadeIn_0.5s_ease-out_forwards]">
             
@@ -184,7 +184,7 @@ export default function DestinationPreview() {
               </div>
             </section>
 
-            {/* 5. PDF Resource Hub / Manual Guides (Nawala kanina) */}
+            {/* 5. PDF Resource Hub / Manual Guides */}
             <section className="space-y-3">
               <h3 className="text-[11px] font-bold uppercase tracking-wider flex items-center gap-2"><FileDown className="w-4 h-4 text-orange-500" /> Downloadable PDF Travel Manuals</h3>
               <div className="grid sm:grid-cols-2 gap-3">
@@ -211,7 +211,7 @@ export default function DestinationPreview() {
               </div>
             </section>
 
-            {/* 6. Flight & E-Ticket Manifest (Nawala kanina) */}
+            {/* 6. Flight & E-Ticket Details */}
             <section className="border rounded-3xl p-4 sm:p-6 shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
               <h3 className="text-[11px] font-bold uppercase tracking-wider mb-3 flex items-center gap-2"><PlaneLanding className="w-4 h-4 text-orange-500" /> Flight & E-Ticket Details</h3>
               <div className="border rounded-2xl p-4 space-y-3 text-xs bg-black/5" style={{ borderColor: borderColor }}>
@@ -238,7 +238,7 @@ export default function DestinationPreview() {
               </div>
             </section>
 
-            {/* 7. Hotel Resort Accommodation Voucher (Nawala kanina) */}
+            {/* 7. Hotel Resort Accommodation Voucher */}
             <section className="border rounded-3xl p-4 sm:p-6 shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
               <h3 className="text-[11px] font-bold uppercase tracking-wider mb-3 flex items-center gap-2"><Hotel className="w-4 h-4 text-orange-500" /> Hotel Accommodation Summary</h3>
               <div className="border rounded-2xl p-4 flex flex-col sm:flex-row justify-between gap-4 bg-black/5" style={{ borderColor: borderColor }}>
@@ -255,7 +255,33 @@ export default function DestinationPreview() {
               </div>
             </section>
 
-            {/* 8. Travel Logistics / Instruction Center */}
+            {/* NEW: 8. Group Travel Insurance Protection Manifest */}
+            <section className="border rounded-3xl p-4 sm:p-6 shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
+              <h3 className="text-[11px] font-bold uppercase tracking-wider mb-3 flex items-center gap-2 text-emerald-500">
+                <ShieldCheck className="w-4 h-4" /> Comprehensive Travel Insurance Policy
+              </h3>
+              <div className="border rounded-2xl p-4 bg-emerald-500/[0.02] border-emerald-500/20 text-xs space-y-3">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h4 className="font-bold">Chubb Travel Safeguard Plan</h4>
+                    <p className="text-[10px]" style={{ color: textMuted }}>Policy Group Key: GDX-INS-77491B</p>
+                  </div>
+                  <span className="px-2 py-0.5 text-[9px] font-bold bg-emerald-500/10 text-emerald-500 rounded-md uppercase tracking-wider">Active</span>
+                </div>
+                <div className="grid grid-cols-2 gap-4 pt-1 border-t border-emerald-500/10 text-[11px]">
+                  <div>
+                    <span className="block text-[10px] mb-0.5" style={{ color: textMuted }}>Medical Coverage</span>
+                    <span className="font-semibold">Up to ₱1,000,000 / pax</span>
+                  </div>
+                  <div>
+                    <span className="block text-[10px] mb-0.5" style={{ color: textMuted }}>Trip Disruption</span>
+                    <span className="font-semibold">Flight Delays & Baggage Loss Protection</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* 9. Travel Logistics / Instruction Center */}
             <section className="space-y-3">
               <h3 className="text-sm sm:text-base font-bold mb-2 flex items-center gap-2">
                 <Compass className="w-4 h-4 text-orange-500" /> Travel Logistics & Instructions
@@ -285,7 +311,7 @@ export default function DestinationPreview() {
               </div>
             </section>
 
-            {/* 9. KLOOK-STYLE "WHAT TO EXPECT" FULL-WIDTH PHOTOMAP VIEW */}
+            {/* 10. KLOOK-STYLE "WHAT TO EXPECT" FULL-WIDTH PHOTOMAP VIEW */}
             <section className="border rounded-3xl p-4 sm:p-8 shadow-sm space-y-6" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
               <div className="border-b pb-4" style={{ borderColor: borderColor }}>
                 <h3 className="text-base sm:text-lg font-bold tracking-tight flex items-center gap-2">
@@ -323,7 +349,7 @@ export default function DestinationPreview() {
               </div>
             </section>
 
-            {/* 10 & 11. Checklist & What To Bring Section */}
+            {/* 11 & 12. Checklist & What To Bring Section */}
             <section className="border rounded-3xl p-4 sm:p-6 shadow-sm grid md:grid-cols-2 gap-6" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
               <div>
                 <h3 className="text-[11px] font-bold mb-1 uppercase tracking-wider flex items-center gap-2"><CheckSquare className="w-4 h-4 text-orange-500" /> Travel Readiness Checklist</h3>
@@ -345,7 +371,26 @@ export default function DestinationPreview() {
               </div>
             </section>
 
-            {/* 12. Optional Tours Marketplace */}
+            {/* NEW: 13. Emergency Support Dispatch & Hotlines */}
+            <section className="border rounded-3xl p-4 sm:p-6 shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
+              <h3 className="text-[11px] font-bold uppercase tracking-wider mb-3 flex items-center gap-2 text-rose-500">
+                <PhoneCall className="w-4 h-4" /> 24/7 Dedicated Emergency Dispatch
+              </h3>
+              <div className="grid sm:grid-cols-2 gap-3 text-xs">
+                <div className="p-3 rounded-xl border bg-black/5" style={{ borderColor: borderColor }}>
+                  <span className="font-bold block text-[11px]">Agency Hotline Support</span>
+                  <p className="mt-1 font-semibold text-rose-500">+63 (2) 8888-TRANSLOG</p>
+                  <p className="text-[10px] mt-0.5" style={{ color: textMuted }}>Immediate dispatch & re-bookings</p>
+                </div>
+                <div className="p-3 rounded-xl border bg-black/5" style={{ borderColor: borderColor }}>
+                  <span className="font-bold block text-[11px]">Boracay Tourist Assistance</span>
+                  <p className="mt-1 font-semibold text-neutral-400">Station 2 Command Center</p>
+                  <p className="text-[10px] mt-0.5" style={{ color: textMuted }}>Local island emergency responder line</p>
+                </div>
+              </div>
+            </section>
+
+            {/* 14. Optional Tours Marketplace */}
             <section className="space-y-3">
               <h3 className="text-[11px] font-bold uppercase tracking-wider flex items-center gap-2"><Sparkles className="w-4 h-4 text-orange-500" /> Optional Tours Marketplace</h3>
               <div className="border rounded-2xl p-4 flex justify-between items-center shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
@@ -359,7 +404,7 @@ export default function DestinationPreview() {
               </div>
             </section>
 
-            {/* 13. Dynamic Ledger Checkout Panel */}
+            {/* 15. Dynamic Ledger Checkout Panel */}
             <section className="border-2 rounded-3xl p-5 shadow-2xl bg-gradient-to-br from-black/20 via-black/40 to-black/10" style={{ borderColor: 'rgba(255,140,0,0.25)' }}>
               <h3 className="text-[11px] font-bold uppercase tracking-wider mb-4 flex items-center gap-2"><ShoppingCart className="w-4 h-4 text-orange-500" /> Checkout Ledger Total</h3>
               <div className="flex justify-between items-center mb-4">
