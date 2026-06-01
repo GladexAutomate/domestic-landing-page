@@ -4,48 +4,74 @@ import { useTheme } from "@/lib/ThemeContext";
 import DestinationNavbar from "@/components/destination/DestinationNavbar";
 import { 
   Search, ChevronRight, Download, FileText, ArrowLeft, 
-  PlaneLanding, Truck, Hotel, Compass, X,
+  PlaneLanding, Truck, Hotel, Compass, X, ChevronLeft,
   CheckSquare, Briefcase, Sparkles, ShieldCheck, ShoppingCart, HelpCircle,
-  MessageSquare, Star, Check, Image
+  MessageSquare, Star, Check, Image as ImageIcon
 } from "lucide-react";
 
 export default function DestinationPreview() {
   const { slug } = useParams();
   const { darkMode } = useTheme();
   
-  // Input fields state
   const [searchID, setSearchID] = useState("");
-  
-  // Naka-set sa false sa simula para nakatago ang lahat ng detalye ayon sa PDF customer flow
   const [hasSearched, setHasSearched] = useState(false);
-
-  // Upsell state management
   const [selectedTours, setSelectedTours] = useState({});
   const [selectedInsurance, setSelectedInsurance] = useState(null);
 
-  // Klook-style Lightbox/Modal State para sa pagpapalaki ng litrato
-  const [activePhoto, setActivePhoto] = useState(null);
+  // Klook Slider State Management
+  const [activePhotoIndex, setActivePhotoIndex] = useState(null);
 
-  // Checklist state management
   const [checklist, setChecklist] = useState({
     id: true, voucher: true, flight: false, hotel: false, cash: false, data: false
   });
+
+  // Klook-style experience data grid array
+  const experiencePhotos = [
+    { url: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=800&auto=format&fit=crop&q=80", caption: "Crystal Kayak Experience" },
+    { url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop&q=80", caption: "White Beach Station 2" },
+    { url: "https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&auto=format&fit=crop&q=80", caption: "Sunset Paraw Sailing" },
+    { url: "https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=800&auto=format&fit=crop&q=80", caption: "Island Hopping Buffet Lunch" },
+  ];
+
+  // Keyboard Event Navigation Core Module (Next/Prev/Close)
+  useEffect(() => {
+    if (activePhotoIndex === null) return;
+
+    const handleKeyDown = (e) => {
+      if (e.key === "ArrowRight") {
+        handleNextPhoto();
+      } else if (e.key === "ArrowLeft") {
+        handlePrevPhoto();
+      } else if (e.key === "Escape") {
+        setActivePhotoIndex(null);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [activePhotoIndex]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [slug]);
 
-  // Theme configuration tokens
   const bg = darkMode ? "#0a0a0a" : "#f8f9fa";
   const cardBg = darkMode ? "#000000" : "#ffffff";
   const textPrimary = darkMode ? "#ffffff" : "#0F172A";
   const textMuted = darkMode ? "rgba(255,255,255,0.4)" : "#64748B";
   const borderColor = darkMode ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)";
 
-  // Dynamic calculations
   const tourTotal = Object.values(selectedTours).reduce((sum, item) => sum + item.price, 0);
   const insuranceTotal = selectedInsurance ? selectedInsurance.price : 0;
   const overallTotal = tourTotal + insuranceTotal;
+
+  const handleNextPhoto = () => {
+    setActivePhotoIndex((prev) => (prev + 1) % experiencePhotos.length);
+  };
+
+  const handlePrevPhoto = () => {
+    setActivePhotoIndex((prev) => (prev - 1 + experiencePhotos.length) % experiencePhotos.length);
+  };
 
   const toggleTour = (id, title, price) => {
     setSelectedTours(prev => {
@@ -65,26 +91,16 @@ export default function DestinationPreview() {
     setHasSearched(true);
   };
 
-  // Klook-style placeholder experiences photos 
-  const experiencePhotos = [
-    { url: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=800&auto=format&fit=crop&q=80", caption: "Crystal Kayak Experience" },
-    { url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop&q=80", caption: "White Beach Station 2" },
-    { url: "https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&auto=format&fit=crop&q=80", caption: "Sunset Paraw Sailing" },
-    { url: "https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=800&auto=format&fit=crop&q=80", caption: "Island Hopping Buffet Lunch" },
-  ];
-
   return (
     <div className="font-poppins min-h-screen transition-colors duration-500 pb-24" style={{ background: bg, color: textPrimary }}>
       <DestinationNavbar />
 
-      {/* Top Banner Context Notification - Auto-fluid typography */}
       <div className="bg-gradient-to-r from-amber-600 to-orange-600 text-white text-[10px] sm:text-xs py-2.5 px-4 text-center font-bold tracking-wider uppercase shadow-sm">
         ✨ Automated Travel Onboarding Hub — Available 24/7 After Your Confirmed Payment
       </div>
 
       <main className="max-w-4xl mx-auto px-4 mt-6 sm:mt-10">
         
-        {/* Back Link Row */}
         <div className="flex justify-end mb-4 sm:mb-6">
           <Link to="/" className="text-[10px] sm:text-xs font-bold tracking-widest uppercase transition-all duration-300 flex items-center gap-2 border px-4 py-2 rounded-full bg-black/5 hover:bg-black/10 hover:scale-105 active:scale-95" style={{ borderColor: borderColor, color: textPrimary }}>
             <ArrowLeft className="w-3.5 h-3.5 text-orange-500" /> Back to Domestic
@@ -101,7 +117,7 @@ export default function DestinationPreview() {
             <div className="h-[1px] w-8 sm:w-12 bg-gradient-to-l from-transparent to-orange-500"></div>
           </div>
 
-          <span className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 dark:text-emerald-400 text-[9px] sm:text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-4 inline-block animate-bounce">
+          <span className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 dark:text-emerald-400 text-[9px] sm:text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-4 inline-block">
             Booking Status: Fully Paid & Confirmed
           </span>
           
@@ -110,7 +126,6 @@ export default function DestinationPreview() {
             Enter your GDX Confirmation Number or Tour Voucher Number to access your personalized travel briefing, vouchers, reminders, optional tours, and add ons.
           </p>
           
-          {/* SEARCH FORM MODULE BLOCK - Desktop flow / Mobile stacked */}
           <form onSubmit={handleSearchSubmit} className="max-w-md mx-auto flex flex-col sm:flex-row gap-2 relative z-10">
             <div className="relative flex-1">
               <Search className="w-4 h-4 absolute left-4 top-3.5 sm:top-4 text-slate-400" />
@@ -153,21 +168,20 @@ export default function DestinationPreview() {
                 </div>
               </div>
 
-              {/* Grid adjusts flawlessly from 2 columns on small screens to 4 on tablets */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 text-xs">
-                <div className="p-3 rounded-xl border bg-black/5 transition-colors hover:bg-black/10" style={{ borderColor: borderColor }}>
+                <div className="p-3 rounded-xl border bg-black/5" style={{ borderColor: borderColor }}>
                   <span className="text-[9px] sm:text-[10px] font-bold block uppercase tracking-wider mb-1" style={{ color: textMuted }}>Destination</span>
                   <span className="font-bold text-xs sm:text-sm">Boracay, PH</span>
                 </div>
-                <div className="p-3 rounded-xl border bg-black/5 transition-colors hover:bg-black/10" style={{ borderColor: borderColor }}>
+                <div className="p-3 rounded-xl border bg-black/5" style={{ borderColor: borderColor }}>
                   <span className="text-[9px] sm:text-[10px] font-bold block uppercase tracking-wider mb-1" style={{ color: textMuted }}>Travel Date</span>
                   <span className="font-bold text-xs sm:text-sm">June 15-18, 2026</span>
                 </div>
-                <div className="p-3 rounded-xl border bg-black/5 transition-colors hover:bg-black/10" style={{ borderColor: borderColor }}>
+                <div className="p-3 rounded-xl border bg-black/5" style={{ borderColor: borderColor }}>
                   <span className="text-[9px] sm:text-[10px] font-bold block uppercase tracking-wider mb-1" style={{ color: textMuted }}>Accommodations</span>
                   <span className="font-bold text-xs sm:text-sm truncate block">Henann Lagoon</span>
                 </div>
-                <div className="p-3 rounded-xl border bg-black/5 transition-colors hover:bg-black/10" style={{ borderColor: borderColor }}>
+                <div className="p-3 rounded-xl border bg-black/5" style={{ borderColor: borderColor }}>
                   <span className="text-[9px] sm:text-[10px] font-bold block uppercase tracking-wider mb-1" style={{ color: textMuted }}>Consultant</span>
                   <span className="font-bold text-orange-500 text-xs sm:text-sm">Agent Roy</span>
                 </div>
@@ -180,7 +194,6 @@ export default function DestinationPreview() {
                 <h3 className="text-sm sm:text-base font-bold tracking-tight mb-1" style={{ color: textPrimary }}>Your Destination Video Briefing</h3>
                 <p className="text-[11px] sm:text-xs mb-6" style={{ color: textMuted }}>Review this mandatory onboarding video layout to prepare for your journey.</p>
                 
-                {/* Smartphone simulation container - Auto scaling dimensions */}
                 <div className="w-full max-w-[260px] sm:max-w-[280px] aspect-[9/16] bg-black rounded-[2rem] sm:rounded-[2.5rem] mx-auto shadow-2xl border-[3px] sm:border-4 border-neutral-800 overflow-hidden relative transition-transform duration-300 hover:scale-105">
                   <div className="absolute inset-0 top-[-45px] bottom-[-45px] overflow-hidden">
                     <iframe 
@@ -203,13 +216,12 @@ export default function DestinationPreview() {
               </h3>
 
               <div className="space-y-3">
-                {/* Accordion blocks use generic focus targets for transitions */}
                 <div className="border rounded-2xl overflow-hidden shadow-sm transition-all" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
                   <details className="group" open>
                     <summary className="flex justify-between items-center font-bold text-[11px] sm:text-xs p-4 cursor-pointer select-none hover:bg-black/5 tracking-wider uppercase" style={{ color: textPrimary }}>
                       <span className="flex items-center gap-2.5"><PlaneLanding className="w-4 h-4 text-orange-500" /> Arrival & Airport Instructions</span>
                     </summary>
-                    <div className="p-4 sm:p-5 pt-0 border-t text-[11px] sm:text-xs space-y-4 transition-all" style={{ borderColor: borderColor, color: textMuted }}>
+                    <div className="p-4 sm:p-5 pt-0 border-t text-[11px] sm:text-xs space-y-4" style={{ borderColor: borderColor, color: textMuted }}>
                       <div>
                         <h5 className="font-bold mb-1.5 text-orange-500">Before Departure:</h5>
                         <p>• Arrive at the airport 2 to 3 hours before departure</p>
@@ -218,81 +230,25 @@ export default function DestinationPreview() {
                     </div>
                   </details>
                 </div>
-
-                <div className="border rounded-2xl overflow-hidden shadow-sm transition-all" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
-                  <details className="group" open>
-                    <summary className="flex justify-between items-center font-bold text-[11px] sm:text-xs p-4 cursor-pointer select-none hover:bg-black/5 tracking-wider uppercase" style={{ color: textPrimary }}>
-                      <span className="flex items-center gap-2.5"><Truck className="w-4 h-4 text-orange-500" /> Transfer Instructions & Logistics</span>
-                    </summary>
-                    <div className="p-4 sm:p-5 pt-0 border-t text-[11px] sm:text-xs text-slate-400" style={{ borderColor: borderColor }}>
-                      <div className="p-3 border rounded-xl grid grid-cols-2 gap-3 mb-4 bg-black/5" style={{ borderColor: borderColor }}>
-                        <div><span className="text-[9px] font-bold block uppercase" style={{ color: textMuted }}>Transfer Type</span><span className="font-bold text-xs" style={{ color: textPrimary }}>Sea & Land</span></div>
-                        <div><span className="text-[9px] font-bold block uppercase" style={{ color: textMuted }}>Provider</span><span className="font-bold text-xs" style={{ color: textPrimary }}>Southwest</span></div>
-                      </div>
-                    </div>
-                  </details>
-                </div>
               </div>
             </section>
 
-            {/* 6 & 7. Checklist & What To Bring Section */}
-            <section className="border rounded-3xl p-4 sm:p-6 shadow-sm grid md:grid-cols-2 gap-6 sm:gap-8" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
-              <div>
-                <h3 className="text-[11px] sm:text-xs font-bold mb-1 uppercase tracking-wider flex items-center gap-2" style={{ color: textPrimary }}>
-                  <CheckSquare className="w-4 h-4 text-orange-500" /> Travel Readiness Checklist
-                </h3>
-                <p className="text-[10px] sm:text-[11px] mb-4" style={{ color: textMuted }}>Interactive setup to complete milestones before departure.</p>
-                <div className="space-y-2 text-xs">
-                  {Object.keys(checklist).map((key) => (
-                    <label key={key} className="flex items-center gap-2.5 p-2.5 border rounded-xl cursor-pointer hover:bg-black/10 transition-all bg-black/5" style={{ borderColor: borderColor }}>
-                      <input 
-                        type="checkbox" 
-                        checked={checklist[key]} 
-                        onChange={() => setChecklist(p => ({ ...p, [key]: !p[key] }))}
-                        className="w-4 h-4 text-orange-500 accent-orange-500 rounded focus:ring-0 transition" 
-                      />
-                      <span className="text-xs" style={{ color: textPrimary }}>
-                        {key === 'id' && 'Valid ID / Passport'}
-                        {key === 'voucher' && 'Travel Voucher'}
-                        {key === 'flight' && 'Flight Ticket'}
-                        {key === 'hotel' && 'Hotel Voucher'}
-                        {key === 'cash' && 'Pocket Cash'}
-                        {key === 'data' && 'Mobile Data Connection'}
-                      </span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-[11px] sm:text-xs font-bold mb-1 uppercase tracking-wider flex items-center gap-2" style={{ color: textPrimary }}>
-                  <Briefcase className="w-4 h-4 text-orange-500" /> What To Bring Guide
-                </h3>
-                <p className="text-[10px] sm:text-[11px] mb-4" style={{ color: textMuted }}>Suggested packing categories mapped directly to your itinerary layout.</p>
-                <div className="space-y-3 text-[11px] sm:text-xs leading-relaxed" style={{ color: textMuted }}>
-                  <p><strong style={{ color: textPrimary }}>Documents:</strong> Passport, IDs, Travel Voucher, Flight Ticket</p>
-                  <p><strong style={{ color: textPrimary }}>Essentials:</strong> Cash, Powerbank, Charger, Basic Medicines</p>
-                  <p><strong style={{ color: textPrimary }}>Beach Pack:</strong> Beachwear, Slippers, Sunscreen, Waterproof Bag</p>
-                </div>
-              </div>
-            </section>
-
-            {/* KLOOK-STYLE SNAPSHOTS SECTION WITH LIGHTBOX ENLARGE & EFFECTS */}
+            {/* KLOOK-STYLE SNAPSHOTS SECTION WITH INTEGRATED SLIDER/CAROUSEL CONTROLS */}
             <section className="border rounded-3xl p-4 sm:p-6 shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
               <div className="mb-4 flex items-center gap-2">
-                <Image className="w-4 h-4 text-orange-500" />
+                <ImageIcon className="w-4 h-4 text-orange-500" />
                 <div>
                   <h3 className="text-[11px] sm:text-xs font-bold uppercase tracking-wider" style={{ color: textPrimary }}>Real Guest Moments & Snapshots</h3>
-                  <p className="text-[10px] sm:text-[11px]" style={{ color: textMuted }}>Click any image block to enlarge view, tracking actual traveler insights on-site.</p>
+                  <p className="text-[10px] sm:text-[11px]" style={{ color: textMuted }}>Click to zoom and click next/prev or use keyboard arrows to browse all assets.</p>
                 </div>
               </div>
               
-              {/* Responsive Mosaic Gallery Grid - Flawless layout adaptivity */}
+              {/* Responsive Photo Grid Layout */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
                 {experiencePhotos.map((photo, i) => (
                   <div 
                     key={i} 
-                    onClick={() => setActivePhoto(photo)}
+                    onClick={() => setActivePhotoIndex(i)}
                     className="group relative overflow-hidden rounded-2xl aspect-square bg-neutral-200 dark:bg-neutral-800 border cursor-zoom-in transition-all duration-300 hover:scale-[1.03] hover:shadow-lg" 
                     style={{ borderColor: borderColor }}
                   >
@@ -301,7 +257,7 @@ export default function DestinationPreview() {
                       alt={photo.caption} 
                       className="w-full h-full object-cover transition duration-500 ease-in-out group-hover:brightness-90"
                     />
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-2.5 sm:p-3 pt-6 transition-transform duration-300">
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-2.5 sm:p-3 pt-6">
                       <span className="text-[9px] sm:text-[10px] text-white font-medium tracking-tight block truncate">{photo.caption}</span>
                     </div>
                   </div>
@@ -309,50 +265,26 @@ export default function DestinationPreview() {
               </div>
             </section>
 
-            {/* 10. Optional Tours marketplace */}
+            {/* 10. Optional Tours Marketplace */}
             <section className="space-y-3">
-              <div>
-                <h3 className="text-[11px] sm:text-xs font-bold uppercase tracking-wider flex items-center gap-2" style={{ color: textPrimary }}>
-                  <Sparkles className="w-4 h-4 text-orange-500" /> Optional Tours Marketplace
-                </h3>
-              </div>
+              <h3 className="text-[11px] sm:text-xs font-bold uppercase tracking-wider flex items-center gap-2" style={{ color: textPrimary }}>
+                <Sparkles className="w-4 h-4 text-orange-500" /> Optional Tours Marketplace
+              </h3>
 
               <div className="grid sm:grid-cols-2 gap-4">
-                {/* Tour Cards with soft trigger scale animations */}
                 <div className="border rounded-2xl p-4 sm:p-5 flex flex-col justify-between shadow-sm transition-transform duration-300 hover:scale-[1.02]" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
                   <div>
                     <h4 className="font-bold text-xs sm:text-sm" style={{ color: textPrimary }}>Boracay Island Hopping</h4>
-                    <p className="text-[10px] sm:text-[11px] mt-1 leading-relaxed" style={{ color: textMuted }}>Includes boat tour, snorkeling accessories, and local group buffet lunch blocks.</p>
+                    <p className="text-[10px] sm:text-[11px] mt-1 leading-relaxed" style={{ color: textMuted }}>Includes boat tour, snorkeling accessories, and group buffet lunch blocks.</p>
                   </div>
                   <div className="flex justify-between items-center mt-5 pt-3 border-t" style={{ borderColor: borderColor }}>
-                    <div>
-                      <span className="font-black text-orange-500 text-xs sm:text-sm">₱999</span>
-                    </div>
+                    <span className="font-black text-orange-500 text-xs sm:text-sm">₱999</span>
                     <button 
                       type="button"
                       onClick={() => toggleTour('island-hop', 'Boracay Island Hopping', 999)}
-                      className={`text-[10px] sm:text-xs font-bold px-3.5 py-2 rounded-xl transition-all duration-200 active:scale-95 border ${selectedTours['island-hop'] ? 'bg-rose-500/10 text-rose-500 border-rose-500/20' : 'bg-orange-500/10 text-orange-500 border-orange-500/20'}`}
+                      className={`text-[10px] sm:text-xs font-bold px-3.5 py-2 rounded-xl transition border ${selectedTours['island-hop'] ? 'bg-rose-500/10 text-rose-500 border-rose-500/20' : 'bg-orange-500/10 text-orange-500 border-orange-500/20'}`}
                     >
                       {selectedTours['island-hop'] ? 'Remove' : 'Add To Trip'}
-                    </button>
-                  </div>
-                </div>
-
-                <div className="border rounded-2xl p-4 sm:p-5 flex flex-col justify-between shadow-sm transition-transform duration-300 hover:scale-[1.02]" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
-                  <div>
-                    <h4 className="font-bold text-xs sm:text-sm" style={{ color: textPrimary }}>Sunset Paraw Sailing</h4>
-                    <p className="text-[10px] sm:text-[11px] mt-1 leading-relaxed" style={{ color: textMuted }}>Traditional sailboat glide across local signature sunset horizons.</p>
-                  </div>
-                  <div className="flex justify-between items-center mt-5 pt-3 border-t" style={{ borderColor: borderColor }}>
-                    <div>
-                      <span className="font-black text-orange-500 text-xs sm:text-sm">₱1,500</span>
-                    </div>
-                    <button 
-                      type="button"
-                      onClick={() => toggleTour('paraw', 'Sunset Paraw Sailing', 1500)}
-                      className={`text-[10px] sm:text-xs font-bold px-3.5 py-2 rounded-xl transition-all duration-200 active:scale-95 border ${selectedTours['paraw'] ? 'bg-rose-500/10 text-rose-500 border-rose-500/20' : 'bg-orange-500/10 text-orange-500 border-orange-500/20'}`}
-                    >
-                      {selectedTours['paraw'] ? 'Remove' : 'Add To Trip'}
                     </button>
                   </div>
                 </div>
@@ -360,23 +292,16 @@ export default function DestinationPreview() {
             </section>
 
             {/* 12. Dynamic Ledger Checkout Panel */}
-            <section className="border-2 rounded-3xl p-5 sm:p-6 shadow-2xl bg-gradient-to-br from-black/20 via-black/40 to-black/10 transition-transform duration-300 hover:scale-[1.01]" style={{ borderColor: 'rgba(255,140,0,0.25)' }}>
+            <section className="border-2 rounded-3xl p-5 sm:p-6 shadow-2xl bg-gradient-to-br from-black/20 via-black/40 to-black/10" style={{ borderColor: 'rgba(255,140,0,0.25)' }}>
               <h3 className="text-[11px] sm:text-xs font-bold uppercase tracking-wider mb-4 flex items-center gap-2" style={{ color: textPrimary }}>
                 <ShoppingCart className="w-4 h-4 text-orange-500" /> Checkout Ledger Total
               </h3>
               
               <div className="border-b pb-4 mb-4 text-xs space-y-2.5" style={{ borderColor: borderColor }}>
                 <div className="flex justify-between items-center text-slate-400 gap-2">
-                  <span className="flex items-center gap-1.5 truncate text-[11px] sm:text-xs"><Check className="w-3.5 h-3.5 text-emerald-500" /> Flight & Base Package</span>
+                  <span className="flex items-center gap-1.5 text-[11px] sm:text-xs"><Check className="w-3.5 h-3.5 text-emerald-500" /> Flight & Base Package Assets</span>
                   <span className="text-emerald-500 font-bold tracking-wider text-[8px] sm:text-[9px] bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded shrink-0">PAID</span>
                 </div>
-                
-                {Object.values(selectedTours).map((tour, i) => (
-                  <div key={i} className="flex justify-between items-center py-0.5 font-medium animate-[fadeIn_0.3s_ease-out]">
-                    <span className="text-[11px] sm:text-xs" style={{ color: textPrimary }}>✦ {tour.title}</span>
-                    <span className="font-bold text-orange-500 text-[11px] sm:text-xs">₱{tour.price.toLocaleString()}</span>
-                  </div>
-                ))}
               </div>
 
               <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-6">
@@ -386,7 +311,7 @@ export default function DestinationPreview() {
                 </div>
               </div>
 
-              <button className="w-full bg-gradient-to-r from-orange-500 to-amber-600 hover:opacity-95 active:scale-[0.99] text-white font-bold uppercase tracking-widest text-[11px] sm:text-xs py-3.5 sm:py-4 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2">
+              <button className="w-full bg-gradient-to-r from-orange-500 to-amber-600 hover:opacity-95 text-white font-bold uppercase tracking-widest text-[11px] sm:text-xs py-3.5 sm:py-4 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2">
                 <span>Proceed To Add-on Checkout</span>
                 <FileText className="w-4 h-4" />
               </button>
@@ -396,45 +321,72 @@ export default function DestinationPreview() {
         )}
       </main>
 
-      {/* KLOOK-STYLE LIGHTBOX MODAL OVERLAY WITH SCALE ENLARGE ANIMATION */}
-      {activePhoto && (
+      {/* AUTOMATED KLOOK SLIDER / INTERACTIVE LIGHTBOX OVERLAY */}
+      {activePhotoIndex !== null && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md p-3 transition-opacity duration-300 cursor-zoom-out animate-[fadeIn_0.2s_ease-out]"
-          onClick={() => setActivePhoto(null)}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md p-2 sm:p-4 animate-[fadeIn_0.2s_ease-out]"
+          onClick={() => setActivePhotoIndex(null)}
         >
-          {/* Fluid Close Trigger Placement */}
+          {/* Top Close Control Panel Button */}
           <button 
-            onClick={() => setActivePhoto(null)}
-            className="absolute top-4 right-4 sm:top-6 sm:right-6 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-transform active:scale-90"
+            onClick={() => setActivePhotoIndex(null)}
+            className="absolute top-4 right-4 z-50 p-2.5 rounded-full bg-white/10 text-white hover:bg-white/20 transition active:scale-90"
+            aria-label="Close modal"
           >
             <X className="w-5 sm:w-6 h-5 sm:h-6" />
           </button>
 
-          {/* Large Image Block container with instant smooth bounce pop-up effect */}
+          {/* LEFT ARROW SLIDER BUTTON */}
+          <button 
+            onClick={(e) => { e.stopPropagation(); handlePrevPhoto(); }}
+            className="absolute left-3 sm:left-6 z-50 p-2.5 sm:p-3 rounded-full bg-white/10 text-white hover:bg-white/20 transition-all active:scale-90"
+            aria-label="Previous photo"
+          >
+            <ChevronLeft className="w-5 sm:w-6 h-5 sm:h-6" />
+          </button>
+
+          {/* MAIN PHOTO COMPONENT DISPLAY */}
           <div 
-            className="max-w-3xl w-full flex flex-col items-center gap-3 sm:gap-4 p-2 relative animate-[scaleUp_0.25s_cubic-bezier(0.34,1.56,0.64,1)_forwards]"
+            className="max-w-3xl w-full flex flex-col items-center gap-3 relative select-none animate-[scaleUp_0.25s_cubic-bezier(0.34,1.56,0.64,1)_forwards]"
             onClick={(e) => e.stopPropagation()}
           >
-            <img 
-              src={activePhoto.url} 
-              alt={activePhoto.caption} 
-              className="max-h-[75vh] sm:max-h-[80vh] w-auto max-w-full rounded-xl sm:rounded-2xl object-contain border border-white/10 shadow-2xl"
-            />
-            <span className="text-[11px] sm:text-xs md:text-sm text-neutral-300 font-semibold tracking-wide bg-neutral-900/80 px-4 py-2 rounded-full border border-white/5 shadow-md">
-              {activePhoto.caption}
-            </span>
+            <div className="relative w-full flex justify-center items-center">
+              <img 
+                src={experiencePhotos[activePhotoIndex].url} 
+                alt={experiencePhotos[activePhotoIndex].caption} 
+                className="max-h-[70vh] sm:max-h-[80vh] w-auto max-w-full rounded-xl sm:rounded-2xl object-contain border border-white/10 shadow-2xl transition-all duration-300"
+              />
+            </div>
+            
+            {/* Meta Text Info Elements Footer Counter layout */}
+            <div className="flex flex-col items-center gap-1.5 text-center bg-neutral-900/90 px-5 py-2.5 rounded-2xl border border-white/5 shadow-xl max-w-sm">
+              <span className="text-[11px] sm:text-xs md:text-sm text-neutral-200 font-semibold tracking-wide">
+                {experiencePhotos[activePhotoIndex].caption}
+              </span>
+              <span className="text-[9px] sm:text-[10px] text-orange-400 font-mono tracking-widest uppercase">
+                Image {activePhotoIndex + 1} of {experiencePhotos.length}
+              </span>
+            </div>
           </div>
+
+          {/* RIGHT ARROW SLIDER BUTTON */}
+          <button 
+            onClick={(e) => { e.stopPropagation(); handleNextPhoto(); }}
+            className="absolute right-3 sm:right-6 z-50 p-2.5 sm:p-3 rounded-full bg-white/10 text-white hover:bg-white/20 transition-all active:scale-90"
+            aria-label="Next photo"
+          >
+            <ChevronRight className="w-5 sm:w-6 h-5 sm:h-6" />
+          </button>
         </div>
       )}
 
-      {/* Injecting dynamic CSS transitions directly for robust performance across global Tailwind configs */}
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(10px); }
+          from { opacity: 0; transform: translateY(8px); }
           to { opacity: 1; transform: translateY(0); }
         }
         @keyframes scaleUp {
-          from { opacity: 0; transform: scale(0.92); }
+          from { opacity: 0; transform: scale(0.94); }
           to { opacity: 1; transform: scale(1); }
         }
       `}} />
