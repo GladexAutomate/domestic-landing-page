@@ -75,9 +75,9 @@ export default function DestinationPreview() {
         
         {/* Back Link Row */}
         <div className="flex justify-end mb-6">
-          <Link to="/" className="text-xs font-bold tracking-widest uppercase transition flex items-center gap-2 border px-4 py-2 rounded-full bg-black/5 hidden" style={{ borderColor: borderColor, color: textPrimary }}>
-            <ArrowLeft className="w-3.5 h-3.5 text-orange-500" /> Back to Domestic
-          </Link>
+          
+
+          
         </div>
 
         {/* 1. Welcome Section & Booking Lookup */}
