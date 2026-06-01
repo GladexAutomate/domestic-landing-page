@@ -5,8 +5,8 @@ import DestinationNavbar from "@/components/destination/DestinationNavbar";
 import { 
   Search, ChevronRight, Download, FileText, ArrowLeft, 
   PlaneLanding, Truck, Hotel, Compass, CheckSquare, 
-  Briefcase, Sparkles, ShoppingCart, Check, Image as ImageIcon,
-  FileDown, Calendar, MapPin, User, ShieldCheck, PhoneCall, HelpCircle
+  Briefcase, Sparkles, ShoppingCart, ShieldCheck, PhoneCall, FileDown,
+  User, MapPin, Calendar
 } from "lucide-react";
 
 export default function DestinationPreview() {
@@ -21,7 +21,7 @@ export default function DestinationPreview() {
     id: true, voucher: true, flight: false, hotel: false, cash: false, data: false
   });
 
-  // Klook "What to Expect" Data Structure (Base sa image_41b964.jpg at image_41b99c.jpg)
+  // Klook "What to Expect" Data Feed
   const itineraryHighlights = [
     { 
       url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&auto=format&fit=crop&q=80", 
@@ -71,6 +71,7 @@ export default function DestinationPreview() {
     <div className="font-poppins min-h-screen transition-colors duration-500 pb-24" style={{ background: bg, color: textPrimary }}>
       <DestinationNavbar />
 
+      {/* TOP ANNOUNCEMENT BANNER */}
       <div className="bg-gradient-to-r from-amber-600 to-orange-600 text-white text-[10px] sm:text-xs py-2.5 px-4 text-center font-bold tracking-wider uppercase shadow-sm">
         ✨ Automated Travel Onboarding Hub — Available 24/7 After Your Confirmed Payment
       </div>
@@ -83,8 +84,10 @@ export default function DestinationPreview() {
           </Link>
         </div>
 
-        {/* 1. Lookup Form / Verification Engine */}
-        <section className="border rounded-3xl p-5 sm:p-8 md:p-12 shadow-xl text-center mb-8 relative overflow-hidden transition-all duration-300 hover:shadow-2xl" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
+        {/* =========================================================================
+            SECTION 1: SEARCH & VERIFICATION ENGINE (ENTRY POINT)
+           ========================================================================= */}
+        <section className="border rounded-3xl p-5 sm:p-8 md:p-12 shadow-xl text-center mb-8 relative overflow-hidden" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
           <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_60%_50%_at_50%_50%,rgba(255,140,0,0.04)_0%,transparent_70%)] animate-pulse" />
           
           <div className="flex items-center justify-center gap-3 mb-4">
@@ -95,7 +98,7 @@ export default function DestinationPreview() {
 
           <h1 className="text-xl sm:text-3xl md:text-4xl font-black mb-3 tracking-tight italic">Your Trip Is Confirmed!</h1>
           <p className="text-[11px] sm:text-xs md:text-sm max-w-md mx-auto mb-6 leading-relaxed" style={{ color: textMuted }}>
-            Enter your GDX Confirmation Number or Tour Voucher Number to access your personalized travel briefing, vouchers, reminders, optional tours, and add ons.
+            Enter your GDX Confirmation Number or Tour Voucher Number to access your personalized travel briefing, vouchers, insurance documents, and add-on selectors.
           </p>
           
           <form onSubmit={handleSearchSubmit} className="max-w-md mx-auto flex flex-col sm:flex-row gap-2 relative z-10">
@@ -116,11 +119,13 @@ export default function DestinationPreview() {
           </form>
         </section>
 
-        {/* FULL INTEGRATED FLOW FROM PDF & KLOOK FEED */}
+        {/* STRICT PDF WORKFLOW SEQUENCE CONDITIONAL RENDERING */}
         {hasSearched && (
           <div className="space-y-6 sm:space-y-8 animate-[fadeIn_0.5s_ease-out_forwards]">
             
-            {/* 2 & 3. Personalized Travel Dashboard */}
+            {/* =========================================================================
+                SECTION 2: TRAVELER PROFILE & TRIP QUICK SNAPSHOT
+               ========================================================================= */}
             <section className="border rounded-3xl p-4 sm:p-6 shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-4 mb-4 gap-4" style={{ borderColor: borderColor }}>
                 <div className="flex items-center gap-2.5">
@@ -162,13 +167,15 @@ export default function DestinationPreview() {
               </div>
             </section>
 
-            {/* 4. Travel Briefing Video Module */}
+            {/* =========================================================================
+                SECTION 3: MANDATORY VIDEO ORIENTATION & BRIEFING LAYOUT
+               ========================================================================= */}
             <section className="border rounded-3xl p-5 sm:p-8 shadow-sm text-center relative overflow-hidden" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
               <div className="max-w-md mx-auto">
                 <h3 className="text-sm sm:text-base font-bold tracking-tight mb-1">Your Destination Video Briefing</h3>
                 <p className="text-[11px] sm:text-xs mb-6" style={{ color: textMuted }}>Review this mandatory onboarding video layout to prepare for your journey.</p>
                 
-                {/* Smartphone simulation container */}
+                {/* Smartphone simulation layout */}
                 <div className="w-full max-w-[260px] sm:max-w-[280px] aspect-[9/16] bg-black rounded-[2rem] sm:rounded-[2.5rem] mx-auto shadow-2xl border-[3px] sm:border-4 border-neutral-800 overflow-hidden relative transition-transform duration-300 hover:scale-105">
                   <div className="absolute inset-0 top-[-45px] bottom-[-45px] overflow-hidden">
                     <iframe 
@@ -184,7 +191,9 @@ export default function DestinationPreview() {
               </div>
             </section>
 
-            {/* 5. PDF Resource Hub / Manual Guides */}
+            {/* =========================================================================
+                SECTION 4: DOWNLOADABLE DOCUMENTATION MANUALS & PDF GUIDES
+               ========================================================================= */}
             <section className="space-y-3">
               <h3 className="text-[11px] font-bold uppercase tracking-wider flex items-center gap-2"><FileDown className="w-4 h-4 text-orange-500" /> Downloadable PDF Travel Manuals</h3>
               <div className="grid sm:grid-cols-2 gap-3">
@@ -211,7 +220,9 @@ export default function DestinationPreview() {
               </div>
             </section>
 
-            {/* 6. Flight & E-Ticket Details */}
+            {/* =========================================================================
+                SECTION 5: AIRFARE TRANSPORTATION & E-TICKET MATRIX
+               ========================================================================= */}
             <section className="border rounded-3xl p-4 sm:p-6 shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
               <h3 className="text-[11px] font-bold uppercase tracking-wider mb-3 flex items-center gap-2"><PlaneLanding className="w-4 h-4 text-orange-500" /> Flight & E-Ticket Details</h3>
               <div className="border rounded-2xl p-4 space-y-3 text-xs bg-black/5" style={{ borderColor: borderColor }}>
@@ -238,7 +249,9 @@ export default function DestinationPreview() {
               </div>
             </section>
 
-            {/* 7. Hotel Resort Accommodation Voucher */}
+            {/* =========================================================================
+                SECTION 6: HOTEL ACCOMMODATION & RESORT VOUCHERS
+               ========================================================================= */}
             <section className="border rounded-3xl p-4 sm:p-6 shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
               <h3 className="text-[11px] font-bold uppercase tracking-wider mb-3 flex items-center gap-2"><Hotel className="w-4 h-4 text-orange-500" /> Hotel Accommodation Summary</h3>
               <div className="border rounded-2xl p-4 flex flex-col sm:flex-row justify-between gap-4 bg-black/5" style={{ borderColor: borderColor }}>
@@ -255,7 +268,9 @@ export default function DestinationPreview() {
               </div>
             </section>
 
-            {/* NEW: 8. Group Travel Insurance Protection Manifest */}
+            {/* =========================================================================
+                SECTION 7: COMPREHENSIVE TRAVEL INSURANCE MANIFEST
+               ========================================================================= */}
             <section className="border rounded-3xl p-4 sm:p-6 shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
               <h3 className="text-[11px] font-bold uppercase tracking-wider mb-3 flex items-center gap-2 text-emerald-500">
                 <ShieldCheck className="w-4 h-4" /> Comprehensive Travel Insurance Policy
@@ -263,25 +278,27 @@ export default function DestinationPreview() {
               <div className="border rounded-2xl p-4 bg-emerald-500/[0.02] border-emerald-500/20 text-xs space-y-3">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h4 className="font-bold">Chubb Travel Safeguard Plan</h4>
-                    <p className="text-[10px]" style={{ color: textMuted }}>Policy Group Key: GDX-INS-77491B</p>
+                    <h4 className="font-bold text-sm">Chubb Travel Safeguard Plan</h4>
+                    <p className="text-[10px] mt-1" style={{ color: textMuted }}>Policy Group Key: GDX-INS-77491B</p>
                   </div>
-                  <span className="px-2 py-0.5 text-[9px] font-bold bg-emerald-500/10 text-emerald-500 rounded-md uppercase tracking-wider">Active</span>
+                  <span className="px-2 py-0.5 text-[9px] font-bold bg-emerald-500/10 text-emerald-500 rounded-md uppercase tracking-wider">Active Policy</span>
                 </div>
-                <div className="grid grid-cols-2 gap-4 pt-1 border-t border-emerald-500/10 text-[11px]">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 border-t border-emerald-500/10 text-[11px]">
                   <div>
-                    <span className="block text-[10px] mb-0.5" style={{ color: textMuted }}>Medical Coverage</span>
-                    <span className="font-semibold">Up to ₱1,000,000 / pax</span>
+                    <span className="block text-[10px] mb-0.5 font-bold uppercase tracking-wider text-neutral-400">Emergency Medical Coverage</span>
+                    <span className="font-semibold">Up to ₱1,000,000 per passenger</span>
                   </div>
                   <div>
-                    <span className="block text-[10px] mb-0.5" style={{ color: textMuted }}>Trip Disruption</span>
-                    <span className="font-semibold">Flight Delays & Baggage Loss Protection</span>
+                    <span className="block text-[10px] mb-0.5 font-bold uppercase tracking-wider text-neutral-400">Trip Interruption Support</span>
+                    <span className="font-semibold">Flight Delays, Cancellations & Baggage Loss Insurance Protection included</span>
                   </div>
                 </div>
               </div>
             </section>
 
-            {/* 9. Travel Logistics / Instruction Center */}
+            {/* =========================================================================
+                SECTION 8: GROUND LOGISTICS & AIRPORT PROCESSING DIRECTIONALS
+               ========================================================================= */}
             <section className="space-y-3">
               <h3 className="text-sm sm:text-base font-bold mb-2 flex items-center gap-2">
                 <Compass className="w-4 h-4 text-orange-500" /> Travel Logistics & Instructions
@@ -293,8 +310,8 @@ export default function DestinationPreview() {
                       <span className="flex items-center gap-2.5"><PlaneLanding className="w-4 h-4 text-orange-500" /> Arrival & Airport Instructions</span>
                     </summary>
                     <div className="p-4 pt-0 border-t text-[11px] sm:text-xs space-y-2" style={{ borderColor: borderColor, color: textMuted }}>
-                      <p>• Arrive at the airport 2 to 3 hours before your scheduled flight departure.</p>
-                      <p>• Ready your GDX digital vouchers or QR codes for seamless terminal gate processing.</p>
+                      <p>• Arrive at the airport terminal 2 to 3 hours prior to your designated departure window.</p>
+                      <p>• Ready your GDX digital travel vouchers or QR confirmation frames for smooth security processing.</p>
                     </div>
                   </details>
                 </div>
@@ -304,14 +321,16 @@ export default function DestinationPreview() {
                       <span className="flex items-center gap-2.5"><Truck className="w-4 h-4 text-orange-500" /> Transfer Instructions & Logistics</span>
                     </summary>
                     <div className="p-4 pt-0 border-t text-[11px] sm:text-xs space-y-2" style={{ borderColor: borderColor, color: textMuted }}>
-                      <p>• Coordinated shuttle services will be waiting outside the arrivals area labeled with Southwest banners.</p>
+                      <p>• Pre-coordinated point-to-point shuttle teams will meet your party right outside arrivals under the Southwest Transfer signage banner.</p>
                     </div>
                   </details>
                 </div>
               </div>
             </section>
 
-            {/* 10. KLOOK-STYLE "WHAT TO EXPECT" FULL-WIDTH PHOTOMAP VIEW */}
+            {/* =========================================================================
+                SECTION 9: KLOOK-INSPIRED "WHAT TO EXPECT" VISUAL CAROUSEL/GRID
+               ========================================================================= */}
             <section className="border rounded-3xl p-4 sm:p-8 shadow-sm space-y-6" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
               <div className="border-b pb-4" style={{ borderColor: borderColor }}>
                 <h3 className="text-base sm:text-lg font-bold tracking-tight flex items-center gap-2">
@@ -319,15 +338,13 @@ export default function DestinationPreview() {
                   What to Expect from Boracay Island Tour
                 </h3>
                 <p className="text-[11px] sm:text-xs mt-2 leading-relaxed" style={{ color: textMuted }}>
-                  Boracay is one of the Philippines’ prime summer and beach getaway destinations. There, you’ll find numerous beaches, many of them unsoiled, along with colorful sea creatures beneath crystal clear waters. Review your custom destination walkthrough visuals below.
+                  Boracay is one of the Philippines’ prime beach getaways. There, you’ll find numerous beaches, many of them unsoiled, along with colorful sea creatures beneath crystal clear waters. Review your custom destination walkthrough visuals below.
                 </p>
               </div>
 
-              {/* Klook-inspired vertical linear scrolling photos layout */}
               <div className="space-y-8">
                 {itineraryHighlights.map((item, index) => (
-                  <div key={index} className="space-y-3 group animate-[fadeIn_0.4s_ease-out]">
-                    
+                  <div key={index} className="space-y-3 group">
                     <div className="w-full overflow-hidden rounded-2xl sm:rounded-3xl border bg-neutral-100 dark:bg-neutral-900 shadow-sm" style={{ borderColor: borderColor }}>
                       <img 
                         src={item.url} 
@@ -336,20 +353,20 @@ export default function DestinationPreview() {
                         loading="lazy"
                       />
                     </div>
-
                     <div className="flex items-start gap-2 px-1 text-left">
                       <span className="text-neutral-400 text-[10px] sm:text-xs mt-0.5 shrink-0">▲</span>
                       <p className="text-[11px] sm:text-xs md:text-sm font-medium leading-relaxed" style={{ color: textMuted }}>
                         {item.caption}
                       </p>
                     </div>
-
                   </div>
                 ))}
               </div>
             </section>
 
-            {/* 11 & 12. Checklist & What To Bring Section */}
+            {/* =========================================================================
+                SECTION 10: TRAVEL READINESS CHECKLIST & WHAT TO BRING MANIFESTS
+               ========================================================================= */}
             <section className="border rounded-3xl p-4 sm:p-6 shadow-sm grid md:grid-cols-2 gap-6" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
               <div>
                 <h3 className="text-[11px] font-bold mb-1 uppercase tracking-wider flex items-center gap-2"><CheckSquare className="w-4 h-4 text-orange-500" /> Travel Readiness Checklist</h3>
@@ -365,13 +382,15 @@ export default function DestinationPreview() {
               <div>
                 <h3 className="text-[11px] font-bold mb-1 uppercase tracking-wider flex items-center gap-2"><Briefcase className="w-4 h-4 text-orange-500" /> What To Bring Guide</h3>
                 <div className="space-y-2 mt-3 text-[11px] sm:text-xs leading-relaxed" style={{ color: textMuted }}>
-                  <p><strong>Beach Pack:</strong> Beachwear, Slippers, Sunscreen, Waterproof Bag, and Swimming gear wrappers.</p>
-                  <p><strong>Essentials:</strong> Pocket Cash, Extra Powerbank, and Universal adapters.</p>
+                  <p><strong>Beach Pack:</strong> Beachwear, Sandals, Sunscreen SPF50+, Waterproof Dry Bags, and dedicated protective phone lenses.</p>
+                  <p><strong>Essentials:</strong> Local currency cash, backup power banks, and electronic terminal ticket configurations.</p>
                 </div>
               </div>
             </section>
 
-            {/* NEW: 13. Emergency Support Dispatch & Hotlines */}
+            {/* =========================================================================
+                SECTION 11: 24/7 EMERGENCY DISPATCH & CUSTOMER HOTLINES
+               ========================================================================= */}
             <section className="border rounded-3xl p-4 sm:p-6 shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
               <h3 className="text-[11px] font-bold uppercase tracking-wider mb-3 flex items-center gap-2 text-rose-500">
                 <PhoneCall className="w-4 h-4" /> 24/7 Dedicated Emergency Dispatch
@@ -380,23 +399,25 @@ export default function DestinationPreview() {
                 <div className="p-3 rounded-xl border bg-black/5" style={{ borderColor: borderColor }}>
                   <span className="font-bold block text-[11px]">Agency Hotline Support</span>
                   <p className="mt-1 font-semibold text-rose-500">+63 (2) 8888-TRANSLOG</p>
-                  <p className="text-[10px] mt-0.5" style={{ color: textMuted }}>Immediate dispatch & re-bookings</p>
+                  <p className="text-[10px] mt-0.5" style={{ color: textMuted }}>Immediate dispatch coordination & backup flight updates</p>
                 </div>
                 <div className="p-3 rounded-xl border bg-black/5" style={{ borderColor: borderColor }}>
                   <span className="font-bold block text-[11px]">Boracay Tourist Assistance</span>
-                  <p className="mt-1 font-semibold text-neutral-400">Station 2 Command Center</p>
-                  <p className="text-[10px] mt-0.5" style={{ color: textMuted }}>Local island emergency responder line</p>
+                  <p className="mt-1 font-semibold text-neutral-400">Station 2 Safety Command Hub</p>
+                  <p className="text-[10px] mt-0.5" style={{ color: textMuted }}>On-island regional responsive operations center</p>
                 </div>
               </div>
             </section>
 
-            {/* 14. Optional Tours Marketplace */}
+            {/* =========================================================================
+                SECTION 12: OPTIONAL ADVENTURES & TOURS MARKETPLACE
+               ========================================================================= */}
             <section className="space-y-3">
               <h3 className="text-[11px] font-bold uppercase tracking-wider flex items-center gap-2"><Sparkles className="w-4 h-4 text-orange-500" /> Optional Tours Marketplace</h3>
               <div className="border rounded-2xl p-4 flex justify-between items-center shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
                 <div>
                   <h4 className="font-bold text-xs sm:text-sm">Boracay Island Hopping</h4>
-                  <p className="text-[10px] sm:text-[11px]" style={{ color: textMuted }}>Includes boat tour, snorkeling accessories, and group buffet lunch.</p>
+                  <p className="text-[10px] sm:text-[11px]" style={{ color: textMuted }}>Includes comprehensive boat transport, snorkeling accessories, and group lunch buffet arrangements.</p>
                 </div>
                 <button type="button" onClick={() => toggleTour('island-hop', 'Boracay Island Hopping', 999)} className={`text-[10px] font-bold px-3.5 py-2 rounded-xl border ${selectedTours['island-hop'] ? 'bg-rose-500/10 text-rose-500' : 'bg-orange-500/10 text-orange-500'}`}>
                   {selectedTours['island-hop'] ? 'Remove' : 'Add (₱999)'}
@@ -404,7 +425,9 @@ export default function DestinationPreview() {
               </div>
             </section>
 
-            {/* 15. Dynamic Ledger Checkout Panel */}
+            {/* =========================================================================
+                SECTION 13: CHECKOUT LEDGER & ADD-ON TRANSACTION PANEL
+               ========================================================================= */}
             <section className="border-2 rounded-3xl p-5 shadow-2xl bg-gradient-to-br from-black/20 via-black/40 to-black/10" style={{ borderColor: 'rgba(255,140,0,0.25)' }}>
               <h3 className="text-[11px] font-bold uppercase tracking-wider mb-4 flex items-center gap-2"><ShoppingCart className="w-4 h-4 text-orange-500" /> Checkout Ledger Total</h3>
               <div className="flex justify-between items-center mb-4">
