@@ -5,7 +5,8 @@ import DestinationNavbar from "@/components/destination/DestinationNavbar";
 import { 
   Search, ChevronRight, Download, FileText, ArrowLeft, 
   PlaneLanding, Truck, Hotel, Compass, CheckSquare, 
-  Briefcase, Sparkles, ShoppingCart, Check, Image as ImageIcon
+  Briefcase, Sparkles, ShoppingCart, Check, Image as ImageIcon,
+  FileDown, Calendar, MapPin, User
 } from "lucide-react";
 
 export default function DestinationPreview() {
@@ -115,16 +116,21 @@ export default function DestinationPreview() {
           </form>
         </section>
 
-        {/* CUSTOMER FLOW FROM PDF: Renders smoothly only after search triggers */}
+        {/* FULL CUSTOMER FLOW: Renders smoothly only after search triggers */}
         {hasSearched && (
           <div className="space-y-6 sm:space-y-8 animate-[fadeIn_0.5s_ease-out_forwards]">
             
-            {/* 2 & 3. Personalized Travel Dashboard Layout */}
+            {/* 2 & 3. Personalized Travel Dashboard */}
             <section className="border rounded-3xl p-4 sm:p-6 shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-4 mb-4 gap-4" style={{ borderColor: borderColor }}>
-                <div>
-                  <h2 className="text-lg sm:text-xl font-bold">Hi Maria! 👋</h2>
-                  <p className="text-[11px] sm:text-xs mt-0.5" style={{ color: textMuted }}>Your automated travel layout is synced directly with live records.</p>
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-full bg-orange-500/10 flex items-center justify-center text-orange-500">
+                    <User className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h2 className="text-sm sm:text-base font-bold">Hi Maria! 👋</h2>
+                    <p className="text-[10px] sm:text-[11px]" style={{ color: textMuted }}>Live Reservation Profile Reference synced successfully.</p>
+                  </div>
                 </div>
                 <div className="flex flex-row w-full md:w-auto gap-2">
                   <button className="flex-1 md:flex-none hover:opacity-80 border text-[10px] sm:text-[11px] font-bold px-3 py-2 rounded-xl flex items-center justify-center gap-1.5 bg-black/5" style={{ borderColor: borderColor }}>
@@ -138,31 +144,31 @@ export default function DestinationPreview() {
               
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
                 <div className="p-3 rounded-xl border bg-black/5" style={{ borderColor: borderColor }}>
-                  <span className="text-[9px] font-bold block uppercase mb-1" style={{ color: textMuted }}>Destination</span>
+                  <span className="text-[9px] font-bold block uppercase mb-1" style={{ color: textMuted }}><MapPin className="w-3 h-3 inline mr-1 text-orange-500" /> Destination</span>
                   <span className="font-bold">Boracay, PH</span>
                 </div>
                 <div className="p-3 rounded-xl border bg-black/5" style={{ borderColor: borderColor }}>
-                  <span className="text-[9px] font-bold block uppercase mb-1" style={{ color: textMuted }}>Travel Date</span>
+                  <span className="text-[9px] font-bold block uppercase mb-1" style={{ color: textMuted }}><Calendar className="w-3 h-3 inline mr-1 text-orange-500" /> Travel Date</span>
                   <span className="font-bold">June 15-18, 2026</span>
                 </div>
                 <div className="p-3 rounded-xl border bg-black/5" style={{ borderColor: borderColor }}>
-                  <span className="text-[9px] font-bold block uppercase mb-1" style={{ color: textMuted }}>Accommodations</span>
+                  <span className="text-[9px] font-bold block uppercase mb-1" style={{ color: textMuted }}><Hotel className="w-3 h-3 inline mr-1 text-orange-500" /> Hotel Resort</span>
                   <span className="font-bold truncate block">Henann Lagoon</span>
                 </div>
                 <div className="p-3 rounded-xl border bg-black/5" style={{ borderColor: borderColor }}>
-                  <span className="text-[9px] font-bold block uppercase mb-1" style={{ color: textMuted }}>Consultant</span>
+                  <span className="text-[9px] font-bold block uppercase mb-1" style={{ color: textMuted }}><User className="w-3 h-3 inline mr-1 text-orange-500" /> Consultant</span>
                   <span className="font-bold text-orange-500">Agent Roy</span>
                 </div>
               </div>
             </section>
 
-            {/* 4. Travel Briefing Video Module (Ito yung nanganawala kanina!) */}
+            {/* 4. Travel Briefing Video Module */}
             <section className="border rounded-3xl p-5 sm:p-8 shadow-sm text-center relative overflow-hidden" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
               <div className="max-w-md mx-auto">
                 <h3 className="text-sm sm:text-base font-bold tracking-tight mb-1">Your Destination Video Briefing</h3>
                 <p className="text-[11px] sm:text-xs mb-6" style={{ color: textMuted }}>Review this mandatory onboarding video layout to prepare for your journey.</p>
                 
-                {/* Smartphone simulation container - Fluidly scales on all screens */}
+                {/* Smartphone simulation container */}
                 <div className="w-full max-w-[260px] sm:max-w-[280px] aspect-[9/16] bg-black rounded-[2rem] sm:rounded-[2.5rem] mx-auto shadow-2xl border-[3px] sm:border-4 border-neutral-800 overflow-hidden relative transition-transform duration-300 hover:scale-105">
                   <div className="absolute inset-0 top-[-45px] bottom-[-45px] overflow-hidden">
                     <iframe 
@@ -178,10 +184,81 @@ export default function DestinationPreview() {
               </div>
             </section>
 
-            {/* 5. Travel Information Center */}
+            {/* 5. PDF Resource Hub / Manual Guides (Nawala kanina) */}
+            <section className="space-y-3">
+              <h3 className="text-[11px] font-bold uppercase tracking-wider flex items-center gap-2"><FileDown className="w-4 h-4 text-orange-500" /> Downloadable PDF Travel Manuals</h3>
+              <div className="grid sm:grid-cols-2 gap-3">
+                <a href="#" className="border rounded-2xl p-4 flex items-center justify-between hover:bg-black/5 transition-all" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 rounded-xl bg-red-500/10 text-red-500"><FileText className="w-5 h-5" /></div>
+                    <div>
+                      <h4 className="font-bold text-xs">Boracay Terminal Manual.pdf</h4>
+                      <p className="text-[10px]" style={{ color: textMuted }}>Step-by-step gate procedures & fees</p>
+                    </div>
+                  </div>
+                  <Download className="w-4 h-4 text-neutral-400" />
+                </a>
+                <a href="#" className="border rounded-2xl p-4 flex items-center justify-between hover:bg-black/5 transition-all" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-500"><FileText className="w-5 h-5" /></div>
+                    <div>
+                      <h4 className="font-bold text-xs">Southwest Transfer Guide.pdf</h4>
+                      <p className="text-[10px]" style={{ color: textMuted }}>Land & Ferry terminal connection map</p>
+                    </div>
+                  </div>
+                  <Download className="w-4 h-4 text-neutral-400" />
+                </a>
+              </div>
+            </section>
+
+            {/* 6. Flight & E-Ticket Manifest (Nawala kanina) */}
+            <section className="border rounded-3xl p-4 sm:p-6 shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
+              <h3 className="text-[11px] font-bold uppercase tracking-wider mb-3 flex items-center gap-2"><PlaneLanding className="w-4 h-4 text-orange-500" /> Flight & E-Ticket Details</h3>
+              <div className="border rounded-2xl p-4 space-y-3 text-xs bg-black/5" style={{ borderColor: borderColor }}>
+                <div className="flex justify-between items-center border-b pb-2" style={{ borderColor: borderColor }}>
+                  <div>
+                    <span className="font-bold text-orange-500">MNL ➔ MPH</span>
+                    <p className="text-[10px]" style={{ color: textMuted }}>AirAsia • Z2 221</p>
+                  </div>
+                  <div className="text-right">
+                    <span className="font-bold">June 15, 2026</span>
+                    <p className="text-[10px]" style={{ color: textMuted }}>ETD: 08:30 AM</p>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <span className="font-bold text-orange-500">MPH ➔ MNL</span>
+                    <p className="text-[10px]" style={{ color: textMuted }}>AirAsia • Z2 222</p>
+                  </div>
+                  <div className="text-right">
+                    <span className="font-bold">June 18, 2026</span>
+                    <p className="text-[10px]" style={{ color: textMuted }}>ETA: 04:15 PM</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* 7. Hotel Resort Accommodation Voucher (Nawala kanina) */}
+            <section className="border rounded-3xl p-4 sm:p-6 shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
+              <h3 className="text-[11px] font-bold uppercase tracking-wider mb-3 flex items-center gap-2"><Hotel className="w-4 h-4 text-orange-500" /> Hotel Accommodation Summary</h3>
+              <div className="border rounded-2xl p-4 flex flex-col sm:flex-row justify-between gap-4 bg-black/5" style={{ borderColor: borderColor }}>
+                <div>
+                  <h4 className="font-bold text-sm">Henann Lagoon Resort Boracay</h4>
+                  <p className="text-[11px] mt-1" style={{ color: textMuted }}>Station 2, Boracay Island, Malay, Aklan</p>
+                  <p className="text-[11px] mt-0.5 font-medium">Room: Deluxe Premier Room (1 Double, 1 Single)</p>
+                </div>
+                <div className="text-left sm:text-right text-xs shrink-0">
+                  <span className="block font-bold">Status: Confirmed & Paid</span>
+                  <span className="block text-[10px] mt-1" style={{ color: textMuted }}>Check-in: June 15 (02:00 PM)</span>
+                  <span className="block text-[10px]" style={{ color: textMuted }}>Check-out: June 18 (12:00 PM)</span>
+                </div>
+              </div>
+            </section>
+
+            {/* 8. Travel Logistics / Instruction Center */}
             <section className="space-y-3">
               <h3 className="text-sm sm:text-base font-bold mb-2 flex items-center gap-2">
-                <Compass className="w-4 h-4 text-orange-500" /> Travel Information Center
+                <Compass className="w-4 h-4 text-orange-500" /> Travel Logistics & Instructions
               </h3>
               <div className="space-y-2">
                 <div className="border rounded-2xl overflow-hidden shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
@@ -208,7 +285,7 @@ export default function DestinationPreview() {
               </div>
             </section>
 
-            {/* KLOOK-STYLE "WHAT TO EXPECT" FULL-WIDTH PHOTOMAP VIEW */}
+            {/* 9. KLOOK-STYLE "WHAT TO EXPECT" FULL-WIDTH PHOTOMAP VIEW */}
             <section className="border rounded-3xl p-4 sm:p-8 shadow-sm space-y-6" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
               <div className="border-b pb-4" style={{ borderColor: borderColor }}>
                 <h3 className="text-base sm:text-lg font-bold tracking-tight flex items-center gap-2">
@@ -220,7 +297,7 @@ export default function DestinationPreview() {
                 </p>
               </div>
 
-              {/* Klook-inspired vertical linear scrolling photos layout (image_41b964.jpg) */}
+              {/* Klook-inspired vertical linear scrolling photos layout */}
               <div className="space-y-8">
                 {itineraryHighlights.map((item, index) => (
                   <div key={index} className="space-y-3 group animate-[fadeIn_0.4s_ease-out]">
@@ -246,7 +323,7 @@ export default function DestinationPreview() {
               </div>
             </section>
 
-            {/* 6 & 7. Checklist & What To Bring Section */}
+            {/* 10 & 11. Checklist & What To Bring Section */}
             <section className="border rounded-3xl p-4 sm:p-6 shadow-sm grid md:grid-cols-2 gap-6" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
               <div>
                 <h3 className="text-[11px] font-bold mb-1 uppercase tracking-wider flex items-center gap-2"><CheckSquare className="w-4 h-4 text-orange-500" /> Travel Readiness Checklist</h3>
@@ -268,7 +345,7 @@ export default function DestinationPreview() {
               </div>
             </section>
 
-            {/* 10. Optional Tours Marketplace */}
+            {/* 12. Optional Tours Marketplace */}
             <section className="space-y-3">
               <h3 className="text-[11px] font-bold uppercase tracking-wider flex items-center gap-2"><Sparkles className="w-4 h-4 text-orange-500" /> Optional Tours Marketplace</h3>
               <div className="border rounded-2xl p-4 flex justify-between items-center shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
@@ -282,7 +359,7 @@ export default function DestinationPreview() {
               </div>
             </section>
 
-            {/* 12. Dynamic Ledger Checkout Panel */}
+            {/* 13. Dynamic Ledger Checkout Panel */}
             <section className="border-2 rounded-3xl p-5 shadow-2xl bg-gradient-to-br from-black/20 via-black/40 to-black/10" style={{ borderColor: 'rgba(255,140,0,0.25)' }}>
               <h3 className="text-[11px] font-bold uppercase tracking-wider mb-4 flex items-center gap-2"><ShoppingCart className="w-4 h-4 text-orange-500" /> Checkout Ledger Total</h3>
               <div className="flex justify-between items-center mb-4">
