@@ -444,7 +444,6 @@ export default function DestinationPreview() {
           </div>
         )}
       </main>
-
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(12px); }
