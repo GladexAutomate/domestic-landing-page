@@ -2,21 +2,21 @@ import { useParams, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useTheme } from "@/lib/ThemeContext";
 import DestinationNavbar from "@/components/destination/DestinationNavbar";
-import {
-  Search, ChevronRight, Download, FileText, Play, ArrowLeft,
+import { 
+  Search, ChevronRight, Download, FileText, Play, ArrowLeft, 
   PlaneLanding, Truck, Hotel, Compass, PhoneCall, ShieldAlert,
   CheckSquare, Briefcase, Shirt, Plane, Camera, Sunset, Sun,
   Palmtree, Sparkles, ShieldCheck, ShoppingCart, HelpCircle,
-  MessageSquare, Users, Star, ThumbsUp, AlertTriangle, Check, Image } from
-"lucide-react";
+  MessageSquare, Users, Star, ThumbsUp, AlertTriangle, Check, Image
+} from "lucide-react";
 
 export default function DestinationPreview() {
   const { slug } = useParams();
   const { darkMode } = useTheme();
-
+  
   // Simulated lookup matching Fusioo workflow
   const [searchID, setSearchID] = useState("GDX-BOR-2026");
-
+  
   // Set to true so everything displays automatically without requiring a click
   const [hasSearched, setHasSearched] = useState(true);
 
@@ -46,21 +46,21 @@ export default function DestinationPreview() {
   const overallTotal = tourTotal + insuranceTotal;
 
   const toggleTour = (id, title, price) => {
-    setSelectedTours((prev) => {
+    setSelectedTours(prev => {
       const next = { ...prev };
-      if (next[id]) {delete next[id];} else
-      {next[id] = { title, price };}
+      if (next[id]) { delete next[id]; } 
+      else { next[id] = { title, price }; }
       return next;
     });
   };
 
   // Klook-style placeholder experiences photos 
   const experiencePhotos = [
-  { url: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=500&auto=format&fit=crop&q=60", caption: "Crystal Kayak Experience" },
-  { url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500&auto=format&fit=crop&q=60", caption: "White Beach Station 2" },
-  { url: "https://images.unsplash.com/photo-1519046904884-53103b34b206?w=500&auto=format&fit=crop&q=60", caption: "Sunset Paraw Sailing" },
-  { url: "https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=500&auto=format&fit=crop&q=60", caption: "Island Hopping Buffet Lunch" }];
-
+    { url: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=500&auto=format&fit=crop&q=60", caption: "Crystal Kayak Experience" },
+    { url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500&auto=format&fit=crop&q=60", caption: "White Beach Station 2" },
+    { url: "https://images.unsplash.com/photo-1519046904884-53103b34b206?w=500&auto=format&fit=crop&q=60", caption: "Sunset Paraw Sailing" },
+    { url: "https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=500&auto=format&fit=crop&q=60", caption: "Island Hopping Buffet Lunch" },
+  ];
 
   return (
     <div className="font-poppins min-h-screen transition-colors duration-500 pb-24" style={{ background: bg, color: textPrimary }}>
@@ -75,9 +75,9 @@ export default function DestinationPreview() {
         
         {/* Back Link Row */}
         <div className="flex justify-end mb-6">
-          
-
-          
+          <Link to="/" className="text-xs font-bold tracking-widest uppercase transition flex items-center gap-2 border px-4 py-2 rounded-full bg-black/5" style={{ borderColor: borderColor, color: textPrimary }}>
+            <ArrowLeft className="w-3.5 h-3.5 text-orange-500" /> Back to Domestic
+          </Link>
         </div>
 
         {/* 1. Welcome Section & Booking Lookup */}
@@ -103,30 +103,30 @@ export default function DestinationPreview() {
           <div className="max-w-md mx-auto flex flex-col sm:flex-row gap-2 relative z-10">
             <div className="relative flex-1">
               <Search className="w-4 h-4 absolute left-4 top-4 text-slate-400" />
-              <input
-                type="text"
+              <input 
+                type="text" 
                 value={searchID}
                 onChange={(e) => setSearchID(e.target.value)}
-                className="w-full pl-11 pr-4 py-3.5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 font-medium text-sm transition bg-neutral-50 dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800 text-neutral-900 dark:text-neutral-100"
-                placeholder="Enter GDX Confirmation Number / Tour Voucher Number" />
-              
+                className="w-full pl-11 pr-4 py-3.5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 font-medium text-sm transition bg-neutral-50 dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800 text-neutral-900 dark:text-neutral-100" 
+                placeholder="Enter GDX Confirmation Number / Tour Voucher Number"
+              />
             </div>
-            <button
+            <button 
               type="button"
-              onClick={() => {
-                setHasSearched(true);
-                alert("Real-time lookup refreshed from Fusioo platform data tables.");
+              onClick={() => { 
+                setHasSearched(true); 
+                alert("Real-time lookup refreshed from Fusioo platform data tables."); 
               }}
-              className="bg-gradient-to-r from-orange-500 to-amber-600 hover:opacity-95 text-white text-xs font-bold uppercase tracking-widest px-6 py-3.5 rounded-xl transition flex items-center justify-center gap-2 shadow-md">
-              
+              className="bg-gradient-to-r from-orange-500 to-amber-600 hover:opacity-95 text-white text-xs font-bold uppercase tracking-widest px-6 py-3.5 rounded-xl transition flex items-center justify-center gap-2 shadow-md"
+            >
               <span>View My Trip</span>
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
         </section>
 
-        {hasSearched &&
-        <div className="space-y-8 animate-fade-in">
+        {hasSearched && (
+          <div className="space-y-8 animate-fade-in">
             
             {/* 2 & 3. Personalized Travel Dashboard */}
             <section className="border rounded-3xl p-6 shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
@@ -171,15 +171,22 @@ export default function DestinationPreview() {
                 <h3 className="text-base font-bold tracking-tight mb-1" style={{ color: textPrimary }}>Your Destination Video Briefing</h3>
                 <p className="text-xs mb-6" style={{ color: textMuted }}>Review this mandatory onboarding video layout to prepare for your journey.</p>
                 
-                {/* ENFORCED MOBILE PORTRAIT ORIENTATION LAYOUT EMBEDDING THE USER'S GOOGLE DRIVE STREAM LINK */}
-                <div className="w-full max-w-[280px] aspect-[9/16] bg-black rounded-[2.2rem] mx-auto shadow-2xl border-4 border-neutral-800 overflow-hidden relative flex flex-col justify-between items-center text-center">
-                  <iframe
-                  src="https://drive.google.com/file/d/1THzQAagycyXm8UYNztawslG7G_2Ak_J3/preview"
-                  className="w-full h-full border-0 rounded-[2rem]"
-                  allow="autoplay; encrypted-media"
-                  allowFullScreen
-                  title="Boracay Onboarding Orientation Video">
-                </iframe>
+                {/* FIXED & ALIGNED SMARTPHONE CONTAINER WITH HIDDEN GOOGLE DRIVE POP-OUT CONTROL */}
+                <div className="w-full max-w-[300px] aspect-[9/16] bg-black rounded-[2.5rem] mx-auto shadow-2xl border-4 border-neutral-800 overflow-hidden relative">
+                  
+                  {/* Outer container cuts off the top bar header components where the pop-out button lives */}
+                  <div className="absolute inset-0 top-[-45px] bottom-[-45px] overflow-hidden">
+                    <iframe 
+                      src="https://drive.google.com/file/d/1THzQAagycyXm8UYNztawslG7G_2Ak_J3/preview" 
+                      className="w-full h-full border-0 scale-105 object-cover"
+                      allow="autoplay; encrypted-media" 
+                      allowFullScreen
+                      title="Boracay Onboarding Orientation Video"
+                    ></iframe>
+                  </div>
+                  
+                  {/* Safe glass sheen layer to maintain mockup feeling */}
+                  <div className="absolute inset-0 pointer-events-none rounded-[2.3rem] border border-white/5 bg-gradient-to-tr from-transparent via-white/[0.02] to-transparent" />
                 </div>
               </div>
             </section>
@@ -268,14 +275,14 @@ export default function DestinationPreview() {
                 </h3>
                 <p className="text-[11px] mb-4" style={{ color: textMuted }}>Interactive setup to complete milestones before departure.</p>
                 <div className="space-y-2 text-xs">
-                  {Object.keys(checklist).map((key) =>
-                <label key={key} className="flex items-center gap-2.5 p-2.5 border rounded-xl cursor-pointer hover:opacity-80 transition bg-black/5" style={{ borderColor: borderColor }}>
-                      <input
-                    type="checkbox"
-                    checked={checklist[key]}
-                    onChange={() => setChecklist((p) => ({ ...p, [key]: !p[key] }))}
-                    className="w-4 h-4 text-orange-500 accent-orange-500 rounded focus:ring-0" />
-                  
+                  {Object.keys(checklist).map((key) => (
+                    <label key={key} className="flex items-center gap-2.5 p-2.5 border rounded-xl cursor-pointer hover:opacity-80 transition bg-black/5" style={{ borderColor: borderColor }}>
+                      <input 
+                        type="checkbox" 
+                        checked={checklist[key]} 
+                        onChange={() => setChecklist(p => ({ ...p, [key]: !p[key] }))}
+                        className="w-4 h-4 text-orange-500 accent-orange-500 rounded focus:ring-0" 
+                      />
                       <span style={{ color: textPrimary }}>
                         {key === 'id' && 'Valid ID / Passport'}
                         {key === 'voucher' && 'Travel Voucher'}
@@ -285,7 +292,7 @@ export default function DestinationPreview() {
                         {key === 'data' && 'Mobile Data Connection'}
                       </span>
                     </label>
-                )}
+                  ))}
                 </div>
               </div>
 
@@ -302,7 +309,7 @@ export default function DestinationPreview() {
               </div>
             </section>
 
-            {/* NEW KLOOK-STYLE ACTUAL EXPERIENCE PHOTOS CONTAINER */}
+            {/* KLOOK-STYLE ACTUAL EXPERIENCE PHOTOS CONTAINER */}
             <section className="border rounded-3xl p-6 shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
               <div className="mb-4 flex items-center gap-2">
                 <Image className="w-4 h-4 text-orange-500" />
@@ -314,18 +321,18 @@ export default function DestinationPreview() {
               
               {/* Klook-Style Responsive Image Mosaic Grid */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {experiencePhotos.map((photo, i) =>
-              <div key={i} className="group relative overflow-hidden rounded-2xl aspect-square bg-neutral-200 dark:bg-neutral-800 border" style={{ borderColor: borderColor }}>
-                    <img
-                  src={photo.url}
-                  alt={photo.caption}
-                  className="w-full h-full object-cover group-hover:scale-105 transition duration-300 ease-in-out" />
-                
+                {experiencePhotos.map((photo, i) => (
+                  <div key={i} className="group relative overflow-hidden rounded-2xl aspect-square bg-neutral-200 dark:bg-neutral-800 border" style={{ borderColor: borderColor }}>
+                    <img 
+                      src={photo.url} 
+                      alt={photo.caption} 
+                      className="w-full h-full object-cover group-hover:scale-105 transition duration-300 ease-in-out"
+                    />
                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent p-3 pt-6">
                       <span className="text-[10px] text-white font-medium tracking-tight block">{photo.caption}</span>
                     </div>
                   </div>
-              )}
+                ))}
               </div>
             </section>
 
@@ -351,11 +358,11 @@ export default function DestinationPreview() {
                       <span className="text-[9px] uppercase font-bold block" style={{ color: textMuted }}>Add-on Price</span>
                       <span className="font-black text-orange-500 text-sm">₱999 <span className="text-[10px] font-normal text-slate-500">/ Person</span></span>
                     </div>
-                    <button
-                    type="button"
-                    onClick={() => toggleTour('island-hop', 'Boracay Island Hopping', 999)}
-                    className={`text-xs font-bold px-4 py-2 rounded-xl transition border ${selectedTours['island-hop'] ? 'bg-rose-500/10 text-rose-500 border-rose-500/20' : 'bg-orange-500/10 text-orange-500 border-orange-500/20'}`}>
-                    
+                    <button 
+                      type="button"
+                      onClick={() => toggleTour('island-hop', 'Boracay Island Hopping', 999)}
+                      className={`text-xs font-bold px-4 py-2 rounded-xl transition border ${selectedTours['island-hop'] ? 'bg-rose-500/10 text-rose-500 border-rose-500/20' : 'bg-orange-500/10 text-orange-500 border-orange-500/20'}`}
+                    >
                       {selectedTours['island-hop'] ? 'Remove' : 'Add To Trip'}
                     </button>
                   </div>
@@ -373,11 +380,11 @@ export default function DestinationPreview() {
                       <span className="text-[9px] uppercase font-bold block" style={{ color: textMuted }}>Add-on Price</span>
                       <span className="font-black text-orange-500 text-sm">₱1,500 <span className="text-[10px] font-normal text-slate-500">/ Sailboat</span></span>
                     </div>
-                    <button
-                    type="button"
-                    onClick={() => toggleTour('paraw', 'Sunset Paraw Sailing', 1500)}
-                    className={`text-xs font-bold px-4 py-2 rounded-xl transition border ${selectedTours['paraw'] ? 'bg-rose-500/10 text-rose-500 border-rose-500/20' : 'bg-orange-500/10 text-orange-500 border-orange-500/20'}`}>
-                    
+                    <button 
+                      type="button"
+                      onClick={() => toggleTour('paraw', 'Sunset Paraw Sailing', 1500)}
+                      className={`text-xs font-bold px-4 py-2 rounded-xl transition border ${selectedTours['paraw'] ? 'bg-rose-500/10 text-rose-500 border-rose-500/20' : 'bg-orange-500/10 text-orange-500 border-orange-500/20'}`}
+                    >
                       {selectedTours['paraw'] ? 'Remove' : 'Add To Trip'}
                     </button>
                   </div>
@@ -397,28 +404,28 @@ export default function DestinationPreview() {
 
               <div className="grid sm:grid-cols-3 gap-3 text-xs">
                 {[
-              { id: 'basic', title: 'Basic Insurance', price: 399 },
-              { id: 'std', title: 'Standard Insurance', price: 699, recommended: true },
-              { id: 'prem', title: 'Premium Insurance', price: 999 }].
-              map((tier) =>
-              <div key={tier.id} className={`border p-4 rounded-xl flex flex-col justify-between relative bg-black/5 ${tier.recommended ? 'border-orange-500 bg-orange-500/[0.02]' : ''}`} style={{ borderColor: tier.recommended ? '#FF8C00' : borderColor }}>
+                  { id: 'basic', title: 'Basic Insurance', price: 399 },
+                  { id: 'std', title: 'Standard Insurance', price: 699, recommended: true },
+                  { id: 'prem', title: 'Premium Insurance', price: 999 }
+                ].map((tier) => (
+                  <div key={tier.id} className={`border p-4 rounded-xl flex flex-col justify-between relative bg-black/5 ${tier.recommended ? 'border-orange-500 bg-orange-500/[0.02]' : ''}`} style={{ borderColor: tier.recommended ? '#FF8C00' : borderColor }}>
                     {tier.recommended && <span className="bg-orange-500 text-black text-[8px] font-black px-2 py-0.5 rounded absolute -top-2.5 left-4 uppercase tracking-wider">Recommended</span>}
                     <div>
                       <span className="font-bold block" style={{ color: textPrimary }}>{tier.title}</span>
                     </div>
                     <div className="mt-4 pt-3 border-t flex items-center justify-between" style={{ borderColor: borderColor }}>
                       <span className="font-black text-sm" style={{ color: textPrimary }}>₱{tier.price}</span>
-                      <button
-                    type="button"
-                    onClick={() => setSelectedInsurance(selectedInsurance?.id === tier.id ? null : tier)}
-                    className={`font-bold px-3 py-1.5 rounded-lg text-[11px] transition ${selectedInsurance?.id === tier.id ? 'bg-emerald-500 text-black' : 'bg-white/5 border text-orange-500'}`}
-                    style={{ borderColor: borderColor }}>
-                    
+                      <button 
+                        type="button"
+                        onClick={() => setSelectedInsurance(selectedInsurance?.id === tier.id ? null : tier)}
+                        className={`font-bold px-3 py-1.5 rounded-lg text-[11px] transition ${selectedInsurance?.id === tier.id ? 'bg-emerald-500 text-black' : 'bg-white/5 border text-orange-500'}`}
+                        style={{ borderColor: borderColor }}
+                      >
                         {selectedInsurance?.id === tier.id ? 'Active ✓' : 'Add'}
                       </button>
                     </div>
                   </div>
-              )}
+                ))}
               </div>
             </section>
 
@@ -434,23 +441,23 @@ export default function DestinationPreview() {
                   <span className="text-emerald-500 font-bold uppercase tracking-widest text-[9px] bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">PAID / SYSTEM MATCHED</span>
                 </div>
                 
-                {Object.values(selectedTours).map((tour, i) =>
-              <div key={i} className="flex justify-between items-center py-0.5 font-medium animate-fade-in">
+                {Object.values(selectedTours).map((tour, i) => (
+                  <div key={i} className="flex justify-between items-center py-0.5 font-medium animate-fade-in">
                     <span style={{ color: textPrimary }}>✦ {tour.title} (Add-on Pack)</span>
                     <span className="font-bold text-orange-500">₱{tour.price.toLocaleString()}</span>
                   </div>
-              )}
+                ))}
 
-                {selectedInsurance &&
-              <div className="flex justify-between items-center py-0.5 font-medium animate-fade-in">
+                {selectedInsurance && (
+                  <div className="flex justify-between items-center py-0.5 font-medium animate-fade-in">
                     <span style={{ color: textPrimary }}>✦ SafeTravel: {selectedInsurance.title} choice</span>
                     <span className="font-bold text-orange-500">₱{selectedInsurance.price.toLocaleString()}</span>
                   </div>
-              }
+                )}
 
-                {Object.keys(selectedTours).length === 0 && !selectedInsurance &&
-              <p className="text-slate-500 italic py-0.5 text-[11px]">No active voluntary add-ons selected currently.</p>
-              }
+                {Object.keys(selectedTours).length === 0 && !selectedInsurance && (
+                  <p className="text-slate-500 italic py-0.5 text-[11px]">No active voluntary add-ons selected currently.</p>
+                )}
               </div>
 
               <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-6">
@@ -511,8 +518,8 @@ export default function DestinationPreview() {
             </section>
 
           </div>
-        }
+        )}
       </main>
-    </div>);
-
+    </div>
+  );
 }
