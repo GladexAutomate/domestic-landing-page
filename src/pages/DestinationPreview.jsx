@@ -3,22 +3,21 @@ import { useState, useEffect } from "react";
 import { useTheme } from "@/lib/ThemeContext";
 import DestinationNavbar from "@/components/destination/DestinationNavbar";
 import { 
-  Search, ChevronRight, Download, FileText, Play, ArrowLeft, 
-  PlaneLanding, Truck, Hotel, Compass, PhoneCall, ShieldAlert,
-  CheckSquare, Briefcase, Shirt, Plane, Camera, Sunset, Sun,
-  Palmtree, Sparkles, ShieldCheck, ShoppingCart, HelpCircle,
-  MessageSquare, Users, Star, ThumbsUp, AlertTriangle, Check, Image
+  Search, ChevronRight, Download, FileText, ArrowLeft, 
+  PlaneLanding, Truck, Hotel, Compass,
+  CheckSquare, Briefcase, Sparkles, ShieldCheck, ShoppingCart, HelpCircle,
+  MessageSquare, Star, Check, Image
 } from "lucide-react";
 
 export default function DestinationPreview() {
   const { slug } = useParams();
   const { darkMode } = useTheme();
   
-  // Simulated lookup matching Fusioo workflow
-  const [searchID, setSearchID] = useState("GDX-BOR-2026");
+  // Input fields state
+  const [searchID, setSearchID] = useState("");
   
-  // Set to true so everything displays automatically without requiring a click
-  const [hasSearched, setHasSearched] = useState(true);
+  // Naka-set sa false sa simula para nakatago ang lahat ng detalye ayon sa PDF customer flow
+  const [hasSearched, setHasSearched] = useState(false);
 
   // Upsell state management
   const [selectedTours, setSelectedTours] = useState({});
@@ -54,6 +53,16 @@ export default function DestinationPreview() {
     });
   };
 
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (!searchID.trim()) {
+      alert("Mangyaring magpasok ng GDX Confirmation Number o Tour Voucher Number.");
+      return;
+    }
+    // Lalabas lang ang buong dashboard at components kapag nag-search na
+    setHasSearched(true);
+  };
+
   // Klook-style placeholder experiences photos 
   const experiencePhotos = [
     { url: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=500&auto=format&fit=crop&q=60", caption: "Crystal Kayak Experience" },
@@ -80,7 +89,7 @@ export default function DestinationPreview() {
           </Link>
         </div>
 
-        {/* 1. Welcome Section & Booking Lookup */}
+        {/* 1. Welcome Section & Booking Lookup (Ito lang ang unang makikita) */}
         <section className="border rounded-3xl p-6 md:p-10 shadow-xl text-center mb-8 relative overflow-hidden" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
           <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_60%_50%_at_50%_50%,rgba(255,140,0,0.04)_0%,transparent_70%)]" />
           
@@ -96,11 +105,11 @@ export default function DestinationPreview() {
           
           <h1 className="text-2xl md:text-4xl font-black mb-3 tracking-tight italic" style={{ color: textPrimary }}>Your Trip Is Confirmed!</h1>
           <p className="text-xs md:text-sm max-w-md mx-auto mb-6 leading-relaxed" style={{ color: textMuted }}>
-            Your GDX Confirmation Number or Tour Voucher Number details are displayed automatically below.
+            Enter your GDX Confirmation Number or Tour Voucher Number to access your personalized travel briefing, vouchers, reminders, optional tours, and add ons.
           </p>
           
-          {/* FIXED SEARCH MODULE BLOCK */}
-          <div className="max-w-md mx-auto flex flex-col sm:flex-row gap-2 relative z-10">
+          {/* SEARCH FORM MODULE BLOCK */}
+          <form onSubmit={handleSearchSubmit} className="max-w-md mx-auto flex flex-col sm:flex-row gap-2 relative z-10">
             <div className="relative flex-1">
               <Search className="w-4 h-4 absolute left-4 top-4 text-slate-400" />
               <input 
@@ -112,19 +121,16 @@ export default function DestinationPreview() {
               />
             </div>
             <button 
-              type="button"
-              onClick={() => { 
-                setHasSearched(true); 
-                alert("Real-time lookup refreshed from Fusioo platform data tables."); 
-              }}
+              type="submit"
               className="bg-gradient-to-r from-orange-500 to-amber-600 hover:opacity-95 text-white text-xs font-bold uppercase tracking-widest px-6 py-3.5 rounded-xl transition flex items-center justify-center gap-2 shadow-md"
             >
               <span>View My Trip</span>
               <ChevronRight className="w-4 h-4" />
             </button>
-          </div>
+          </form>
         </section>
 
+        {/* MGA DETALYE: Lalabas lamang kapag ang hasSearched ay TRUE */}
         {hasSearched && (
           <div className="space-y-8 animate-fade-in">
             
