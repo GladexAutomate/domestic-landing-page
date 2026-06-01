@@ -4,9 +4,8 @@ import { useTheme } from "@/lib/ThemeContext";
 import DestinationNavbar from "@/components/destination/DestinationNavbar";
 import { 
   Search, ChevronRight, Download, FileText, ArrowLeft, 
-  PlaneLanding, Truck, Hotel, Compass, X, ChevronLeft,
-  CheckSquare, Briefcase, Sparkles, ShieldCheck, ShoppingCart, HelpCircle,
-  MessageSquare, Star, Check, Image as ImageIcon
+  PlaneLanding, Truck, Hotel, Compass, CheckSquare, 
+  Briefcase, Sparkles, ShoppingCart, Check, Image as ImageIcon
 } from "lucide-react";
 
 export default function DestinationPreview() {
@@ -16,40 +15,26 @@ export default function DestinationPreview() {
   const [searchID, setSearchID] = useState("");
   const [hasSearched, setHasSearched] = useState(false);
   const [selectedTours, setSelectedTours] = useState({});
-  const [selectedInsurance, setSelectedInsurance] = useState(null);
-
-  // Klook Slider State Management
-  const [activePhotoIndex, setActivePhotoIndex] = useState(null);
 
   const [checklist, setChecklist] = useState({
     id: true, voucher: true, flight: false, hotel: false, cash: false, data: false
   });
 
-  // Klook-style experience data grid array
-  const experiencePhotos = [
-    { url: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=800&auto=format&fit=crop&q=80", caption: "Crystal Kayak Experience" },
-    { url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop&q=80", caption: "White Beach Station 2" },
-    { url: "https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&auto=format&fit=crop&q=80", caption: "Sunset Paraw Sailing" },
-    { url: "https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=800&auto=format&fit=crop&q=80", caption: "Island Hopping Buffet Lunch" },
+  // Klook "What to Expect" Data Structure (Base sa image_41b964.jpg at image_41b99c.jpg)
+  const itineraryHighlights = [
+    { 
+      url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&auto=format&fit=crop&q=80", 
+      caption: "Book this Boracay package to embark on an exhilarating adventure that will take you to the island's best locations!" 
+    },
+    { 
+      url: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=1200&auto=format&fit=crop&q=80", 
+      caption: "Relax by the shores of the likes of Diniwid Beach and marvel at the breathtaking sceneries surrounding you." 
+    },
+    { 
+      url: "https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=1200&auto=format&fit=crop&q=80", 
+      caption: "The tours come with a mouthwatering seafood and BBQ buffet that your group can delight in during lunch at the island." 
+    }
   ];
-
-  // Keyboard Event Navigation Core Module (Next/Prev/Close)
-  useEffect(() => {
-    if (activePhotoIndex === null) return;
-
-    const handleKeyDown = (e) => {
-      if (e.key === "ArrowRight") {
-        handleNextPhoto();
-      } else if (e.key === "ArrowLeft") {
-        handlePrevPhoto();
-      } else if (e.key === "Escape") {
-        setActivePhotoIndex(null);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [activePhotoIndex]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -62,16 +47,6 @@ export default function DestinationPreview() {
   const borderColor = darkMode ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)";
 
   const tourTotal = Object.values(selectedTours).reduce((sum, item) => sum + item.price, 0);
-  const insuranceTotal = selectedInsurance ? selectedInsurance.price : 0;
-  const overallTotal = tourTotal + insuranceTotal;
-
-  const handleNextPhoto = () => {
-    setActivePhotoIndex((prev) => (prev + 1) % experiencePhotos.length);
-  };
-
-  const handlePrevPhoto = () => {
-    setActivePhotoIndex((prev) => (prev - 1 + experiencePhotos.length) % experiencePhotos.length);
-  };
 
   const toggleTour = (id, title, price) => {
     setSelectedTours(prev => {
@@ -107,24 +82,17 @@ export default function DestinationPreview() {
           </Link>
         </div>
 
-        {/* 1. Welcome Section & Booking Lookup */}
+        {/* 1. Lookup Form */}
         <section className="border rounded-3xl p-5 sm:p-8 md:p-12 shadow-xl text-center mb-8 relative overflow-hidden transition-all duration-300 hover:shadow-2xl" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
           <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_60%_50%_at_50%_50%,rgba(255,140,0,0.04)_0%,transparent_70%)] animate-pulse" />
           
           <div className="flex items-center justify-center gap-3 mb-4">
             <div className="h-[1px] w-8 sm:w-12 bg-gradient-to-r from-transparent to-orange-500"></div>
-            <span className="text-[9px] sm:text-[10px] font-bold tracking-[0.3em] sm:tracking-[0.45em] uppercase text-orange-500">Verification Engine</span>
+            <span className="text-[9px] sm:text-[10px] font-bold tracking-[0.3em] uppercase text-orange-500">Verification Engine</span>
             <div className="h-[1px] w-8 sm:w-12 bg-gradient-to-l from-transparent to-orange-500"></div>
           </div>
 
-          <span className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 dark:text-emerald-400 text-[9px] sm:text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-4 inline-block">
-            Booking Status: Fully Paid & Confirmed
-          </span>
-          
-          <h1 className="text-xl sm:text-3xl md:text-4xl font-black mb-3 tracking-tight italic" style={{ color: textPrimary }}>Your Trip Is Confirmed!</h1>
-          <p className="text-[11px] sm:text-xs md:text-sm max-w-md mx-auto mb-6 leading-relaxed" style={{ color: textMuted }}>
-            Enter your GDX Confirmation Number or Tour Voucher Number to access your personalized travel briefing, vouchers, reminders, optional tours, and add ons.
-          </p>
+          <h1 className="text-xl sm:text-3xl md:text-4xl font-black mb-3 tracking-tight italic">Your Trip Is Confirmed!</h1>
           
           <form onSubmit={handleSearchSubmit} className="max-w-md mx-auto flex flex-col sm:flex-row gap-2 relative z-10">
             <div className="relative flex-1">
@@ -133,187 +101,132 @@ export default function DestinationPreview() {
                 type="text" 
                 value={searchID}
                 onChange={(e) => setSearchID(e.target.value)}
-                className="w-full pl-11 pr-4 py-3 sm:py-3.5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 font-medium text-xs sm:text-sm transition-all bg-neutral-50 dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800 text-neutral-900 dark:text-neutral-100" 
+                className="w-full pl-11 pr-4 py-3 sm:py-3.5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 font-medium text-xs sm:text-sm bg-neutral-50 dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800 text-neutral-900 dark:text-neutral-100" 
                 placeholder="Enter GDX / Voucher Number"
               />
             </div>
-            <button 
-              type="submit"
-              className="bg-gradient-to-r from-orange-500 to-amber-600 hover:opacity-95 active:scale-95 text-white text-[11px] sm:text-xs font-bold uppercase tracking-widest px-6 py-3 sm:py-3.5 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-md"
-            >
+            <button type="submit" className="bg-gradient-to-r from-orange-500 to-amber-600 text-white text-[11px] sm:text-xs font-bold uppercase tracking-widest px-6 py-3 sm:py-3.5 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-md">
               <span>View My Trip</span>
               <ChevronRight className="w-4 h-4" />
             </button>
           </form>
         </section>
 
-        {/* MGA DETALYE: Lalabas lamang kapag ang hasSearched ay TRUE */}
         {hasSearched && (
           <div className="space-y-6 sm:space-y-8 animate-[fadeIn_0.5s_ease-out_forwards]">
             
-            {/* 2 & 3. Personalized Travel Dashboard */}
-            <section className="border rounded-3xl p-4 sm:p-6 shadow-sm transition-transform duration-300 hover:scale-[1.01]" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-4 mb-4 sm:mb-6 gap-4" style={{ borderColor: borderColor }}>
+            {/* 2. Dashboard */}
+            <section className="border rounded-3xl p-4 sm:p-6 shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-4 mb-4 gap-4" style={{ borderColor: borderColor }}>
                 <div>
-                  <h2 className="text-lg sm:text-xl font-bold flex items-center gap-2" style={{ color: textPrimary }}>Hi Maria! 👋</h2>
+                  <h2 className="text-lg sm:text-xl font-bold">Hi Maria! 👋</h2>
                   <p className="text-[11px] sm:text-xs mt-0.5" style={{ color: textMuted }}>Your automated travel layout is synced directly with live records.</p>
                 </div>
-                <div className="flex flex-row w-full md:w-auto gap-2">
-                  <button className="flex-1 md:flex-none hover:opacity-80 active:scale-95 border text-[10px] sm:text-[11px] font-bold px-3 py-2 rounded-xl flex items-center justify-center gap-1.5 transition-all bg-black/5" style={{ borderColor: borderColor, color: textPrimary }}>
-                    <Download className="w-3.5 h-3.5 text-orange-500" /> Voucher
-                  </button>
-                  <button className="flex-1 md:flex-none hover:opacity-80 active:scale-95 border text-[10px] sm:text-[11px] font-bold px-3 py-2 rounded-xl flex items-center justify-center gap-1.5 transition-all bg-black/5" style={{ borderColor: borderColor, color: textPrimary }}>
-                    <FileText className="w-3.5 h-3.5 text-orange-500" /> Itinerary
-                  </button>
-                </div>
               </div>
-
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 text-xs">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
                 <div className="p-3 rounded-xl border bg-black/5" style={{ borderColor: borderColor }}>
-                  <span className="text-[9px] sm:text-[10px] font-bold block uppercase tracking-wider mb-1" style={{ color: textMuted }}>Destination</span>
-                  <span className="font-bold text-xs sm:text-sm">Boracay, PH</span>
+                  <span className="text-[9px] font-bold block uppercase mb-1" style={{ color: textMuted }}>Destination</span>
+                  <span className="font-bold">Boracay, PH</span>
                 </div>
                 <div className="p-3 rounded-xl border bg-black/5" style={{ borderColor: borderColor }}>
-                  <span className="text-[9px] sm:text-[10px] font-bold block uppercase tracking-wider mb-1" style={{ color: textMuted }}>Travel Date</span>
-                  <span className="font-bold text-xs sm:text-sm">June 15-18, 2026</span>
+                  <span className="text-[9px] font-bold block uppercase mb-1" style={{ color: textMuted }}>Travel Date</span>
+                  <span className="font-bold">June 15-18, 2026</span>
                 </div>
                 <div className="p-3 rounded-xl border bg-black/5" style={{ borderColor: borderColor }}>
-                  <span className="text-[9px] sm:text-[10px] font-bold block uppercase tracking-wider mb-1" style={{ color: textMuted }}>Accommodations</span>
-                  <span className="font-bold text-xs sm:text-sm truncate block">Henann Lagoon</span>
+                  <span className="text-[9px] font-bold block uppercase mb-1" style={{ color: textMuted }}>Accommodations</span>
+                  <span className="font-bold truncate block">Henann Lagoon</span>
                 </div>
                 <div className="p-3 rounded-xl border bg-black/5" style={{ borderColor: borderColor }}>
-                  <span className="text-[9px] sm:text-[10px] font-bold block uppercase tracking-wider mb-1" style={{ color: textMuted }}>Consultant</span>
-                  <span className="font-bold text-orange-500 text-xs sm:text-sm">Agent Roy</span>
+                  <span className="text-[9px] font-bold block uppercase mb-1" style={{ color: textMuted }}>Consultant</span>
+                  <span className="font-bold text-orange-500">Agent Roy</span>
                 </div>
               </div>
             </section>
 
-            {/* 4. Travel Briefing Video Section */}
-            <section className="border rounded-3xl p-5 sm:p-8 shadow-sm text-center relative overflow-hidden" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
-              <div className="max-w-md mx-auto">
-                <h3 className="text-sm sm:text-base font-bold tracking-tight mb-1" style={{ color: textPrimary }}>Your Destination Video Briefing</h3>
-                <p className="text-[11px] sm:text-xs mb-6" style={{ color: textMuted }}>Review this mandatory onboarding video layout to prepare for your journey.</p>
-                
-                <div className="w-full max-w-[260px] sm:max-w-[280px] aspect-[9/16] bg-black rounded-[2rem] sm:rounded-[2.5rem] mx-auto shadow-2xl border-[3px] sm:border-4 border-neutral-800 overflow-hidden relative transition-transform duration-300 hover:scale-105">
-                  <div className="absolute inset-0 top-[-45px] bottom-[-45px] overflow-hidden">
-                    <iframe 
-                      src="https://drive.google.com/file/d/1THzQAagycyXm8UYNztawslG7G_2Ak_J3/preview" 
-                      className="w-full h-full border-0 scale-105 object-cover"
-                      allow="autoplay; encrypted-media" 
-                      allowFullScreen
-                      title="Boracay Onboarding Orientation Video"
-                    ></iframe>
-                  </div>
-                  <div className="absolute inset-0 pointer-events-none rounded-[2.3rem] border border-white/5 bg-gradient-to-tr from-transparent via-white/[0.02] to-transparent" />
-                </div>
+            {/* KLOOK-STYLE "WHAT TO EXPECT" FULL-WIDTH PHOTOMAP VIEW */}
+            <section className="border rounded-3xl p-4 sm:p-8 shadow-sm space-y-6" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
+              <div className="border-b pb-4" style={{ borderColor: borderColor }}>
+                <h3 className="text-base sm:text-lg font-bold tracking-tight flex items-center gap-2" style={{ color: textPrimary }}>
+                  <span className="w-1.5 h-5 bg-orange-500 rounded-full inline-block"></span>
+                  What to Expect from Boracay Island Tour
+                </h3>
+                <p className="text-[11px] sm:text-xs mt-2 leading-relaxed" style={{ color: textMuted }}>
+                  Boracay is one of the Philippines’ prime summer and beach getaway destinations. There, you’ll find numerous beaches, many of them unsoiled, along with colorful sea creatures beneath crystal clear waters. Review your custom destination walkthrough visuals below.
+                </p>
               </div>
-            </section>
 
-            {/* 5. Travel Information Center */}
-            <section className="space-y-3">
-              <h3 className="text-sm sm:text-base font-bold mb-2 flex items-center gap-2" style={{ color: textPrimary }}>
-                <Compass className="w-4 h-4 text-orange-500" /> Travel Information Center
-              </h3>
-
-              <div className="space-y-3">
-                <div className="border rounded-2xl overflow-hidden shadow-sm transition-all" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
-                  <details className="group" open>
-                    <summary className="flex justify-between items-center font-bold text-[11px] sm:text-xs p-4 cursor-pointer select-none hover:bg-black/5 tracking-wider uppercase" style={{ color: textPrimary }}>
-                      <span className="flex items-center gap-2.5"><PlaneLanding className="w-4 h-4 text-orange-500" /> Arrival & Airport Instructions</span>
-                    </summary>
-                    <div className="p-4 sm:p-5 pt-0 border-t text-[11px] sm:text-xs space-y-4" style={{ borderColor: borderColor, color: textMuted }}>
-                      <div>
-                        <h5 className="font-bold mb-1.5 text-orange-500">Before Departure:</h5>
-                        <p>• Arrive at the airport 2 to 3 hours before departure</p>
-                        <p>• Prepare travel documents and vouchers</p>
-                      </div>
+              {/* Klook Vertical Scrolling Photo Cards Layout */}
+              <div className="space-y-8">
+                {itineraryHighlights.map((item, index) => (
+                  <div key={index} className="space-y-3 group animate-[fadeIn_0.4s_ease-out]">
+                    
+                    {/* Image Container with Responsive Aspect Ratio */}
+                    <div className="w-full overflow-hidden rounded-2xl sm:rounded-3xl border bg-neutral-100 dark:bg-neutral-900 transition-all duration-300 shadow-sm group-hover:shadow-md" style={{ borderColor: borderColor }}>
+                      <img 
+                        src={item.url} 
+                        alt={`Boracay Highlight ${index + 1}`} 
+                        className="w-full h-auto max-h-[480px] object-cover transition-transform duration-500 group-hover:scale-[1.01]"
+                        loading="lazy"
+                      />
                     </div>
-                  </details>
-                </div>
-              </div>
-            </section>
 
-            {/* KLOOK-STYLE SNAPSHOTS SECTION WITH INTEGRATED SLIDER/CAROUSEL CONTROLS */}
-            <section className="border rounded-3xl p-4 sm:p-6 shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
-              <div className="mb-4 flex items-center gap-2">
-                <ImageIcon className="w-4 h-4 text-orange-500" />
-                <div>
-                  <h3 className="text-[11px] sm:text-xs font-bold uppercase tracking-wider" style={{ color: textPrimary }}>Real Guest Moments & Snapshots</h3>
-                  <p className="text-[10px] sm:text-[11px]" style={{ color: textMuted }}>Click to zoom and click next/prev or use keyboard arrows to browse all assets.</p>
-                </div>
-              </div>
-              
-              {/* Responsive Photo Grid Layout */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
-                {experiencePhotos.map((photo, i) => (
-                  <div 
-                    key={i} 
-                    onClick={() => setActivePhotoIndex(i)}
-                    className="group relative overflow-hidden rounded-2xl aspect-square bg-neutral-200 dark:bg-neutral-800 border cursor-zoom-in transition-all duration-300 hover:scale-[1.03] hover:shadow-lg" 
-                    style={{ borderColor: borderColor }}
-                  >
-                    <img 
-                      src={photo.url} 
-                      alt={photo.caption} 
-                      className="w-full h-full object-cover transition duration-500 ease-in-out group-hover:brightness-90"
-                    />
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-2.5 sm:p-3 pt-6">
-                      <span className="text-[9px] sm:text-[10px] text-white font-medium tracking-tight block truncate">{photo.caption}</span>
+                    {/* Left-aligned clean Klook caption typography layout */}
+                    <div className="flex items-start gap-2 px-1 text-left">
+                      <span className="text-neutral-400 text-[10px] sm:text-xs mt-0.5 shrink-0">▲</span>
+                      <p className="text-[11px] sm:text-xs md:text-sm font-medium leading-relaxed" style={{ color: textMuted }}>
+                        {item.caption}
+                      </p>
                     </div>
+
                   </div>
                 ))}
               </div>
             </section>
 
-            {/* 10. Optional Tours Marketplace */}
-            <section className="space-y-3">
-              <h3 className="text-[11px] sm:text-xs font-bold uppercase tracking-wider flex items-center gap-2" style={{ color: textPrimary }}>
-                <Sparkles className="w-4 h-4 text-orange-500" /> Optional Tours Marketplace
-              </h3>
-
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div className="border rounded-2xl p-4 sm:p-5 flex flex-col justify-between shadow-sm transition-transform duration-300 hover:scale-[1.02]" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
-                  <div>
-                    <h4 className="font-bold text-xs sm:text-sm" style={{ color: textPrimary }}>Boracay Island Hopping</h4>
-                    <p className="text-[10px] sm:text-[11px] mt-1 leading-relaxed" style={{ color: textMuted }}>Includes boat tour, snorkeling accessories, and group buffet lunch blocks.</p>
-                  </div>
-                  <div className="flex justify-between items-center mt-5 pt-3 border-t" style={{ borderColor: borderColor }}>
-                    <span className="font-black text-orange-500 text-xs sm:text-sm">₱999</span>
-                    <button 
-                      type="button"
-                      onClick={() => toggleTour('island-hop', 'Boracay Island Hopping', 999)}
-                      className={`text-[10px] sm:text-xs font-bold px-3.5 py-2 rounded-xl transition border ${selectedTours['island-hop'] ? 'bg-rose-500/10 text-rose-500 border-rose-500/20' : 'bg-orange-500/10 text-orange-500 border-orange-500/20'}`}
-                    >
-                      {selectedTours['island-hop'] ? 'Remove' : 'Add To Trip'}
-                    </button>
-                  </div>
+            {/* Checklist */}
+            <section className="border rounded-3xl p-4 sm:p-6 shadow-sm grid md:grid-cols-2 gap-6" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
+              <div>
+                <h3 className="text-[11px] font-bold mb-1 uppercase tracking-wider flex items-center gap-2"><CheckSquare className="w-4 h-4 text-orange-500" /> Travel Readiness Checklist</h3>
+                <div className="space-y-2 mt-3 text-xs">
+                  {Object.keys(checklist).map((key) => (
+                    <label key={key} className="flex items-center gap-2.5 p-2.5 border rounded-xl cursor-pointer bg-black/5" style={{ borderColor: borderColor }}>
+                      <input type="checkbox" checked={checklist[key]} onChange={() => setChecklist(p => ({ ...p, [key]: !p[key] }))} className="w-4 h-4 text-orange-500 accent-orange-500 rounded" />
+                      <span>{key.toUpperCase()} Verified</span>
+                    </label>
+                  ))}
                 </div>
+              </div>
+              <div>
+                <h3 className="text-[11px] font-bold mb-1 uppercase tracking-wider flex items-center gap-2"><Briefcase className="w-4 h-4 text-orange-500" /> What To Bring Guide</h3>
+                <p className="text-[11px] mt-3 leading-relaxed" style={{ color: textMuted }}><strong>Beach Pack:</strong> Beachwear, Slippers, Sunscreen, Waterproof Bag, and Swimming gear wrappers.</p>
               </div>
             </section>
 
-            {/* 12. Dynamic Ledger Checkout Panel */}
-            <section className="border-2 rounded-3xl p-5 sm:p-6 shadow-2xl bg-gradient-to-br from-black/20 via-black/40 to-black/10" style={{ borderColor: 'rgba(255,140,0,0.25)' }}>
-              <h3 className="text-[11px] sm:text-xs font-bold uppercase tracking-wider mb-4 flex items-center gap-2" style={{ color: textPrimary }}>
-                <ShoppingCart className="w-4 h-4 text-orange-500" /> Checkout Ledger Total
-              </h3>
-              
-              <div className="border-b pb-4 mb-4 text-xs space-y-2.5" style={{ borderColor: borderColor }}>
-                <div className="flex justify-between items-center text-slate-400 gap-2">
-                  <span className="flex items-center gap-1.5 text-[11px] sm:text-xs"><Check className="w-3.5 h-3.5 text-emerald-500" /> Flight & Base Package Assets</span>
-                  <span className="text-emerald-500 font-bold tracking-wider text-[8px] sm:text-[9px] bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded shrink-0">PAID</span>
-                </div>
-              </div>
-
-              <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-6">
+            {/* Optional Tours */}
+            <section className="space-y-3">
+              <h3 className="text-[11px] font-bold uppercase tracking-wider flex items-center gap-2"><Sparkles className="w-4 h-4 text-orange-500" /> Optional Tours Marketplace</h3>
+              <div className="border rounded-2xl p-4 flex justify-between items-center shadow-sm" style={{ backgroundColor: cardBg, borderColor: borderColor }}>
                 <div>
-                  <span className="text-[9px] sm:text-[10px] uppercase tracking-wider block font-bold" style={{ color: textMuted }}>Add-On Balance Due:</span>
-                  <span className="text-xl sm:text-2xl font-black tracking-tight italic" style={{ color: textPrimary }}>₱{overallTotal.toLocaleString()}</span>
+                  <h4 className="font-bold text-xs sm:text-sm">Boracay Island Hopping</h4>
+                  <p className="text-[10px] sm:text-[11px]" style={{ color: textMuted }}>Includes boat tour, snorkeling accessories, and group buffet lunch.</p>
+                </div>
+                <button type="button" onClick={() => toggleTour('island-hop', 'Boracay Island Hopping', 999)} className={`text-[10px] font-bold px-3.5 py-2 rounded-xl border ${selectedTours['island-hop'] ? 'bg-rose-500/10 text-rose-500' : 'bg-orange-500/10 text-orange-500'}`}>
+                  {selectedTours['island-hop'] ? 'Remove' : 'Add (₱999)'}
+                </button>
+              </div>
+            </section>
+
+            {/* Checkout Ledger */}
+            <section className="border-2 rounded-3xl p-5 shadow-2xl bg-gradient-to-br from-black/20 via-black/40 to-black/10" style={{ borderColor: 'rgba(255,140,0,0.25)' }}>
+              <h3 className="text-[11px] font-bold uppercase tracking-wider mb-4 flex items-center gap-2"><ShoppingCart className="w-4 h-4 text-orange-500" /> Checkout Ledger Total</h3>
+              <div className="flex justify-between items-center mb-4">
+                <div>
+                  <span className="text-[9px] uppercase tracking-wider block" style={{ color: textMuted }}>Add-On Balance Due:</span>
+                  <span className="text-xl font-black italic">₱{tourTotal.toLocaleString()}</span>
                 </div>
               </div>
-
-              <button className="w-full bg-gradient-to-r from-orange-500 to-amber-600 hover:opacity-95 text-white font-bold uppercase tracking-widest text-[11px] sm:text-xs py-3.5 sm:py-4 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2">
-                <span>Proceed To Add-on Checkout</span>
-                <FileText className="w-4 h-4" />
+              <button className="w-full bg-gradient-to-r from-orange-500 to-amber-600 text-white font-bold uppercase tracking-widest text-[11px] sm:text-xs py-3.5 rounded-xl shadow-lg">
+                Proceed To Add-on Checkout
               </button>
             </section>
 
@@ -321,73 +234,10 @@ export default function DestinationPreview() {
         )}
       </main>
 
-      {/* AUTOMATED KLOOK SLIDER / INTERACTIVE LIGHTBOX OVERLAY */}
-      {activePhotoIndex !== null && (
-        <div 
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md p-2 sm:p-4 animate-[fadeIn_0.2s_ease-out]"
-          onClick={() => setActivePhotoIndex(null)}
-        >
-          {/* Top Close Control Panel Button */}
-          <button 
-            onClick={() => setActivePhotoIndex(null)}
-            className="absolute top-4 right-4 z-50 p-2.5 rounded-full bg-white/10 text-white hover:bg-white/20 transition active:scale-90"
-            aria-label="Close modal"
-          >
-            <X className="w-5 sm:w-6 h-5 sm:h-6" />
-          </button>
-
-          {/* LEFT ARROW SLIDER BUTTON */}
-          <button 
-            onClick={(e) => { e.stopPropagation(); handlePrevPhoto(); }}
-            className="absolute left-3 sm:left-6 z-50 p-2.5 sm:p-3 rounded-full bg-white/10 text-white hover:bg-white/20 transition-all active:scale-90"
-            aria-label="Previous photo"
-          >
-            <ChevronLeft className="w-5 sm:w-6 h-5 sm:h-6" />
-          </button>
-
-          {/* MAIN PHOTO COMPONENT DISPLAY */}
-          <div 
-            className="max-w-3xl w-full flex flex-col items-center gap-3 relative select-none animate-[scaleUp_0.25s_cubic-bezier(0.34,1.56,0.64,1)_forwards]"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="relative w-full flex justify-center items-center">
-              <img 
-                src={experiencePhotos[activePhotoIndex].url} 
-                alt={experiencePhotos[activePhotoIndex].caption} 
-                className="max-h-[70vh] sm:max-h-[80vh] w-auto max-w-full rounded-xl sm:rounded-2xl object-contain border border-white/10 shadow-2xl transition-all duration-300"
-              />
-            </div>
-            
-            {/* Meta Text Info Elements Footer Counter layout */}
-            <div className="flex flex-col items-center gap-1.5 text-center bg-neutral-900/90 px-5 py-2.5 rounded-2xl border border-white/5 shadow-xl max-w-sm">
-              <span className="text-[11px] sm:text-xs md:text-sm text-neutral-200 font-semibold tracking-wide">
-                {experiencePhotos[activePhotoIndex].caption}
-              </span>
-              <span className="text-[9px] sm:text-[10px] text-orange-400 font-mono tracking-widest uppercase">
-                Image {activePhotoIndex + 1} of {experiencePhotos.length}
-              </span>
-            </div>
-          </div>
-
-          {/* RIGHT ARROW SLIDER BUTTON */}
-          <button 
-            onClick={(e) => { e.stopPropagation(); handleNextPhoto(); }}
-            className="absolute right-3 sm:right-6 z-50 p-2.5 sm:p-3 rounded-full bg-white/10 text-white hover:bg-white/20 transition-all active:scale-90"
-            aria-label="Next photo"
-          >
-            <ChevronRight className="w-5 sm:w-6 h-5 sm:h-6" />
-          </button>
-        </div>
-      )}
-
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(8px); }
+          from { opacity: 0; transform: translateY(12px); }
           to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes scaleUp {
-          from { opacity: 0; transform: scale(0.94); }
-          to { opacity: 1; transform: scale(1); }
         }
       `}} />
     </div>
