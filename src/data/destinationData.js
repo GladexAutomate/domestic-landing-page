@@ -13,9 +13,10 @@ export const DESTINATION_DATA = {
     heroImage:
       "https://images.unsplash.com/photo-1511316695145-4992006ffddb?w=1600&q=85",
     heroImages: [
-      "https://images.unsplash.com/photo-1511316695145-4992006ffddb?w=1200&q=80",
-      "https://images.unsplash.com/photo-1579033462043-0f11a7862f7d?w=1200&q=80",
-      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80",
+      "https://images.unsplash.com/photo-1511316695145-4992006ffddb?w=1600&q=85",
+      "https://images.pexels.com/photos/3601430/pexels-photo-3601430.jpeg?w=1600&q=85",
+      "https://images.pexels.com/photos/3601427/pexels-photo-3601427.jpeg?w=1600&q=85",
+      "https://images.unsplash.com/photo-1579033462043-0f11a7862f7d?w=1600&q=85",
     ],
     accentColor: "#f97316",
     video: {
@@ -211,9 +212,9 @@ export const DESTINATION_DATA = {
     ],
     destinationGuide: {
       highlights: [
-        { name: "White Beach — Boracay", desc: "4.3 km of powdery white sand and crystal-clear turquoise water. Swim, relax, or walk the full stretch of the most beautiful beach in the Philippines.", icon: "🏖️", image: "https://images.unsplash.com/photo-1511316695145-4992006ffddb?w=900&q=85" },
-        { name: "Island Hopping by Bangka Boat", desc: "Ride a traditional Filipino bangka boat to Puka Beach, Crystal Cove, Crocodile Island, and private beach stops — the #1 Boracay experience.", icon: "⛵", image: "https://images.unsplash.com/photo-1574482620811-1aa16ffe3c82?w=900&q=85" },
-        { name: "Swimming in Crystal Clear Water", desc: "Boracay's calm, shallow waters are perfect for swimming. The turquoise color comes from the pure white sand below — unlike anywhere else in the world.", icon: "🏊", image: "https://images.unsplash.com/photo-1544551763-77ef2d0cfc6c?w=900&q=85" },
+        { name: "White Beach — Boracay", desc: "4.3 km of powdery white sand and crystal-clear turquoise water. Swim, relax, or walk the full stretch of the most beautiful beach in the Philippines.", icon: "🏖️", image: "https://images.pexels.com/photos/1174732/pexels-photo-1174732.jpeg?w=900&q=85" },
+        { name: "Island Hopping by Bangka Boat", desc: "Ride a traditional Filipino bangka boat to Puka Beach, Crystal Cove, Crocodile Island, and private beach stops — the #1 Boracay experience.", icon: "⛵", image: "https://images.pexels.com/photos/1430676/pexels-photo-1430676.jpeg?w=900&q=85" }, // Bangka boat on clear water
+        { name: "Swimming in Crystal Clear Water", desc: "Boracay's calm, shallow waters are perfect for swimming. The turquoise color comes from the pure white sand below — unlike anywhere else in the world.", icon: "🏊", image: "https://images.pexels.com/photos/3601426/pexels-photo-3601426.jpeg?w=900&q=85" },
         { name: "World-Famous Boracay Sunset", desc: "Every evening, the sky above White Beach turns shades of gold, orange, and pink. Widely ranked as one of the top sunsets in all of Asia.", icon: "🌅", image: "https://images.unsplash.com/photo-1503614472-8c93d56e92ce?w=900&q=85" },
         { name: "Snorkeling & Helmet Diving", desc: "Explore Boracay's vibrant underwater world — colorful reef fish, coral gardens, and sea turtles. No experience needed for helmet diving.", icon: "🤿", image: "https://images.unsplash.com/photo-1583212292454-1fe6229603b7?w=900&q=85" },
         { name: "Paraw Sailing at Sunset", desc: "Board a traditional Filipino paraw sailboat as the sun goes down — one of the most romantic and iconic Boracay experiences available.", icon: "⛵", image: "https://images.unsplash.com/photo-1530549387789-4c1017266635?w=900&q=85" },
@@ -225,10 +226,10 @@ export const DESTINATION_DATA = {
         { name: "Mango Float", note: "Creamy chilled mango dessert loved by locals and tourists alike", emoji: "🥭" },
       ],
       photoSpots: [
-        { name: "White Beach — Morning Swim", note: "Early morning, calm water, no crowds — the clearest and most iconic Boracay shot", image: "https://images.unsplash.com/photo-1506953823976-52e1fdc0149a?w=700&q=85" },
-        { name: "Sunset at White Beach", note: "Grab a beachside spot by 5:30 PM — the golden sky reflection on the sand is breathtaking", image: "https://images.unsplash.com/photo-1589394815804-964ed0be2eb5?w=700&q=85" },
-        { name: "Puka Shell Beach", note: "Quiet northern beach — rough shells, natural beauty, and almost no tourists", image: "https://images.unsplash.com/photo-1545579133-99bb5ab189bd?w=700&q=85" },
-        { name: "On the Island Hopping Boat", note: "Shoot the clear green water and surrounding islands from the bangka boat deck", image: "https://images.unsplash.com/photo-1499678329028-101435549a4e?w=700&q=85" },
+        { name: "White Beach — Morning Swim", note: "Early morning, calm water, no crowds — the clearest and most iconic Boracay shot", image: "https://images.unsplash.com/photo-1506953823976-52e1fdc0149a?w=900&q=85" },
+        { name: "Sunset at White Beach", note: "Grab a beachside spot by 5:30 PM — the golden sky reflection on the sand is breathtaking", image: "https://images.unsplash.com/photo-1503614472-8c93d56e92ce?w=900&q=85" },
+        { name: "Puka Shell Beach", note: "Quiet northern beach — rough shells, natural beauty, and almost no tourists", image: "https://images.pexels.com/photos/1287460/pexels-photo-1287460.jpeg?w=900&q=85" },
+        { name: "On the Island Hopping Boat", note: "Shoot the clear green water and surrounding islands from the bangka boat deck", image: "https://images.pexels.com/photos/1430672/pexels-photo-1430672.jpeg?w=900&q=85" }, // Bangka boat deck view
       ],
       bestTime: "November to May is the peak season with favorable weather. June to October is rainy season with fewer crowds.",
       localTips: [
@@ -247,7 +248,7 @@ export const DESTINATION_DATA = {
         duration: "Full Day · 8 AM – 3 PM",
         highlights: ["Snorkeling gear included", "BBQ lunch on the beach", "Multiple island stops", "Mermaid tail photo op"],
         badge: "Most Popular",
-        image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=900&q=85",
+        image: "https://images.pexels.com/photos/1430676/pexels-photo-1430676.jpeg?w=900&q=85", // Bangka boat island hopping
       },
       {
         name: "Helmet Diving",
@@ -290,14 +291,14 @@ export const DESTINATION_DATA = {
         image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=85",
       },
       {
-        name: "JetSki & Water Sports",
-        description: "Feel the rush of speeding across Boracay's clear waters on a JetSki. Also available: banana boat, parasailing, and other exciting water sports at the beach.",
+        name: "Parasailing Adventure",
+        description: "Soar above Boracay's iconic White Beach on a parasail and get a breathtaking bird's-eye view of the island. One of the most exhilarating ways to see Boracay from above.",
         stops: [],
-        icon: "💨",
-        duration: "15–30 minutes",
-        highlights: ["High speed thrills", "Open sea access", "Good for 2 riders", "Beach activity area"],
+        icon: "🪂",
+        duration: "15–20 minutes",
+        highlights: ["Aerial views of White Beach", "Solo or tandem available", "Safe harness equipment", "Thrill seeker activity"],
         badge: "Thrill Seeker",
-        image: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=900&q=85",
+        image: "https://images.pexels.com/photos/1654498/pexels-photo-1654498.jpeg?w=900&q=85", // Parasailing over ocean
       },
     ],
     notes: [
@@ -329,10 +330,12 @@ export const DESTINATION_DATA = {
       "Discover Cebu's perfect blend of rich history, vibrant city life, stunning waterfalls, pristine beaches, and world-famous marine encounters.",
     airport: "Mactan-Cebu International Airport (CEB)",
     heroImage:
-      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1600&q=85",
+      "https://images.pexels.com/photos/3601425/pexels-photo-3601425.jpeg?w=1600&q=85",
     heroImages: [
-      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80",
-      "https://images.unsplash.com/photo-1519451241324-20b4ea2c4220?w=1200&q=80",
+      "https://images.pexels.com/photos/3601425/pexels-photo-3601425.jpeg?w=1600&q=85",
+      "https://images.pexels.com/photos/2161449/pexels-photo-2161449.jpeg?w=1600&q=85",
+      "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1600&q=85",
+      "https://images.pexels.com/photos/3723493/pexels-photo-3723493.jpeg?w=1600&q=85",
     ],
     accentColor: "#0ea5e9",
     video: {
@@ -512,11 +515,11 @@ export const DESTINATION_DATA = {
     destinationGuide: {
       highlights: [
         { name: "Whale Shark Watching — Oslob", desc: "One of the world's most unique wildlife encounters — swim alongside gentle whale sharks in the warm waters of Oslob. An experience unlike anything else in the Philippines.", icon: "🐋", image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=900&q=85" },
-        { name: "Moalboal Sardine Run", desc: "Millions of sardines swirl in a mesmerizing tornado just meters from shore — snorkel into an underwater spectacle that rivals any dive destination in the world.", icon: "🐟", image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=900&q=85" },
-        { name: "Kawasan Falls & Canyoneering", desc: "Iconic turquoise waterfalls deep in South Cebu's jungle canyon — swim at the base or conquer the full canyoneering route with cliff jumps and river trekking.", icon: "💧", image: "https://images.unsplash.com/photo-1499678329028-101435549a4e?w=900&q=85" },
-        { name: "Cebu City Heritage Tour", desc: "Walk through 500 years of Philippine history — from Magellan's Cross and Fort San Pedro to Colon Street, the oldest street in the country.", icon: "🏛️", image: "https://images.unsplash.com/photo-1476041800959-2f6bb412c8ce?w=900&q=85" },
-        { name: "Marine Life & Island Hopping", desc: "Cebu's Mactan waters are home to thriving coral reefs, sea turtles, and diverse marine life. Island hopping tours visit Hilutungan, Nalusuan, and Caohagan.", icon: "🐠", image: "https://images.unsplash.com/photo-1565118531796-763e5082d113?w=900&q=85" },
-        { name: "Bohol Day Tour", desc: "A short ferry ride to Bohol reveals the famous Chocolate Hills, Philippine Tarsiers, Man-made Forest, and the scenic Loboc River cruise.", icon: "🌿", image: "https://images.unsplash.com/photo-1519451241324-20b4ea2c4220?w=900&q=85" },
+        { name: "Moalboal Sardine Run", desc: "Millions of sardines swirl in a mesmerizing tornado just meters from shore — snorkel into an underwater spectacle that rivals any dive destination in the world.", icon: "🐟", image: "https://images.pexels.com/photos/3586966/pexels-photo-3586966.jpeg?w=900&q=85" }, // Sardine school underwater
+        { name: "Kawasan Falls & Canyoneering", desc: "Iconic turquoise waterfalls deep in South Cebu's jungle canyon — swim at the base or conquer the full canyoneering route with cliff jumps and river trekking.", icon: "💧", image: "https://images.pexels.com/photos/2739664/pexels-photo-2739664.jpeg?w=900&q=85" },
+        { name: "Cebu City Heritage Tour", desc: "Walk through 500 years of Philippine history — from Magellan's Cross and Fort San Pedro to Colon Street, the oldest street in the country.", icon: "🏛️", image: "https://images.pexels.com/photos/3223517/pexels-photo-3223517.jpeg?w=900&q=85" },
+        { name: "Marine Life & Island Hopping", desc: "Cebu's Mactan waters are home to thriving coral reefs, sea turtles, and diverse marine life. Island hopping tours visit Hilutungan, Nalusuan, and Caohagan.", icon: "🐠", image: "https://images.pexels.com/photos/3601427/pexels-photo-3601427.jpeg?w=900&q=85" },
+        { name: "Bohol Day Tour", desc: "A short ferry ride to Bohol reveals the famous Chocolate Hills, Philippine Tarsiers, Man-made Forest, and the scenic Loboc River cruise.", icon: "🌿", image: "https://images.pexels.com/photos/3408744/pexels-photo-3408744.jpeg?w=900&q=85" },
       ],
       food: [
         { name: "Lechon Cebu", note: "Famous roasted pig — the most celebrated dish in Cebu", emoji: "🍖" },
@@ -525,10 +528,10 @@ export const DESTINATION_DATA = {
         { name: "Mango Desserts", note: "Dried mangoes and mango-based sweets — the best pasalubong from Cebu", emoji: "🥭" },
       ],
       photoSpots: [
-        { name: "Tops Lookout", note: "Best panoramic city view of Cebu — breathtaking at sunset" },
-        { name: "Temple of Leah", note: "Roman-inspired hilltop temple — striking architecture and city views" },
-        { name: "Kawasan Falls Blue Pool", note: "Iconic turquoise water — best mid-morning lighting" },
-        { name: "CCLEX Bridge", note: "Cebu's stunning cable-stayed bridge over the Mactan Channel" },
+        { name: "Tops Lookout", note: "Best panoramic city view of Cebu — breathtaking at sunset", image: "https://images.pexels.com/photos/2832034/pexels-photo-2832034.jpeg?w=900&q=85" },
+        { name: "Temple of Leah", note: "Roman-inspired hilltop temple — striking architecture and city views", image: "https://images.pexels.com/photos/3601430/pexels-photo-3601430.jpeg?w=900&q=85" },
+        { name: "Kawasan Falls Blue Pool", note: "Iconic turquoise water — best mid-morning lighting", image: "https://images.pexels.com/photos/2739664/pexels-photo-2739664.jpeg?w=900&q=85" },
+        { name: "CCLEX Bridge", note: "Cebu's stunning cable-stayed bridge over the Mactan Channel", image: "https://images.pexels.com/photos/2775196/pexels-photo-2775196.jpeg?w=900&q=85" },
       ],
       bestTime: "December to May (dry season) is ideal for beaches and outdoor tours. June to November is rainy season.",
       localTips: [
@@ -547,24 +550,27 @@ export const DESTINATION_DATA = {
         duration: "Full Day (~12 hours)",
         highlights: ["Whale shark interaction", "Sumilon Island", "Simala Church visit"],
         badge: "Most Popular",
+        image: "https://images.pexels.com/photos/3723493/pexels-photo-3723493.jpeg?w=900&q=85",
       },
       {
-        name: "Moalboal Tour (Joiners)",
-        description: "Swim with millions of sardines, encounter sea turtles, and cool off at the stunning Kawasan Falls.",
+        name: "Moalboal Sardine Run (Joiners)",
+        description: "Swim with millions of sardines in a mesmerizing underwater tornado just meters from shore at Moalboal — plus encounter sea turtles at their sanctuary.",
         stops: ["Sardines Tornado Run", "Sea Turtle Sanctuary", "Lambug Beach", "Kawasan Falls", "Carcar Pasalubong Market"],
         icon: "🐟",
         duration: "Full Day (~12 hours)",
-        highlights: ["Sardine run", "Sea turtle encounter", "Kawasan Falls"],
+        highlights: ["Sardine tornado run", "Sea turtle encounter", "Kawasan Falls swimming"],
         badge: null,
+        image: "https://images.pexels.com/photos/3586966/pexels-photo-3586966.jpeg?w=900&q=85", // Sardine school underwater
       },
       {
-        name: "Moalboal + Canyoneering (Joiners)",
-        description: "The ultimate South Cebu adventure — combine the sardine run with an exhilarating full-course canyoneering at Kawasan Falls.",
+        name: "Kawasan Canyoneering (Joiners)",
+        description: "The ultimate South Cebu adventure — cliff jump into Kawasan Falls' turquoise water, trek through the river canyon, and swim at Moalboal's famous sardine run.",
         stops: ["Sea Turtle Sanctuary", "Sardines Run", "Kawasan Falls Canyoneering", "Carcar Pasalubong Market"],
         icon: "🏄",
         duration: "Full Day (~12 hours)",
-        highlights: ["Cliff jumping", "River trekking", "Canyoneering", "Sardine run"],
+        highlights: ["Cliff jumping at Kawasan Falls", "River canyon trekking", "Sardine run snorkeling"],
         badge: "Adventure Pick",
+        image: "https://images.pexels.com/photos/2739664/pexels-photo-2739664.jpeg?w=900&q=85", // Kawasan Falls turquoise water
       },
       {
         name: "Bohol Day Tour (Sidetrip)",
@@ -574,6 +580,7 @@ export const DESTINATION_DATA = {
         duration: "Full Day (pick-up ~4:30 AM)",
         highlights: ["Chocolate Hills", "Philippine Tarsiers", "Ferry crossing included"],
         badge: null,
+        image: "https://images.pexels.com/photos/1287460/pexels-photo-1287460.jpeg?w=900&q=85",
       },
       {
         name: "Simala Tour (Private)",
@@ -583,6 +590,7 @@ export const DESTINATION_DATA = {
         duration: "6:00 AM – 2:00 PM",
         highlights: ["Private vehicle", "Hilltop shrine visit", "Carcar heritage stop"],
         badge: null,
+        image: "https://images.pexels.com/photos/3601425/pexels-photo-3601425.jpeg?w=900&q=85",
       },
     ],
     notes: [
@@ -614,18 +622,19 @@ export const DESTINATION_DATA = {
       "Discover one of the world's most beautiful island destinations — dramatic limestone cliffs, crystal-clear hidden lagoons, and pristine white-sand beaches.",
     airport: "Puerto Princesa Airport (PPS) or El Nido Airport (LIO)",
     heroImage:
-      "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1600&q=85",
+      "https://images.pexels.com/photos/3155666/pexels-photo-3155666.jpeg?w=1600&q=85",
     heroImages: [
-      "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1200&q=80",
-      "https://images.unsplash.com/photo-1519451241324-20b4ea2c4220?w=1200&q=80",
-      "https://images.unsplash.com/photo-1476041800959-2f6bb412c8ce?w=1200&q=80",
+      "https://images.pexels.com/photos/3155666/pexels-photo-3155666.jpeg?w=1600&q=85",
+      "https://images.pexels.com/photos/2168974/pexels-photo-2168974.jpeg?w=1600&q=85",
+      "https://images.unsplash.com/photo-1519451241324-20b4ea2c4220?w=1600&q=85",
+      "https://images.pexels.com/photos/1591056/pexels-photo-1591056.jpeg?w=1600&q=85",
     ],
     accentColor: "#10b981",
     video: {
       url: "",
       title: "El Nido Pre-Departure Briefing",
       comingSoon: true,
-      thumbnail: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&q=80",
+      thumbnail: "https://images.pexels.com/photos/3155666/pexels-photo-3155666.jpeg?w=900&q=85",
     },
     inclusions: [
       "Roundtrip Airfare (except for Land Arrangement Packages)",
@@ -822,12 +831,12 @@ export const DESTINATION_DATA = {
     ],
     destinationGuide: {
       highlights: [
-        { name: "Big & Small Lagoon", desc: "El Nido's most iconic experience — paddle a kayak through emerald-green lagoons enclosed by towering limestone cliffs. The light filtering through the cliffs at midday is absolutely magical.", icon: "🛶", image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=900&q=85" },
-        { name: "Secret Lagoon", desc: "A hidden paradise accessible only through a narrow crack in the limestone rock face — once inside, you'll find a calm, private lagoon with crystal clear water and no noise but nature.", icon: "🌿", image: "https://images.unsplash.com/photo-1519451241324-20b4ea2c4220?w=900&q=85" },
-        { name: "Shimizu Island — Snorkeling", desc: "El Nido's premier snorkeling spot — vibrant coral gardens, sea turtles, and schools of tropical fish in clear, shallow water. Bring an underwater camera.", icon: "🐠", image: "https://images.unsplash.com/photo-1565118531796-763e5082d113?w=900&q=85" },
-        { name: "Seven Commandos Beach", desc: "A postcard-perfect white sand beach lined with swaying palms — the best place in El Nido to watch the sunset with your feet in the warm water.", icon: "🌅", image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=900&q=85" },
-        { name: "Limestone Cliffs & Sea Caves", desc: "El Nido's dramatic landscape is defined by ancient limestone formations rising from the sea — Cathedral Cave and Cudugnon Cave are highlights of Tour B.", icon: "🏔️", image: "https://images.unsplash.com/photo-1476041800959-2f6bb412c8ce?w=900&q=85" },
-        { name: "Tropical Waters & Marine Life", desc: "El Nido's UNESCO-protected marine sanctuary is home to one of the richest ecosystems in the Philippines — sea turtles, reef sharks, and thousands of fish species.", icon: "🌊", image: "https://images.unsplash.com/photo-1540979388789-6cee28a1cdc9?w=900&q=85" },
+        { name: "Big & Small Lagoon", desc: "El Nido's most iconic experience — paddle a kayak through emerald-green lagoons enclosed by towering limestone cliffs. The light filtering through the cliffs at midday is absolutely magical.", icon: "🛶", image: "https://images.pexels.com/photos/3155666/pexels-photo-3155666.jpeg?w=900&q=85" },
+        { name: "Secret Lagoon", desc: "A hidden paradise accessible only through a narrow crack in the limestone rock face — once inside, you'll find a calm, private lagoon with crystal clear water and no noise but nature.", icon: "🌿", image: "https://images.pexels.com/photos/2168974/pexels-photo-2168974.jpeg?w=900&q=85" },
+        { name: "Shimizu Island — Snorkeling", desc: "El Nido's premier snorkeling spot — vibrant coral gardens, sea turtles, and schools of tropical fish in clear, shallow water. Bring an underwater camera.", icon: "🐠", image: "https://images.unsplash.com/photo-1540979388789-6cee28a1cdc9?w=900&q=85" },
+        { name: "Seven Commandos Beach", desc: "A postcard-perfect white sand beach lined with swaying palms — the best place in El Nido to watch the sunset with your feet in the warm water.", icon: "🌅", image: "https://images.pexels.com/photos/1450360/pexels-photo-1450360.jpeg?w=900&q=85" },
+        { name: "Limestone Cliffs & Sea Caves", desc: "El Nido's dramatic landscape is defined by ancient limestone formations rising from the sea — Cathedral Cave and Cudugnon Cave are highlights of Tour B.", icon: "🏔️", image: "https://images.pexels.com/photos/1591056/pexels-photo-1591056.jpeg?w=900&q=85" },
+        { name: "Tropical Waters & Marine Life", desc: "El Nido's UNESCO-protected marine sanctuary is home to one of the richest ecosystems in the Philippines — sea turtles, reef sharks, and thousands of fish species.", icon: "🌊", image: "https://images.pexels.com/photos/1450361/pexels-photo-1450361.jpeg?w=900&q=85" },
       ],
       food: [
         { name: "Fresh Seafood Grill", note: "Straight from the sea to the grill — authentic Palawan flavors", emoji: "🦞" },
@@ -836,10 +845,10 @@ export const DESTINATION_DATA = {
         { name: "Filipino Beach Meals", note: "Adobo, sinigang, and kare-kare in beachside restaurants", emoji: "🍲" },
       ],
       photoSpots: [
-        { name: "Snake Island Hilltop", note: "Best aerial view of the famous sandbar — bring good shoes for the climb" },
-        { name: "Secret Lagoon Entrance", note: "The narrow passage opens to a hidden paradise — magical light at midday" },
-        { name: "Nacpan Beach", note: "4 km of golden sand — the most scenic beach in El Nido" },
-        { name: "El Nido Town Pier at Sunset", note: "Golden hour over the limestone cliffs — stunning skyline" },
+        { name: "Snake Island Hilltop", note: "Best aerial view of the famous sandbar — bring good shoes for the climb", image: "https://images.pexels.com/photos/3155666/pexels-photo-3155666.jpeg?w=900&q=85" },
+        { name: "Secret Lagoon Entrance", note: "The narrow passage opens to a hidden paradise — magical light at midday", image: "https://images.pexels.com/photos/2168974/pexels-photo-2168974.jpeg?w=900&q=85" },
+        { name: "Nacpan Beach", note: "4 km of golden sand — the most scenic beach in El Nido", image: "https://images.pexels.com/photos/1450361/pexels-photo-1450361.jpeg?w=900&q=85" },
+        { name: "El Nido Town Pier at Sunset", note: "Golden hour over the limestone cliffs — stunning skyline", image: "https://images.unsplash.com/photo-1519451241324-20b4ea2c4220?w=900&q=85" },
       ],
       bestTime: "November to May (dry season) is best for island hopping. June to October is rainy season — some tours may be cancelled due to weather.",
       localTips: [
@@ -858,6 +867,7 @@ export const DESTINATION_DATA = {
         duration: "9:00 AM – 4:00 PM",
         highlights: ["Snorkeling at Shimizu", "Hidden lagoon", "Premium beach stop"],
         badge: "Most Popular",
+        image: "https://images.pexels.com/photos/3155666/pexels-photo-3155666.jpeg?w=900&q=85",
       },
       {
         name: "Tour B — Caves & Coves (Joiner)",
@@ -867,6 +877,7 @@ export const DESTINATION_DATA = {
         duration: "9:00 AM – 4:00 PM",
         highlights: ["Sea caves", "Unique sandbar", "Snorkeling"],
         badge: null,
+        image: "https://images.pexels.com/photos/2168974/pexels-photo-2168974.jpeg?w=900&q=85",
       },
       {
         name: "Tour C — Hidden Beaches (Joiner)",
@@ -876,6 +887,7 @@ export const DESTINATION_DATA = {
         duration: "9:00 AM – 4:00 PM",
         highlights: ["Hidden Beach", "Secret Beach", "Limestone cliffs"],
         badge: "Adventure Pick",
+        image: "https://images.pexels.com/photos/1450361/pexels-photo-1450361.jpeg?w=900&q=85",
       },
       {
         name: "Tour D — Northern Lagoons (Joiner)",
@@ -885,6 +897,7 @@ export const DESTINATION_DATA = {
         duration: "9:00 AM – 4:00 PM",
         highlights: ["Kayaking", "Secluded beaches", "Cadlao Lagoon"],
         badge: null,
+        image: "https://images.pexels.com/photos/1591056/pexels-photo-1591056.jpeg?w=900&q=85",
       },
     ],
     notes: [
