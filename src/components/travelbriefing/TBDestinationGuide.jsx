@@ -54,7 +54,7 @@ function ImageCard({ item, darkMode, tk, priority = false }) {
       {/* Image */}
       <div
         className="overflow-hidden"
-        style={{ aspectRatio: priority ? "16 / 9" : "4 / 3", position: "relative" }}
+        style={{ aspectRatio: priority ? "16 / 7" : "4 / 3", position: "relative" }}
       >
         {item.image && !failed ? (
           <img

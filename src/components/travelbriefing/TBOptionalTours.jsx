@@ -24,7 +24,7 @@ export default function TBOptionalTours({ dest, darkMode, tk, onAddToCart, cartI
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 gap-5">
       {tours.map((tour, idx) => {
         const isOpen  = open === idx;
         const cartKey = String(tour.id || tour.name);
@@ -47,7 +47,7 @@ export default function TBOptionalTours({ dest, darkMode, tk, onAddToCart, cartI
             {/* ── Activity Photo ─────────────────────────────────── */}
             <div
               className="relative overflow-hidden cursor-pointer"
-              style={{ aspectRatio: "16 / 9" }}
+              style={{ aspectRatio: "16 / 7" }}
               onClick={() => setOpen(isOpen ? null : idx)}
             >
               {tour.image ? (
