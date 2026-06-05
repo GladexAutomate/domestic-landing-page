@@ -492,6 +492,7 @@ export default function TravelBriefingLanding() {
                 {/* ── Key trip info grid ── */}
                 <div className="grid grid-cols-2 gap-2.5">
                   {[
+                    { label: "Destination",    value: dest.name },
                     { label: "Travel Date",    value: bookingFromSearch?.travelDate    || dest.tagline },
                     { label: "Hotel",          value: bookingFromSearch?.hotel?.stayDates ? `${bookingFromSearch.hotel.roomType || "—"} · ${bookingFromSearch.hotel.nights || "—"} night(s)` : (bookingFromSearch?.tour?.hotelMention || "—") },
                     { label: "Guests",         value: bookingFromSearch ? `${bookingFromSearch.totalGuests} person${Number(bookingFromSearch.totalGuests) !== 1 ? "s" : ""}` : "—" },
