@@ -230,6 +230,12 @@ export default function TravelBriefingLanding() {
   const cartTotal = cart.tours.reduce((s, t) => s + (t.price || 0), 0)
     + (cart.insurance?.price || 0);
 
+  // Button enabled when cart has items, regardless of price
+  const hasCartItems = cart.tours.length > 0 || !!cart.insurance;
+
+  // For Xendit: if prices are null, use minimum ₱1 for testing
+  const xenditAmount = cartTotal > 0 ? cartTotal : 1;
+
   const toggleTour = (tour) =>
     setCart((prev) => ({
       ...prev,
@@ -391,17 +397,19 @@ export default function TravelBriefingLanding() {
 
   // ── Xendit checkout ───────────────────────────────────────────
   const handleCheckout = async () => {
-    if (cartTotal === 0) return;
+    if (!hasCartItems) return;
     setCheckoutLoading(true);
     setCheckoutError(null);
     try {
+      // Build items — use ₱100 fallback if price not loaded yet (Xendit minimum is ₱10)
       const items = [
-        ...cart.tours.map((t) => ({ name: t.name, quantity: 1, price: t.price || 0 })),
-        ...(cart.insurance ? [{ name: `${cart.insurance.name} Travel Insurance`, quantity: 1, price: cart.insurance.price || 0 }] : []),
+        ...cart.tours.map((t) => ({ name: t.name, quantity: 1, price: t.price || 100 })),
+        ...(cart.insurance ? [{ name: `${cart.insurance.name} Travel Insurance`, quantity: 1, price: cart.insurance.price || 100 }] : []),
       ];
       const invoice = await createGladexCheckout({
-        bookingCode: `GDX-${dest.slug.toUpperCase()}-${Date.now()}`,
-        guestName:   "Guest",
+        bookingCode: `${dest.slug.toUpperCase()}-${Date.now()}`,
+        guestName:   "Guest", // Do NOT pass real client name/email during staging
+        guestEmail:  null,    // Email disabled on staging — enable only on production
         items,
       });
       window.location.href = invoice.invoice_url;
@@ -934,10 +942,10 @@ export default function TravelBriefingLanding() {
         <FadeIn>
           <div className={sectionGap}>
             <SectionHeader eyebrow="Cart Summary" title="Checkout" tk={tk} />
-            <div className="rounded-2xl border p-5" style={{ ...card, borderStyle: cartTotal > 0 ? "solid" : "dashed" }}>
+            <div className="rounded-2xl border p-5" style={{ ...card, borderStyle: hasCartItems ? "solid" : "dashed" }}>
 
               {/* Empty state */}
-              {cartTotal === 0 && (
+              {!hasCartItems && (
                 <div className="flex items-center gap-3 mb-4">
                   <ShoppingCart className="w-5 h-5" style={{ color: textMuted }} />
                   <p className="text-sm font-semibold" style={{ color: textPrimary }}>Your cart is empty</p>
@@ -1002,22 +1010,24 @@ export default function TravelBriefingLanding() {
 
               {/* Proceed to Checkout — live via Xendit */}
               <motion.button
-                whileTap={{ scale: cartTotal > 0 ? 0.97 : 1 }}
+                whileTap={{ scale: hasCartItems ? 0.97 : 1 }}
                 onClick={handleCheckout}
-                disabled={cartTotal === 0 || checkoutLoading}
+                disabled={!hasCartItems || checkoutLoading}
                 className="w-full py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all"
                 style={{
                   background: "linear-gradient(135deg, #f97316, #b45309)",
                   color: "#fff",
-                  opacity: cartTotal === 0 ? 0.4 : 1,
-                  cursor: cartTotal === 0 ? "not-allowed" : "pointer",
+                  opacity: !hasCartItems ? 0.4 : 1,
+                  cursor: !hasCartItems ? "not-allowed" : "pointer",
                 }}
               >
                 {checkoutLoading
                   ? <><Loader className="w-4 h-4 animate-spin" /> Creating payment link…</>
-                  : cartTotal > 0
-                    ? <>Proceed to Checkout · ₱{cartTotal.toLocaleString("en-PH", { minimumFractionDigits: 2 })}</>
-                    : "Proceed to Checkout"
+                  : hasCartItems
+                    ? cartTotal > 0
+                      ? <>Proceed to Checkout · ₱{cartTotal.toLocaleString("en-PH", { minimumFractionDigits: 2 })}</>
+                      : <>Proceed to Checkout · Contact for Pricing</>
+                    : "Add items to checkout"
                 }
               </motion.button>
 

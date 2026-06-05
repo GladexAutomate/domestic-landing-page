@@ -75,7 +75,9 @@ export const createInvoice = async (params) => {
     amount:               params.amount,
     description:          params.description || "Gladex Travel & Tours",
     payer_email:          params.payerEmail || undefined,
-    customer:             params.payerName ? { given_names: params.payerName, email: params.payerEmail } : undefined,
+    customer:             params.payerName
+      ? { given_names: params.payerName, ...(params.payerEmail ? { email: params.payerEmail } : {}) }
+      : undefined,
     items:                params.items || [],
     currency:             params.currency || "PHP",
     success_redirect_url: params.successRedirectUrl || `${window.location.origin}/payment/success`,

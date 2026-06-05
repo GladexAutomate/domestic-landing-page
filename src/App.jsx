@@ -9,6 +9,8 @@ import Domestic from "./pages/Domestic";
 import DestinationPreview from "./pages/DestinationPreview";
 import TravelBriefingLanding from "./pages/TravelBriefingLanding";
 import TravelBriefingHome from "./pages/TravelBriefingHome";
+import PaymentSuccess from "./pages/PaymentSuccess";
+import PaymentFailed from "./pages/PaymentFailed";
 import { ThemeProvider } from "@/lib/ThemeContext";
 
 /*
@@ -22,7 +24,7 @@ import { ThemeProvider } from "@/lib/ThemeContext";
 */
 
 // Routes that are public (no Base44 auth required)
-const PUBLIC_PREFIXES = ["/destination/", "/preview/"];
+const PUBLIC_PREFIXES = ["/destination/", "/preview/", "/payment/"];
 
 const isPublicRoute = (pathname) =>
   PUBLIC_PREFIXES.some((p) => pathname.startsWith(p)) || pathname === "/";
@@ -65,6 +67,8 @@ const AppShell = () => {
         <Route path="/" element={<TravelBriefingHome />} />
         <Route path="/destination/:slug" element={<TravelBriefingLanding />} />
         <Route path="/preview/:slug" element={<DestinationPreview />} />
+        <Route path="/payment/success" element={<PaymentSuccess />} />
+        <Route path="/payment/failed" element={<PaymentFailed />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     );
