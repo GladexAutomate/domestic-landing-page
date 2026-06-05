@@ -24,9 +24,10 @@ export default function DestinationNavbar() {
     ? darkMode ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.08)"
     : "transparent";
 
+  // When not scrolled: white text over dark hero; dark text in light mode (no hero bg)
   const linkColor = scrolled
     ? darkMode ? "rgba(255,255,255,0.85)" : "#0F172A"
-    : "rgba(255,255,255,0.9)";
+    : darkMode ? "rgba(255,255,255,0.9)" : "#0F172A";
 
   return (
     <nav
@@ -51,17 +52,6 @@ export default function DestinationNavbar() {
 
         <div className="flex items-center gap-4">
           <ThemeToggleButton darkMode={darkMode} toggleTheme={toggleTheme} />
-
-          <Link
-            to="/"
-            className="flex items-center gap-2 text-sm font-semibold tracking-widest uppercase transition-all duration-300 hover:text-[#FF8C00]"
-            style={{ color: linkColor, letterSpacing: "0.1em" }}
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-            </svg>
-            <span className="hidden sm:inline">All Destinations</span>
-          </Link>
         </div>
       </div>
     </nav>
