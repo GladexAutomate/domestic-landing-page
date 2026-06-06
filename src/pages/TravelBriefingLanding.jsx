@@ -12,6 +12,7 @@ import TBDestinationGuide from "@/components/travelbriefing/TBDestinationGuide";
 import TBOptionalTours from "@/components/travelbriefing/TBOptionalTours";
 import TBFAQs from "@/components/travelbriefing/TBFAQs";
 import TBBookingVerification from "@/components/travelbriefing/TBBookingVerification";
+import { lookupBooking } from "@/services/supabaseService";
 import { getDomesticQuote } from "@/services/starrService";
 import { loadDestinationTours, GLADEX_TOUR_PRODUCTS } from "@/services/globaltixService";
 import { createGladexCheckout } from "@/services/xenditService";
@@ -207,6 +208,8 @@ function DevSwitcher({ currentSlug, navigate, darkMode, tk }) {
 // ═══════════════════════════════════════════════════════════════
 //  MAIN PAGE — follows GLADEX Travel Briefing Platform flow
 // ═══════════════════════════════════════════════════════════════
+const SESSION_KEY = "gladex-session";
+
 export default function TravelBriefingLanding() {
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -215,7 +218,9 @@ export default function TravelBriefingLanding() {
   const dest = getDestination(slug);
 
   // Booking from GDX search (passed via React Router state)
-  const bookingFromSearch = location.state?.booking || null;
+  const routeBooking = location.state?.booking || null;
+  const [restoredBooking, setRestoredBooking] = useState(null);
+  const activeBooking = routeBooking || restoredBooking;
 
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [arrivalTab, setArrivalTab] = useState(() => dest?.arrivalInstructions?.tabs?.[0]?.key || "default");
@@ -300,9 +305,34 @@ export default function TravelBriefingLanding() {
       .finally(() => setToursLoading(false));
   }, [dest?.slug]);
 
+  // ── Restore booking from sessionStorage on page refresh ──────
+  useEffect(() => {
+    setRestoredBooking(null);
+    if (routeBooking) return;
+
+    let saved;
+    try {
+      const raw = sessionStorage.getItem(SESSION_KEY);
+      if (!raw) return;
+      saved = JSON.parse(raw);
+    } catch {
+      sessionStorage.removeItem(SESSION_KEY);
+      return;
+    }
+
+    if (!saved?.gdx || !saved?.slug || saved.slug !== slug) {
+      sessionStorage.removeItem(SESSION_KEY);
+      return;
+    }
+
+    lookupBooking(saved.gdx)
+      .then((booking) => setRestoredBooking(booking))
+      .catch(() => sessionStorage.removeItem(SESSION_KEY));
+  }, [slug]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // ── Itinerary PDF download ────────────────────────────────────
   const downloadItinerary = async () => {
-    const bk = bookingFromSearch;
+    const bk = activeBooking;
     const { jsPDF } = await import("jspdf");
     const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
     const OG = [249, 115, 22];
@@ -496,7 +526,7 @@ export default function TravelBriefingLanding() {
                   </div>
                   <div>
                     <p className="font-black text-xl" style={{ color: textPrimary }}>
-                      Hi {bookingFromSearch ? (bookingFromSearch.leadName.split(" ")[0] || bookingFromSearch.leadName) : "Traveler"}! 👋
+                      Hi {activeBooking ? (activeBooking.leadName.split(" ")[0] || activeBooking.leadName) : "Traveler"}! 👋
                     </p>
                     <p className="font-semibold text-sm" style={{ color: "#f97316" }}>
                       Your {dest.name} trip is confirmed.
@@ -508,9 +538,9 @@ export default function TravelBriefingLanding() {
                 <div className="grid grid-cols-2 gap-2.5">
                   {[
                     { label: "Destination",    value: dest.name },
-                    { label: "Travel Date",    value: bookingFromSearch?.travelDate    || dest.tagline },
+                    { label: "Travel Date",    value: activeBooking?.travelDate    || dest.tagline },
                     { label: "Hotel",          value: (() => {
-                      const bk = bookingFromSearch;
+                      const bk = activeBooking;
                       if (!bk) return "—";
                       if (bk.hotel?.hotelName) return bk.hotel.hotelName;
                       if (bk.tour?.hotelMention) return bk.tour.hotelMention;
@@ -518,8 +548,8 @@ export default function TravelBriefingLanding() {
                       if (bk.hotel?.roomType) return bk.hotel.roomType;
                       return "—";
                     })() },
-                    { label: "Guests",         value: bookingFromSearch ? `${bookingFromSearch.totalGuests} person${Number(bookingFromSearch.totalGuests) !== 1 ? "s" : ""}` : "—" },
-                    { label: "Booking Status", value: getDisplayStatus(bookingFromSearch?.status), badge: true },
+                    { label: "Guests",         value: activeBooking ? `${activeBooking.totalGuests} person${Number(activeBooking.totalGuests) !== 1 ? "s" : ""}` : "—" },
+                    { label: "Booking Status", value: getDisplayStatus(activeBooking?.status), badge: true },
                   ].map(({ label, value, badge }) => (
                     <div key={label} className="rounded-xl p-3 border" style={{ borderColor, backgroundColor: surfaceBg }}>
                       <p className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>{label}</p>
@@ -531,13 +561,13 @@ export default function TravelBriefingLanding() {
                   ))}
                 </div>
 
-                {bookingFromSearch && (
+                {activeBooking && (
                   <div className="mt-3 flex flex-wrap gap-2">
                     {[
-                      { label: "GDX Reference", value: `GDX-${bookingFromSearch.gdx}` },
-                      { label: "Payment", value: bookingFromSearch.paymentStatus || "—" },
-                      ...(bookingFromSearch.ticket?.airline ? [{ label: "Airline", value: `${bookingFromSearch.ticket.airline}${bookingFromSearch.ticket.pnr ? ` · ${bookingFromSearch.ticket.pnr}` : ""}` }] : []),
-                      ...(bookingFromSearch.tour?.tourName ? [{ label: "Tour", value: bookingFromSearch.tour.tourName }] : []),
+                      { label: "GDX Reference", value: `GDX-${activeBooking.gdx}` },
+                      { label: "Payment", value: activeBooking.paymentStatus || "—" },
+                      ...(activeBooking.ticket?.airline ? [{ label: "Airline", value: `${activeBooking.ticket.airline}${activeBooking.ticket.pnr ? ` · ${activeBooking.ticket.pnr}` : ""}` }] : []),
+                      ...(activeBooking.tour?.tourName ? [{ label: "Tour", value: activeBooking.tour.tourName }] : []),
                     ].map(({ label, value }) => (
                       <div key={label} className="rounded-xl px-2.5 py-1 border text-xs" style={{ borderColor, backgroundColor: surfaceBg }}>
                         <span style={muted}>{label}: </span>
@@ -552,7 +582,7 @@ export default function TravelBriefingLanding() {
               <div className="p-4 flex flex-wrap gap-2">
                 {/* Download Voucher — uses best available URL from Fusioo */}
                 {(() => {
-                  const bk = bookingFromSearch;
+                  const bk = activeBooking;
                   const url = bk?.automatedVoucherUrl || bk?.voucherUrl || bk?.tourVoucherUrl
                     || (bk?.automatedVoucher?.startsWith?.("http") ? bk.automatedVoucher : null);
                   return url ? (
@@ -589,8 +619,8 @@ export default function TravelBriefingLanding() {
             </div>
 
             {/* ── Full booking details — expandable (contains inclusions/exclusions + itinerary) ── */}
-            {bookingFromSearch ? (
-              <TBBookingVerification booking={bookingFromSearch} dest={dest} darkMode={darkMode} tk={tk} />
+            {activeBooking ? (
+              <TBBookingVerification booking={activeBooking} dest={dest} darkMode={darkMode} tk={tk} />
             ) : (
               /* Non-logged-in view: show inclusions/exclusions directly */
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
