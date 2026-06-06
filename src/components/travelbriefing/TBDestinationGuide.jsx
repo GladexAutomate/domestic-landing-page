@@ -176,16 +176,73 @@ export default function TBDestinationGuide({ dest, darkMode, tk }) {
         </div>
       )}
 
-      {/* ── Best Time To Visit ── */}
-      {guide.bestTime && (
+      {/* ── Weather Reminder ── */}
+      {guide.weather && (
         <div
           className="rounded-2xl p-4 border"
-          style={{ borderColor: "rgba(249,115,22,0.3)", backgroundColor: "rgba(249,115,22,0.07)" }}
+          style={{ borderColor: "rgba(59,130,246,0.3)", backgroundColor: "rgba(59,130,246,0.05)" }}
         >
-          <p className="text-xs font-bold uppercase tracking-widest mb-1.5" style={{ color: "#f97316" }}>
-            Best Time to Visit
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#3b82f6" }}>
+            🌤️ Weather & Climate
           </p>
-          <p className="text-sm" style={{ color: tk.textPrimary }}>{guide.bestTime}</p>
+          <div className="space-y-2">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-wider mb-0.5" style={{ color: tk.textMuted }}>Best Season</p>
+              <p className="text-sm" style={{ color: tk.textPrimary }}>{guide.weather.bestSeason}</p>
+            </div>
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-wider mb-0.5" style={{ color: tk.textMuted }}>Rainy Season</p>
+              <p className="text-sm" style={{ color: tk.textPrimary }}>{guide.weather.rainySeason}</p>
+            </div>
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-wider mb-0.5" style={{ color: tk.textMuted }}>Temperature</p>
+              <p className="text-sm" style={{ color: tk.textPrimary }}>{guide.weather.temperature}</p>
+            </div>
+            <div className="mt-2 pt-2 border-t" style={{ borderColor: "rgba(59,130,246,0.2)" }}>
+              <p className="text-xs italic" style={{ color: tk.textMuted }}>💡 {guide.weather.packingTip}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Currency & Payments ── */}
+      {guide.currency && (
+        <div
+          className="rounded-2xl p-4 border"
+          style={{ borderColor: "rgba(34,197,94,0.3)", backgroundColor: "rgba(34,197,94,0.05)" }}
+        >
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#22c55e" }}>
+            💵 Currency & Payments
+          </p>
+          <p className="font-bold text-sm mb-3" style={{ color: tk.textPrimary }}>
+            {guide.currency.symbol} {guide.currency.name}
+          </p>
+          <ul className="space-y-2">
+            {guide.currency.tips.map((tip, i) => (
+              <li key={i} className="flex items-start gap-2 text-xs" style={{ color: tk.textPrimary }}>
+                <span className="shrink-0 mt-0.5" style={{ color: "#22c55e" }}>✓</span> {tip}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* ── Safety Tips ── */}
+      {guide.safetyTips?.length > 0 && (
+        <div
+          className="rounded-2xl p-4 border"
+          style={{ borderColor: "rgba(239,68,68,0.25)", backgroundColor: "rgba(239,68,68,0.04)" }}
+        >
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#ef4444" }}>
+            🛡️ Safety Tips
+          </p>
+          <ul className="space-y-2">
+            {guide.safetyTips.map((tip, i) => (
+              <li key={i} className="flex items-start gap-2 text-xs" style={{ color: tk.textPrimary }}>
+                <span className="shrink-0 mt-0.5" style={{ color: "#ef4444" }}>•</span> {tip}
+              </li>
+            ))}
+          </ul>
         </div>
       )}
     </div>

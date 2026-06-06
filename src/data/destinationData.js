@@ -244,6 +244,30 @@ export const DESTINATION_DATA = {
         "Book island hopping tours at least a day in advance",
         "Early morning is the best time to visit popular beaches before the crowds arrive",
       ],
+      weather: {
+        bestSeason: "November to April (dry season — calm seas, perfect for beach and water activities)",
+        rainySeason: "June to October (occasional typhoons; sea conditions may affect inter-island transfers)",
+        temperature: "27°C – 32°C year-round",
+        packingTip: "Light breathable clothing; reef-safe sunscreen; bring a light rain jacket if visiting between May and October",
+      },
+      currency: {
+        name: "Philippine Peso (PHP)",
+        symbol: "₱",
+        tips: [
+          "ATMs are available at D'Mall and Station 2 — best to withdraw cash on arrival",
+          "Most beachfront establishments accept GCash and major credit cards",
+          "Bring small bills for food stalls, tricycles, and beach vendor fees",
+          "Seaport terminal and environmental fees (₱150–300/pax) require on-site cash payment",
+        ],
+      },
+      safetyTips: [
+        "Swim only in designated zones — beach flags indicate current water safety conditions",
+        "Do not leave valuables unattended on the beach or at resort pools",
+        "Book all water activities only through accredited providers — avoid unauthorized boats",
+        "Use reef-safe sunscreen only — chemical sunscreen is prohibited in Boracay's marine areas",
+        "Keep your Southwest sticker visible from airport arrival until hotel check-in",
+        "Contact Gladex immediately (+63 917 875 2200) if your transfer coordinator is unreachable",
+      ],
     },
     optionalTours: [
       {
@@ -548,6 +572,30 @@ export const DESTINATION_DATA = {
         "For Moalboal, pick-up is as early as 3 AM — prepare your packed breakfast",
         "Visit Taboan Public Market for authentic dried mangoes and danggit",
         "Simala Church requires modest attire — no sleeveless tops or above-the-knee shorts",
+      ],
+      weather: {
+        bestSeason: "December to May (dry season — best conditions for Oslob, island hopping, and Kawasan Falls)",
+        rainySeason: "June to November (some rain expected; most outdoor tours still operate)",
+        temperature: "25°C – 35°C year-round",
+        packingTip: "Light clothes, swimwear, reef-safe sunscreen, and walking shoes for city and heritage tours",
+      },
+      currency: {
+        name: "Philippine Peso (PHP)",
+        symbol: "₱",
+        tips: [
+          "ATMs widely available in Cebu City, Mactan, and Oslob town proper",
+          "GCash and credit cards accepted at major establishments, restaurants, and malls",
+          "Bring cash for Oslob entrance fees, sardine run gear, and local markets",
+          "Simala Church, whale shark fees, and Oslob park fees require on-site cash payment",
+        ],
+      },
+      safetyTips: [
+        "Follow the 10-meter no-touch rule strictly at Oslob — flash photography is also prohibited",
+        "Wear life jackets at all times during island hopping and canyoneering tours",
+        "Swim only in designated areas at Kawasan Falls — avoid entering restricted zones",
+        "Book Oslob, Moalboal, and canyoneering tours exclusively through your Gladex coordinator",
+        "Keep belongings secured in public markets and Colon Street area",
+        "Contact Gladex immediately (+63 917 875 2200) if your guide or driver is unreachable",
       ],
     },
     optionalTours: [
@@ -867,6 +915,30 @@ export const DESTINATION_DATA = {
         "Book island tours early — popular tours fill up fast especially Tour A",
         "Wear reef-safe sunscreen to protect the coral reefs",
         "Start tours as early as possible to avoid afternoon winds and afternoon crowds",
+      ],
+      weather: {
+        bestSeason: "November to May (dry season — best sea conditions for island hopping and kayaking)",
+        rainySeason: "June to October (off-peak season; some tours may be suspended due to rough seas)",
+        temperature: "26°C – 33°C year-round",
+        packingTip: "Quick-dry swimwear, reef-safe sunscreen, motion sickness tablets for boat tours, and a waterproof bag for gear",
+      },
+      currency: {
+        name: "Philippine Peso (PHP)",
+        symbol: "₱",
+        tips: [
+          "Bring sufficient cash from Puerto Princesa — ATMs in El Nido town are very limited and frequently out of service",
+          "Most island tour operators, restaurants, and smaller shops prefer cash payment",
+          "GCash is accepted in some establishments but mobile signal can be unreliable",
+          "Budget ₱500–1,000/day for meals, tour fees, and incidentals (fuel surcharge ₱300 + environmental fee ₱400 per tour day)",
+        ],
+      },
+      safetyTips: [
+        "Wear your life jacket for the entire duration of all boat transfers and island tours — no exceptions",
+        "Follow park ranger and boatman instructions — El Nido is a UNESCO-protected marine sanctuary",
+        "Do not stand on or touch coral reefs — violations carry heavy fines and may result in tour removal",
+        "Avoid swimming in open seas during rough weather or strong winds — follow your boatman's guidance",
+        "Mobile signal is limited across El Nido — inform family of your itinerary before departure",
+        "Contact Gladex (+63 917 875 2200) or your local guide if weather delays or cancels any tour",
       ],
     },
     optionalTours: [

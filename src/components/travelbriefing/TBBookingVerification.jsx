@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { BadgeCheck, Download, User, MapPin, CreditCard, FileText, Paperclip, X, Check, Calendar } from "lucide-react";
+import { BadgeCheck, Download, User, MapPin, CreditCard, FileText, Paperclip, X, Check } from "lucide-react";
 
 // Maps raw Fusioo status values to client-facing labels
 function getDisplayStatus(rawStatus) {
@@ -202,26 +202,6 @@ export default function TBBookingVerification({ booking, dest, darkMode, tk, onC
                   <Row label="Transfer" value="—" textPrimary={textPrimary} textMuted={textMuted} />
                 )}
               </Section>
-
-              {/* ── TRIP ITINERARY ────────────────────────────────────── */}
-              {dest?.itinerary?.length > 0 && (
-                <Section title="Trip Itinerary" icon={<Calendar className="w-4 h-4" />} borderColor={borderColor} cardBg={cardBg} cardShadow={cardShadow} textPrimary={textPrimary}>
-                  <div className="space-y-4">
-                    {dest.itinerary.map((day) => (
-                      <div key={day.day} className="border-l-2 pl-3" style={{ borderColor: "#f97316" }}>
-                        <p className="text-xs font-black mb-1" style={{ color: "#f97316" }}>
-                          Day {day.day} — {day.title}
-                        </p>
-                        {day.activities.map((activity, i) => (
-                          <p key={i} className="text-xs mb-0.5 flex items-start gap-1.5" style={{ color: textPrimary }}>
-                            <span className="text-orange-400 shrink-0 mt-0.5">•</span> {activity}
-                          </p>
-                        ))}
-                      </div>
-                    ))}
-                  </div>
-                </Section>
-              )}
 
               {/* ── PAYMENT INFORMATION ───────────────────────────────── */}
               <Section title="Payment Information" icon={<CreditCard className="w-4 h-4" />} borderColor={borderColor} cardBg={cardBg} cardShadow={cardShadow} textPrimary={textPrimary}>

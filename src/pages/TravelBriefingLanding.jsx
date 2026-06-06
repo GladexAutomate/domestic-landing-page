@@ -778,12 +778,6 @@ export default function TravelBriefingLanding() {
                     </div>
                   ))}
                 </div>
-                {dest.transferInstructions.reminders?.length > 0 && (
-                  <div className="mt-5 p-3 rounded-xl border" style={{ borderColor: "rgba(249,115,22,0.2)", backgroundColor: "rgba(249,115,22,0.06)" }}>
-                    <p className="text-xs font-bold mb-2" style={{ color: "#f97316" }}>Important Transfer Reminders</p>
-                    {dest.transferInstructions.reminders.map((r) => (<p key={r} className="text-xs mb-1" style={muted}>• {r}</p>))}
-                  </div>
-                )}
               </div>
             </div>
 
