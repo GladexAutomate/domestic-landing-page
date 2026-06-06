@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { hero as boracayHero } from "@/images/boracay";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { supabase } from "./supabaseClient";
@@ -22,8 +23,7 @@ const cardVariant = { hidden: { opacity: 0, y: 14 }, visible: { opacity: 1, y: 0
 
 // ─── Hardcoded Boracay Briefing Data ─────────────────────────────────────────
 
-const HERO_IMAGE =
-  "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=90&fit=crop";
+const HERO_IMAGE = boracayHero;
 /*
   VIDEO SOURCE — read before changing
   ─────────────────────────────────────────────────────────────────────────────

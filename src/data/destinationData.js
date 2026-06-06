@@ -3,7 +3,7 @@
 // To add a new destination: add a new key to DESTINATION_DATA following the same schema.
 //
 // LOCAL IMAGE IMPORTS — uncomment when verified Philippine photos are placed in the folders.
-// import * as boracayImgs from "@/images/boracay";
+import * as boracayImgs from "@/images/boracay";
 // import * as cebuImgs    from "@/images/cebu";
 // import * as elnidoImgs  from "@/images/elnido";
 
@@ -16,13 +16,12 @@ export const DESTINATION_DATA = {
     description:
       "Experience the Philippines' most iconic island destination with powdery white sand, crystal-clear waters, and world-famous sunsets.",
     airport: "Caticlan (MPH) or Kalibo (KLO)",
-    heroImage:
-      "https://images.unsplash.com/photo-1519046904884-53103b34b206",
+    heroImage: boracayImgs.hero,
     heroImages: [
-      "https://images.unsplash.com/photo-1511316695145-4992006ffddb?w=1600&q=85",
-      "https://images.pexels.com/photos/3601430/pexels-photo-3601430.jpeg?w=1600&q=85",
-      "https://images.pexels.com/photos/3601427/pexels-photo-3601427.jpeg?w=1600&q=85",
-      "https://images.unsplash.com/photo-1579033462043-0f11a7862f7d?w=1600&q=85",
+      boracayImgs.hero,
+      boracayImgs.whiteBeach,
+      boracayImgs.sunset,
+      boracayImgs.islandHopping,
     ],
     accentColor: "#f97316",
     video: {
@@ -53,7 +52,7 @@ export const DESTINATION_DATA = {
         day: 1,
         title: "Arrival in Boracay",
         meals: "X / X / X",
-        image: "https://images.unsplash.com/photo-1556388158-158ea5ccacbd?w=600&q=80",
+        image: boracayImgs.arrival,
         activities: [
           "Arrive at Caticlan Airport or Kalibo Airport",
           "Transfer via van or coaster to Caticlan Jetty Port",
@@ -67,7 +66,7 @@ export const DESTINATION_DATA = {
         day: 2,
         title: "Complimentary Island Hopping Tour",
         meals: "B / X / X",
-        image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=600&q=80",
+        image: boracayImgs.islandHopping,
         activities: [
           "After breakfast, get ready for one of the highlights of the trip",
           "Meet-up time: 8:00 AM – 9:00 AM at your hotel",
@@ -81,7 +80,7 @@ export const DESTINATION_DATA = {
         day: 3,
         title: "Departure Day",
         meals: "B / X / X",
-        image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=600&q=80",
+        image: boracayImgs.departure,
         activities: [
           "After breakfast, enjoy free time at your own leisure",
           "Optional: avail water activities or explore the island",
@@ -218,12 +217,12 @@ export const DESTINATION_DATA = {
     ],
     destinationGuide: {
       highlights: [
-        { name: "White Beach — Boracay", desc: "4.3 km of powdery white sand and crystal-clear turquoise water. Swim, relax, or walk the full stretch of the most beautiful beach in the Philippines.", icon: "🏖️", image: "https://images.pexels.com/photos/1174732/pexels-photo-1174732.jpeg?w=900&q=85" },
-        { name: "Island Hopping by Bangka Boat", desc: "Ride a traditional Filipino bangka boat to Puka Beach, Crystal Cove, Crocodile Island, and private beach stops — the #1 Boracay experience.", icon: "⛵", image: "https://images.pexels.com/photos/1430676/pexels-photo-1430676.jpeg?w=900&q=85" }, // Bangka boat on clear water
-        { name: "Swimming in Crystal Clear Water", desc: "Boracay's calm, shallow waters are perfect for swimming. The turquoise color comes from the pure white sand below — unlike anywhere else in the world.", icon: "🏊", image: "https://images.pexels.com/photos/3601426/pexels-photo-3601426.jpeg?w=900&q=85" },
-        { name: "World-Famous Boracay Sunset", desc: "Every evening, the sky above White Beach turns shades of gold, orange, and pink. Widely ranked as one of the top sunsets in all of Asia.", icon: "🌅", image: "https://images.unsplash.com/photo-1503614472-8c93d56e92ce?w=900&q=85" },
-        { name: "Snorkeling & Helmet Diving", desc: "Explore Boracay's vibrant underwater world — colorful reef fish, coral gardens, and sea turtles. No experience needed for helmet diving.", icon: "🤿", image: "https://images.unsplash.com/photo-1583212292454-1fe6229603b7?w=900&q=85" },
-        { name: "Paraw Sailing at Sunset", desc: "Board a traditional Filipino paraw sailboat as the sun goes down — one of the most romantic and iconic Boracay experiences available.", icon: "⛵", image: "https://images.unsplash.com/photo-1530549387789-4c1017266635?w=900&q=85" },
+        { name: "White Beach — Boracay", desc: "4.3 km of powdery white sand and crystal-clear turquoise water. Swim, relax, or walk the full stretch of the most beautiful beach in the Philippines.", icon: "🏖️", image: boracayImgs.whiteBeach },
+        { name: "Island Hopping by Bangka Boat", desc: "Ride a traditional Filipino bangka boat to Puka Beach, Crystal Cove, Crocodile Island, and private beach stops — the #1 Boracay experience.", icon: "⛵", image: boracayImgs.islandHopping },
+        { name: "Swimming in Crystal Clear Water", desc: "Boracay's calm, shallow waters are perfect for swimming. The turquoise color comes from the pure white sand below — unlike anywhere else in the world.", icon: "🏊", image: boracayImgs.crystalCove },
+        { name: "World-Famous Boracay Sunset", desc: "Every evening, the sky above White Beach turns shades of gold, orange, and pink. Widely ranked as one of the top sunsets in all of Asia.", icon: "🌅", image: boracayImgs.sunset },
+        { name: "Snorkeling & Helmet Diving", desc: "Explore Boracay's vibrant underwater world — colorful reef fish, coral gardens, and sea turtles. No experience needed for helmet diving.", icon: "🤿", image: boracayImgs.helmetDiving },
+        { name: "Paraw Sailing at Sunset", desc: "Board a traditional Filipino paraw sailboat as the sun goes down — one of the most romantic and iconic Boracay experiences available.", icon: "⛵", image: boracayImgs.parawSailing },
       ],
       food: [
         { name: "Chori Burger", note: "Local favorite — chorizo patty with a Filipino twist", emoji: "🍔" },
@@ -232,10 +231,10 @@ export const DESTINATION_DATA = {
         { name: "Mango Float", note: "Creamy chilled mango dessert loved by locals and tourists alike", emoji: "🥭" },
       ],
       photoSpots: [
-        { name: "White Beach — Morning Swim", note: "Early morning, calm water, no crowds — the clearest and most iconic Boracay shot", image: "https://images.unsplash.com/photo-1506953823976-52e1fdc0149a?w=900&q=85" },
-        { name: "Sunset at White Beach", note: "Grab a beachside spot by 5:30 PM — the golden sky reflection on the sand is breathtaking", image: "https://images.unsplash.com/photo-1503614472-8c93d56e92ce?w=900&q=85" },
-        { name: "Puka Shell Beach", note: "Quiet northern beach — rough shells, natural beauty, and almost no tourists", image: "https://images.pexels.com/photos/1287460/pexels-photo-1287460.jpeg?w=900&q=85" },
-        { name: "On the Island Hopping Boat", note: "Shoot the clear green water and surrounding islands from the bangka boat deck", image: "https://images.pexels.com/photos/1483053/pexels-photo-1483053.jpeg?w=900&q=85" },
+        { name: "White Beach — Morning Swim", note: "Early morning, calm water, no crowds — the clearest and most iconic Boracay shot", image: boracayImgs.whiteBeach },
+        { name: "Sunset at White Beach", note: "Grab a beachside spot by 5:30 PM — the golden sky reflection on the sand is breathtaking", image: boracayImgs.sunset },
+        { name: "Puka Shell Beach", note: "Quiet northern beach — rough shells, natural beauty, and almost no tourists", image: boracayImgs.pukaBeach },
+        { name: "On the Island Hopping Boat", note: "Shoot the clear green water and surrounding islands from the bangka boat deck", image: boracayImgs.islandTour },
       ],
       bestTime: "November to May is the peak season with favorable weather. June to October is rainy season with fewer crowds.",
       localTips: [
@@ -278,7 +277,7 @@ export const DESTINATION_DATA = {
         duration: "Full Day · 8 AM – 3 PM",
         highlights: ["Snorkeling gear included", "BBQ lunch on the beach", "Multiple island stops", "Mermaid tail photo op"],
         badge: "Most Popular",
-        image: "https://images.pexels.com/photos/1430676/pexels-photo-1430676.jpeg?w=900&q=85", // Bangka boat island hopping
+        image: boracayImgs.islandHopping,
       },
       {
         name: "Helmet Diving",
@@ -288,7 +287,7 @@ export const DESTINATION_DATA = {
         duration: "15–20 minutes",
         highlights: ["No experience required", "Walk underwater", "Feed reef fish", "Safe for non-swimmers"],
         badge: null,
-        image: "https://images.unsplash.com/photo-1540979388789-6cee28a1cdc9?w=900&q=85",
+        image: boracayImgs.helmetDiving,
       },
       {
         name: "Sunset Paraw Sailing",
@@ -298,7 +297,7 @@ export const DESTINATION_DATA = {
         duration: "1 hour",
         highlights: ["Traditional Filipino sailboat", "World-famous Boracay sunset", "Peaceful & romantic", "Open water views"],
         badge: "Best Experience",
-        image: "https://images.unsplash.com/photo-1530549387789-4c1017266635?w=900&q=85",
+        image: boracayImgs.parawSailing,
       },
       {
         name: "Snorkeling Adventure",
@@ -308,7 +307,7 @@ export const DESTINATION_DATA = {
         duration: "2–3 hours",
         highlights: ["All snorkeling gear provided", "Sea turtles & reef fish", "Coral garden exploration", "Suitable for beginners"],
         badge: null,
-        image: "https://images.unsplash.com/photo-1583212292454-1fe6229603b7?w=900&q=85",
+        image: boracayImgs.helmetDiving,
       },
       {
         name: "ATV Beach Adventure",
@@ -318,7 +317,7 @@ export const DESTINATION_DATA = {
         duration: "30–60 minutes",
         highlights: ["Off-road island trails", "Island panoramic views", "Suitable for beginners", "Thrilling experience"],
         badge: null,
-        image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=85",
+        image: boracayImgs.atv,
       },
       {
         name: "Parasailing Adventure",
@@ -328,7 +327,7 @@ export const DESTINATION_DATA = {
         duration: "15–20 minutes",
         highlights: ["Aerial views of White Beach", "Solo or tandem available", "Safe harness equipment", "Thrill seeker activity"],
         badge: "Thrill Seeker",
-        image: "https://images.pexels.com/photos/1654498/pexels-photo-1654498.jpeg?w=900&q=85", // Parasailing over ocean
+        image: boracayImgs.parasailing,
       },
     ],
     notes: [
