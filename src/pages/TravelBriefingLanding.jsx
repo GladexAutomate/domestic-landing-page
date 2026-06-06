@@ -7,6 +7,7 @@ import DestinationNavbar from "@/components/destination/DestinationNavbar";
 import { getDestination, SUPPORTED_DESTINATIONS } from "@/data/destinationData";
 import TBHero from "@/components/travelbriefing/TBHero";
 import TBBriefingVideo from "@/components/travelbriefing/TBBriefingVideo";
+import TBItinerary from "@/components/travelbriefing/TBItinerary";
 import TBChecklist from "@/components/travelbriefing/TBChecklist";
 import TBDestinationGuide from "@/components/travelbriefing/TBDestinationGuide";
 import TBOptionalTours from "@/components/travelbriefing/TBOptionalTours";
@@ -39,6 +40,13 @@ const STARR_PLANS = [
     coverage: ["All Economy Coverage", "Trip Cancellation", "Trip Delay", "Personal Liability", "Emergency Evacuation"],
     recommended: true,
   },
+];
+
+const RATE_QUESTIONS = [
+  "Was the booking process easy?",
+  "Was our team responsive?",
+  "Are you satisfied with the service so far?",
+  "Would you recommend Gladex?",
 ];
 
 // ── Status display helper ────────────────────────────────────────
@@ -240,6 +248,9 @@ export default function TravelBriefingLanding() {
   // ── Phase 2: Xendit checkout ─────────────────────────────────
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [checkoutError, setCheckoutError] = useState(null);
+
+  // ── Rate My Service ───────────────────────────────────────────
+  const [ratings, setRatings] = useState({});
 
   // ── Cart helpers ──────────────────────────────────────────────
   const cartTotal = cart.tours.reduce((s, t) => s + (t.price || 0), 0)
@@ -663,7 +674,17 @@ export default function TravelBriefingLanding() {
         </FadeIn>
 
         {/* ══════════════════════════════════════════════════
-            5. TRAVEL INFORMATION CENTER
+            5. DAY-BY-DAY ITINERARY
+           ══════════════════════════════════════════════════ */}
+        <FadeIn>
+          <div className={sectionGap}>
+            <SectionHeader eyebrow="Your Trip Program" title="Day-by-Day Itinerary" tk={tk} />
+            <TBItinerary dest={dest} darkMode={darkMode} tk={tk} />
+          </div>
+        </FadeIn>
+
+        {/* ══════════════════════════════════════════════════
+            6. TRAVEL INFORMATION CENTER
            ══════════════════════════════════════════════════ */}
         <FadeIn>
           <div className={sectionGap}>
@@ -1119,9 +1140,9 @@ export default function TravelBriefingLanding() {
             <SectionHeader eyebrow="Real Gladex Experiences" title="What Our Guests Say" tk={tk} />
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {[
-                { name: "Maria Santos", dest: "Boracay", rating: 5, review: "The briefing portal made our trip so much smoother. Every detail was clearly laid out — we knew exactly what to do from the moment we landed!" },
-                { name: "Jose Reyes", dest: "Cebu", rating: 5, review: "Loved the Oslob whale shark experience! The arrival instructions were spot on — our driver was right there with our name sign. 10/10 would book Gladex again." },
-                { name: "Ana Cruz", dest: "El Nido", rating: 5, review: "El Nido is paradise. The tour guides were professional, the lagoons were breathtaking, and Gladex handled everything seamlessly." },
+                { name: "Maria L.", dest: "Boracay · 3D2N", rating: 5, review: "Everything from our Caticlan airport pick-up to the sunset cruise was perfectly arranged. The briefing portal told us exactly where to wait and who to call — zero stress!" },
+                { name: "Joel T.", dest: "Cebu · 4D3N", rating: 5, review: "The Oslob whale shark swim was a dream. Our driver had our name on a signboard before we even cleared arrivals. Gladex thought of every detail we'd never have figured out ourselves." },
+                { name: "Christine B.", dest: "El Nido · 3D2N", rating: 5, review: "Tour C through the lagoons left us speechless. The van from Puerto Princesa was comfortable, stopovers were well-timed, and the team was reachable every step of the way." },
               ].map((t) => (
                 <div key={t.name} className="rounded-2xl border p-4" style={{ ...card }}>
                   <div className="flex items-center gap-2 mb-3">
@@ -1151,19 +1172,41 @@ export default function TravelBriefingLanding() {
             <SectionHeader eyebrow="How Was Your Experience?" title="Rate My Service" tk={tk} />
             <div className="rounded-2xl border p-5" style={{ ...card }}>
               <div className="space-y-3 mb-5">
-                {["Was the booking process easy?", "Was our team responsive?", "Are you satisfied with the service so far?", "Would you recommend Gladex?"].map((q) => (
+                {RATE_QUESTIONS.map((q) => (
                   <div key={q} className="flex items-center justify-between gap-4">
                     <p className="text-sm" style={{ color: textPrimary }}>{q}</p>
                     <div className="flex gap-1 shrink-0">
                       {[1, 2, 3, 4, 5].map((s) => (
-                        <Star key={s} className="w-5 h-5 text-yellow-400/30 hover:text-yellow-400 transition-colors cursor-pointer" />
+                        <button
+                          key={s}
+                          onClick={() => setRatings((prev) => ({ ...prev, [q]: s }))}
+                          className="transition-transform hover:scale-110 active:scale-95"
+                          aria-label={`Rate ${s} star${s > 1 ? "s" : ""}`}
+                        >
+                          <Star
+                            className={`w-5 h-5 transition-colors ${
+                              s <= (ratings[q] || 0)
+                                ? "fill-yellow-400 text-yellow-400"
+                                : "text-yellow-400/30 hover:text-yellow-400"
+                            }`}
+                          />
+                        </button>
                       ))}
                     </div>
                   </div>
                 ))}
               </div>
-              <button disabled className="w-full py-3 rounded-xl text-sm font-bold border opacity-50" style={{ borderColor: "rgba(249,115,22,0.35)", color: "#f97316", backgroundColor: "rgba(249,115,22,0.07)" }}>
-                Leave A Review
+              <button
+                disabled={!RATE_QUESTIONS.every((q) => ratings[q])}
+                className="w-full py-3 rounded-xl text-sm font-bold border transition-all"
+                style={{
+                  borderColor: "rgba(249,115,22,0.35)",
+                  color: "#f97316",
+                  backgroundColor: "rgba(249,115,22,0.07)",
+                  opacity: RATE_QUESTIONS.every((q) => ratings[q]) ? 1 : 0.5,
+                }}
+              >
+                {RATE_QUESTIONS.every((q) => ratings[q]) ? "Leave A Review" : `Rate ${RATE_QUESTIONS.filter((q) => !ratings[q]).length} more question${RATE_QUESTIONS.filter((q) => !ratings[q]).length !== 1 ? "s" : ""}`}
               </button>
               <p className="text-[10px] text-center mt-3" style={muted}>🔒 Review submission available in Phase 2 via Rate My Service integration.</p>
             </div>
