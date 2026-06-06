@@ -192,14 +192,19 @@ function normalizeBooking(raw, { tourData, ticketData, hotelData, transferData }
     paymentMethod:    raw.mop_used_by_customer || null,
     paymentType:      raw.payment_type || null,
 
-    // Documents
+    // Documents — extract URLs from Fusioo file attachment fields (array or string)
     voucherId:        raw.voucher || null,
+    voucherUrl:       extractFusiooUrl(raw.voucher),
     automatedVoucher: raw.automated_voucher || null,
-    attachments:      Array.isArray(raw.attachments) ? raw.attachments : [],
+    automatedVoucherUrl: extractFusiooUrl(raw.automated_voucher),
+    attachments:      normalizeAttachments(raw.attachments),
+    tourVoucherUrl:   extractFusiooUrl(raw.tour_voucher),
 
     // Agent
     agentName:        raw.agent_name || null,
     salesAgent:       raw.name_of_agent || null,
+    consultantName:   raw.consultant_name || raw.travel_consultant || null,
+    consultantPhone:  raw.consultant_phone || raw.consultant_mobile || null,
 
     // Raw data for destination detection
     rawData:          raw.data || {},
@@ -242,6 +247,8 @@ function normalizeHotel(d, raw) {
     nights:         d.number_of_nights || null,
     requests:       stripHtml(d.hotel_requests || ""),
     hotelNumber:    d.hotel_number || null,
+    // Hotel name — Fusioo may store it under several field names
+    hotelName:      d.hotel_name || d.property_name || d.accommodation_name || d.hotel_property || null,
   };
 }
 
@@ -255,6 +262,38 @@ function normalizeTransfer(d) {
     quantity:     d.quantity || null,
     supplier:     d.supplier_name || null,
   };
+}
+
+// ── Fusioo file attachment helpers ───────────────────────────────
+// Fusioo file fields can be: URL string, array of {id,name,url}, or null
+function extractFusiooUrl(field) {
+  if (!field) return null;
+  // Plain URL string
+  if (typeof field === "string" && (field.startsWith("http://") || field.startsWith("https://"))) return field;
+  // Array of Fusioo file objects [{id, name, url, ...}]
+  if (Array.isArray(field) && field.length > 0) {
+    const first = field[0];
+    if (typeof first === "string" && first.startsWith("http")) return first;
+    if (first?.url) return first.url;
+    if (first?.download_url) return first.download_url;
+  }
+  // Object with url property
+  if (typeof field === "object" && field?.url) return field.url;
+  return null;
+}
+
+function normalizeAttachments(raw) {
+  if (!raw) return [];
+  if (Array.isArray(raw)) {
+    return raw.map((att) => {
+      if (typeof att === "string") return { name: "Attachment", url: att };
+      return {
+        name: att.name || att.filename || "Attachment",
+        url:  att.url || att.download_url || null,
+      };
+    }).filter((a) => a.url);
+  }
+  return [];
 }
 
 // ── String helpers ────────────────────────────────────────────────

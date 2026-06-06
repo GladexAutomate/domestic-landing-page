@@ -29,8 +29,22 @@ function authHeader() {
   return { Authorization: `Basic ${encoded}` };
 }
 
+// ── Edge function flag — when true, all Xendit calls go through Supabase Edge Function
+//    Set VITE_USE_EDGE_FUNCTIONS=true in .env.local after deploying supabase/functions/xendit-invoice
+const USE_EDGE = import.meta.env.VITE_USE_EDGE_FUNCTIONS === "true";
+
 // ── Base request helper ───────────────────────────────────────────
 async function xRequest(path, options = {}) {
+  // Production path: route through Supabase Edge Function (secret key stays server-side)
+  if (USE_EDGE) {
+    const { supabase } = await import("@/services/supabaseService");
+    const body = options.body ? JSON.parse(options.body) : undefined;
+    const { data, error } = await supabase.functions.invoke("xendit-invoice", { body });
+    if (error) throw new Error(error.message);
+    return data;
+  }
+
+  // Dev/UAT path: direct API call (key in .env.local, not committed)
   const url = `${XENDIT_BASE}${path}`;
   const res = await fetch(url, {
     ...options,

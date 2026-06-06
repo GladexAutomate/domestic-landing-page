@@ -41,6 +41,11 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
       // Detect destination slug — always returns a value (defaults to "boracay")
       const slug = detectDestinationSlug(booking);
 
+      // Persist GDX + slug only (no PII) for session restore on page refresh
+      try {
+        sessionStorage.setItem("gladex-session", JSON.stringify({ gdx: booking.gdx, slug }));
+      } catch {}
+
       // Navigate to destination page with full booking pre-loaded
       navigate(`/destination/${slug}`, { state: { booking } });
     } catch (err) {

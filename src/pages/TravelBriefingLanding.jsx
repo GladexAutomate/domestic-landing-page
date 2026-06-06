@@ -12,8 +12,9 @@ import TBDestinationGuide from "@/components/travelbriefing/TBDestinationGuide";
 import TBOptionalTours from "@/components/travelbriefing/TBOptionalTours";
 import TBFAQs from "@/components/travelbriefing/TBFAQs";
 import TBBookingVerification from "@/components/travelbriefing/TBBookingVerification";
+import { lookupBooking } from "@/services/supabaseService";
 import { getDomesticQuote } from "@/services/starrService";
-import { loadDestinationTours } from "@/services/globaltixService";
+import { loadDestinationTours, GLADEX_TOUR_PRODUCTS } from "@/services/globaltixService";
 import { createGladexCheckout } from "@/services/xenditService";
 import {
   Check, X, AlertTriangle, ArrowUp, Phone,
@@ -39,6 +40,16 @@ const STARR_PLANS = [
     recommended: true,
   },
 ];
+
+// ── Status display helper ────────────────────────────────────────
+function getDisplayStatus(rawStatus) {
+  if (!rawStatus) return "Confirmed";
+  const s = rawStatus.toLowerCase().trim();
+  if (["processed", "confirmed", "booked", "complete", "completed", "verified", "approved", "active"].includes(s)) return "Confirmed";
+  if (s.includes("pending")) return "Pending";
+  if (s.includes("cancel")) return "Cancelled";
+  return rawStatus;
+}
 
 // ── Shared animation config ──────────────────────────────────────
 const stagger = { visible: { transition: { staggerChildren: 0.07 } } };
@@ -197,6 +208,8 @@ function DevSwitcher({ currentSlug, navigate, darkMode, tk }) {
 // ═══════════════════════════════════════════════════════════════
 //  MAIN PAGE — follows GLADEX Travel Briefing Platform flow
 // ═══════════════════════════════════════════════════════════════
+const SESSION_KEY = "gladex-session";
+
 export default function TravelBriefingLanding() {
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -205,7 +218,9 @@ export default function TravelBriefingLanding() {
   const dest = getDestination(slug);
 
   // Booking from GDX search (passed via React Router state)
-  const bookingFromSearch = location.state?.booking || null;
+  const routeBooking = location.state?.booking || null;
+  const [restoredBooking, setRestoredBooking] = useState(null);
+  const activeBooking = routeBooking || restoredBooking;
 
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [arrivalTab, setArrivalTab] = useState(() => dest?.arrivalInstructions?.tabs?.[0]?.key || "default");
@@ -278,16 +293,46 @@ export default function TravelBriefingLanding() {
   const [liveTourData, setLiveTourData] = useState([]);
   useEffect(() => {
     if (!dest) return;
+    // Skip API call when no products are configured for this destination
+    if (!GLADEX_TOUR_PRODUCTS[dest.slug]?.length) {
+      setToursLoading(false);
+      return;
+    }
     setToursLoading(true);
     loadDestinationTours(dest.slug)
       .then((tours) => { if (tours?.length) setLiveTourData(tours); })
-      .catch(() => {}) // silent fallback to static dest.optionalTours
+      .catch(() => {})
       .finally(() => setToursLoading(false));
   }, [dest?.slug]);
 
+  // ── Restore booking from sessionStorage on page refresh ──────
+  useEffect(() => {
+    setRestoredBooking(null);
+    if (routeBooking) return;
+
+    let saved;
+    try {
+      const raw = sessionStorage.getItem(SESSION_KEY);
+      if (!raw) return;
+      saved = JSON.parse(raw);
+    } catch {
+      sessionStorage.removeItem(SESSION_KEY);
+      return;
+    }
+
+    if (!saved?.gdx || !saved?.slug || saved.slug !== slug) {
+      sessionStorage.removeItem(SESSION_KEY);
+      return;
+    }
+
+    lookupBooking(saved.gdx)
+      .then((booking) => setRestoredBooking(booking))
+      .catch(() => sessionStorage.removeItem(SESSION_KEY));
+  }, [slug]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // ── Itinerary PDF download ────────────────────────────────────
   const downloadItinerary = async () => {
-    const bk = bookingFromSearch;
+    const bk = activeBooking;
     const { jsPDF } = await import("jspdf");
     const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
     const OG = [249, 115, 22];
@@ -481,7 +526,7 @@ export default function TravelBriefingLanding() {
                   </div>
                   <div>
                     <p className="font-black text-xl" style={{ color: textPrimary }}>
-                      Hi {bookingFromSearch ? (bookingFromSearch.leadName.split(" ")[0] || bookingFromSearch.leadName) : "Traveler"}! 👋
+                      Hi {activeBooking ? (activeBooking.leadName.split(" ")[0] || activeBooking.leadName) : "Traveler"}! 👋
                     </p>
                     <p className="font-semibold text-sm" style={{ color: "#f97316" }}>
                       Your {dest.name} trip is confirmed.
@@ -493,10 +538,18 @@ export default function TravelBriefingLanding() {
                 <div className="grid grid-cols-2 gap-2.5">
                   {[
                     { label: "Destination",    value: dest.name },
-                    { label: "Travel Date",    value: bookingFromSearch?.travelDate    || dest.tagline },
-                    { label: "Hotel",          value: bookingFromSearch?.hotel?.stayDates ? `${bookingFromSearch.hotel.roomType || "—"} · ${bookingFromSearch.hotel.nights || "—"} night(s)` : (bookingFromSearch?.tour?.hotelMention || "—") },
-                    { label: "Guests",         value: bookingFromSearch ? `${bookingFromSearch.totalGuests} person${Number(bookingFromSearch.totalGuests) !== 1 ? "s" : ""}` : "—" },
-                    { label: "Booking Status", value: bookingFromSearch?.status || "Confirmed", badge: true },
+                    { label: "Travel Date",    value: activeBooking?.travelDate    || dest.tagline },
+                    { label: "Hotel",          value: (() => {
+                      const bk = activeBooking;
+                      if (!bk) return "—";
+                      if (bk.hotel?.hotelName) return bk.hotel.hotelName;
+                      if (bk.tour?.hotelMention) return bk.tour.hotelMention;
+                      if (bk.hotel?.roomType && bk.hotel?.nights) return `${bk.hotel.roomType} · ${bk.hotel.nights} night(s)`;
+                      if (bk.hotel?.roomType) return bk.hotel.roomType;
+                      return "—";
+                    })() },
+                    { label: "Guests",         value: activeBooking ? `${activeBooking.totalGuests} person${Number(activeBooking.totalGuests) !== 1 ? "s" : ""}` : "—" },
+                    { label: "Booking Status", value: getDisplayStatus(activeBooking?.status), badge: true },
                   ].map(({ label, value, badge }) => (
                     <div key={label} className="rounded-xl p-3 border" style={{ borderColor, backgroundColor: surfaceBg }}>
                       <p className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>{label}</p>
@@ -508,13 +561,13 @@ export default function TravelBriefingLanding() {
                   ))}
                 </div>
 
-                {bookingFromSearch && (
+                {activeBooking && (
                   <div className="mt-3 flex flex-wrap gap-2">
                     {[
-                      { label: "GDX Reference", value: `GDX-${bookingFromSearch.gdx}` },
-                      { label: "Payment", value: bookingFromSearch.paymentStatus || "—" },
-                      ...(bookingFromSearch.ticket?.airline ? [{ label: "Airline", value: `${bookingFromSearch.ticket.airline}${bookingFromSearch.ticket.pnr ? ` · ${bookingFromSearch.ticket.pnr}` : ""}` }] : []),
-                      ...(bookingFromSearch.tour?.tourName ? [{ label: "Tour", value: bookingFromSearch.tour.tourName }] : []),
+                      { label: "GDX Reference", value: `GDX-${activeBooking.gdx}` },
+                      { label: "Payment", value: activeBooking.paymentStatus || "—" },
+                      ...(activeBooking.ticket?.airline ? [{ label: "Airline", value: `${activeBooking.ticket.airline}${activeBooking.ticket.pnr ? ` · ${activeBooking.ticket.pnr}` : ""}` }] : []),
+                      ...(activeBooking.tour?.tourName ? [{ label: "Tour", value: activeBooking.tour.tourName }] : []),
                     ].map(({ label, value }) => (
                       <div key={label} className="rounded-xl px-2.5 py-1 border text-xs" style={{ borderColor, backgroundColor: surfaceBg }}>
                         <span style={muted}>{label}: </span>
@@ -527,19 +580,24 @@ export default function TravelBriefingLanding() {
 
               {/* ── Action buttons ── */}
               <div className="p-4 flex flex-wrap gap-2">
-                {/* Download Voucher */}
-                {bookingFromSearch?.automatedVoucher && bookingFromSearch.automatedVoucher.startsWith("http") ? (
-                  <a href={bookingFromSearch.automatedVoucher} target="_blank" rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl border transition-all hover:opacity-80"
-                    style={{ borderColor: "rgba(249,115,22,0.35)", color: "#f97316", backgroundColor: "rgba(249,115,22,0.08)" }}>
-                    <Download className="w-3.5 h-3.5" /> Download Voucher
-                  </a>
-                ) : (
-                  <button disabled className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl border opacity-40"
-                    style={{ borderColor, color: textPrimary, backgroundColor: surfaceBg }} title="Voucher not yet available">
-                    <Download className="w-3.5 h-3.5" /> Download Voucher
-                  </button>
-                )}
+                {/* Download Voucher — uses best available URL from Fusioo */}
+                {(() => {
+                  const bk = activeBooking;
+                  const url = bk?.automatedVoucherUrl || bk?.voucherUrl || bk?.tourVoucherUrl
+                    || (bk?.automatedVoucher?.startsWith?.("http") ? bk.automatedVoucher : null);
+                  return url ? (
+                    <a href={url} target="_blank" rel="noopener noreferrer"
+                      className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl border transition-all hover:opacity-80"
+                      style={{ borderColor: "rgba(249,115,22,0.35)", color: "#f97316", backgroundColor: "rgba(249,115,22,0.08)" }}>
+                      <Download className="w-3.5 h-3.5" /> Download Voucher
+                    </a>
+                  ) : (
+                    <button disabled className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl border opacity-40"
+                      style={{ borderColor, color: textPrimary, backgroundColor: surfaceBg }} title="Voucher not yet available — contact your travel consultant">
+                      <Download className="w-3.5 h-3.5" /> Download Voucher
+                    </button>
+                  );
+                })()}
 
                 {/* Download Itinerary — always enabled, generates PDF */}
                 <motion.button
@@ -560,33 +618,33 @@ export default function TravelBriefingLanding() {
               </div>
             </div>
 
-            {/* ── Package Inclusions & Exclusions (part of dashboard) ── */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-              <div className="rounded-2xl border p-4" style={{ ...card }}>
-                <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#22c55e" }}>✓ Package Inclusions</p>
-                <ul className="space-y-2">
-                  {dest.inclusions.map((item) => (
-                    <li key={item} className="flex items-start gap-2 text-xs" style={{ color: textPrimary }}>
-                      <Check className="w-3.5 h-3.5 shrink-0 mt-0.5 text-green-500" strokeWidth={2.5} /> {item}
-                    </li>
-                  ))}
-                </ul>
+            {/* ── Full booking details — expandable (contains inclusions/exclusions + itinerary) ── */}
+            {activeBooking ? (
+              <TBBookingVerification booking={activeBooking} dest={dest} darkMode={darkMode} tk={tk} />
+            ) : (
+              /* Non-logged-in view: show inclusions/exclusions directly */
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <div className="rounded-2xl border p-4" style={{ ...card }}>
+                  <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#22c55e" }}>✓ Package Inclusions</p>
+                  <ul className="space-y-2">
+                    {dest.inclusions.map((item) => (
+                      <li key={item} className="flex items-start gap-2 text-xs" style={{ color: textPrimary }}>
+                        <Check className="w-3.5 h-3.5 shrink-0 mt-0.5 text-green-500" strokeWidth={2.5} /> {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="rounded-2xl border p-4" style={{ ...card }}>
+                  <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#ef4444" }}>✗ Exclusions</p>
+                  <ul className="space-y-2">
+                    {dest.exclusions.map((item) => (
+                      <li key={item} className="flex items-start gap-2 text-xs" style={{ color: textPrimary }}>
+                        <X className="w-3.5 h-3.5 shrink-0 mt-0.5 text-red-500" strokeWidth={2.5} /> {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
-              <div className="rounded-2xl border p-4" style={{ ...card }}>
-                <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#ef4444" }}>✗ Exclusions</p>
-                <ul className="space-y-2">
-                  {dest.exclusions.map((item) => (
-                    <li key={item} className="flex items-start gap-2 text-xs" style={{ color: textPrimary }}>
-                      <X className="w-3.5 h-3.5 shrink-0 mt-0.5 text-red-500" strokeWidth={2.5} /> {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            {/* ── Full booking details — expandable ── */}
-            {bookingFromSearch && (
-              <TBBookingVerification booking={bookingFromSearch} darkMode={darkMode} tk={tk} />
             )}
           </div>
         </FadeIn>
@@ -853,9 +911,13 @@ export default function TravelBriefingLanding() {
             <p className="text-sm mb-5" style={muted}>
               Select tours to add to your checkout. Contact +63 917 875 2200 for group or custom bookings.
             </p>
-            {liveTourData.length > 0 && (
+            {liveTourData.length > 0 ? (
               <p className="text-[10px] mb-3 flex items-center gap-1" style={{ color: "#22c55e" }}>
-                ✅ Live tours loaded from GlobalTix
+                ✅ Live pricing from GlobalTix · Add to cart and checkout below
+              </p>
+            ) : !toursLoading && (
+              <p className="text-[10px] mb-3 flex items-center gap-1" style={{ color: tk.textMuted }}>
+                📌 Curated tour list · Call +63 917 875 2200 to book any activity
               </p>
             )}
             <TBOptionalTours

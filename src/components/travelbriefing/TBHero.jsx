@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { MapPin, ChevronDown } from "lucide-react";
+import { MapPin } from "lucide-react";
 
 // Gradient fallback per destination slug (in case image fails to load)
 const DEST_GRADIENTS = {
@@ -14,12 +14,12 @@ const DEST_GRADIENTS = {
 export default function TBHero({ dest, darkMode }) {
   const [imgFailed, setImgFailed] = useState(false);
 
-  const overlayStart = "rgba(0,0,0,0.5)";
-  const overlayEnd   = "rgba(0,0,0,0.75)";
+  const overlayStart = "rgba(0,0,0,0.45)";
+  const overlayEnd   = "rgba(0,0,0,0.70)";
   const fallbackBg   = DEST_GRADIENTS[dest?.slug] || DEST_GRADIENTS.default;
 
   return (
-    <div className="relative w-full overflow-hidden" style={{ minHeight: "92vh" }}>
+    <div className="relative w-full overflow-hidden" style={{ minHeight: "36vh", maxHeight: "40vh" }}>
 
       {/* Background — image with gradient fallback */}
       {dest?.heroImage && !imgFailed ? (
@@ -27,7 +27,7 @@ export default function TBHero({ dest, darkMode }) {
           src={dest.heroImage}
           alt={dest.name}
           className="absolute inset-0 w-full h-full object-cover"
-          style={{ filter: "saturate(1.15) brightness(0.9)" }}
+          style={{ filter: "saturate(1.1) brightness(0.85)" }}
           onError={() => setImgFailed(true)}
         />
       ) : (
@@ -45,50 +45,40 @@ export default function TBHero({ dest, darkMode }) {
 
       {/* Content */}
       <div
-        className="relative z-10 flex flex-col items-center justify-center h-full text-white text-center px-4 pt-24 pb-20"
-        style={{ minHeight: "92vh" }}
+        className="relative z-10 flex flex-col items-center justify-center h-full text-white text-center px-4 pt-16 pb-6"
+        style={{ minHeight: "36vh" }}
       >
         {/* Location badge */}
         <motion.div
-          initial={{ opacity: 0, y: -12 }}
+          initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.5 }}
-          className="flex items-center gap-1.5 mb-5 px-3 py-1 rounded-full border border-white/25 backdrop-blur-sm"
-          style={{ backgroundColor: "rgba(255,255,255,0.1)", fontSize: "11px" }}
+          transition={{ delay: 0.05, duration: 0.3 }}
+          className="flex items-center gap-1.5 mb-2 px-3 py-1 rounded-full border border-white/25 backdrop-blur-sm"
+          style={{ backgroundColor: "rgba(255,255,255,0.1)", fontSize: "10px" }}
         >
           <MapPin className="w-3 h-3 opacity-75" />
-          <span className="uppercase tracking-widest font-semibold opacity-85">Philippines</span>
+          <span className="uppercase tracking-widest font-semibold opacity-85">Philippines · Gladex Travel</span>
         </motion.div>
 
         {/* Destination name */}
         <motion.h1
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.6 }}
-          className="font-black leading-none mb-3"
-          style={{ fontSize: "clamp(3rem, 12vw, 7rem)", letterSpacing: "-0.02em" }}
+          transition={{ delay: 0.1, duration: 0.35 }}
+          className="font-black leading-none mb-1.5"
+          style={{ fontSize: "clamp(2rem, 8vw, 4rem)", letterSpacing: "-0.02em" }}
         >
           {dest?.name || ""}
         </motion.h1>
 
-        {/* Tagline */}
+        {/* Tagline / package name */}
         <motion.p
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-          className="text-sm sm:text-base font-semibold uppercase tracking-widest mb-4 opacity-75"
+          transition={{ delay: 0.18, duration: 0.3 }}
+          className="text-xs font-semibold uppercase tracking-widest mb-3 opacity-70"
         >
           {dest?.tagline || ""}
-        </motion.p>
-
-        {/* Description */}
-        <motion.p
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
-          className="max-w-xl text-sm sm:text-base leading-relaxed opacity-80 mb-10"
-        >
-          {dest?.description || ""}
         </motion.p>
 
         {/* Airport badge */}
@@ -96,26 +86,13 @@ export default function TBHero({ dest, darkMode }) {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.55, duration: 0.4 }}
-            className="flex items-center gap-2 text-xs opacity-60"
+            transition={{ delay: 0.25, duration: 0.3 }}
+            className="flex items-center gap-1.5 text-xs opacity-55"
           >
             <span>✈️</span>
             <span>{dest.airport}</span>
           </motion.div>
         )}
-
-        {/* Scroll hint */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.2, duration: 0.5 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 opacity-40"
-        >
-          <span className="text-[10px] uppercase tracking-widest">Scroll</span>
-          <motion.div animate={{ y: [0, 5, 0] }} transition={{ repeat: Infinity, duration: 1.4 }}>
-            <ChevronDown className="w-4 h-4" />
-          </motion.div>
-        </motion.div>
       </div>
     </div>
   );

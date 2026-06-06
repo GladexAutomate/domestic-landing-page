@@ -33,8 +33,8 @@ const ENV = import.meta.env.VITE_STARR_ENV || "uat"; // "uat" | "prod"
 const CONFIG = {
   uat: {
     baseUrl:    import.meta.env.VITE_STARR_UAT_BASE_URL  || "http://16489.phbeta.51zxtx.com",
-    userId:     import.meta.env.VITE_STARR_UAT_USER_ID   || "178772",
-    key:        import.meta.env.VITE_STARR_UAT_KEY        || "3fhpDQxzdsinaojgO7CEZlPeBtmHuLJ8",
+    userId:     import.meta.env.VITE_STARR_UAT_USER_ID,   // required — set in .env.local
+    key:        import.meta.env.VITE_STARR_UAT_KEY,        // required — set in .env.local
     // UAT domestic product IDs
     contracts: {
       domestic:     "147271",
@@ -56,8 +56,8 @@ const CONFIG = {
   },
   prod: {
     baseUrl:   import.meta.env.VITE_STARR_PROD_BASE_URL  || "https://17410.starrinsurance.com.ph",
-    userId:    import.meta.env.VITE_STARR_PROD_USER_ID   || "182149",
-    key:       import.meta.env.VITE_STARR_PROD_KEY        || "4fpjwR18loU7sJSNmKHiZIT3nMgXWvFY",
+    userId:    import.meta.env.VITE_STARR_PROD_USER_ID,   // required — set in .env.local
+    key:       import.meta.env.VITE_STARR_PROD_KEY,        // required — set in .env.local (NEVER commit)
     contracts: {
       domestic:     "153123",
       international: "153124",
@@ -87,8 +87,23 @@ function buildSign(url, body) {
   return CryptoJS.MD5(url + bodyStr + cfg.key).toString().toUpperCase();
 }
 
+// ── Edge function flag
+const USE_EDGE = import.meta.env.VITE_USE_EDGE_FUNCTIONS === "true";
+
 // ── Base request helper ───────────────────────────────────────────
 async function starrRequest(endpoint, body) {
+  // Production path: signing + key stay server-side in Supabase Edge Function
+  if (USE_EDGE) {
+    const { supabase } = await import("@/services/supabaseService");
+    const { data, error } = await supabase.functions.invoke("starr-proxy", {
+      body: { endpoint, body },
+    });
+    if (error) throw new Error(error.message);
+    if (data?.success !== "1") throw new Error(`Starr error [${data?.code}]: ${data?.msg}`);
+    return data.data;
+  }
+
+  // Dev/UAT path: direct API call (key in .env.local, not committed)
   const url = `${cfg.baseUrl}/${cfg.userId}/${endpoint}`;
   const bodyStr = JSON.stringify(body);
   const sign = buildSign(url, bodyStr);

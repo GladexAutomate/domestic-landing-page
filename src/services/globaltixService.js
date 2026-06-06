@@ -25,10 +25,10 @@
       49272 — 3-in-1 Adventure Day Tour in Sabang Puerto Princesa
 */
 
-const BASE_URL  = "https://stg-api.globaltix.com";
+const BASE_URL  = import.meta.env.VITE_GLOBALTIX_BASE_URL || "https://stg-api.globaltix.com";
 const API_KEY   = import.meta.env.VITE_GLOBALTIX_API_KEY;
 const API_AGENT = import.meta.env.VITE_GLOBALTIX_X_API_AGENT;
-const USERNAME  = "r013193-api@globaltix.com";
+const USERNAME  = import.meta.env.VITE_GLOBALTIX_USERNAME; // moved from hardcoded — set in .env.local
 
 // ── Token cache (in-memory, ~24h validity) ───────────────────────
 let _token = null;
@@ -65,8 +65,23 @@ export const authenticate = async () => {
   return _token;
 };
 
+// ── Edge function flag
+const USE_EDGE = import.meta.env.VITE_USE_EDGE_FUNCTIONS === "true";
+
 // ── Base request helper ───────────────────────────────────────────
 async function gRequest(path, options = {}) {
+  // Production path: API key + username stay server-side in Supabase Edge Function
+  if (USE_EDGE) {
+    const { supabase } = await import("@/services/supabaseService");
+    const body = options.body ? JSON.parse(options.body) : undefined;
+    const { data, error } = await supabase.functions.invoke("globaltix-proxy", {
+      body: { path, method: options.method || "GET", body },
+    });
+    if (error) throw new Error(error.message);
+    return data;
+  }
+
+  // Dev/UAT path: direct API call (credentials in .env.local, not committed)
   const token = await authenticate();
   const res = await fetch(`${BASE_URL}${path}`, {
     ...options,
@@ -187,18 +202,43 @@ const normalizeGloabalTixProduct = (raw, def) => {
 // ── Load live tours for a destination ────────────────────────────
 export const loadDestinationTours = async (destinationSlug) => {
   const productDefs = GLADEX_TOUR_PRODUCTS[destinationSlug] || [];
-  if (productDefs.length === 0) return [];
+  if (productDefs.length === 0) {
+    console.info(`[GlobalTix] No products configured for destination: ${destinationSlug}`);
+    return [];
+  }
+
+  console.info(`[GlobalTix] Loading ${productDefs.length} products for: ${destinationSlug}`);
 
   const results = await Promise.all(
     productDefs.map(async (def) => {
+      const startTime = Date.now();
       try {
+        console.info(`[GlobalTix] Fetching product ${def.id} (${def.name}) — ${BASE_URL}/api/product/info?id=${def.id}`);
         const res = await getProduct(def.id);
+        const elapsed = Date.now() - startTime;
+        console.info(`[GlobalTix] Product ${def.id} loaded in ${elapsed}ms`);
         return normalizeGloabalTixProduct(res, def);
-      } catch {
-        return { id: String(def.id), name: def.name, icon: def.icon, badge: def.badge, description: "", stops: [], highlights: [], price: null, liveData: false };
+      } catch (err) {
+        const elapsed = Date.now() - startTime;
+        console.warn(`[GlobalTix] Product ${def.id} (${def.name}) failed after ${elapsed}ms:`, err?.message || err);
+        // Return a static-only card so the UI still renders this activity
+        return {
+          id:          String(def.id),
+          name:        def.name,
+          icon:        def.icon,
+          badge:       def.badge,
+          description: "",
+          stops:       [],
+          highlights:  [],
+          price:       null,
+          liveData:    false,
+          apiError:    err?.message || "API unavailable",
+        };
       }
     })
   );
 
+  const live = results.filter((r) => r.liveData).length;
+  console.info(`[GlobalTix] ${live}/${results.length} products loaded live for: ${destinationSlug}`);
   return results;
 };

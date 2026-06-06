@@ -1,6 +1,12 @@
 // @ts-nocheck
 // Source of truth for all destination content.
 // To add a new destination: add a new key to DESTINATION_DATA following the same schema.
+//
+// LOCAL IMAGE IMPORTS — uncomment when verified Philippine photos are placed in the folders.
+// import * as boracayImgs from "@/images/boracay";
+// import * as cebuImgs    from "@/images/cebu";
+// import * as elnidoImgs  from "@/images/elnido";
+
 
 export const DESTINATION_DATA = {
   boracay: {
@@ -11,7 +17,7 @@ export const DESTINATION_DATA = {
       "Experience the Philippines' most iconic island destination with powdery white sand, crystal-clear waters, and world-famous sunsets.",
     airport: "Caticlan (MPH) or Kalibo (KLO)",
     heroImage:
-      "https://images.unsplash.com/photo-1511316695145-4992006ffddb?w=1600&q=85",
+      "https://images.unsplash.com/photo-1519046904884-53103b34b206",
     heroImages: [
       "https://images.unsplash.com/photo-1511316695145-4992006ffddb?w=1600&q=85",
       "https://images.pexels.com/photos/3601430/pexels-photo-3601430.jpeg?w=1600&q=85",
@@ -229,7 +235,7 @@ export const DESTINATION_DATA = {
         { name: "White Beach — Morning Swim", note: "Early morning, calm water, no crowds — the clearest and most iconic Boracay shot", image: "https://images.unsplash.com/photo-1506953823976-52e1fdc0149a?w=900&q=85" },
         { name: "Sunset at White Beach", note: "Grab a beachside spot by 5:30 PM — the golden sky reflection on the sand is breathtaking", image: "https://images.unsplash.com/photo-1503614472-8c93d56e92ce?w=900&q=85" },
         { name: "Puka Shell Beach", note: "Quiet northern beach — rough shells, natural beauty, and almost no tourists", image: "https://images.pexels.com/photos/1287460/pexels-photo-1287460.jpeg?w=900&q=85" },
-        { name: "On the Island Hopping Boat", note: "Shoot the clear green water and surrounding islands from the bangka boat deck", image: "https://images.pexels.com/photos/1430672/pexels-photo-1430672.jpeg?w=900&q=85" }, // Bangka boat deck view
+        { name: "On the Island Hopping Boat", note: "Shoot the clear green water and surrounding islands from the bangka boat deck", image: "https://images.pexels.com/photos/1483053/pexels-photo-1483053.jpeg?w=900&q=85" },
       ],
       bestTime: "November to May is the peak season with favorable weather. June to October is rainy season with fewer crowds.",
       localTips: [
@@ -311,14 +317,17 @@ export const DESTINATION_DATA = {
     ],
     faqs: [
       { q: "When can we receive our final voucher and ticket?", a: "Your final travel voucher and confirmed hotel details will be sent approximately 7–10 working days after full payment." },
+      { q: "What if my flight is delayed or cancelled?", a: "Inform your Gladex handling agent immediately — before boarding if possible. Call +63 917 875 2200. Transfer arrangements will be adjusted based on your updated arrival time. Do not leave the airport without coordinating with your representative." },
+      { q: "What time is hotel check-in and check-out?", a: "Standard check-in is 2:00 PM – 3:00 PM. Check-out is by 11:00 AM – 12:00 NN. Early check-in and late check-out are subject to availability and may incur additional charges." },
+      { q: "What if it rains or the weather is bad?", a: "Light rain typically does not cancel tours. However, if the Philippine Coast Guard issues a travel suspension, island hopping tours may be cancelled or rescheduled for safety. In this case, a reschedule may be offered subject to availability." },
+      { q: "Is the tour refundable if cancelled?", a: "Same-day tour cancellations are non-refundable and automatically forfeited. To reschedule, please notify your coordinator at least one day before the activity date." },
+      { q: "Can I add optional tours once I'm there?", a: "Yes. You can book additional activities directly through your Gladex coordinator (+63 917 875 2200) or use this portal's optional tours section to add items before your trip." },
+      { q: "Is travel insurance required?", a: "Travel insurance is not mandatory but is strongly recommended. Gladex offers Starr TraveLead Domestic Travel Insurance — Economy and Elite plans are available. Ask your coordinator for details." },
+      { q: "Who do I contact during emergencies?", a: "Call Gladex Customer Care at +63 917 875 2200 (7:00 AM – 9:00 PM). You can also contact Ms. Che at +63 985 045 3635 or Mr. Mark at +63 995 416 7143 for local operations assistance." },
       { q: "What is the best time to visit Boracay?", a: "November to May is generally considered the best season due to favorable weather conditions." },
       { q: "Is Boracay family-friendly?", a: "Yes. Boracay offers activities suitable for families, couples, and solo travelers of all ages." },
       { q: "Are ATMs available on the island?", a: "Yes. ATMs and money exchange facilities are available in key tourist areas including D'Mall." },
-      { q: "Is Wi-Fi available?", a: "Most hotels, restaurants, and cafes provide Wi-Fi access throughout the island." },
       { q: "Can I use credit cards?", a: "Major establishments accept credit cards, but carrying cash is still recommended for smaller shops and market vendors." },
-      { q: "Is Boracay safe for tourists?", a: "Yes. Boracay is generally safe for tourists. However, standard travel precautions should always be observed." },
-      { q: "Are airport transfers included in the package?", a: "This depends on your tour package. Some packages include private or shared transfers — please refer to your voucher." },
-      { q: "What should I do in case of emergency?", a: "Contact local emergency services, your hotel, or your travel coordinator immediately using the emergency numbers provided." },
     ],
   },
 
@@ -603,14 +612,16 @@ export const DESTINATION_DATA = {
     ],
     faqs: [
       { q: "When can we receive our final voucher and ticket?", a: "Your final travel voucher and confirmed hotel details will be sent approximately 7–10 working days after full payment." },
+      { q: "What if my flight is delayed or cancelled?", a: "Inform your Gladex handling agent immediately at +63 917 875 2200. Transfer and tour arrangements will be adjusted based on your updated arrival time. The Admin Team will provide your driver details prior to arrival — coordinate with them if your schedule changes." },
+      { q: "What time is hotel check-in and check-out?", a: "Standard check-in is 2:00 PM – 3:00 PM. Check-out is by 11:00 AM – 12:00 NN. Early check-in and late check-out are subject to availability and may incur additional charges." },
+      { q: "What if it rains or the weather is bad?", a: "Light rain typically does not cancel tours. Outdoor tours like Oslob and Moalboal may be rescheduled if conditions are unsafe. Your coordinator will inform you of any changes the night before." },
+      { q: "Is the tour refundable if cancelled?", a: "Same-day tour cancellations are non-refundable and automatically forfeited. To reschedule, please notify your coordinator at least one day before the activity date." },
+      { q: "Can I add optional tours once I'm there?", a: "Yes. You can book additional tours through your Gladex coordinator (+63 917 875 2200) or via the optional tours section on this portal." },
+      { q: "Is travel insurance required?", a: "Travel insurance is not mandatory but strongly recommended. Gladex offers Starr TraveLead Domestic Travel Insurance. Ask your coordinator for details." },
+      { q: "Who do I contact during emergencies?", a: "Call Gladex Customer Care at +63 917 875 2200 (7:00 AM – 9:00 PM). Additional local operations contact details are in your travel voucher." },
       { q: "What is the best time to visit Cebu?", a: "December to May (dry season) is ideal for beaches and outdoor tours. The weather is best for island hopping and waterfall activities." },
-      { q: "Do I need a visa to travel to Cebu?", a: "For domestic travelers within the Philippines, no visa is required. International visitors should check Philippine visa requirements based on their nationality." },
       { q: "Are ATMs available?", a: "Yes. ATMs and money exchange facilities are available in key tourist areas across Cebu City and Mactan." },
-      { q: "Is Wi-Fi available?", a: "Most hotels, restaurants, and cafes provide Wi-Fi access throughout Cebu." },
       { q: "Can I use credit cards?", a: "Major establishments accept credit cards, but carrying cash is still recommended especially for markets and local vendors." },
-      { q: "Is Cebu safe for tourists?", a: "Yes. Cebu is generally safe for tourists. Standard travel precautions should always be observed." },
-      { q: "Are airport transfers included?", a: "This depends on your tour package. Please refer to your travel voucher for specific transfer inclusions." },
-      { q: "What should I do in case of emergency?", a: "Contact local emergency services, your hotel, or your travel coordinator immediately. Use the emergency contact numbers provided." },
     ],
   },
 
@@ -912,14 +923,17 @@ export const DESTINATION_DATA = {
     ],
     faqs: [
       { q: "When will we receive our final voucher?", a: "Final travel documents are typically sent 7–10 working days after full payment." },
-      { q: "Is El Nido safe for tourists?", a: "Yes, it is generally safe with proper tour coordination and standard travel precautions." },
-      { q: "Do I need to bring cash?", a: "Yes — cash is highly recommended as ATMs are very limited in El Nido. Prepare enough for your entire stay including tours and meals." },
+      { q: "What if my flight is delayed or cancelled?", a: "Inform your Gladex handling agent immediately at +63 917 875 2200. Your representative will be waiting for you — coordinate with them if your arrival time changes. For PPS arrivals, the van transfer can be adjusted. For LIO arrivals, contact your driver directly." },
+      { q: "What time is hotel check-in and check-out?", a: "Standard check-in is 2:00 PM – 3:00 PM. Check-out is by 11:00 AM – 12:00 NN. Early check-in is subject to availability and additional charges." },
+      { q: "What if it rains or the weather is bad?", a: "Island hopping tours may be cancelled or rescheduled if the Philippine Coast Guard issues a travel suspension. Your guide will inform you. In case of cancellation due to weather, a reschedule will be offered subject to availability." },
+      { q: "Is the tour refundable if cancelled?", a: "Same-day tour cancellations are non-refundable. To reschedule, notify your coordinator at least one day before the activity. Weather-related cancellations by authorities may be eligible for reschedule options." },
+      { q: "Can I add optional tours once I'm there?", a: "Yes. Joiner tours (Tour A, B, C, D) can be arranged through your Gladex coordinator or booked locally at El Nido. Availability varies by season." },
+      { q: "Is travel insurance required?", a: "Travel insurance is not mandatory but strongly recommended given El Nido's remote location and outdoor activities. Gladex offers Starr TraveLead Domestic Travel Insurance." },
+      { q: "Who do I contact during emergencies?", a: "Call Gladex Customer Care at +63 917 875 2200 (7:00 AM – 9:00 PM). Local operations contact details are included in your travel voucher." },
+      { q: "Do I need to bring cash?", a: "Yes — cash is highly recommended as ATMs are very limited in El Nido. Prepare enough for your entire stay including tours, meals, and environmental fees." },
       { q: "Are island tours available daily?", a: "Yes, but subject to weather conditions and Philippine Coast Guard clearance. Tours may be cancelled or rescheduled for safety." },
-      { q: "Is Wi-Fi available?", a: "Yes, but Wi-Fi may be limited or slow in some areas of El Nido, especially on outer islands." },
-      { q: "Can I use credit cards?", a: "Credit card acceptance is very limited in El Nido. It is strongly recommended to bring sufficient cash." },
-      { q: "Are transfers included in the package?", a: "This depends on your package inclusions stated in your travel voucher. Please refer to your confirmed booking." },
-      { q: "What happens during bad weather?", a: "Tours may be cancelled or rescheduled for safety reasons. In case of suspension by local authorities, reschedule may be offered subject to availability." },
       { q: "How long is the van transfer from Puerto Princesa?", a: "The van transfer from Puerto Princesa Airport (PPS) to El Nido takes approximately 5–6 hours including stopovers." },
+      { q: "What happens during bad weather?", a: "Tours may be cancelled or rescheduled for safety reasons. In case of suspension by local authorities, a reschedule may be offered subject to availability. Always follow tour guide and Coast Guard instructions." },
     ],
   },
 };

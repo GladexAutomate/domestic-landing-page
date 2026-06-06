@@ -5,7 +5,7 @@ import { ChevronDown, Clock, MapPin, Plus, Check } from "lucide-react";
 
 export default function TBOptionalTours({ dest, darkMode, tk, onAddToCart, cartItems = [], loading = false }) {
   const [open, setOpen] = useState(null);
-  const tours = dest.optionalTours;
+  const tours = dest?.optionalTours || [];
 
   if (loading) {
     return (
@@ -19,6 +19,21 @@ export default function TBOptionalTours({ dest, darkMode, tk, onAddToCart, cartI
             </div>
           </div>
         ))}
+      </div>
+    );
+  }
+
+  if (tours.length === 0) {
+    return (
+      <div
+        className="flex flex-col items-center justify-center gap-3 py-12 rounded-2xl border text-center"
+        style={{ borderColor: tk.borderColor, backgroundColor: tk.surfaceBg }}
+      >
+        <span className="text-4xl">🏝️</span>
+        <p className="font-bold text-sm" style={{ color: tk.textPrimary }}>No tours available at the moment</p>
+        <p className="text-xs" style={{ color: tk.textMuted }}>
+          Contact Gladex at +63 917 875 2200 to arrange custom activities.
+        </p>
       </div>
     );
   }
@@ -77,10 +92,15 @@ export default function TBOptionalTours({ dest, darkMode, tk, onAddToCart, cartI
                     {tour.badge}
                   </span>
                 )}
-                {tour.liveData && (
+                {tour.liveData ? (
                   <span className="text-[9px] font-bold px-2 py-1 rounded-full backdrop-blur-sm"
                     style={{ background: "rgba(34,197,94,0.88)", color: "#fff" }}>
-                    ✅ Live
+                    Live
+                  </span>
+                ) : (
+                  <span className="text-[9px] font-bold px-2 py-1 rounded-full backdrop-blur-sm"
+                    style={{ background: "rgba(0,0,0,0.55)", color: "rgba(255,255,255,0.75)" }}>
+                    On Request
                   </span>
                 )}
               </div>
