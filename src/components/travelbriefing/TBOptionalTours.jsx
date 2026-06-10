@@ -3,19 +3,42 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, Clock, MapPin, Plus, Check } from "lucide-react";
 
+function getChipIcon(text) {
+  const t = text.toLowerCase();
+  if (t.includes("lunch") || t.includes("bbq") || t.includes("meal") || t.includes("food")) return "🍱";
+  if (t.includes("snorkel")) return "🤿";
+  if (t.includes("guide") || t.includes("instructor")) return "👨‍✈️";
+  if (t.includes("boat") || t.includes("bangka") || t.includes("ferry")) return "⛴️";
+  if (t.includes("gear") || t.includes("equipment")) return "🎽";
+  if (t.includes("photo") || t.includes("picture")) return "📸";
+  if (t.includes("transport") || t.includes("transfer")) return "🚌";
+  if (t.includes("fish") || t.includes("marine") || t.includes("coral")) return "🐠";
+  if (t.includes("underwater") || t.includes("ocean floor")) return "🌊";
+  if (t.includes("helmet") || t.includes("safety")) return "⛑️";
+  if (t.includes("wetsuit")) return "🤽";
+  if (t.includes("lifejacket") || t.includes("life jacket")) return "🦺";
+  if (t.includes("beach") || t.includes("island")) return "🏖️";
+  return "✓";
+}
+
 export default function TBOptionalTours({ dest, darkMode, tk, onAddToCart, cartItems = [], loading = false }) {
   const [open, setOpen] = useState(null);
   const tours = dest?.optionalTours || [];
+
+  const { cardBg, cardShadow, borderColor, textPrimary, textMuted, surfaceBg } = tk;
 
   if (loading) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="border rounded-2xl overflow-hidden animate-pulse" style={{ borderColor: tk.borderColor }}>
-            <div className="h-44 w-full" style={{ backgroundColor: tk.surfaceBg }} />
-            <div className="p-4 space-y-2">
-              <div className="h-4 rounded w-3/4" style={{ backgroundColor: tk.surfaceBg }} />
-              <div className="h-3 rounded w-1/2" style={{ backgroundColor: tk.surfaceBg }} />
+          <div key={i} className="border rounded-2xl overflow-hidden animate-pulse" style={{ borderColor }}>
+            <div className="h-44 w-full" style={{ backgroundColor: surfaceBg }} />
+            <div className="p-4 space-y-3">
+              <div className="h-5 rounded w-3/4" style={{ backgroundColor: surfaceBg }} />
+              <div className="h-6 rounded w-1/3" style={{ backgroundColor: surfaceBg }} />
+              <div className="h-3 rounded w-1/2" style={{ backgroundColor: surfaceBg }} />
+              <div className="h-3 rounded w-2/3" style={{ backgroundColor: surfaceBg }} />
+              <div className="h-9 rounded-xl" style={{ backgroundColor: surfaceBg }} />
             </div>
           </div>
         ))}
@@ -27,11 +50,11 @@ export default function TBOptionalTours({ dest, darkMode, tk, onAddToCart, cartI
     return (
       <div
         className="flex flex-col items-center justify-center gap-3 py-12 rounded-2xl border text-center"
-        style={{ borderColor: tk.borderColor, backgroundColor: tk.surfaceBg }}
+        style={{ borderColor, backgroundColor: surfaceBg }}
       >
         <span className="text-4xl">🏝️</span>
-        <p className="font-bold text-sm" style={{ color: tk.textPrimary }}>No tours available at the moment</p>
-        <p className="text-xs" style={{ color: tk.textMuted }}>
+        <p className="font-bold text-sm" style={{ color: textPrimary }}>No tours available at the moment</p>
+        <p className="text-xs" style={{ color: textMuted }}>
           Contact Gladex at +63 917 875 2200 to arrange custom activities.
         </p>
       </div>
@@ -39,11 +62,23 @@ export default function TBOptionalTours({ dest, darkMode, tk, onAddToCart, cartI
   }
 
   return (
-    <div className="grid grid-cols-1 gap-5">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       {tours.map((tour, idx) => {
         const isOpen  = open === idx;
         const cartKey = String(tour.id || tour.name);
         const inCart  = cartItems.some((c) => c.id === cartKey);
+
+        // liveData is a boolean on GlobalTix-sourced tours (true = live API, false = fallback)
+        // price is always set via normalizeGloabalTixProduct or fallbackPrice
+        const resolvedPrice = tour.price ? Number(tour.price) : null;
+        const priceIsLive   = tour.liveData === true;
+
+        // Items to always show (top 3), rest in expand
+        const allInclusions = tour.highlights?.length
+          ? tour.highlights
+          : (tour.stops?.length ? tour.stops : []);
+        const visibleInclusions = allInclusions.slice(0, 3);
+        const hiddenInclusions  = allInclusions.slice(3);
 
         return (
           <motion.div
@@ -54,17 +89,13 @@ export default function TBOptionalTours({ dest, darkMode, tk, onAddToCart, cartI
             transition={{ delay: idx * 0.05, duration: 0.4 }}
             className="border rounded-2xl overflow-hidden flex flex-col"
             style={{
-              borderColor: inCart ? "rgba(34,197,94,0.4)" : isOpen ? "rgba(249,115,22,0.35)" : tk.borderColor,
-              backgroundColor: tk.cardBg,
-              boxShadow: tk.cardShadow,
+              borderColor: inCart ? "rgba(34,197,94,0.4)" : isOpen ? "rgba(249,115,22,0.35)" : borderColor,
+              backgroundColor: cardBg,
+              boxShadow: cardShadow,
             }}
           >
             {/* ── Activity Photo ─────────────────────────────────── */}
-            <div
-              className="relative overflow-hidden cursor-pointer"
-              style={{ aspectRatio: "16 / 7" }}
-              onClick={() => setOpen(isOpen ? null : idx)}
-            >
+            <div className="relative overflow-hidden" style={{ aspectRatio: "16 / 7" }}>
               {tour.image ? (
                 <img
                   src={tour.image}
@@ -72,7 +103,7 @@ export default function TBOptionalTours({ dest, darkMode, tk, onAddToCart, cartI
                   className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                   loading="lazy"
                   onError={(e) => {
-                    e.target.parentNode.innerHTML = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:3rem;background:${darkMode ? '#1a1a1a' : '#f0f0f0'}">${tour.icon || '🏝️'}</div>`;
+                    e.target.parentNode.innerHTML = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:3.5rem;background:${darkMode ? '#1a1a1a' : '#f0f0f0'}">${tour.icon || '🏝️'}</div>`;
                   }}
                 />
               ) : (
@@ -84,149 +115,192 @@ export default function TBOptionalTours({ dest, darkMode, tk, onAddToCart, cartI
                 </div>
               )}
 
-              {/* Badges over image */}
-              <div className="absolute top-2.5 left-2.5 flex gap-1.5 flex-wrap">
-                {tour.badge && (
+              {/* Badge */}
+              {tour.badge && (
+                <div className="absolute top-2.5 left-2.5">
                   <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-full backdrop-blur-sm"
                     style={{ background: "rgba(249,115,22,0.88)", color: "#fff" }}>
                     {tour.badge}
                   </span>
-                )}
-                {tour.liveData ? (
-                  <span className="text-[9px] font-bold px-2 py-1 rounded-full backdrop-blur-sm"
-                    style={{ background: "rgba(34,197,94,0.88)", color: "#fff" }}>
-                    Live
-                  </span>
-                ) : (
-                  <span className="text-[9px] font-bold px-2 py-1 rounded-full backdrop-blur-sm"
-                    style={{ background: "rgba(0,0,0,0.55)", color: "rgba(255,255,255,0.75)" }}>
-                    On Request
-                  </span>
-                )}
-              </div>
-
-              {/* Price over image */}
-              {tour.price && (
-                <div className="absolute bottom-2.5 right-2.5">
-                  <span className="text-sm font-black px-2.5 py-1 rounded-lg backdrop-blur-sm"
-                    style={{ background: "rgba(0,0,0,0.65)", color: "#fff" }}>
-                    ₱{Number(tour.price).toLocaleString("en-PH")}
-                    <span className="text-[10px] font-normal ml-0.5 opacity-80">/pax</span>
-                  </span>
                 </div>
               )}
+
+              {/* Price source indicator */}
+              {tour.liveData !== undefined && (
+                <div className="absolute top-2.5 right-2.5">
+                  {priceIsLive ? (
+                    <span className="text-[9px] font-bold px-2 py-1 rounded-full backdrop-blur-sm"
+                      style={{ background: "rgba(34,197,94,0.88)", color: "#fff" }}>
+                      Live API
+                    </span>
+                  ) : (
+                    <span className="text-[9px] font-bold px-2 py-1 rounded-full backdrop-blur-sm"
+                      style={{ background: "rgba(249,115,22,0.82)", color: "#fff" }}>
+                      Est. Price
+                    </span>
+                  )}
+                </div>
+              )}
+
+              {/* Dark gradient at bottom for readability */}
+              <div className="absolute inset-x-0 bottom-0 h-16"
+                style={{ background: "linear-gradient(to top, rgba(0,0,0,0.55), transparent)" }} />
             </div>
 
-            {/* ── Tour Header ─────────────────────────────────────── */}
-            <button
-              className="flex items-start gap-3 p-4 text-left w-full"
-              onClick={() => setOpen(isOpen ? null : idx)}
-            >
-              <div className="flex-1 min-w-0">
-                <p className="font-bold text-sm leading-snug" style={{ color: tk.textPrimary }}>
-                  {tour.name}
-                </p>
+            {/* ── Card Body ──────────────────────────────────────── */}
+            <div className="p-4 flex flex-col flex-1 gap-0">
+
+              {/* Tour name */}
+              <p className="font-black text-base leading-snug mb-2" style={{ color: textPrimary }}>
+                {tour.name}
+              </p>
+
+              {/* Price — headline figure */}
+              <p className="font-black text-2xl mb-1" style={{ color: "#f97316", letterSpacing: "-0.02em" }}>
+                {resolvedPrice !== null
+                  ? <>
+                      ₱{resolvedPrice.toLocaleString("en-PH")}
+                      <span className="text-xs font-normal ml-1.5 opacity-70">/pax</span>
+                    </>
+                  : <span className="text-sm font-semibold" style={{ color: textMuted }}>Contact for pricing</span>
+                }
+              </p>
+
+              {/* Duration + Available Dates row */}
+              <div className="flex flex-wrap items-center gap-3 mb-3">
                 {tour.duration && (
-                  <div className="flex items-center gap-1 mt-1">
-                    <Clock className="w-3 h-3 shrink-0" style={{ color: tk.textMuted }} />
-                    <span className="text-xs" style={{ color: tk.textMuted }}>{tour.duration}</span>
+                  <div className="flex items-center gap-1.5 text-xs" style={{ color: textMuted }}>
+                    <Clock className="w-3 h-3 shrink-0" />
+                    <span>{tour.duration}</span>
+                  </div>
+                )}
+                {tour.schedule && (
+                  <div className="flex items-center gap-1.5 text-xs" style={{ color: "rgba(34,197,94,0.85)" }}>
+                    <span>📅</span>
+                    <span>{tour.schedule}</span>
                   </div>
                 )}
               </div>
-              <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.22 }} className="shrink-0 mt-0.5">
-                <ChevronDown className="w-4 h-4" style={{ color: tk.textMuted }} />
-              </motion.div>
-            </button>
 
-            {/* ── Expandable Details ──────────────────────────────── */}
-            <AnimatePresence initial={false}>
-              {isOpen && (
-                <motion.div
-                  key="body"
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.28, ease: "easeInOut" }}
-                  style={{ overflow: "hidden" }}
+              {/* Inclusions — visual chips, top 3 */}
+              {visibleInclusions.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mb-3">
+                  {visibleInclusions.map((item, i) => {
+                    const text = typeof item === "string" ? item : (item.name || "");
+                    return (
+                      <span
+                        key={i}
+                        className="text-[10px] font-semibold px-2.5 py-1 rounded-full border flex items-center gap-1"
+                        style={{ borderColor, backgroundColor: surfaceBg, color: textPrimary }}
+                      >
+                        {getChipIcon(text)} {text}
+                      </span>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Expand toggle — shows remaining inclusions + description */}
+              {(hiddenInclusions.length > 0 || tour.description) && (
+                <button
+                  className="flex items-center gap-1 text-xs mb-3 font-semibold self-start"
+                  style={{ color: "#f97316" }}
+                  onClick={() => setOpen(isOpen ? null : idx)}
                 >
-                  <div className="px-4 pb-4 space-y-4" style={{ borderTop: `1px solid ${tk.borderColor}`, paddingTop: "14px" }}>
+                  <motion.span animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                    <ChevronDown className="w-3.5 h-3.5" />
+                  </motion.span>
+                  {isOpen ? "Show less" : `View full details`}
+                </button>
+              )}
 
-                    {/* Description */}
-                    {tour.description && (
-                      <p className="text-sm leading-relaxed" style={{ color: tk.textPrimary }}>
-                        {tour.description.length > 250
-                          ? tour.description.substring(0, 250) + "…"
-                          : tour.description
-                        }
-                      </p>
-                    )}
-
-                    {/* Inclusions / Stops */}
-                    {(tour.stops?.length > 0 || tour.highlights?.length > 0) && (
-                      <div>
-                        <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: tk.textMuted }}>
-                          {tour.stops?.length > 0 ? "What's Included" : "Highlights"}
+              <AnimatePresence initial={false}>
+                {isOpen && (
+                  <motion.div
+                    key="details"
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.25, ease: "easeInOut" }}
+                    style={{ overflow: "hidden" }}
+                  >
+                    <div className="space-y-3 mb-3 pt-1">
+                      {tour.description && (
+                        <p className="text-xs leading-relaxed" style={{ color: textMuted }}>
+                          {tour.description}
                         </p>
+                      )}
+
+                      {hiddenInclusions.length > 0 && (
                         <div className="space-y-1.5">
-                          {(tour.stops?.length > 0 ? tour.stops : tour.highlights)
-                            .slice(0, 6)
-                            .map((item, i) => (
-                              <div key={i} className="flex items-start gap-2 text-xs" style={{ color: tk.textPrimary }}>
-                                <span className="text-orange-400 shrink-0 mt-0.5">✓</span>
-                                <span>{typeof item === "string" ? item : item.name || JSON.stringify(item)}</span>
-                              </div>
-                            ))
-                          }
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Destinations */}
-                    {!tour.liveData && tour.stops?.length > 0 && (
-                      <div>
-                        <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: tk.textMuted }}>
-                          Destinations
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                          {tour.stops.map((stop) => (
-                            <div key={stop} className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-full border"
-                              style={{ borderColor: tk.borderColor, color: tk.textMuted, backgroundColor: tk.surfaceBg }}>
-                              <MapPin className="w-2.5 h-2.5" /> {stop}
+                          <p className="text-[10px] font-bold uppercase tracking-wider" style={{ color: textMuted }}>
+                            Additional Inclusions
+                          </p>
+                          {hiddenInclusions.map((item, i) => (
+                            <div key={i} className="flex items-start gap-2 text-xs" style={{ color: textPrimary }}>
+                              <span className="text-orange-400 shrink-0 mt-0.5">✓</span>
+                              <span>{typeof item === "string" ? item : item.name || JSON.stringify(item)}</span>
                             </div>
                           ))}
                         </div>
-                      </div>
-                    )}
+                      )}
 
-                    {/* Add to Trip */}
-                    {onAddToCart ? (
-                      <motion.button
-                        whileTap={{ scale: 0.97 }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onAddToCart({ id: cartKey, name: tour.name, price: tour.price || 0, icon: tour.icon });
-                        }}
-                        className="w-full py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all"
-                        style={{
-                          background: inCart ? "rgba(34,197,94,0.12)" : "linear-gradient(135deg, #f97316, #b45309)",
-                          color: inCart ? "#22c55e" : "#fff",
-                          border: inCart ? "1px solid rgba(34,197,94,0.4)" : "none",
-                        }}
-                      >
-                        {inCart
-                          ? <><Check className="w-4 h-4" /> Added to Trip</>
-                          : <><Plus className="w-4 h-4" /> Add to Trip</>
-                        }
-                      </motion.button>
-                    ) : (
-                      <p className="text-xs italic" style={{ color: tk.textMuted }}>
-                        Contact Gladex at +63 917 875 2200 to book this tour.
-                      </p>
-                    )}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                      {!tour.liveData && tour.stops?.length > 0 && (
+                        <div>
+                          <p className="text-[10px] font-bold uppercase tracking-wider mb-1.5" style={{ color: textMuted }}>
+                            Destinations
+                          </p>
+                          <div className="flex flex-wrap gap-2">
+                            {tour.stops.map((stop) => (
+                              <div
+                                key={stop}
+                                className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-full border"
+                                style={{ borderColor, color: textMuted, backgroundColor: surfaceBg }}
+                              >
+                                <MapPin className="w-2.5 h-2.5" />
+                                {stop}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* ── Add to Trip — always visible ─────────────────── */}
+              <div className="mt-auto pt-1">
+                {onAddToCart ? (
+                  <motion.button
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() =>
+                      onAddToCart({
+                        id:    cartKey,
+                        name:  tour.name,
+                        price: resolvedPrice || 0,
+                        icon:  tour.icon,
+                      })
+                    }
+                    className="w-full py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all"
+                    style={{
+                      background: inCart ? "rgba(34,197,94,0.12)" : "linear-gradient(135deg, #f97316, #b45309)",
+                      color:      inCart ? "#22c55e" : "#fff",
+                      border:     inCart ? "1px solid rgba(34,197,94,0.4)" : "none",
+                    }}
+                  >
+                    {inCart
+                      ? <><Check className="w-4 h-4" /> Added to Trip</>
+                      : <><Plus className="w-4 h-4" /> Add to Trip · {resolvedPrice ? `₱${resolvedPrice.toLocaleString("en-PH")}` : "Contact for Price"}</>
+                    }
+                  </motion.button>
+                ) : (
+                  <p className="text-xs italic" style={{ color: textMuted }}>
+                    Contact Gladex at +63 917 875 2200 to book this tour.
+                  </p>
+                )}
+              </div>
+            </div>
           </motion.div>
         );
       })}

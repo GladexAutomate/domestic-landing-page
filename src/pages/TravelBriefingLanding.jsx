@@ -5,39 +5,54 @@ import { useTheme } from "@/lib/ThemeContext";
 import { motion, AnimatePresence } from "framer-motion";
 import DestinationNavbar from "@/components/destination/DestinationNavbar";
 import { getDestination, SUPPORTED_DESTINATIONS } from "@/data/destinationData";
-import TBHero from "@/components/travelbriefing/TBHero";
+import TBWelcomeSection from "@/components/travelbriefing/TBWelcomeSection";
 import TBBriefingVideo from "@/components/travelbriefing/TBBriefingVideo";
+import TBItinerary from "@/components/travelbriefing/TBItinerary";
 import TBChecklist from "@/components/travelbriefing/TBChecklist";
 import TBDestinationGuide from "@/components/travelbriefing/TBDestinationGuide";
-import TBOptionalTours from "@/components/travelbriefing/TBOptionalTours";
 import TBFAQs from "@/components/travelbriefing/TBFAQs";
-import TBBookingVerification from "@/components/travelbriefing/TBBookingVerification";
 import { lookupBooking } from "@/services/supabaseService";
-import { getDomesticQuote } from "@/services/starrService";
-import { loadDestinationTours, GLADEX_TOUR_PRODUCTS } from "@/services/globaltixService";
-import { createGladexCheckout } from "@/services/xenditService";
 import {
   Check, X, AlertTriangle, ArrowUp, Phone,
-  Download, Star, Gift, ShoppingCart,
-  BadgeCheck, Info, Loader,
+  Download, Star, Gift,
+  BadgeCheck, Info, Loader, ChevronDown, MapPin,
 } from "lucide-react";
 
-// ── Starr domestic plan definitions ─────────────────────────────
-// Coverage text stays static; only prices come from Starr API
-const STARR_PLANS = [
+const TESTIMONIALS = [
   {
-    key:      "economy",
-    planId:   "1086",
-    name:     "Economy",
-    coverage: ["Emergency Medical Expenses", "Accidental Death & Disablement", "Baggage Loss / Delay"],
-    recommended: false,
+    name: "Maria Santos",
+    location: "Da Nang, Vietnam",
+    date: "May 2025",
+    review: "Gladex made our Vietnam trip absolutely seamless! The briefing page had everything we needed — no stress, no confusion. The itinerary was perfect from start to finish. 10/10!",
+    rating: 5,
   },
   {
-    key:      "elite",
-    planId:   "1087",
-    name:     "Elite",
-    coverage: ["All Economy Coverage", "Trip Cancellation", "Trip Delay", "Personal Liability", "Emergency Evacuation"],
-    recommended: true,
+    name: "Jose Reyes",
+    location: "Hong Kong",
+    date: "March 2025",
+    review: "The pre-trip briefing page was incredibly detailed. I loved seeing all the tour options and insurance in one place. Our family of 5 had zero confusion during the entire trip!",
+    rating: 5,
+  },
+  {
+    name: "Ana Villanueva",
+    location: "Singapore",
+    date: "April 2025",
+    review: "Best travel experience ever! The team was so responsive and the itinerary was perfectly planned. We've already booked our Korea trip with Gladex for next year!",
+    rating: 5,
+  },
+  {
+    name: "Joel T.",
+    location: "Cebu",
+    date: "February 2025",
+    review: "The briefing portal made our entire arrival process smooth. We knew the van schedule, the terminal to go to, and the hotel check-in time before we even boarded. Highly recommended.",
+    rating: 5,
+  },
+  {
+    name: "Christine B.",
+    location: "El Nido",
+    date: "January 2025",
+    review: "Having all the hotel and tour schedules in one place was so helpful. We referred to the portal several times during the trip and everything matched exactly what happened on the ground.",
+    rating: 5,
   },
 ];
 
@@ -52,17 +67,42 @@ function getDisplayStatus(rawStatus) {
 }
 
 // ── Shared animation config ──────────────────────────────────────
-const stagger = { visible: { transition: { staggerChildren: 0.07 } } };
-const cardVariant = { hidden: { opacity: 0, y: 14 }, visible: { opacity: 1, y: 0 } };
+const stagger = { visible: { transition: { staggerChildren: 0.06 } } };
+const cardVariant = { hidden: { opacity: 0, y: 6 }, visible: { opacity: 1, y: 0 } };
+
+// ── Item icon for What to Bring grid ────────────────────────────
+function getItemIcon(item) {
+  const t = item.toLowerCase();
+  if (t.includes("passport") || (t.includes("id") && !t.includes("valid"))) return "🪪";
+  if (t.includes("power bank")) return "🔋";
+  if (t.includes("phone") || t.includes("mobile")) return "📱";
+  if (t.includes("wallet") || (t.includes("cash") && !t.includes("bottle"))) return "💳";
+  if (t.includes("water bottle") || t.includes("reusable")) return "🍶";
+  if (t.includes("swimwear") || t.includes("swim")) return "🩱";
+  if (t.includes("beach towel") || t.includes("towel")) return "🏖️";
+  if (t.includes("sunscreen") || t.includes("sunblock")) return "🧴";
+  if (t.includes("sunglasses") || t.includes("shades")) return "🕶️";
+  if (t.includes("hat") || t.includes("cap")) return "🧢";
+  if (t.includes("waterproof bag")) return "🎒";
+  if (t.includes("waterproof phone") || t.includes("phone case")) return "📷";
+  if (t.includes("clothes") || t.includes("outfit") || t.includes("extra")) return "👕";
+  if (t.includes("toiletries")) return "🪥";
+  if (t.includes("medication") || t.includes("medicine")) return "💊";
+  if (t.includes("charger")) return "🔌";
+  if (t.includes("rash guard")) return "🏄";
+  if (t.includes("sandal") || t.includes("flip") || t.includes("shoe")) return "🩴";
+  if (t.includes("valid id")) return "🪪";
+  return "✅";
+}
 
 // ── FadeIn ───────────────────────────────────────────────────────
 function FadeIn({ children, delay = 0 }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 18 }}
+      initial={{ opacity: 0, y: 6 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.5, delay }}
+      transition={{ duration: 0.35, delay }}
     >
       {children}
     </motion.div>
@@ -147,7 +187,7 @@ function ArrivalTab({ dest, activeTab, setActiveTab, tk, darkMode }) {
       {current && (
         <div className="space-y-3">
           {current.steps.map((step, i) => (
-            <motion.div key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.06, duration: 0.3 }} className="flex items-start gap-3">
+            <motion.div key={i} initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05, duration: 0.25 }} className="flex items-start gap-3">
               <div className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-black" style={{ background: "linear-gradient(135deg, #f97316, #b45309)", color: "#fff" }}>
                 {i + 1}
               </div>
@@ -205,6 +245,290 @@ function DevSwitcher({ currentSlug, navigate, darkMode, tk }) {
   );
 }
 
+// ── BookingSection ───────────────────────────────────────────────
+function BookingSection({ label, children, darkMode }) {
+  return (
+    <div style={{ borderTop: `1px solid ${darkMode ? "rgba(255,255,255,0.06)" : "#f0ece7"}` }}>
+      <div
+        className="px-5 py-3 flex items-center gap-2"
+        style={{ backgroundColor: darkMode ? "rgba(249,115,22,0.04)" : "rgba(249,115,22,0.025)" }}
+      >
+        <div
+          className="w-3.5 h-3.5 rounded-full flex items-center justify-center shrink-0"
+          style={{ background: "rgba(249,115,22,0.12)", border: "1.5px solid rgba(249,115,22,0.35)" }}
+        >
+          <div className="w-1 h-1 rounded-full" style={{ background: "#f97316" }} />
+        </div>
+        <span className="text-[9px] font-black uppercase tracking-[0.14em]" style={{ color: "#f97316" }}>
+          {label}
+        </span>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+// ── BookingRow ───────────────────────────────────────────────────
+function BookingRow({ label1, value1, label2, value2, textPrimary, textMuted }) {
+  return (
+    <div className="grid grid-cols-2 gap-x-4">
+      <div>
+        <p className="text-[9px] font-bold uppercase tracking-wider mb-0.5" style={{ color: textMuted }}>
+          {label1}
+        </p>
+        <p className="text-sm font-semibold leading-snug" style={{ color: textPrimary }}>
+          {value1 || "—"}
+        </p>
+      </div>
+      {label2 ? (
+        <div>
+          <p className="text-[9px] font-bold uppercase tracking-wider mb-0.5" style={{ color: textMuted }}>
+            {label2}
+          </p>
+          <p className="text-sm font-semibold leading-snug" style={{ color: textPrimary }}>
+            {value2 || "—"}
+          </p>
+        </div>
+      ) : (
+        <div />
+      )}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  OUTFIT GUIDE — helper components
+// ═══════════════════════════════════════════════════════════════
+const OUTFIT_TABS = ["Female","Male","Couple","Family","Kids","Senior"];
+
+function OutfitCard({ occasion, darkMode, textPrimary, textMuted, cardBg, borderColor, cardShadow }) {
+  const [activeTab, setActiveTab] = useState("Female");
+  const [photoIdx, setPhotoIdx]   = useState(0);
+
+  const variant    = occasion.variants?.[activeTab];
+  const rawPhotos  = variant?.photos?.filter(Boolean) ?? [];
+  const photos     = rawPhotos.length ? rawPhotos : (occasion.image ? [occasion.image] : []);
+  const tip        = variant?.tip || occasion.tip || "";
+
+  const handleTabChange = (tab) => { setActiveTab(tab); setPhotoIdx(0); };
+  const prevPhoto = () => setPhotoIdx((c) => (c - 1 + photos.length) % photos.length);
+  const nextPhoto = () => setPhotoIdx((c) => (c + 1) % photos.length);
+
+  return (
+    <div className="rounded-2xl border overflow-hidden flex flex-col" style={{ backgroundColor: cardBg, borderColor, boxShadow: cardShadow }}>
+      {/* ── Photo area ── */}
+      <div className="relative overflow-hidden" style={{ aspectRatio: "4/5" }}>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={`${activeTab}-${photoIdx}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="absolute inset-0"
+          >
+            {photos.length > 0 ? (
+              <img
+                src={photos[photoIdx]}
+                alt={`${occasion.occasion} — ${activeTab}`}
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+            ) : (
+              <div
+                className="w-full h-full flex items-center justify-center text-6xl"
+                style={{ background: darkMode ? "#1a1a1a" : "#f5f5f5" }}
+              >
+                {occasion.icon}
+              </div>
+            )}
+          </motion.div>
+        </AnimatePresence>
+
+        <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.78) 0%, transparent 55%)" }} />
+
+        {/* Counter */}
+        <div className="absolute top-3 left-3 text-[10px] font-bold px-2 py-1 rounded-full" style={{ background: "rgba(0,0,0,0.5)", color: "#fff" }}>
+          {photos.length > 1 ? `${photoIdx + 1} / ${photos.length}` : `1 / ${photos.length || 1}`}
+        </div>
+
+        {/* Gender badge */}
+        <div className="absolute top-3 right-3 text-[10px] font-black px-2.5 py-1 rounded-full" style={{ background: "#f97316", color: "#fff" }}>
+          {activeTab}
+        </div>
+
+        {/* Prev/Next arrows — only when multiple photos */}
+        {photos.length > 1 && (
+          <>
+            <button
+              onClick={prevPhoto}
+              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center"
+              style={{ background: "rgba(0,0,0,0.45)", color: "#fff", fontSize: "1.1rem", lineHeight: 1 }}
+              aria-label="Previous photo"
+            >‹</button>
+            <button
+              onClick={nextPhoto}
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center"
+              style={{ background: "rgba(0,0,0,0.45)", color: "#fff", fontSize: "1.1rem", lineHeight: 1 }}
+              aria-label="Next photo"
+            >›</button>
+          </>
+        )}
+
+        {/* Photo dots (inside image, above label) */}
+        {photos.length > 1 && (
+          <div className="absolute bottom-10 left-0 right-0 flex items-center justify-center gap-1 pointer-events-none">
+            {photos.map((_, i) => (
+              <div
+                key={i}
+                className="rounded-full transition-all"
+                style={{ width: i === photoIdx ? "14px" : "5px", height: "5px", background: i === photoIdx ? "#fff" : "rgba(255,255,255,0.45)" }}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Occasion label */}
+        <div className="absolute bottom-0 left-0 right-0 p-3">
+          <p className="font-black text-sm text-white leading-snug">{occasion.icon} {occasion.occasion}</p>
+        </div>
+      </div>
+
+      {/* ── Gender tabs ── */}
+      <div className="px-2.5 pt-2.5 pb-1.5 flex flex-wrap gap-1">
+        {OUTFIT_TABS.map((tab) => (
+          <button
+            key={tab}
+            onClick={() => handleTabChange(tab)}
+            className="text-[10px] font-bold px-2.5 py-1 rounded-full border transition-all"
+            style={activeTab === tab
+              ? { background: "#f97316", color: "#fff", borderColor: "#f97316" }
+              : { background: "transparent", color: textMuted, borderColor }
+            }
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
+
+      {/* Save badge */}
+      <div className="px-3 pb-1">
+        <span className="text-[9px] font-black uppercase tracking-widest" style={{ color: "#f97316" }}>✦ Save This For Later!</span>
+      </div>
+
+      {/* Tip */}
+      <div className="px-3 pb-3 flex items-start gap-1.5">
+        <span className="text-xs shrink-0">💡</span>
+        <p className="text-[11px] leading-relaxed" style={{ color: textMuted }}>{tip}</p>
+      </div>
+    </div>
+  );
+}
+
+function OutfitGuideSection({ dest, darkMode, sectionGap, textPrimary, textMuted, cardBg, borderColor, cardShadow }) {
+  const [page, setPage]       = useState(0);
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" ? window.innerWidth < 640 : false
+  );
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 639px)");
+    setIsMobile(mq.matches);
+    const handler = (e) => { setIsMobile(e.matches); setPage(0); };
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  const occasions = dest.outfitGuide || [];
+  if (!occasions.length) return null;
+
+  const PER_PAGE   = isMobile ? 1 : 2;
+  const totalPages = Math.ceil(occasions.length / PER_PAGE);
+  const safePage   = Math.min(page, totalPages - 1);
+  const visible    = occasions.slice(safePage * PER_PAGE, (safePage + 1) * PER_PAGE);
+  const prevPage   = () => setPage((p) => Math.max(0, p - 1));
+  const nextPage   = () => setPage((p) => Math.min(totalPages - 1, p + 1));
+
+  return (
+    <div className={sectionGap}>
+      <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: "#f97316" }}>Style Guide</p>
+      <h2
+        className="font-black text-2xl mb-2"
+        style={{ color: textPrimary, fontFamily: "'Montserrat', sans-serif", letterSpacing: "-0.02em", borderLeft: "4px solid #f97316", paddingLeft: "0.75rem" }}
+      >
+        Outfit Inspiration
+      </h2>
+      <p className="text-sm mb-4 leading-relaxed" style={{ color: textMuted }}>
+        Tap a category to swap photos per gender. Gray arrows → browse photos. Orange arrow → change outfit type.
+      </p>
+
+      {/* Cards + outer nav arrows */}
+      <div className="relative flex items-center gap-2">
+        {/* Left page arrow — gray */}
+        <button
+          onClick={prevPage}
+          disabled={safePage === 0}
+          className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all"
+          style={{
+            background: safePage === 0 ? "transparent" : (darkMode ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)"),
+            color: safePage === 0 ? "transparent" : textMuted,
+            border: `1px solid ${safePage === 0 ? "transparent" : borderColor}`,
+            fontSize: "1.1rem",
+            lineHeight: 1,
+          }}
+          aria-label="Previous outfit type"
+        >‹</button>
+
+        {/* Cards — 1 col on mobile, 2 col on desktop */}
+        <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {visible.map((o) => (
+            <OutfitCard
+              key={o.occasion}
+              occasion={o}
+              darkMode={darkMode}
+              textPrimary={textPrimary}
+              textMuted={textMuted}
+              cardBg={cardBg}
+              borderColor={borderColor}
+              cardShadow={cardShadow}
+            />
+          ))}
+        </div>
+
+        {/* Right page arrow — ORANGE, prominent */}
+        <button
+          onClick={nextPage}
+          disabled={page === totalPages - 1}
+          className="shrink-0 w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-105 active:scale-95"
+          style={{
+            background: safePage === totalPages - 1 ? borderColor : "linear-gradient(135deg, #f97316, #b45309)",
+            color: "#fff",
+            fontSize: "1.3rem",
+            lineHeight: 1,
+            boxShadow: safePage === totalPages - 1 ? "none" : "0 4px 14px rgba(249,115,22,0.45)",
+          }}
+          aria-label="Next outfit type"
+        >›</button>
+      </div>
+
+      {/* Page dots */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2 mt-3">
+          {Array.from({ length: totalPages }).map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setPage(i)}
+              className="rounded-full transition-all"
+              style={{ width: i === safePage ? "24px" : "8px", height: "8px", background: i === safePage ? "#f97316" : borderColor }}
+              aria-label={`Page ${i + 1}`}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ═══════════════════════════════════════════════════════════════
 //  MAIN PAGE — follows GLADEX Travel Briefing Platform flow
 // ═══════════════════════════════════════════════════════════════
@@ -223,87 +547,26 @@ export default function TravelBriefingLanding() {
   const activeBooking = routeBooking || restoredBooking;
 
   const [showBackToTop, setShowBackToTop] = useState(false);
-  const [arrivalTab, setArrivalTab] = useState(() => dest?.arrivalInstructions?.tabs?.[0]?.key || "default");
-  const [transferTab, setTransferTab] = useState("arrival");
-  const [reminderTab, setReminderTab] = useState("before");
+  const [bookingExpanded, setBookingExpanded] = useState(false);
+  const [showTripDetails, setShowTripDetails] = useState(false);
 
-  // ── Phase 2: cart state ──────────────────────────────────────
-  const [cart, setCart] = useState({ tours: [], insurance: null });
+  // ── Testimonials carousel ─────────────────────────────────────
+  const [testimonialsPage, setTestimonialsPage] = useState(0);
+  const [testimonialsMobile, setTestimonialsMobile] = useState(
+    typeof window !== "undefined" ? window.innerWidth < 640 : false
+  );
 
-  // ── Phase 2: Starr live pricing ──────────────────────────────
-  const [starrPrices, setStarrPrices] = useState({});     // { economy: "1146.00", elite: "1799.00" }
-  const [insuranceLoading, setInsuranceLoading] = useState(true);
+  // ── Rate My Service ───────────────────────────────────────────
+  const [reviewStars, setReviewStars] = useState(0);
+  const [reviewComment, setReviewComment] = useState("");
 
-  // ── Phase 2: GlobalTix live tours ────────────────────────────
-  const [toursLoading, setToursLoading] = useState(false);
-
-  // ── Phase 2: Xendit checkout ─────────────────────────────────
-  const [checkoutLoading, setCheckoutLoading] = useState(false);
-  const [checkoutError, setCheckoutError] = useState(null);
-
-  // ── Cart helpers ──────────────────────────────────────────────
-  const cartTotal = cart.tours.reduce((s, t) => s + (t.price || 0), 0)
-    + (cart.insurance?.price || 0);
-
-  // Button enabled when cart has items, regardless of price
-  const hasCartItems = cart.tours.length > 0 || !!cart.insurance;
-
-  // For Xendit: if prices are null, use minimum ₱1 for testing
-  const xenditAmount = cartTotal > 0 ? cartTotal : 1;
-
-  const toggleTour = (tour) =>
-    setCart((prev) => ({
-      ...prev,
-      tours: prev.tours.some((t) => t.id === tour.id)
-        ? prev.tours.filter((t) => t.id !== tour.id)
-        : [...prev.tours, tour],
-    }));
-
-  const toggleInsurance = (plan) =>
-    setCart((prev) => ({
-      ...prev,
-      insurance: prev.insurance?.key === plan.key ? null : plan,
-    }));
-
-  // ── Fetch Starr domestic plan pricing ────────────────────────
   useEffect(() => {
-    setInsuranceLoading(true);
-    const today = new Date();
-    const end   = new Date(today);
-    end.setDate(today.getDate() + 5);
-    const ds = today.toISOString().split("T")[0];
-    const de = end.toISOString().split("T")[0];
-
-    Promise.all(
-      STARR_PLANS.map((plan) =>
-        getDomesticQuote(plan.key, ds, de, 1, 0)
-          .then((data) => ({ key: plan.key, price: data?.discountPremium || null }))
-          .catch(() => ({ key: plan.key, price: null }))
-      )
-    )
-      .then((results) => {
-        const priceMap = {};
-        results.forEach(({ key, price }) => { priceMap[key] = price; });
-        setStarrPrices(priceMap);
-      })
-      .finally(() => setInsuranceLoading(false));
+    const mq = window.matchMedia("(max-width: 639px)");
+    setTestimonialsMobile(mq.matches);
+    const handler = (e) => { setTestimonialsMobile(e.matches); setTestimonialsPage(0); };
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
   }, []);
-
-  // ── Fetch GlobalTix live tours for this destination ─────────────
-  const [liveTourData, setLiveTourData] = useState([]);
-  useEffect(() => {
-    if (!dest) return;
-    // Skip API call when no products are configured for this destination
-    if (!GLADEX_TOUR_PRODUCTS[dest.slug]?.length) {
-      setToursLoading(false);
-      return;
-    }
-    setToursLoading(true);
-    loadDestinationTours(dest.slug)
-      .then((tours) => { if (tours?.length) setLiveTourData(tours); })
-      .catch(() => {})
-      .finally(() => setToursLoading(false));
-  }, [dest?.slug]);
 
   // ── Restore booking from sessionStorage on page refresh ──────
   useEffect(() => {
@@ -440,31 +703,6 @@ export default function TravelBriefingLanding() {
     doc.save(`GDX-${bk?.gdx || "itinerary"}-Itinerary.pdf`);
   };
 
-  // ── Xendit checkout ───────────────────────────────────────────
-  const handleCheckout = async () => {
-    if (!hasCartItems) return;
-    setCheckoutLoading(true);
-    setCheckoutError(null);
-    try {
-      // Build items — use ₱100 fallback if price not loaded yet (Xendit minimum is ₱10)
-      const items = [
-        ...cart.tours.map((t) => ({ name: t.name, quantity: 1, price: t.price || 100 })),
-        ...(cart.insurance ? [{ name: `${cart.insurance.name} Travel Insurance`, quantity: 1, price: cart.insurance.price || 100 }] : []),
-      ];
-      const invoice = await createGladexCheckout({
-        bookingCode: `${dest.slug.toUpperCase()}-${Date.now()}`,
-        guestName:   "Guest", // Do NOT pass real client name/email during staging
-        guestEmail:  null,    // Email disabled on staging — enable only on production
-        items,
-      });
-      window.location.href = invoice.invoice_url;
-    } catch (err) {
-      setCheckoutError(err.message || "Checkout failed. Please try again.");
-    } finally {
-      setCheckoutLoading(false);
-    }
-  };
-
   useEffect(() => {
     const onScroll = () => setShowBackToTop(window.scrollY > 600);
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -484,7 +722,7 @@ export default function TravelBriefingLanding() {
   const card  = { backgroundColor: cardBg, borderColor, boxShadow: cardShadow };
   const muted = { color: textMuted };
   const tk    = { bg, cardBg, surfaceBg, textPrimary, textMuted, borderColor, cardShadow, card, muted };
-  const sectionGap = "mb-12";
+  const sectionGap = "mb-16";
   const pad = "px-4 sm:px-6 max-w-2xl mx-auto";
 
   // ── 404 ─────────────────────────────────────────────────────
@@ -504,339 +742,895 @@ export default function TravelBriefingLanding() {
     <div className="min-h-screen" style={{ backgroundColor: bg }}>
       <DestinationNavbar />
 
-      {/* ══════════════════════════════════════════════════════
-          HERO — destination imagery
-         ══════════════════════════════════════════════════════ */}
-      <TBHero dest={dest} darkMode={darkMode} />
+      {/* ── DESTINATION HERO IMAGE ── */}
+      <div className="relative w-full overflow-hidden" style={{ minHeight: "380px", maxHeight: "480px" }}>
+        <img
+          src={dest.heroImage}
+          alt={dest.name}
+          className="w-full h-full object-cover"
+          style={{ position: "absolute", inset: 0, height: "100%" }}
+        />
+        <div
+          className="absolute inset-0"
+          style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.68) 100%)" }}
+        />
+        <div
+          className="absolute inset-0 flex flex-col items-center justify-end text-center pb-10 px-6"
+        >
+          <h1
+            className="font-black text-white mb-2"
+            style={{
+              fontSize: "clamp(2.6rem, 11vw, 5rem)",
+              letterSpacing: "-0.03em",
+              fontFamily: "'Montserrat', sans-serif",
+              lineHeight: 1.05,
+              textShadow: "0 2px 24px rgba(0,0,0,0.5)",
+            }}
+          >
+            {dest.name}
+          </h1>
+          <div className="flex items-center gap-1.5 mb-2">
+            <MapPin className="w-3.5 h-3.5" style={{ color: "rgba(255,255,255,0.7)" }} />
+            <span className="text-sm font-semibold" style={{ color: "rgba(255,255,255,0.8)" }}>
+              {dest.region}
+            </span>
+          </div>
+          <p className="text-sm leading-relaxed max-w-xs" style={{ color: "rgba(255,255,255,0.55)" }}>
+            {dest.description.split(".")[0]}.
+          </p>
+        </div>
+      </div>
 
-      <div className={pad} style={{ paddingTop: "3rem", paddingBottom: "6rem" }}>
+      <div className={pad} style={{ paddingTop: "2rem", paddingBottom: "8rem" }}>
 
         {/* ══════════════════════════════════════════════════
-            3. PERSONALIZED TRAVEL DASHBOARD
-            Real data when via GDX · generic when direct URL
+            1. HERO / BOOKING ENTRY
            ══════════════════════════════════════════════════ */}
-        <FadeIn>
-          <div className={sectionGap}>
-            {/* ── Greeting card ── */}
-            <div className="rounded-2xl border overflow-hidden mb-4" style={{ ...card }}>
-              <div className="p-5 pb-4" style={{ borderBottom: `1px solid ${borderColor}`, background: "linear-gradient(135deg, rgba(249,115,22,0.07), rgba(180,83,9,0.03))" }}>
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-11 h-11 rounded-full flex items-center justify-center shrink-0" style={{ background: "linear-gradient(135deg, #f97316, #b45309)" }}>
-                    <BadgeCheck className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <p className="font-black text-xl" style={{ color: textPrimary }}>
-                      Hi {activeBooking ? (activeBooking.leadName.split(" ")[0] || activeBooking.leadName) : "Traveler"}! 👋
-                    </p>
-                    <p className="font-semibold text-sm" style={{ color: "#f97316" }}>
-                      Your {dest.name} trip is confirmed.
-                    </p>
-                  </div>
-                </div>
+        <div className={sectionGap}>
 
-                {/* ── Key trip info grid ── */}
-                <div className="grid grid-cols-2 gap-2.5">
-                  {[
-                    { label: "Destination",    value: dest.name },
-                    { label: "Travel Date",    value: activeBooking?.travelDate    || dest.tagline },
-                    { label: "Hotel",          value: (() => {
-                      const bk = activeBooking;
-                      if (!bk) return "—";
-                      if (bk.hotel?.hotelName) return bk.hotel.hotelName;
-                      if (bk.tour?.hotelMention) return bk.tour.hotelMention;
-                      if (bk.hotel?.roomType && bk.hotel?.nights) return `${bk.hotel.roomType} · ${bk.hotel.nights} night(s)`;
-                      if (bk.hotel?.roomType) return bk.hotel.roomType;
-                      return "—";
-                    })() },
-                    { label: "Guests",         value: activeBooking ? `${activeBooking.totalGuests} person${Number(activeBooking.totalGuests) !== 1 ? "s" : ""}` : "—" },
-                    { label: "Booking Status", value: getDisplayStatus(activeBooking?.status), badge: true },
-                  ].map(({ label, value, badge }) => (
-                    <div key={label} className="rounded-xl p-3 border" style={{ borderColor, backgroundColor: surfaceBg }}>
-                      <p className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>{label}</p>
-                      {badge
-                        ? <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: "rgba(34,197,94,0.12)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.3)" }}>{value}</span>
-                        : <p className="text-xs font-semibold leading-snug" style={{ color: textPrimary }}>{value || "—"}</p>
-                      }
-                    </div>
-                  ))}
-                </div>
+          {/* No booking — show search hero */}
+          {!activeBooking && (
+            <TBWelcomeSection darkMode={darkMode} tk={tk} />
+          )}
 
-                {activeBooking && (
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {[
-                      { label: "GDX Reference", value: `GDX-${activeBooking.gdx}` },
-                      { label: "Payment", value: activeBooking.paymentStatus || "—" },
-                      ...(activeBooking.ticket?.airline ? [{ label: "Airline", value: `${activeBooking.ticket.airline}${activeBooking.ticket.pnr ? ` · ${activeBooking.ticket.pnr}` : ""}` }] : []),
-                      ...(activeBooking.tour?.tourName ? [{ label: "Tour", value: activeBooking.tour.tourName }] : []),
-                    ].map(({ label, value }) => (
-                      <div key={label} className="rounded-xl px-2.5 py-1 border text-xs" style={{ borderColor, backgroundColor: surfaceBg }}>
-                        <span style={muted}>{label}: </span>
-                        <span className="font-bold" style={{ color: textPrimary }}>{value}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
+          {/* Booking found, not yet revealed — compact orange button */}
+          {activeBooking && !showTripDetails && (
+            <motion.button
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.25 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => setShowTripDetails(true)}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl border transition-all"
+              style={{
+                backgroundColor: darkMode ? "rgba(249,115,22,0.1)" : "rgba(249,115,22,0.07)",
+                borderColor: "rgba(249,115,22,0.3)",
+              }}
+            >
+              {/* Icon */}
+              <div
+                className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
+                style={{ background: "rgba(249,115,22,0.15)" }}
+              >
+                <BadgeCheck className="w-4 h-4" style={{ color: "#f97316" }} />
               </div>
 
-              {/* ── Action buttons ── */}
-              <div className="p-4 flex flex-wrap gap-2">
-                {/* Download Voucher — uses best available URL from Fusioo */}
-                {(() => {
-                  const bk = activeBooking;
-                  const url = bk?.automatedVoucherUrl || bk?.voucherUrl || bk?.tourVoucherUrl
-                    || (bk?.automatedVoucher?.startsWith?.("http") ? bk.automatedVoucher : null);
-                  return url ? (
-                    <a href={url} target="_blank" rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl border transition-all hover:opacity-80"
-                      style={{ borderColor: "rgba(249,115,22,0.35)", color: "#f97316", backgroundColor: "rgba(249,115,22,0.08)" }}>
-                      <Download className="w-3.5 h-3.5" /> Download Voucher
-                    </a>
-                  ) : (
-                    <button disabled className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl border opacity-40"
-                      style={{ borderColor, color: textPrimary, backgroundColor: surfaceBg }} title="Voucher not yet available — contact your travel consultant">
-                      <Download className="w-3.5 h-3.5" /> Download Voucher
-                    </button>
-                  );
-                })()}
+              {/* Text */}
+              <div className="text-left flex-1 min-w-0">
+                <p className="font-black text-sm leading-tight" style={{ color: "#f97316" }}>View My Trip</p>
+                <p className="text-[11px] truncate mt-0.5" style={{ color: textMuted }}>
+                  GDX-{activeBooking.gdx} · {activeBooking.leadName}
+                </p>
+              </div>
 
-                {/* Download Itinerary — always enabled, generates PDF */}
-                <motion.button
-                  whileTap={{ scale: 0.97 }}
-                  onClick={downloadItinerary}
-                  className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl border transition-all hover:opacity-80"
-                  style={{ borderColor: "rgba(249,115,22,0.35)", color: "#f97316", backgroundColor: "rgba(249,115,22,0.08)" }}
+              {/* Confirmed + animated tap hint */}
+              <div className="flex items-center gap-2 shrink-0">
+                <span
+                  className="text-[10px] font-bold px-2.5 py-1 rounded-full"
+                  style={{ background: "rgba(34,197,94,0.12)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.25)" }}
                 >
-                  <Download className="w-3.5 h-3.5" /> Download Itinerary
-                </motion.button>
-
-                {/* Contact Support */}
-                <a href="tel:+639178752200"
-                  className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl border transition-all hover:opacity-80"
-                  style={{ borderColor, color: textPrimary, backgroundColor: surfaceBg }}>
-                  <Phone className="w-3.5 h-3.5" /> Contact Support
-                </a>
+                  ✓ Confirmed
+                </span>
+                <motion.div
+                  animate={{ x: [0, 3, 0] }}
+                  transition={{ repeat: Infinity, duration: 1.4, ease: "easeInOut", repeatDelay: 0.6 }}
+                >
+                  <ChevronDown className="w-4 h-4 -rotate-90" style={{ color: "#f97316" }} />
+                </motion.div>
               </div>
-            </div>
+            </motion.button>
+          )}
 
-            {/* ── Full booking details — expandable (contains inclusions/exclusions + itinerary) ── */}
-            {activeBooking ? (
-              <TBBookingVerification booking={activeBooking} dest={dest} darkMode={darkMode} tk={tk} />
-            ) : (
-              /* Non-logged-in view: show inclusions/exclusions directly */
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                <div className="rounded-2xl border p-4" style={{ ...card }}>
-                  <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#22c55e" }}>✓ Package Inclusions</p>
-                  <ul className="space-y-2">
-                    {dest.inclusions.map((item) => (
-                      <li key={item} className="flex items-start gap-2 text-xs" style={{ color: textPrimary }}>
-                        <Check className="w-3.5 h-3.5 shrink-0 mt-0.5 text-green-500" strokeWidth={2.5} /> {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="rounded-2xl border p-4" style={{ ...card }}>
-                  <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#ef4444" }}>✗ Exclusions</p>
-                  <ul className="space-y-2">
-                    {dest.exclusions.map((item) => (
-                      <li key={item} className="flex items-start gap-2 text-xs" style={{ color: textPrimary }}>
-                        <X className="w-3.5 h-3.5 shrink-0 mt-0.5 text-red-500" strokeWidth={2.5} /> {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            )}
-          </div>
-        </FadeIn>
-
-        {/* ══════════════════════════════════════════════════
-            4. TRAVEL BRIEFING VIDEO
-           ══════════════════════════════════════════════════ */}
-        <FadeIn>
-          <div className={sectionGap}>
-            <SectionHeader eyebrow="Pre-Departure Briefing" title="Watch Your Briefing Video" tk={tk} />
-            <TBBriefingVideo dest={dest} darkMode={darkMode} tk={tk} />
-            <p className="text-xs mt-3 text-center" style={muted}>
-              Scroll down to review your complete travel briefing.
-            </p>
-          </div>
-        </FadeIn>
-
-        {/* ══════════════════════════════════════════════════
-            5. TRAVEL INFORMATION CENTER
-           ══════════════════════════════════════════════════ */}
-        <FadeIn>
-          <div className={sectionGap}>
-            <SectionHeader eyebrow="Travel Information Center" title="Everything You Need to Know" tk={tk} />
-
-            {/* ── 5a. Arrival Instructions ── */}
-            <div className="rounded-2xl border overflow-hidden mb-4" style={{ ...card }}>
-              <div className="px-5 pt-4 pb-3" style={{ borderBottom: `1px solid ${borderColor}` }}>
-                <p className="font-bold text-sm" style={{ color: textPrimary }}>✈️ Arrival Instructions</p>
-              </div>
-              <div className="p-5">
-                <ArrivalTab dest={dest} activeTab={arrivalTab} setActiveTab={setArrivalTab} tk={tk} darkMode={darkMode} />
-              </div>
-            </div>
-
-            {/* ── 5b. Hotel Check-In ── */}
-            <div className="rounded-2xl border overflow-hidden mb-4" style={{ ...card }}>
-              <div className="px-5 pt-4 pb-3" style={{ borderBottom: `1px solid ${borderColor}` }}>
-                <p className="font-bold text-sm" style={{ color: textPrimary }}>🏨 Hotel Check-In Information</p>
-              </div>
-              <div className="p-5">
-                <div className="grid grid-cols-2 gap-3 mb-5">
-                  <div className="rounded-xl p-3 border" style={{ borderColor: "rgba(34,197,94,0.3)", backgroundColor: "rgba(34,197,94,0.07)" }}>
-                    <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: "#22c55e" }}>Check-In</p>
-                    <p className="font-black text-sm" style={{ color: textPrimary }}>{dest.hotelInfo.checkin}</p>
+          {/* Booking found + revealed — Orange Card + Booking Details */}
+          {activeBooking && showTripDetails && (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              {/* ── ORANGE CONFIRMATION CARD ── */}
+              <div
+                className="rounded-2xl overflow-hidden mb-4"
+                style={{
+                  background: "linear-gradient(135deg, #f97316 0%, #ea580c 55%, #f97316 100%)",
+                  boxShadow: "0 8px 32px rgba(249,115,22,0.4), 0 2px 8px rgba(0,0,0,0.12)",
+                }}
+              >
+                <div className="p-5 pb-5">
+                  {/* Confirmed badge */}
+                  <div className="mb-4">
+                    <span
+                      className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full"
+                      style={{ background: "rgba(34,197,94,0.88)", color: "#fff" }}
+                    >
+                      <BadgeCheck className="w-3 h-3" /> Trip Confirmed
+                    </span>
                   </div>
-                  <div className="rounded-xl p-3 border" style={{ borderColor: "rgba(239,68,68,0.3)", backgroundColor: "rgba(239,68,68,0.07)" }}>
-                    <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: "#ef4444" }}>Check-Out</p>
-                    <p className="font-black text-sm" style={{ color: textPrimary }}>{dest.hotelInfo.checkout}</p>
-                  </div>
-                </div>
-                <p className="text-xs font-bold uppercase tracking-widest mb-3" style={muted}>Upon Arrival to the Hotel:</p>
-                <ul className="space-y-2">
-                  {dest.hotelInfo.notes.map((note) => (
-                    <li key={note} className="flex items-start gap-2 text-xs" style={{ color: textPrimary }}>
-                      <span className="text-orange-400 shrink-0 mt-0.5">•</span> {note}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            {/* ── 5c. Requirements ── */}
-            <div className="rounded-2xl border overflow-hidden mb-4" style={{ ...card }}>
-              <div className="px-5 pt-4 pb-3" style={{ borderBottom: `1px solid ${borderColor}` }}>
-                <p className="font-bold text-sm" style={{ color: textPrimary }}>📋 Requirements</p>
-              </div>
-              <div className="p-5">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  {[
-                    { label: "🇵🇭 Filipino Travelers", items: dest.requirements.filipino },
-                    { label: "🌏 Foreign Travelers", items: dest.requirements.foreign },
-                    { label: "📄 Travel Documents", items: dest.requirements.documents },
-                  ].map(({ label, items }) => (
-                    <div key={label}>
-                      <p className="text-xs font-bold mb-2" style={{ color: "#f97316" }}>{label}</p>
-                      {items.map((r) => (
-                        <p key={r} className="text-xs flex items-center gap-1.5 mb-1" style={{ color: textPrimary }}>
-                          <BadgeCheck className="w-3 h-3 text-green-500 shrink-0" /> {r}
+                  {/* Heading */}
+                  <h1
+                    className="font-black text-white mb-2"
+                    style={{
+                      fontSize: "clamp(1.55rem, 6vw, 2.4rem)",
+                      letterSpacing: "-0.025em",
+                      fontFamily: "'Montserrat', sans-serif",
+                      lineHeight: 1.15,
+                    }}
+                  >
+                    Your Trip Is Confirmed! 🧡
+                  </h1>
+                  <p className="text-sm font-medium mb-5" style={{ color: "rgba(255,255,255,0.82)" }}>
+                    Hi {activeBooking.leadName.split(" ")[0]}! Your {dest.name} trip is all set.
+                  </p>
+                  {/* 4 info chips */}
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { label: "Destination", value: dest.name },
+                      { label: "Travel Date",  value: activeBooking.travelDate || "—" },
+                      {
+                        label: "Hotel",
+                        value: activeBooking.hotel?.hotelName
+                          || activeBooking.hotel?.roomType
+                          || activeBooking.tour?.hotelMention
+                          || "—",
+                      },
+                      { label: "Guests", value: `${activeBooking.totalGuests || 1} pax` },
+                    ].map(({ label, value }) => (
+                      <div
+                        key={label}
+                        className="rounded-xl px-3 py-2.5"
+                        style={{ background: "rgba(0,0,0,0.18)" }}
+                      >
+                        <p
+                          className="text-[9px] font-bold uppercase tracking-wider mb-0.5"
+                          style={{ color: "rgba(255,255,255,0.62)" }}
+                        >
+                          {label}
                         </p>
-                      ))}
-                    </div>
-                  ))}
+                        <p className="text-sm font-black text-white leading-snug">{value}</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
+
+              {/* ── BOOKING DETAILS CARD (continues from orange card above) ── */}
+                    <div
+                      className="rounded-2xl border overflow-hidden"
+                      style={{
+                        backgroundColor: darkMode ? "#141414" : "#fefcfb",
+                        borderColor: darkMode ? "rgba(255,255,255,0.08)" : "#e8ddd4",
+                        boxShadow: darkMode
+                          ? "0 2px 16px rgba(0,0,0,0.5)"
+                          : "0 2px 8px rgba(0,0,0,0.05), 0 8px 32px rgba(0,0,0,0.04)",
+                      }}
+                    >
+                      {/* ── HEADER ── */}
+                      <div
+                        className="p-5"
+                        style={{
+                          borderBottom: `1px solid ${darkMode ? "rgba(255,255,255,0.06)" : "#f0ece7"}`,
+                        }}
+                      >
+                        <div className="flex items-center justify-between mb-3">
+                          <span
+                            className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full"
+                            style={{
+                              background: "rgba(34,197,94,0.1)",
+                              color: "#16a34a",
+                              border: "1px solid rgba(34,197,94,0.2)",
+                            }}
+                          >
+                            <BadgeCheck className="w-3 h-3" /> Booking Verified
+                          </span>
+                          <button
+                            onClick={() => setShowTripDetails(false)}
+                            className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full border transition-all hover:opacity-70"
+                            style={{
+                              borderColor: darkMode ? "rgba(255,255,255,0.12)" : "#ddd8d0",
+                              color: textMuted,
+                              backgroundColor: surfaceBg,
+                            }}
+                          >
+                            <X className="w-3 h-3" /> Close
+                          </button>
+                        </div>
+                        <h2
+                          className="font-black text-xl mb-0.5"
+                          style={{
+                            color: textPrimary,
+                            fontFamily: "'Montserrat', sans-serif",
+                            letterSpacing: "-0.02em",
+                          }}
+                        >
+                          Your Booking Details
+                        </h2>
+                        <p className="text-xs mb-4" style={{ color: textMuted }}>
+                          Retrieved from your GDX booking record
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          <span
+                            className="flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full"
+                            style={{
+                              background: "rgba(34,197,94,0.1)",
+                              color: "#16a34a",
+                              border: "1px solid rgba(34,197,94,0.2)",
+                            }}
+                          >
+                            <Check className="w-3 h-3" /> {getDisplayStatus(activeBooking.status)}
+                          </span>
+                          {activeBooking.paymentStatus && (
+                            <span
+                              className="text-[11px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full"
+                              style={{
+                                background: "rgba(217,119,6,0.1)",
+                                color: "#b45309",
+                                border: "1px solid rgba(217,119,6,0.2)",
+                              }}
+                            >
+                              {activeBooking.paymentStatus}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* ── SECTIONS ── */}
+
+                      {/* BOOKING SUMMARY */}
+                      <BookingSection label="Booking Summary" darkMode={darkMode}>
+                        <div className="px-5 py-4 space-y-4">
+                          <BookingRow
+                            label1="GDX Number"    value1={`GDX-${activeBooking.gdx}`}
+                            label2="Status"        value2={getDisplayStatus(activeBooking.status)}
+                            textPrimary={textPrimary} textMuted={textMuted}
+                          />
+                          <BookingRow
+                            label1="Payment Status"    value1={activeBooking.paymentStatus || "—"}
+                            label2="Transaction Type"  value2={activeBooking.transactionType || "—"}
+                            textPrimary={textPrimary} textMuted={textMuted}
+                          />
+                          <BookingRow
+                            label1="Booking Date"  value1={activeBooking.bookingDate || "—"}
+                            label2="Last Modified" value2={activeBooking.lastModified || "—"}
+                            textPrimary={textPrimary} textMuted={textMuted}
+                          />
+                        </div>
+                      </BookingSection>
+
+                      {/* TRAVELER INFORMATION */}
+                      <BookingSection label="Traveler Information" darkMode={darkMode}>
+                        <div className="px-5 py-4 space-y-4">
+                          <BookingRow
+                            label1="Lead Guest"    value1={activeBooking.leadName}
+                            label2="Total Guests"  value2={String(activeBooking.totalGuests || "—")}
+                            textPrimary={textPrimary} textMuted={textMuted}
+                          />
+                          <BookingRow
+                            label1="Guest Names"  value1={activeBooking.guestNames || activeBooking.leadName || "—"}
+                            label2="Email"        value2={activeBooking.email || "—"}
+                            textPrimary={textPrimary} textMuted={textMuted}
+                          />
+                          <BookingRow
+                            label1="Mobile Number"  value1={activeBooking.mobile || activeBooking.phone || "—"}
+                            label2=""               value2=""
+                            textPrimary={textPrimary} textMuted={textMuted}
+                          />
+                        </div>
+                      </BookingSection>
+
+                      {/* TRAVEL INFORMATION */}
+                      <BookingSection label="Travel Information" darkMode={darkMode}>
+                        <div className="px-5 py-4 space-y-4">
+                          <BookingRow
+                            label1="Destination"   value1={dest.name}
+                            label2="Travel Date"   value2={activeBooking.travelDate || "—"}
+                            textPrimary={textPrimary} textMuted={textMuted}
+                          />
+                          <BookingRow
+                            label1="Arrival Date"    value1={activeBooking.arrivalDate || activeBooking.travelDate || "—"}
+                            label2="Departure Date"  value2={activeBooking.departureDate || "—"}
+                            textPrimary={textPrimary} textMuted={textMuted}
+                          />
+                          <BookingRow
+                            label1="Duration"  value1={activeBooking.duration || dest.duration || "—"}
+                            label2=""          value2=""
+                            textPrimary={textPrimary} textMuted={textMuted}
+                          />
+                        </div>
+                      </BookingSection>
+
+                      {/* ACCOMMODATION */}
+                      {(activeBooking.hotel?.hotelName || activeBooking.hotel?.roomType) && (
+                        <BookingSection label="Accommodation" darkMode={darkMode}>
+                          <div className="px-5 py-4 space-y-4">
+                            <BookingRow
+                              label1="Hotel"
+                              value1={activeBooking.hotel?.hotelName || "—"}
+                              label2="Room Type"
+                              value2={
+                                activeBooking.hotel?.roomType
+                                  ? `${activeBooking.hotel.roomType}${activeBooking.hotel.nights ? ` · ${activeBooking.hotel.nights} night(s)` : ""}`
+                                  : "—"
+                              }
+                              textPrimary={textPrimary} textMuted={textMuted}
+                            />
+                          </div>
+                        </BookingSection>
+                      )}
+
+                      {/* TOUR INFORMATION */}
+                      {activeBooking.tour?.tourName && (
+                        <BookingSection label="Tour Information" darkMode={darkMode}>
+                          <div className="px-5 py-4 space-y-4">
+                            <BookingRow
+                              label1="Tour"       value1={activeBooking.tour.tourName}
+                              label2="Tour Date"  value2={activeBooking.tour?.tourDate || "—"}
+                              textPrimary={textPrimary} textMuted={textMuted}
+                            />
+                          </div>
+                        </BookingSection>
+                      )}
+
+                      {/* TRANSFER INFORMATION */}
+                      {(activeBooking.ticket || activeBooking.transferDetails) && (
+                        <BookingSection label="Transfer Information" darkMode={darkMode}>
+                          <div className="px-5 py-4 space-y-4">
+                            {activeBooking.ticket?.airline && (
+                              <BookingRow
+                                label1="Airline"  value1={activeBooking.ticket.airline}
+                                label2="PNR"      value2={activeBooking.ticket.pnr || "—"}
+                                textPrimary={textPrimary} textMuted={textMuted}
+                              />
+                            )}
+                            {activeBooking.ticket?.terminal && (
+                              <BookingRow
+                                label1="Terminal"  value1={activeBooking.ticket.terminal}
+                                label2=""          value2=""
+                                textPrimary={textPrimary} textMuted={textMuted}
+                              />
+                            )}
+                            {activeBooking.transferDetails && (
+                              <div>
+                                <p className="text-[9px] font-bold uppercase tracking-wider mb-0.5" style={{ color: textMuted }}>
+                                  Transfer Details
+                                </p>
+                                <p className="text-sm font-medium leading-relaxed" style={{ color: textPrimary }}>
+                                  {activeBooking.transferDetails}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        </BookingSection>
+                      )}
+
+                      {/* AGENT INFORMATION */}
+                      {activeBooking.travelConsultant && (
+                        <BookingSection label="Agent Information" darkMode={darkMode}>
+                          <div className="px-5 py-4">
+                            <BookingRow
+                              label1="Travel Consultant"  value1={activeBooking.travelConsultant}
+                              label2=""                   value2=""
+                              textPrimary={textPrimary} textMuted={textMuted}
+                            />
+                          </div>
+                        </BookingSection>
+                      )}
+
+                      {/* TRAVEL DOCUMENTS */}
+                      <BookingSection label="Travel Documents" darkMode={darkMode}>
+                        <div className="px-5 py-5 flex flex-wrap gap-3">
+                          {(() => {
+                            const bk = activeBooking;
+                            const url =
+                              bk?.automatedVoucherUrl ||
+                              bk?.voucherUrl ||
+                              bk?.tourVoucherUrl ||
+                              (bk?.automatedVoucher?.startsWith?.("http") ? bk.automatedVoucher : null);
+                            return url ? (
+                              <a
+                                href={url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-2 text-sm font-semibold px-4 py-2.5 rounded-xl border transition-all hover:opacity-80"
+                                style={{
+                                  borderColor: darkMode ? "rgba(255,255,255,0.1)" : "#ddd8d0",
+                                  color: textPrimary,
+                                  backgroundColor: surfaceBg,
+                                }}
+                              >
+                                <Download className="w-4 h-4" style={{ color: "#f97316" }} />
+                                View Your Voucher
+                              </a>
+                            ) : null;
+                          })()}
+                          <motion.button
+                            whileTap={{ scale: 0.97 }}
+                            onClick={downloadItinerary}
+                            className="flex items-center gap-2 text-sm font-semibold px-4 py-2.5 rounded-xl border transition-all hover:opacity-80"
+                            style={{
+                              borderColor: darkMode ? "rgba(255,255,255,0.1)" : "#ddd8d0",
+                              color: textPrimary,
+                              backgroundColor: surfaceBg,
+                            }}
+                          >
+                            <Download className="w-4 h-4" style={{ color: "#f97316" }} />
+                            View Itinerary
+                          </motion.button>
+                        </div>
+                      </BookingSection>
+
+                    </div>
+                </motion.div>
+              )}
             </div>
 
-            {/* ── 5d. Transfer Instructions ── */}
-            <div className="rounded-2xl border overflow-hidden mb-4" style={{ ...card }}>
-              <div className="flex border-b" style={{ borderColor }}>
-                <button className="px-5 pt-4 pb-3 font-bold text-sm flex-1 text-left" style={{ color: textPrimary }}>🚌 Transfer Instructions</button>
-                <div className="flex border-l" style={{ borderColor }}>
-                  {["arrival", "departure"].map((t) => (
-                    <button key={t} onClick={() => setTransferTab(t)} className="px-4 py-3 text-xs font-bold uppercase tracking-wider transition-all" style={{ color: transferTab === t ? "#f97316" : textMuted, borderBottom: transferTab === t ? "2px solid #f97316" : "2px solid transparent" }}>
-                      {t === "arrival" ? "Arrival" : "Departure"}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="p-5">
-                <div className="space-y-3">
-                  {(transferTab === "arrival" ? dest.transferInstructions.arrival : dest.transferInstructions.departure).map((s) => (
-                    <div key={s.step} className="flex items-start gap-3">
-                      <div className="shrink-0 w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black" style={{ background: "linear-gradient(135deg, #f97316, #b45309)", color: "#fff" }}>
-                        {s.step}
-                      </div>
-                      <div className="pt-1">
-                        <p className="text-xs font-bold mb-0.5" style={{ color: textPrimary }}>{s.title}</p>
-                        <p className="text-sm" style={muted}>{s.desc}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                {dest.transferInstructions.reminders?.length > 0 && (
-                  <div className="mt-5 p-3 rounded-xl border" style={{ borderColor: "rgba(249,115,22,0.2)", backgroundColor: "rgba(249,115,22,0.06)" }}>
-                    <p className="text-xs font-bold mb-2" style={{ color: "#f97316" }}>Important Transfer Reminders</p>
-                    {dest.transferInstructions.reminders.map((r) => (<p key={r} className="text-xs mb-1" style={muted}>• {r}</p>))}
-                  </div>
+        {/* ══════════════════════════════════════════════════
+            2. TRAVEL BRIEFING VIDEO
+           ══════════════════════════════════════════════════ */}
+        <FadeIn>
+          <div className={sectionGap}>
+            <SectionHeader eyebrow="Watch Before You Travel" title="Your Travel Briefing" tk={tk} />
+            <TBBriefingVideo dest={dest} darkMode={darkMode} tk={tk} />
+          </div>
+        </FadeIn>
+
+        {/* ══════════════════════════════════════════════════
+            3. OFFICIAL BRIEFING WELCOME
+           ══════════════════════════════════════════════════ */}
+        <FadeIn>
+          <div className={sectionGap}>
+            {/* Eyebrow + title */}
+            <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: "#f97316" }}>
+              Official Briefing
+            </p>
+            <h2
+              className="font-black text-2xl mb-5"
+              style={{
+                color: textPrimary,
+                fontFamily: "'Montserrat', sans-serif",
+                letterSpacing: "-0.02em",
+                borderLeft: "4px solid #f97316",
+                paddingLeft: "0.75rem",
+              }}
+            >
+              Official {dest.name} Briefing
+            </h2>
+
+            {/* Card */}
+            <div
+              className="rounded-2xl border p-5"
+              style={{
+                backgroundColor: cardBg,
+                borderColor,
+                boxShadow: cardShadow,
+              }}
+            >
+              {/* Badges row */}
+              <div className="flex flex-wrap items-center gap-2 mb-4">
+                <span
+                  className="text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-full"
+                  style={{ background: "#f97316", color: "#fff" }}
+                >
+                  {dest.tagline}
+                </span>
+                {dest.itinerary?.length && (
+                  <span
+                    className="text-[11px] font-semibold px-3 py-1.5 rounded-full border"
+                    style={{ borderColor, color: textMuted, backgroundColor: surfaceBg }}
+                  >
+                    {dest.itinerary.length} Days / {dest.itinerary.length - 1} Nights
+                  </span>
                 )}
               </div>
-            </div>
 
-            {/* ── 5e. Tour Reminders ── */}
-            <div className="rounded-2xl border overflow-hidden mb-4" style={{ ...card }}>
-              <div className="px-5 pt-4 pb-0" style={{ borderBottom: `1px solid ${borderColor}` }}>
-                <p className="font-bold text-sm mb-3" style={{ color: textPrimary }}>📌 Tour Reminders</p>
-                <div className="flex gap-0">
-                  {[{ key: "before", label: "Before" }, { key: "during", label: "During Stay" }, { key: "departure", label: "Departure" }].map((t) => (
-                    <button key={t.key} onClick={() => setReminderTab(t.key)} className="flex-1 pb-3 text-xs font-bold uppercase tracking-wider transition-all border-b-2" style={{ color: reminderTab === t.key ? "#f97316" : textMuted, borderColor: reminderTab === t.key ? "#f97316" : "transparent" }}>
-                      {t.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="p-5">
-                <AnimatePresence mode="wait">
-                  <motion.ul key={reminderTab} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="space-y-2.5">
-                    {dest.reminders[reminderTab].map((r) => (
-                      <li key={r} className="flex items-start gap-2.5 text-sm" style={{ color: textPrimary }}>
-                        <span className="text-orange-400 shrink-0 mt-0.5">✔</span> {r}
-                      </li>
-                    ))}
-                  </motion.ul>
-                </AnimatePresence>
-              </div>
-            </div>
+              <div style={{ borderTop: `1px solid ${borderColor}`, marginBottom: "1rem" }} />
 
-            {/* ── 5f. Emergency Contacts ── */}
-            <div className="rounded-2xl border overflow-hidden mb-4" style={{ ...card }}>
-              <div className="px-5 pt-4 pb-3" style={{ borderBottom: `1px solid ${borderColor}` }}>
-                <p className="font-bold text-sm" style={{ color: textPrimary }}>📞 Emergency Contact Numbers</p>
-              </div>
-              <div className="p-4 space-y-3">
-                {dest.emergencyContacts.map((c) => (
-                  <div key={c.label} className="flex items-center gap-3 p-3 rounded-xl border" style={{ borderColor, backgroundColor: surfaceBg }}>
-                    <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style={{ background: "linear-gradient(135deg, #f97316, #b45309)" }}>
-                      <Phone className="w-4 h-4 text-white" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs" style={muted}>{c.label}</p>
-                      <p className="font-bold text-sm" style={{ color: textPrimary }}>{c.number}</p>
-                    </div>
-                    {c.number.startsWith("+") && (
-                      <a href={`tel:${c.number.replace(/\s/g, "")}`} className="text-xs font-semibold px-3 py-1.5 rounded-full border shrink-0" style={{ borderColor: "rgba(249,115,22,0.35)", color: "#f97316", backgroundColor: "rgba(249,115,22,0.08)" }}>
-                        Call
-                      </a>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* ── 5g. Important Dos & Don'ts ── */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="rounded-2xl border p-4" style={{ ...card }}>
-                <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#22c55e" }}>✅ Do's</p>
-                <ul className="space-y-2">
-                  {dest.dos.map((d) => (<li key={d} className="flex items-start gap-2 text-xs" style={{ color: textPrimary }}><Check className="w-3.5 h-3.5 shrink-0 mt-0.5 text-green-500" strokeWidth={2.5} />{d}</li>))}
-                </ul>
-              </div>
-              <div className="rounded-2xl border p-4" style={{ ...card }}>
-                <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#ef4444" }}>✖ Don'ts</p>
-                <ul className="space-y-2">
-                  {dest.donts.map((d) => (<li key={d} className="flex items-start gap-2 text-xs" style={{ color: textPrimary }}><X className="w-3.5 h-3.5 shrink-0 mt-0.5 text-red-500" strokeWidth={2.5} />{d}</li>))}
-                </ul>
-              </div>
+              <p className="text-sm mb-3 font-semibold" style={{ color: textPrimary }}>
+                Welcome and congratulations on your upcoming trip to {dest.name} with Gladex Tours!
+              </p>
+              <p className="text-sm mb-3 leading-relaxed" style={{ color: textMuted }}>
+                This page contains your complete travel briefing — including all important travel information, arrival instructions, transfer details, hotel check-in policies, tour reminders, requirements, FAQs, and emergency contacts.
+              </p>
+              <p className="text-sm leading-relaxed" style={{ color: textMuted }}>
+                Please read every section carefully before your departure and keep this page bookmarked for easy reference throughout your trip. If you have questions after reviewing the briefing, reach out to our team via Messenger, WhatsApp, or our hotline.
+              </p>
             </div>
           </div>
         </FadeIn>
 
+        {/* ══════════════════════════════════════════════════
+            3b. PACKAGE INCLUSIONS & EXCLUSIONS
+           ══════════════════════════════════════════════════ */}
+        {(dest.inclusions?.length || dest.exclusions?.length) && (
+          <FadeIn>
+            <div className={sectionGap}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                {/* ── INCLUSIONS ── */}
+                {dest.inclusions?.length > 0 && (
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: "#f97316" }}>
+                      What's Covered
+                    </p>
+                    <h3
+                      className="font-black text-xl mb-3"
+                      style={{
+                        color: textPrimary,
+                        fontFamily: "'Montserrat', sans-serif",
+                        letterSpacing: "-0.02em",
+                        borderLeft: "4px solid #16a34a",
+                        paddingLeft: "0.75rem",
+                      }}
+                    >
+                      Package Inclusions
+                    </h3>
+                    <div
+                      className="rounded-2xl border p-4"
+                      style={{
+                        backgroundColor: darkMode ? "rgba(34,197,94,0.06)" : "#f0fdf4",
+                        borderColor: darkMode ? "rgba(34,197,94,0.18)" : "#bbf7d0",
+                        boxShadow: cardShadow,
+                      }}
+                    >
+                      <ul className="space-y-2.5">
+                        {dest.inclusions.map((item, i) => (
+                          <li key={i} className="flex items-start gap-2.5">
+                            <Check
+                              className="w-4 h-4 shrink-0 mt-0.5"
+                              style={{ color: "#16a34a" }}
+                            />
+                            <span className="text-sm leading-snug" style={{ color: darkMode ? "rgba(255,255,255,0.82)" : "#166534" }}>
+                              {item}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                )}
+
+                {/* ── EXCLUSIONS ── */}
+                {dest.exclusions?.length > 0 && (
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: "#f97316" }}>
+                      Not Covered
+                    </p>
+                    <h3
+                      className="font-black text-xl mb-3"
+                      style={{
+                        color: textPrimary,
+                        fontFamily: "'Montserrat', sans-serif",
+                        letterSpacing: "-0.02em",
+                        borderLeft: "4px solid #dc2626",
+                        paddingLeft: "0.75rem",
+                      }}
+                    >
+                      Package Exclusions
+                    </h3>
+                    <div
+                      className="rounded-2xl border p-4"
+                      style={{
+                        backgroundColor: darkMode ? "rgba(220,38,38,0.06)" : "#fff7f7",
+                        borderColor: darkMode ? "rgba(220,38,38,0.18)" : "#fecaca",
+                        boxShadow: cardShadow,
+                      }}
+                    >
+                      <ul className="space-y-2.5">
+                        {dest.exclusions.map((item, i) => (
+                          <li key={i} className="flex items-start gap-2.5">
+                            <X
+                              className="w-4 h-4 shrink-0 mt-0.5"
+                              style={{ color: "#dc2626" }}
+                            />
+                            <span className="text-sm leading-snug" style={{ color: darkMode ? "rgba(255,255,255,0.82)" : "#7f1d1d" }}>
+                              {item}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                      {/* Footnotes */}
+                      {dest.exclusionNotes?.length > 0 && (
+                        <div className="mt-4 pt-3 space-y-1.5" style={{ borderTop: `1px solid ${darkMode ? "rgba(220,38,38,0.15)" : "#fecaca"}` }}>
+                          {dest.exclusionNotes.map((note, i) => (
+                            <p key={i} className="text-xs leading-snug" style={{ color: textMuted }}>
+                              {note}
+                            </p>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+              </div>
+            </div>
+          </FadeIn>
+        )}
 
         {/* ══════════════════════════════════════════════════
-            6. TRAVEL READINESS CHECKLIST
+            3c. DAY-BY-DAY ITINERARY TIMELINE
+           ══════════════════════════════════════════════════ */}
+        {dest.itinerary?.length > 0 && (
+          <FadeIn>
+            <div className={sectionGap}>
+              <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: "#f97316" }}>
+                Day by Day
+              </p>
+              <h2
+                className="font-black text-2xl mb-5"
+                style={{
+                  color: textPrimary,
+                  fontFamily: "'Montserrat', sans-serif",
+                  letterSpacing: "-0.02em",
+                  borderLeft: "4px solid #f97316",
+                  paddingLeft: "0.75rem",
+                }}
+              >
+                Itinerary Timeline
+              </h2>
+              <TBItinerary dest={dest} darkMode={darkMode} tk={tk} />
+            </div>
+          </FadeIn>
+        )}
+
+        {/* ══════════════════════════════════════════════════
+            4. TRAVEL INFORMATION CENTER
+           ══════════════════════════════════════════════════ */}
+
+        <FadeIn>
+          <div className={sectionGap}>
+            <SectionHeader eyebrow="Operational Information" title="Travel Information Center" tk={tk} />
+            <div className="space-y-4">
+
+              {/* 5a. Arrival Instructions — all airports shown vertically, no tabs */}
+              <div className="rounded-2xl border overflow-hidden" style={{ ...card }}>
+                <div className="px-5 pt-4 pb-3 border-b" style={{ borderColor }}>
+                  <p className="font-bold text-base" style={{ color: textPrimary }}>Arrival Instructions</p>
+                  <p className="text-xs mt-0.5" style={{ color: textMuted }}>How to get from the airport to your hotel</p>
+                </div>
+                <div className="p-5 space-y-7">
+                  {dest.arrivalInstructions.tabs.map(({ key, label }, tabIdx) => {
+                    const info = dest.arrivalInstructions[key];
+                    if (!info) return null;
+                    return (
+                      <div key={key} className={tabIdx > 0 ? "pt-6 border-t" : ""} style={{ borderColor }}>
+                        <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: "#f97316" }}>{label}</p>
+                        <div className="space-y-3">
+                          {info.steps.map((step, i) => (
+                            <div key={i} className="flex items-start gap-3">
+                              <div className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-black" style={{ background: "linear-gradient(135deg, #f97316, #b45309)", color: "#fff" }}>
+                                {i + 1}
+                              </div>
+                              <p className="text-sm leading-snug pt-1" style={{ color: textPrimary }}>{step}</p>
+                            </div>
+                          ))}
+                        </div>
+                        {info.note && (
+                          <div className="mt-4 p-3 rounded-xl border text-xs flex items-start gap-2" style={{ borderColor: "rgba(249,115,22,0.25)", backgroundColor: "rgba(249,115,22,0.07)", color: textMuted }}>
+                            <Info className="w-3.5 h-3.5 shrink-0 mt-0.5 text-orange-400" />
+                            {info.note}
+                          </div>
+                        )}
+                        {info.vanSchedule && (
+                          <div className="mt-4">
+                            <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: textMuted }}>Van Transfer Schedule</p>
+                            <div className="grid grid-cols-2 gap-3">
+                              <div className="rounded-xl p-3 border" style={{ borderColor, backgroundColor: surfaceBg }}>
+                                <p className="text-xs font-bold mb-2" style={{ color: "#f97316" }}>Puerto Princesa → El Nido</p>
+                                {info.vanSchedule.ppsToElNido.map((s) => (<p key={s} className="text-xs py-0.5" style={{ color: textPrimary }}>{s}</p>))}
+                              </div>
+                              <div className="rounded-xl p-3 border" style={{ borderColor, backgroundColor: surfaceBg }}>
+                                <p className="text-xs font-bold mb-2" style={{ color: "#f97316" }}>El Nido → Puerto Princesa</p>
+                                {info.vanSchedule.elNidoToPps.map((s) => (<p key={s} className="text-xs py-0.5" style={{ color: textPrimary }}>{s}</p>))}
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* 5b. Transfer Instructions */}
+              <div className="rounded-2xl border overflow-hidden" style={{ ...card }}>
+                <div className="px-5 pt-4 pb-3 border-b" style={{ borderColor }}>
+                  <p className="font-bold text-base" style={{ color: textPrimary }}>Transfer Instructions</p>
+                  <p className="text-xs mt-0.5" style={{ color: textMuted }}>Arrival and departure transport details</p>
+                </div>
+                <div className="p-5 space-y-6">
+                  {[
+                    { key: "arrival",   label: "Arrival Transfer",  color: "#f97316" },
+                    { key: "departure", label: "Departure Transfer", color: "#3b82f6" },
+                  ].map(({ key, label, color }, gi) => (
+                    <div key={key} className={gi > 0 ? "pt-5" : ""} style={{ borderTop: gi > 0 ? `1px solid ${borderColor}` : undefined }}>
+                      <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color }}>{label}</p>
+                      <div className="space-y-3">
+                        {dest.transferInstructions[key].map((s) => (
+                          <div key={s.step} className="flex items-start gap-3">
+                            <div className="shrink-0 w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black" style={{ background: "linear-gradient(135deg, #f97316, #b45309)", color: "#fff" }}>
+                              {s.step}
+                            </div>
+                            <div className="pt-1">
+                              <p className="text-sm font-bold mb-0.5" style={{ color: textPrimary }}>{s.title}</p>
+                              <p className="text-sm leading-relaxed" style={muted}>{s.desc}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* 5c. Hotel Check-In */}
+              <div className="rounded-2xl border overflow-hidden" style={{ ...card }}>
+                <div className="px-5 pt-4 pb-3 border-b" style={{ borderColor }}>
+                  <p className="font-bold text-base" style={{ color: textPrimary }}>Hotel Check-In Information</p>
+                  <p className="text-xs mt-0.5" style={{ color: textMuted }}>Arriving at your accommodation</p>
+                </div>
+                <div className="p-5">
+                  <div className="grid grid-cols-2 gap-3 mb-5">
+                    <div className="rounded-xl p-3 border" style={{ borderColor: "rgba(34,197,94,0.3)", backgroundColor: "rgba(34,197,94,0.07)" }}>
+                      <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: "#22c55e" }}>Check-In Time</p>
+                      <p className="text-sm" style={{ color: textPrimary }}>{dest.hotelInfo.checkin}</p>
+                    </div>
+                    <div className="rounded-xl p-3 border" style={{ borderColor: "rgba(239,68,68,0.3)", backgroundColor: "rgba(239,68,68,0.07)" }}>
+                      <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: "#ef4444" }}>Check-Out Time</p>
+                      <p className="text-sm" style={{ color: textPrimary }}>{dest.hotelInfo.checkout}</p>
+                    </div>
+                  </div>
+                  <p className="text-xs font-bold uppercase tracking-widest mb-3" style={muted}>Upon Arrival:</p>
+                  <ul className="space-y-2.5">
+                    {dest.hotelInfo.notes.map((note) => (
+                      <li key={note} className="flex items-start gap-2 text-sm leading-snug" style={{ color: textPrimary }}>
+                        <span className="text-orange-400 shrink-0 mt-0.5">•</span> {note}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              {/* 5d. Travel Requirements */}
+              <div className="rounded-2xl border overflow-hidden" style={{ ...card }}>
+                <div className="px-5 pt-4 pb-3 border-b" style={{ borderColor }}>
+                  <p className="font-bold text-base" style={{ color: textPrimary }}>Travel Requirements</p>
+                  <p className="text-xs mt-0.5" style={{ color: textMuted }}>Documents and entry requirements</p>
+                </div>
+                <div className="p-5">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                    {[
+                      { label: "Filipino Travelers",  items: dest.requirements.filipino },
+                      { label: "Foreign Travelers",   items: dest.requirements.foreign },
+                      { label: "Travel Documents",    items: dest.requirements.documents },
+                    ].map(({ label, items }) => (
+                      <div key={label}>
+                        <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#f97316" }}>{label}</p>
+                        <ul className="space-y-2">
+                          {items.map((r) => (
+                            <li key={r} className="flex items-start gap-2 text-sm leading-snug" style={{ color: textPrimary }}>
+                              <BadgeCheck className="w-3.5 h-3.5 text-green-500 shrink-0 mt-0.5" /> {r}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* 5e. Tour Reminders */}
+              <div className="rounded-2xl border overflow-hidden" style={{ ...card }}>
+                <div className="px-5 pt-4 pb-3 border-b" style={{ borderColor }}>
+                  <p className="font-bold text-base" style={{ color: textPrimary }}>Tour Reminders</p>
+                  <p className="text-xs mt-0.5" style={{ color: textMuted }}>What to remember before, during, and after your tour</p>
+                </div>
+                <div className="p-5 space-y-6">
+                  {[
+                    { key: "before",    label: "Before Your Trip",  color: "#f97316" },
+                    { key: "during",    label: "During Your Stay",  color: "#3b82f6" },
+                    { key: "departure", label: "On Departure Day",  color: "#22c55e" },
+                  ].map(({ key, label, color }, gi) => (
+                    <div key={key} className={gi > 0 ? "pt-5" : ""} style={{ borderTop: gi > 0 ? `1px solid ${borderColor}` : undefined }}>
+                      <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color }}>{label}</p>
+                      <ul className="space-y-2.5">
+                        {dest.reminders[key].map((r) => (
+                          <li key={r} className="flex items-start gap-2.5 text-sm leading-snug" style={{ color: textPrimary }}>
+                            <span className="text-orange-400 shrink-0 mt-0.5">✔</span> {r}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* 5f. Emergency Contacts */}
+              <div className="rounded-2xl border overflow-hidden" style={{ ...card }}>
+                <div className="px-5 pt-4 pb-3 border-b" style={{ borderColor }}>
+                  <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: "#f97316" }}>Save These Now</p>
+                  <p className="font-black text-base" style={{ color: textPrimary, fontFamily: "'Montserrat', sans-serif", letterSpacing: "-0.01em" }}>Emergency Contacts</p>
+                </div>
+                <div className="p-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {dest.emergencyContacts.map((group) => (
+                      <div
+                        key={group.group}
+                        className="rounded-xl border p-4"
+                        style={{ borderColor, backgroundColor: surfaceBg }}
+                      >
+                        {/* Group header */}
+                        <div className="flex items-center gap-2 mb-3">
+                          <span className="text-lg">{group.icon}</span>
+                          <p className="font-black text-sm" style={{ color: textPrimary }}>{group.group}</p>
+                        </div>
+                        <div style={{ borderTop: `1px solid ${borderColor}` }} />
+                        {/* Contacts */}
+                        <div className="mt-3 space-y-2.5">
+                          {group.contacts.map((c) => (
+                            <div key={c.label} className="flex items-start justify-between gap-3">
+                              <p className="text-xs leading-snug" style={{ color: textMuted }}>{c.label}</p>
+                              {c.number.startsWith("+") ? (
+                                <a
+                                  href={`tel:${c.number.replace(/\s/g, "")}`}
+                                  className="text-xs font-black shrink-0 hover:opacity-80 transition-opacity"
+                                  style={{ color: "#f97316" }}
+                                >
+                                  {c.number}
+                                </a>
+                              ) : (
+                                <p className="text-xs font-semibold shrink-0 text-right" style={{ color: textMuted }}>{c.number}</p>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* 5g. Do's & Don'ts */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="rounded-2xl border p-5" style={{ backgroundColor: darkMode ? "rgba(34,197,94,0.06)" : "#f0fdf4", borderColor: darkMode ? "rgba(34,197,94,0.18)" : "#bbf7d0" }}>
+                  <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: "#16a34a" }}>Do's</p>
+                  <ul className="space-y-2.5">
+                    {dest.dos.map((d) => (<li key={d} className="flex items-start gap-2 text-sm leading-snug" style={{ color: darkMode ? "rgba(255,255,255,0.82)" : "#166534" }}><Check className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: "#16a34a" }} strokeWidth={2.5} />{d}</li>))}
+                  </ul>
+                </div>
+                <div className="rounded-2xl border p-5" style={{ backgroundColor: darkMode ? "rgba(220,38,38,0.06)" : "#fff7f7", borderColor: darkMode ? "rgba(220,38,38,0.18)" : "#fecaca" }}>
+                  <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: "#dc2626" }}>Don'ts</p>
+                  <ul className="space-y-2.5">
+                    {dest.donts.map((d) => (<li key={d} className="flex items-start gap-2 text-sm leading-snug" style={{ color: darkMode ? "rgba(255,255,255,0.82)" : "#7f1d1d" }}><X className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: "#dc2626" }} strokeWidth={2.5} />{d}</li>))}
+                  </ul>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </FadeIn>
+
+        {/* ══════════════════════════════════════════════════
+            7. TRAVEL READINESS CHECKLIST
            ══════════════════════════════════════════════════ */}
         <FadeIn>
           <div className={sectionGap}>
@@ -848,49 +1642,69 @@ export default function TravelBriefingLanding() {
         </FadeIn>
 
         {/* ══════════════════════════════════════════════════
-            7. WHAT TO BRING
+            7. WHAT TO BRING — Packing Guide
            ══════════════════════════════════════════════════ */}
-        <FadeIn>
-          <div className={sectionGap}>
-            <SectionHeader eyebrow="Pack Smart" title="What To Bring" tk={tk} />
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {dest.packingGuide && (
+          <FadeIn>
+            <div className={sectionGap}>
+              <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: "#f97316" }}>Packing Guide</p>
+              <h2 className="font-black text-2xl mb-6" style={{ color: textPrimary, fontFamily: "'Montserrat', sans-serif", letterSpacing: "-0.02em", borderLeft: "4px solid #f97316", paddingLeft: "0.75rem" }}>
+                What to Bring
+              </h2>
               {[
-                { label: "📋 Essentials", items: dest.whatToBring.essentials },
-                { label: "🏖️ Beach Essentials", items: dest.whatToBring.beach },
-                { label: "🧳 Personal Items", items: dest.whatToBring.personal },
-              ].map(({ label, items }) => (
-                <div key={label} className="rounded-2xl border p-4" style={{ ...card }}>
-                  <p className="text-xs font-bold uppercase tracking-widest mb-3" style={muted}>{label}</p>
-                  <ul className="space-y-1.5">
-                    {items.map((item) => (<li key={item} className="text-xs flex items-center gap-1.5" style={{ color: textPrimary }}><span className="text-orange-400 text-[8px]">●</span> {item}</li>))}
-                  </ul>
-                </div>
-              ))}
+                { key: "documents",           label: "Documents",            emoji: "📋" },
+                { key: "essentials",          label: "Essentials",           emoji: "🧳" },
+                { key: "destinationSpecific", label: "Destination Specific", emoji: "🌴" },
+              ].map(({ key, label, emoji }) => {
+                const items = dest.packingGuide[key];
+                if (!items?.length) return null;
+                return (
+                  <div key={key} className="mb-6">
+                    <div className="flex items-center gap-2 mb-3">
+                      <span>{emoji}</span>
+                      <p className="text-xs font-black uppercase tracking-widest" style={{ color: textMuted }}>{label}</p>
+                    </div>
+                    <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))" }}>
+                      {items.map((item) => (
+                        <div key={item.name} className="rounded-2xl border overflow-hidden" style={{ backgroundColor: cardBg, borderColor }}>
+                          <div className="flex items-center justify-center" style={{ aspectRatio: "1/1", backgroundColor: darkMode ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)" }}>
+                            {item.image ? (
+                              <img src={item.image} alt={item.name} className="w-full h-full object-cover" loading="lazy" />
+                            ) : (
+                              <span style={{ fontSize: "3.25rem" }}>{item.icon}</span>
+                            )}
+                          </div>
+                          <div className="p-3">
+                            <p className="font-black text-sm leading-snug mb-0.5" style={{ color: textPrimary }}>{item.name}</p>
+                            <p className="text-xs leading-snug" style={{ color: textMuted }}>{item.desc}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-          </div>
-        </FadeIn>
+          </FadeIn>
+        )}
 
         {/* ══════════════════════════════════════════════════
             8. OUTFIT GUIDE
            ══════════════════════════════════════════════════ */}
-        <FadeIn>
-          <div className={sectionGap}>
-            <SectionHeader eyebrow="Dress Code Guide" title="Outfit Guide" tk={tk} />
-            <div className="grid grid-cols-2 gap-3">
-              {dest.outfitGuide.map((o) => (
-                <div key={o.occasion} className="border rounded-2xl p-4" style={{ borderColor, backgroundColor: surfaceBg }}>
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className="text-2xl">{o.icon}</span>
-                    <p className="font-bold text-sm" style={{ color: textPrimary }}>{o.occasion}</p>
-                  </div>
-                  <ul className="space-y-1">
-                    {o.items.map((item) => (<li key={item} className="text-xs" style={muted}>→ {item}</li>))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </div>
-        </FadeIn>
+        {dest.outfitGuide?.length >= 2 && (
+          <FadeIn>
+            <OutfitGuideSection
+              dest={dest}
+              darkMode={darkMode}
+              sectionGap={sectionGap}
+              textPrimary={textPrimary}
+              textMuted={textMuted}
+              cardBg={cardBg}
+              borderColor={borderColor}
+              cardShadow={cardShadow}
+            />
+          </FadeIn>
+        )}
 
         {/* ══════════════════════════════════════════════════
             9. DESTINATION GUIDE
@@ -902,270 +1716,180 @@ export default function TravelBriefingLanding() {
           </div>
         </FadeIn>
 
-        {/* ══════════════════════════════════════════════════
-            10. OPTIONAL TOURS SECTION
-           ══════════════════════════════════════════════════ */}
-        <FadeIn>
-          <div className={sectionGap}>
-            <SectionHeader eyebrow="Add To Your Trip" title="Optional Tours & Activities" tk={tk} />
-            <p className="text-sm mb-5" style={muted}>
-              Select tours to add to your checkout. Contact +63 917 875 2200 for group or custom bookings.
-            </p>
-            {liveTourData.length > 0 ? (
-              <p className="text-[10px] mb-3 flex items-center gap-1" style={{ color: "#22c55e" }}>
-                ✅ Live pricing from GlobalTix · Add to cart and checkout below
-              </p>
-            ) : !toursLoading && (
-              <p className="text-[10px] mb-3 flex items-center gap-1" style={{ color: tk.textMuted }}>
-                📌 Curated tour list · Call +63 917 875 2200 to book any activity
-              </p>
-            )}
-            <TBOptionalTours
-              dest={liveTourData.length > 0
-                ? { ...dest, optionalTours: liveTourData }
-                : dest
-              }
-              darkMode={darkMode}
-              tk={tk}
-              loading={toursLoading}
-              onAddToCart={toggleTour}
-              cartItems={cart.tours}
-            />
-          </div>
-        </FadeIn>
-
-        {/* ══════════════════════════════════════════════════
-            11. TRAVEL INSURANCE ADD-ON
-           ══════════════════════════════════════════════════ */}
-        <FadeIn>
-          <div className={sectionGap}>
-            <SectionHeader eyebrow="Protect Your Trip" title="Travel Insurance" tk={tk} />
-            <p className="text-sm mb-5" style={muted}>
-              Powered by Starr TraveLead — Philippines Domestic Travel Insurance.
-              {insuranceLoading && <span className="ml-2 inline-flex items-center gap-1 text-orange-400"><Loader className="w-3 h-3 animate-spin" />Fetching live rates…</span>}
-            </p>
-            {/* Insurance plans — live prices from Starr API */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-              {STARR_PLANS.map((plan) => {
-                const livePrice = starrPrices[plan.key];
-                const inCart    = cart.insurance?.key === plan.key;
-                return (
-                  <div key={plan.key} className="rounded-2xl border p-4 relative" style={{ borderColor: plan.recommended ? "rgba(249,115,22,0.4)" : inCart ? "rgba(34,197,94,0.4)" : borderColor, backgroundColor: plan.recommended ? "rgba(249,115,22,0.05)" : cardBg, boxShadow: plan.recommended ? "0 0 0 2px rgba(249,115,22,0.2)" : cardShadow }}>
-                    {plan.recommended && !inCart && (
-                      <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                        <span className="text-[9px] font-bold uppercase tracking-wider px-3 py-1 rounded-full" style={{ background: "#f97316", color: "#fff" }}>⭐ Recommended</span>
-                      </div>
-                    )}
-                    {inCart && (
-                      <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                        <span className="text-[9px] font-bold uppercase tracking-wider px-3 py-1 rounded-full" style={{ background: "#22c55e", color: "#fff" }}>✓ Added</span>
-                      </div>
-                    )}
-                    <p className="font-black text-sm mb-1 mt-1" style={{ color: textPrimary }}>{plan.name} Coverage</p>
-
-                    {/* Live price from Starr */}
-                    <p className="font-black text-xl mb-3" style={{ color: "#f97316" }}>
-                      {insuranceLoading
-                        ? <span className="text-sm font-normal" style={{ color: textMuted }}>Loading…</span>
-                        : livePrice
-                          ? <>₱{parseFloat(livePrice).toLocaleString("en-PH", { minimumFractionDigits: 2 })}<span className="text-xs font-normal ml-1" style={{ color: textMuted }}>/ person</span></>
-                          : <span className="text-sm font-normal" style={{ color: textMuted }}>Contact us</span>
-                      }
-                    </p>
-
-                    <ul className="space-y-1.5 mb-4">
-                      {plan.coverage.map((c) => (<li key={c} className="flex items-center gap-1.5 text-xs" style={{ color: textPrimary }}><Check className="w-3 h-3 text-green-500 shrink-0" strokeWidth={2.5} />{c}</li>))}
-                    </ul>
-
-                    <motion.button
-                      whileTap={{ scale: 0.97 }}
-                      onClick={() => toggleInsurance({ key: plan.key, name: `${plan.name}`, price: livePrice ? parseFloat(livePrice) : 0 })}
-                      className="w-full py-2 rounded-xl text-xs font-bold transition-all"
-                      style={{
-                        background: inCart ? "rgba(34,197,94,0.12)" : "linear-gradient(135deg, #f97316, #b45309)",
-                        color: inCart ? "#22c55e" : "#fff",
-                        border: inCart ? "1px solid rgba(34,197,94,0.4)" : "none",
-                      }}
-                    >
-                      {inCart ? "✓ Remove Insurance" : "Add Insurance"}
-                    </motion.button>
-                  </div>
-                );
-              })}
-            </div>
-            <p className="text-[10px] text-center" style={muted}>
-              Prices fetched live from Starr TraveLead API (UAT) · {new Date().toLocaleDateString("en-PH")} · Single trip, 1 adult, 5 days
-            </p>
-          </div>
-        </FadeIn>
-
-        {/* ══════════════════════════════════════════════════
-            12. CHECKOUT SECTION (Phase 1 placeholder)
-           ══════════════════════════════════════════════════ */}
-        <FadeIn>
-          <div className={sectionGap}>
-            <SectionHeader eyebrow="Cart Summary" title="Checkout" tk={tk} />
-            <div className="rounded-2xl border p-5" style={{ ...card, borderStyle: hasCartItems ? "solid" : "dashed" }}>
-
-              {/* Empty state */}
-              {!hasCartItems && (
-                <div className="flex items-center gap-3 mb-4">
-                  <ShoppingCart className="w-5 h-5" style={{ color: textMuted }} />
-                  <p className="text-sm font-semibold" style={{ color: textPrimary }}>Your cart is empty</p>
-                </div>
-              )}
-
-              {/* Cart items */}
-              {(cart.tours.length > 0 || cart.insurance) && (
-                <div className="space-y-2 mb-4">
-                  {cart.tours.map((tour) => (
-                    <div key={tour.id} className="flex items-center justify-between gap-3 py-2 border-b" style={{ borderColor }}>
-                      <span className="text-sm" style={{ color: textPrimary }}>{tour.icon} {tour.name}</span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold" style={{ color: "#f97316" }}>
-                          {tour.price > 0 ? `₱${tour.price.toLocaleString("en-PH")}` : "Call for price"}
-                        </span>
-                        <button onClick={() => toggleTour(tour)} className="text-xs opacity-50 hover:opacity-100 transition-opacity" style={{ color: textMuted }}>✕</button>
-                      </div>
-                    </div>
-                  ))}
-                  {cart.insurance && (
-                    <div className="flex items-center justify-between gap-3 py-2 border-b" style={{ borderColor }}>
-                      <span className="text-sm" style={{ color: textPrimary }}>🛡️ {cart.insurance.name} Travel Insurance</span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold" style={{ color: "#f97316" }}>
-                          {cart.insurance.price > 0 ? `₱${cart.insurance.price.toLocaleString("en-PH")}` : "Call for price"}
-                        </span>
-                        <button onClick={() => toggleInsurance(cart.insurance)} className="text-xs opacity-50 hover:opacity-100 transition-opacity" style={{ color: textMuted }}>✕</button>
-                      </div>
-                    </div>
-                  )}
-                  {cartTotal > 0 && (
-                    <div className="flex items-center justify-between pt-2">
-                      <span className="font-bold text-sm" style={{ color: textPrimary }}>Total</span>
-                      <span className="font-black text-lg" style={{ color: "#f97316" }}>
-                        ₱{cartTotal.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              <p className="text-xs mb-4" style={muted}>
-                {cartTotal > 0
-                  ? "Proceeding to Xendit secure payment. Accepts GCash, Maya, Credit Card, Bank Transfer."
-                  : "Add optional tours or travel insurance from the sections above to proceed."}
-              </p>
-
-              {/* Payment method badges */}
-              <div className="flex flex-wrap gap-2 mb-4">
-                {["GCash", "Maya", "Credit Card", "Bank Transfer", "Payment Link"].map((m) => (
-                  <span key={m} className="text-xs px-3 py-1 rounded-full border" style={{ borderColor, color: textMuted, backgroundColor: surfaceBg }}>{m}</span>
-                ))}
-              </div>
-
-              {/* Checkout error */}
-              {checkoutError && (
-                <div className="mb-3 p-3 rounded-xl text-xs" style={{ backgroundColor: "rgba(239,68,68,0.1)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.3)" }}>
-                  ⚠️ {checkoutError}
-                </div>
-              )}
-
-              {/* Proceed to Checkout — live via Xendit */}
-              <motion.button
-                whileTap={{ scale: hasCartItems ? 0.97 : 1 }}
-                onClick={handleCheckout}
-                disabled={!hasCartItems || checkoutLoading}
-                className="w-full py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all"
-                style={{
-                  background: "linear-gradient(135deg, #f97316, #b45309)",
-                  color: "#fff",
-                  opacity: !hasCartItems ? 0.4 : 1,
-                  cursor: !hasCartItems ? "not-allowed" : "pointer",
-                }}
-              >
-                {checkoutLoading
-                  ? <><Loader className="w-4 h-4 animate-spin" /> Creating payment link…</>
-                  : hasCartItems
-                    ? cartTotal > 0
-                      ? <>Proceed to Checkout · ₱{cartTotal.toLocaleString("en-PH", { minimumFractionDigits: 2 })}</>
-                      : <>Proceed to Checkout · Contact for Pricing</>
-                    : "Add items to checkout"
-                }
-              </motion.button>
-
-              <p className="text-[10px] text-center mt-3" style={muted}>
-                Secured by Xendit · You will be redirected to the payment page.
-              </p>
-            </div>
-          </div>
-        </FadeIn>
 
         {/* ══════════════════════════════════════════════════
             13. FREQUENTLY ASKED QUESTIONS
            ══════════════════════════════════════════════════ */}
         <FadeIn>
           <div className={sectionGap}>
-            <SectionHeader eyebrow="Got Questions?" title="Frequently Asked Questions" tk={tk} />
+            <SectionHeader eyebrow="Have Questions?" title="Frequently Asked Questions" tk={tk} />
             <TBFAQs dest={dest} darkMode={darkMode} tk={tk} />
           </div>
         </FadeIn>
 
         {/* ══════════════════════════════════════════════════
-            14. TESTIMONIALS (Phase 1 placeholder)
+            14. TESTIMONIALS
            ══════════════════════════════════════════════════ */}
         <FadeIn>
           <div className={sectionGap}>
-            <SectionHeader eyebrow="Real Gladex Experiences" title="What Our Guests Say" tk={tk} />
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {[
-                { name: "Maria Santos", dest: "Boracay", rating: 5, review: "The briefing portal made our trip so much smoother. Every detail was clearly laid out — we knew exactly what to do from the moment we landed!" },
-                { name: "Jose Reyes", dest: "Cebu", rating: 5, review: "Loved the Oslob whale shark experience! The arrival instructions were spot on — our driver was right there with our name sign. 10/10 would book Gladex again." },
-                { name: "Ana Cruz", dest: "El Nido", rating: 5, review: "El Nido is paradise. The tour guides were professional, the lagoons were breathtaking, and Gladex handled everything seamlessly." },
-              ].map((t) => (
-                <div key={t.name} className="rounded-2xl border p-4" style={{ ...card }}>
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-black" style={{ background: "linear-gradient(135deg, #f97316, #b45309)", color: "#fff" }}>
-                      {t.name.charAt(0)}
+            <SectionHeader eyebrow="Traveler Reviews" title="Real Gladex Travel Experiences 🧡" tk={tk} />
+
+            {/* Carousel cards */}
+            {(() => {
+              const PER = testimonialsMobile ? 1 : 3;
+              const totalPages = Math.ceil(TESTIMONIALS.length / PER);
+              const safePage = Math.min(testimonialsPage, totalPages - 1);
+              const visible = TESTIMONIALS.slice(safePage * PER, (safePage + 1) * PER);
+              return (
+                <>
+                  <div className={`grid gap-3 mb-4 ${testimonialsMobile ? "grid-cols-1" : "grid-cols-3"}`}>
+                    {visible.map((t, i) => (
+                      <motion.div
+                        key={`${safePage}-${i}`}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.06, duration: 0.3 }}
+                        className="rounded-2xl border p-4 flex flex-col gap-3"
+                        style={{ backgroundColor: cardBg, borderColor, boxShadow: cardShadow }}
+                      >
+                        {/* Stars */}
+                        <div className="flex gap-0.5">
+                          {[1,2,3,4,5].map((s) => (
+                            <Star key={s} className={`w-3.5 h-3.5 ${s <= t.rating ? "fill-yellow-400 text-yellow-400" : "text-yellow-200"}`} />
+                          ))}
+                        </div>
+                        {/* Quote */}
+                        <p className="text-xs leading-relaxed flex-1 italic" style={{ color: textPrimary }}>
+                          "{t.review}"
+                        </p>
+                        {/* Reviewer */}
+                        <div className="flex items-center gap-2.5 pt-2 border-t" style={{ borderColor }}>
+                          <div
+                            className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black shrink-0"
+                            style={{ background: "#1a1a1a", color: "#fff" }}
+                          >
+                            {t.name.charAt(0)}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-black text-xs" style={{ color: textPrimary }}>{t.name}</p>
+                            <p className="text-[10px]" style={{ color: "#f97316" }}>{t.location} · {t.date}</p>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+
+                  {/* Navigation row — dots left, arrows right */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex gap-1.5">
+                      {Array.from({ length: totalPages }).map((_, pi) => (
+                        <button
+                          key={pi}
+                          onClick={() => setTestimonialsPage(pi)}
+                          className="rounded-full transition-all"
+                          style={{
+                            width: pi === safePage ? "20px" : "8px",
+                            height: "8px",
+                            backgroundColor: pi === safePage ? "#f97316" : (darkMode ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.15)"),
+                          }}
+                        />
+                      ))}
                     </div>
-                    <div>
-                      <p className="font-bold text-xs" style={{ color: textPrimary }}>{t.name}</p>
-                      <p className="text-[10px]" style={muted}>{t.dest}</p>
-                    </div>
-                    <div className="ml-auto flex">
-                      {Array.from({ length: t.rating }).map((_, i) => (<Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />))}
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setTestimonialsPage((p) => Math.max(0, p - 1))}
+                        disabled={safePage === 0}
+                        className="w-9 h-9 rounded-full flex items-center justify-center border transition-all"
+                        style={{
+                          borderColor: darkMode ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.12)",
+                          backgroundColor: darkMode ? "rgba(255,255,255,0.05)" : "#fff",
+                          opacity: safePage === 0 ? 0.35 : 1,
+                          color: textPrimary,
+                        }}
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                      </button>
+                      <button
+                        onClick={() => setTestimonialsPage((p) => Math.min(totalPages - 1, p + 1))}
+                        disabled={safePage === totalPages - 1}
+                        className="w-9 h-9 rounded-full flex items-center justify-center transition-all"
+                        style={{
+                          backgroundColor: safePage === totalPages - 1 ? "rgba(249,115,22,0.3)" : "#f97316",
+                          opacity: safePage === totalPages - 1 ? 0.5 : 1,
+                          color: "#fff",
+                          boxShadow: safePage < totalPages - 1 ? "0 4px 14px rgba(249,115,22,0.4)" : "none",
+                        }}
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                      </button>
                     </div>
                   </div>
-                  <p className="text-xs leading-relaxed italic" style={muted}>"{t.review}"</p>
-                </div>
-              ))}
-            </div>
+                </>
+              );
+            })()}
           </div>
         </FadeIn>
 
         {/* ══════════════════════════════════════════════════
-            15. RATE MY SERVICE (Phase 1 placeholder)
+            15. RATE MY SERVICE
            ══════════════════════════════════════════════════ */}
         <FadeIn>
           <div className={sectionGap}>
-            <SectionHeader eyebrow="How Was Your Experience?" title="Rate My Service" tk={tk} />
+            <SectionHeader eyebrow="Your Experience" title="Review Our Service" tk={tk} />
             <div className="rounded-2xl border p-5" style={{ ...card }}>
-              <div className="space-y-3 mb-5">
-                {["Was the booking process easy?", "Was our team responsive?", "Are you satisfied with the service so far?", "Would you recommend Gladex?"].map((q) => (
-                  <div key={q} className="flex items-center justify-between gap-4">
-                    <p className="text-sm" style={{ color: textPrimary }}>{q}</p>
-                    <div className="flex gap-1 shrink-0">
-                      {[1, 2, 3, 4, 5].map((s) => (
-                        <Star key={s} className="w-5 h-5 text-yellow-400/30 hover:text-yellow-400 transition-colors cursor-pointer" />
-                      ))}
-                    </div>
-                  </div>
+              {/* Question + stars */}
+              <p className="text-sm mb-3" style={{ color: textPrimary }}>
+                How would you rate your experience with Gladex Tours?
+              </p>
+              <div className="flex gap-2 mb-5">
+                {[1, 2, 3, 4, 5].map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => setReviewStars(s)}
+                    className="transition-transform hover:scale-110 active:scale-95"
+                    aria-label={`${s} star${s > 1 ? "s" : ""}`}
+                  >
+                    <Star
+                      className={`w-7 h-7 transition-colors ${
+                        s <= reviewStars
+                          ? "fill-yellow-400 text-yellow-400"
+                          : darkMode ? "text-white/20 hover:text-yellow-400" : "text-black/15 hover:text-yellow-400"
+                      }`}
+                    />
+                  </button>
                 ))}
               </div>
-              <button disabled className="w-full py-3 rounded-xl text-sm font-bold border opacity-50" style={{ borderColor: "rgba(249,115,22,0.35)", color: "#f97316", backgroundColor: "rgba(249,115,22,0.07)" }}>
-                Leave A Review
+
+              {/* Comments */}
+              <p className="text-[10px] font-black uppercase tracking-widest mb-1.5" style={{ color: textMuted }}>
+                Comments <span className="font-normal normal-case tracking-normal">(optional)</span>
+              </p>
+              <textarea
+                rows={3}
+                value={reviewComment}
+                onChange={(e) => setReviewComment(e.target.value)}
+                placeholder="Tell us about your experience..."
+                className="w-full rounded-xl border px-4 py-3 text-sm resize-none outline-none transition-colors"
+                style={{
+                  backgroundColor: darkMode ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)",
+                  borderColor: darkMode ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)",
+                  color: textPrimary,
+                }}
+              />
+
+              {/* Submit */}
+              <button
+                disabled={reviewStars === 0}
+                className="w-full mt-4 py-3 rounded-xl text-sm font-bold transition-all"
+                style={{
+                  backgroundColor: reviewStars > 0 ? "#f97316" : (darkMode ? "rgba(249,115,22,0.25)" : "rgba(249,115,22,0.2)"),
+                  color: reviewStars > 0 ? "#fff" : "#f97316",
+                  opacity: reviewStars === 0 ? 0.6 : 1,
+                }}
+              >
+                Submit Review
               </button>
-              <p className="text-[10px] text-center mt-3" style={muted}>🔒 Review submission available in Phase 2 via Rate My Service integration.</p>
+              <p className="text-[10px] text-center mt-3" style={muted}>🔒 Review submission available in Phase 2.</p>
             </div>
           </div>
         </FadeIn>
@@ -1224,7 +1948,6 @@ export default function TravelBriefingLanding() {
 
       {/* Floating UI */}
       <BackToTopButton visible={showBackToTop} />
-      <DevSwitcher currentSlug={slug} navigate={navigate} darkMode={darkMode} tk={tk} />
     </div>
   );
 }
