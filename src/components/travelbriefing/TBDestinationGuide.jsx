@@ -2,46 +2,187 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 
-function PhotoSpotCard({ spot, idx, darkMode, tk }) {
+const MONTH_MAP = {
+  january: "Jan", february: "Feb", march: "Mar", april: "Apr",
+  may: "May", june: "Jun", july: "Jul", august: "Aug",
+  september: "Sep", october: "Oct", november: "Nov", december: "Dec",
+};
+
+function parseMonthRange(text) {
+  const match = text.match(/([A-Za-z]+)\s+to\s+([A-Za-z]+)/i);
+  if (match) {
+    const a = MONTH_MAP[match[1].toLowerCase()] || match[1].slice(0, 3);
+    const b = MONTH_MAP[match[2].toLowerCase()] || match[2].slice(0, 3);
+    return `${a} – ${b}`;
+  }
+  return text.split("(")[0].trim().split(",")[0].trim();
+}
+
+function parseTemp(text) {
+  const match = text.match(/\d+°[CF]?\s*[–\-]\s*\d+°[CF]?/);
+  return match ? match[0] : text.split(",")[0].trim();
+}
+
+function parseCurrencyTip(tip) {
+  const t = tip.toLowerCase();
+  let icon = "💡";
+  let title = "";
+  let sub   = "";
+
+  if (t.includes("atm")) {
+    icon  = "🏧";
+    title = "ATM Available";
+    const loc = tip.match(/at\s+([^—\-–]+?)(?:\s*[—\-–]|$)/i);
+    sub   = loc ? loc[1].trim().slice(0, 22) : "";
+  } else if (t.includes("gcash") && (t.includes("credit") || t.includes("card"))) {
+    icon  = "📱";
+    title = "GCash & Cards";
+    sub   = "Accepted at most shops";
+  } else if (t.includes("gcash")) {
+    icon  = "📱";
+    title = "GCash Accepted";
+  } else if (t.includes("credit") || t.includes("card")) {
+    icon  = "💳";
+    title = "Cards Accepted";
+  } else if (t.includes("small bill") || (t.includes("bill") && t.includes("small"))) {
+    icon  = "💵";
+    title = "Small Bills";
+    sub   = "For stalls & vendors";
+  } else if (t.includes("terminal") || t.includes("fee") || t.includes("port")) {
+    icon  = "🎫";
+    title = "Port / Terminal Fees";
+    const rng = tip.match(/₱[\d,]+[–\-–]?[\d,]*/);
+    sub   = rng ? `${rng[0]} · cash only` : "Cash required on-site";
+  } else {
+    const first = tip.split("—")[0].trim().split(" ");
+    title = first.slice(0, 3).join(" ");
+  }
+  return { icon, title, sub };
+}
+
+function parseSafetyTip(tip) {
+  const t = tip.toLowerCase();
+  let icon = "⚠️";
+  if (t.includes("swim") || t.includes("zone") || t.includes("flag"))          icon = "🏊";
+  else if (t.includes("valuabl") || t.includes("unattend") || t.includes("bag")) icon = "🎒";
+  else if (t.includes("accredit") || t.includes("provider") || t.includes("unauthor") || t.includes("boat")) icon = "🚤";
+  else if (t.includes("sunscreen") || t.includes("reef") || t.includes("chemical")) icon = "🧴";
+  else if (t.includes("sticker") || t.includes("wristband") || t.includes("southwest")) icon = "🔖";
+  else if (t.includes("gladex") || t.includes("contact") || t.includes("coordinat")) icon = "📞";
+  else if (t.includes("alcohol") || t.includes("drink"))      icon = "🚫";
+  else if (t.includes("litter") || t.includes("trash") || t.includes("waste"))   icon = "♻️";
+
+  const raw = tip.split("—")[0].trim().replace(/\.$/, "");
+  const title = raw.split(" ").slice(0, 5).join(" ");
+  return { icon, title, detail: tip };
+}
+
+function parseLocalTip(tip) {
+  const t = tip.toLowerCase();
+  let icon = "💡";
+  if (t.includes("cash") || t.includes("small"))              icon = "💰";
+  else if (t.includes("trike") || t.includes("e-trike") || t.includes("transport")) icon = "🛺";
+  else if (t.includes("book") || t.includes("advance") || t.includes("reserv"))     icon = "📅";
+  else if (t.includes("morning") || t.includes("early"))      icon = "🌅";
+  else if (t.includes("bargain") || t.includes("haggle"))     icon = "🤝";
+  else if (t.includes("photo"))                               icon = "📸";
+  else if (t.includes("hydrat") || t.includes("water"))       icon = "💧";
+  else if (t.includes("food") || t.includes("eat") || t.includes("try")) icon = "🍽️";
+  else if (t.includes("tour") || t.includes("hop"))           icon = "🗺️";
+
+  const dashIdx = tip.indexOf("—");
+  let title, detail;
+  if (dashIdx > 0) {
+    title  = tip.slice(0, dashIdx).trim();
+    detail = tip.slice(dashIdx + 1).trim();
+  } else {
+    const commaIdx = tip.indexOf(",");
+    if (commaIdx > 0) {
+      title  = tip.slice(0, commaIdx).trim();
+      detail = tip.slice(commaIdx + 1).trim();
+    } else {
+      title  = tip.split(" ").slice(0, 4).join(" ");
+      detail = "";
+    }
+  }
+  return { icon, title, detail: detail || tip };
+}
+
+function PhotoSpotCarousel({ spots, darkMode, tk }) {
+  const [current, setCurrent] = useState(0);
   const [imgFailed, setImgFailed] = useState(false);
+
+  const prev = () => { setImgFailed(false); setCurrent((c) => (c - 1 + spots.length) % spots.length); };
+  const next = () => { setImgFailed(false); setCurrent((c) => (c + 1) % spots.length); };
+
+  const spot = spots[current];
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay: idx * 0.06, duration: 0.4 }}
-      className="rounded-2xl overflow-hidden border"
-      style={{ borderColor: tk.borderColor, boxShadow: tk.cardShadow }}
-    >
-      {spot.image && !imgFailed ? (
-        <div style={{ aspectRatio: "4/3", overflow: "hidden" }}>
+    <div className="rounded-2xl overflow-hidden border relative" style={{ borderColor: tk.borderColor, boxShadow: tk.cardShadow }}>
+      <div className="relative" style={{ aspectRatio: "16/9", overflow: "hidden" }}>
+        {spot.image && !imgFailed ? (
           <img
             src={spot.image}
             alt={spot.name}
-            className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+            className="w-full h-full object-cover"
             loading="lazy"
             onError={() => setImgFailed(true)}
           />
+        ) : (
+          <div
+            className="w-full h-full flex items-center justify-center text-4xl"
+            style={{ background: darkMode ? "#1a1a1a" : "#e8e8e8" }}
+          >
+            📸
+          </div>
+        )}
+        <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 55%)" }} />
+        {/* Counter badge */}
+        <div className="absolute top-3 right-3 text-[10px] font-bold px-2.5 py-1 rounded-full" style={{ background: "rgba(0,0,0,0.55)", color: "#fff" }}>
+          {current + 1} / {spots.length}
         </div>
-      ) : (
-        <div
-          className="flex items-center justify-center text-3xl"
-          style={{ aspectRatio: "4/3", background: darkMode ? "#1a1a1a" : "#e8e8e8" }}
-        >
-          📸
+        {/* Left arrow */}
+        <button
+          onClick={prev}
+          className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center transition-all"
+          style={{ background: "rgba(0,0,0,0.45)", color: "#fff", fontSize: "1rem" }}
+          aria-label="Previous"
+        >‹</button>
+        {/* Right arrow */}
+        <button
+          onClick={next}
+          className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center transition-all"
+          style={{ background: "rgba(0,0,0,0.45)", color: "#fff", fontSize: "1rem" }}
+          aria-label="Next"
+        >›</button>
+        {/* Name + note overlay */}
+        <div className="absolute bottom-0 left-0 right-0 p-3">
+          <p className="font-bold text-sm text-white leading-snug">{spot.name}</p>
+          {spot.note && <p className="text-[10px] leading-snug mt-0.5" style={{ color: "rgba(255,255,255,0.65)" }}>{spot.note}</p>}
         </div>
-      )}
-      <div className="p-3" style={{ backgroundColor: tk.cardBg }}>
-        <p className="font-bold text-sm mb-0.5" style={{ color: tk.textPrimary }}>{spot.name}</p>
-        <p className="text-xs leading-snug" style={{ color: tk.textMuted }}>{spot.note}</p>
       </div>
-    </motion.div>
+      {/* Dot indicators */}
+      <div className="flex items-center justify-center gap-1.5 py-3" style={{ backgroundColor: tk.cardBg }}>
+        {spots.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => { setImgFailed(false); setCurrent(i); }}
+            className="rounded-full transition-all"
+            style={{
+              width: i === current ? "20px" : "6px",
+              height: "6px",
+              background: i === current ? "#f97316" : tk.borderColor,
+            }}
+            aria-label={`Go to photo ${i + 1}`}
+          />
+        ))}
+      </div>
+    </div>
   );
 }
 
 function ImageCard({ item, darkMode, tk, priority = false }) {
   const [failed, setFailed] = useState(false);
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
@@ -51,11 +192,7 @@ function ImageCard({ item, darkMode, tk, priority = false }) {
       className="rounded-2xl overflow-hidden border"
       style={{ borderColor: tk.borderColor, boxShadow: tk.cardShadow }}
     >
-      {/* Image */}
-      <div
-        className="overflow-hidden"
-        style={{ aspectRatio: priority ? "16 / 7" : "4 / 3", position: "relative" }}
-      >
+      <div className="overflow-hidden" style={{ aspectRatio: priority ? "16 / 7" : "4 / 3", position: "relative" }}>
         {item.image && !failed ? (
           <img
             src={item.image}
@@ -78,15 +215,9 @@ function ImageCard({ item, darkMode, tk, priority = false }) {
           </div>
         )}
       </div>
-
-      {/* Text */}
       <div className="p-4" style={{ backgroundColor: tk.cardBg }}>
-        <p className="font-black text-base mb-1" style={{ color: tk.textPrimary }}>
-          {item.name}
-        </p>
-        <p className="text-sm leading-relaxed" style={{ color: tk.textMuted }}>
-          {item.desc}
-        </p>
+        <p className="font-black text-base mb-1" style={{ color: tk.textPrimary }}>{item.name}</p>
+        <p className="text-sm leading-relaxed" style={{ color: tk.textMuted }}>{item.desc}</p>
       </div>
     </motion.div>
   );
@@ -98,21 +229,15 @@ export default function TBDestinationGuide({ dest, darkMode, tk }) {
   return (
     <div className="space-y-10">
 
-      {/* ── Must-Visit Spots — Klook large vertical layout ── */}
+      {/* ── Must-Visit Spots ── */}
       {guide.highlights?.length > 0 && (
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest mb-5" style={{ color: tk.textMuted }}>
-            Must-Visit Spots
-          </p>
-
-          {/* First card: full-width hero (16:9) */}
+          <p className="text-xs font-black uppercase tracking-widest mb-5" style={{ color: "#f97316" }}>Best Places to Visit</p>
           <div className="mb-4">
             <ImageCard item={guide.highlights[0]} darkMode={darkMode} tk={tk} priority />
           </div>
-
-          {/* Remaining: 2-column grid (4:3) — scrolls DOWN on all devices */}
           {guide.highlights.length > 1 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {guide.highlights.slice(1).map((h) => (
                 <ImageCard key={h.name} item={h} darkMode={darkMode} tk={tk} />
               ))}
@@ -124,20 +249,36 @@ export default function TBDestinationGuide({ dest, darkMode, tk }) {
       {/* ── Local Food To Try ── */}
       {guide.food?.length > 0 && (
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: tk.textMuted }}>
-            Local Food To Try
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <p className="text-xs font-black uppercase tracking-widest mb-4" style={{ color: "#f97316" }}>Best Food & Dining</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {guide.food.map((f) => (
               <div
                 key={f.name}
-                className="border rounded-2xl p-4 flex items-start gap-3"
-                style={{ borderColor: tk.borderColor, backgroundColor: tk.surfaceBg }}
+                className="relative rounded-2xl overflow-hidden border"
+                style={{ aspectRatio: "4/3", borderColor: tk.borderColor, boxShadow: tk.cardShadow }}
               >
-                <span className="text-2xl shrink-0">{f.emoji}</span>
-                <div>
-                  <p className="font-bold text-sm mb-0.5" style={{ color: tk.textPrimary }}>{f.name}</p>
-                  <p className="text-xs leading-snug" style={{ color: tk.textMuted }}>{f.note}</p>
+                {f.image ? (
+                  <img
+                    src={f.image}
+                    alt={f.name}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div
+                    className="absolute inset-0 flex items-center justify-center"
+                    style={{ background: darkMode ? "linear-gradient(135deg, #1c1008, #0c0c0c)" : "linear-gradient(135deg, #fff7ed, #fed7aa)" }}
+                  >
+                    <span style={{ fontSize: "3.5rem" }}>{f.emoji}</span>
+                  </div>
+                )}
+                <div
+                  className="absolute inset-0"
+                  style={{ background: "linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.1) 55%, transparent 100%)" }}
+                />
+                <div className="absolute bottom-0 left-0 right-0 p-3">
+                  <p className="font-bold text-sm text-white leading-snug">{f.name}</p>
+                  {f.note && <p className="text-[10px] leading-snug mt-0.5" style={{ color: "rgba(255,255,255,0.65)" }}>{f.note}</p>}
                 </div>
               </div>
             ))}
@@ -145,15 +286,94 @@ export default function TBDestinationGuide({ dest, darkMode, tk }) {
         </div>
       )}
 
-      {/* ── Best Photo Spots ── */}
+      {/* ── Best Photo Spots — full-width carousel ── */}
       {guide.photoSpots?.length > 0 && (
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: tk.textMuted }}>
-            Best Photo Spots
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {guide.photoSpots.map((spot, i) => (
-              <PhotoSpotCard key={spot.name} spot={spot} idx={i} darkMode={darkMode} tk={tk} />
+          <p className="text-xs font-black uppercase tracking-widest mb-4" style={{ color: "#f97316" }}>Best Photo Spots</p>
+          <PhotoSpotCarousel spots={guide.photoSpots} darkMode={darkMode} tk={tk} />
+        </div>
+      )}
+
+      {/* ── Weather & Climate ── */}
+      {guide.weather && (
+        <div>
+          <div className="flex items-center gap-1.5 mb-4">
+            <span className="text-sm">🌤️</span>
+            <p className="text-xs font-black uppercase tracking-widest" style={{ color: "#f97316" }}>Weather & Practical Info</p>
+          </div>
+          <div className="flex flex-col gap-2">
+            {[
+              { label: "Best Season",  text: guide.weather.bestSeason },
+              { label: "Rainy Season", text: guide.weather.rainySeason },
+              { label: "Temperature",  text: guide.weather.temperature },
+              { label: "Pack Light",   text: guide.weather.packingTip },
+            ].map(({ label, text }) => (
+              <motion.div
+                key={label}
+                initial={{ opacity: 0, y: 8 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.35 }}
+                className="px-4 py-3 rounded-2xl border"
+                style={{ borderColor: tk.borderColor, backgroundColor: tk.cardBg, boxShadow: tk.cardShadow }}
+              >
+                <p className="text-xs font-bold mb-1" style={{ color: tk.textPrimary }}>{label}</p>
+                <p className="text-xs leading-relaxed" style={{ color: tk.textMuted }}>{text}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── Currency & Payments ── */}
+      {guide.currency && (
+        <div>
+          <div className="flex items-center gap-1.5 mb-4">
+            <span className="text-sm">💱</span>
+            <p className="text-xs font-black uppercase tracking-widest" style={{ color: "#f97316" }}>Currency Guide</p>
+          </div>
+          {/* PHP identity — full-width header card */}
+          <div
+            className="px-4 py-3 rounded-2xl border mb-3"
+            style={{ borderColor: "rgba(34,197,94,0.25)", backgroundColor: "rgba(34,197,94,0.07)" }}
+          >
+            <p className="text-sm font-bold leading-tight" style={{ color: tk.textPrimary }}>
+              {guide.currency.symbol} Philippine Peso
+            </p>
+            <p className="text-xs mt-1 leading-relaxed" style={{ color: tk.textMuted }}>Official currency · accepted everywhere in the Philippines</p>
+          </div>
+          {/* Tip cards — vertical list */}
+          <div className="flex flex-col gap-2">
+            {guide.currency.tips.map((tip, i) => (
+              <div
+                key={i}
+                className="px-4 py-3 rounded-2xl border"
+                style={{ borderColor: "rgba(34,197,94,0.15)", backgroundColor: "rgba(34,197,94,0.04)" }}
+              >
+                <p className="text-xs leading-relaxed" style={{ color: tk.textPrimary }}>{tip}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── Safety Tips ── */}
+      {guide.safetyTips?.length > 0 && (
+        <div>
+          <div className="flex items-center gap-1.5 mb-4">
+            <span className="text-sm">🛡️</span>
+            <p className="text-xs font-black uppercase tracking-widest" style={{ color: "#f97316" }}>Safety Tips</p>
+          </div>
+          <div className="flex flex-col gap-2">
+            {guide.safetyTips.map((tip, i) => (
+              <div
+                key={i}
+                className="flex items-start gap-2.5 px-4 py-3 rounded-2xl border"
+                style={{ borderColor: "rgba(239,68,68,0.15)", backgroundColor: "rgba(239,68,68,0.04)" }}
+              >
+                <span className="text-sm shrink-0 mt-0.5">🛡️</span>
+                <p className="text-xs leading-relaxed" style={{ color: tk.textPrimary }}>{tip}</p>
+              </div>
             ))}
           </div>
         </div>
@@ -162,89 +382,25 @@ export default function TBDestinationGuide({ dest, darkMode, tk }) {
       {/* ── Local Tips ── */}
       {guide.localTips?.length > 0 && (
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: tk.textMuted }}>
-            Local Tips
-          </p>
-          <ul className="space-y-2">
+          <div className="flex items-center gap-1.5 mb-3">
+            <span className="text-sm">💡</span>
+            <p className="text-xs font-black uppercase tracking-widest" style={{ color: "#f97316" }}>Local Tips</p>
+          </div>
+          <div className="flex flex-col gap-2">
             {guide.localTips.map((tip, i) => (
-              <li key={i} className="flex items-start gap-2.5 text-sm" style={{ color: tk.textPrimary }}>
-                <span className="text-orange-400 shrink-0 mt-0.5">→</span>
-                {tip}
-              </li>
+              <div
+                key={i}
+                className="flex items-start gap-2.5 px-4 py-3 rounded-2xl border"
+                style={{ borderColor: tk.borderColor, backgroundColor: tk.cardBg, boxShadow: tk.cardShadow }}
+              >
+                <span className="text-sm shrink-0 mt-0.5">💡</span>
+                <p className="text-xs leading-relaxed" style={{ color: tk.textPrimary }}>{tip}</p>
+              </div>
             ))}
-          </ul>
-        </div>
-      )}
-
-      {/* ── Weather Reminder ── */}
-      {guide.weather && (
-        <div
-          className="rounded-2xl p-4 border"
-          style={{ borderColor: "rgba(59,130,246,0.3)", backgroundColor: "rgba(59,130,246,0.05)" }}
-        >
-          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#3b82f6" }}>
-            🌤️ Weather & Climate
-          </p>
-          <div className="space-y-2">
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider mb-0.5" style={{ color: tk.textMuted }}>Best Season</p>
-              <p className="text-sm" style={{ color: tk.textPrimary }}>{guide.weather.bestSeason}</p>
-            </div>
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider mb-0.5" style={{ color: tk.textMuted }}>Rainy Season</p>
-              <p className="text-sm" style={{ color: tk.textPrimary }}>{guide.weather.rainySeason}</p>
-            </div>
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider mb-0.5" style={{ color: tk.textMuted }}>Temperature</p>
-              <p className="text-sm" style={{ color: tk.textPrimary }}>{guide.weather.temperature}</p>
-            </div>
-            <div className="mt-2 pt-2 border-t" style={{ borderColor: "rgba(59,130,246,0.2)" }}>
-              <p className="text-xs italic" style={{ color: tk.textMuted }}>💡 {guide.weather.packingTip}</p>
-            </div>
           </div>
         </div>
       )}
 
-      {/* ── Currency & Payments ── */}
-      {guide.currency && (
-        <div
-          className="rounded-2xl p-4 border"
-          style={{ borderColor: "rgba(34,197,94,0.3)", backgroundColor: "rgba(34,197,94,0.05)" }}
-        >
-          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#22c55e" }}>
-            💵 Currency & Payments
-          </p>
-          <p className="font-bold text-sm mb-3" style={{ color: tk.textPrimary }}>
-            {guide.currency.symbol} {guide.currency.name}
-          </p>
-          <ul className="space-y-2">
-            {guide.currency.tips.map((tip, i) => (
-              <li key={i} className="flex items-start gap-2 text-xs" style={{ color: tk.textPrimary }}>
-                <span className="shrink-0 mt-0.5" style={{ color: "#22c55e" }}>✓</span> {tip}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {/* ── Safety Tips ── */}
-      {guide.safetyTips?.length > 0 && (
-        <div
-          className="rounded-2xl p-4 border"
-          style={{ borderColor: "rgba(239,68,68,0.25)", backgroundColor: "rgba(239,68,68,0.04)" }}
-        >
-          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#ef4444" }}>
-            🛡️ Safety Tips
-          </p>
-          <ul className="space-y-2">
-            {guide.safetyTips.map((tip, i) => (
-              <li key={i} className="flex items-start gap-2 text-xs" style={{ color: tk.textPrimary }}>
-                <span className="shrink-0 mt-0.5" style={{ color: "#ef4444" }}>•</span> {tip}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
     </div>
   );
 }

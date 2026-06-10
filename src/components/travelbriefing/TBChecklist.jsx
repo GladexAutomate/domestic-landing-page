@@ -3,6 +3,32 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 
+function getChecklistIcon(item) {
+  const t = item.toLowerCase();
+  if (t.includes("passport") || t.includes("id")) return "🪪";
+  if (t.includes("flight") || t.includes("ticket")) return "✈️";
+  if (t.includes("hotel") || t.includes("voucher")) return "🏨";
+  if (t.includes("tour") || t.includes("confirmat")) return "📋";
+  if (t.includes("cash") || t.includes("card") || t.includes("credit")) return "💳";
+  if (t.includes("phone") || t.includes("mobile") || t.includes("charger")) return "📱";
+  if (t.includes("power bank")) return "🔋";
+  if (t.includes("medication") || t.includes("medicine")) return "💊";
+  if (t.includes("insurance")) return "🛡️";
+  if (t.includes("sunscreen") || t.includes("sunblock")) return "🧴";
+  if (t.includes("swimwear") || t.includes("swim")) return "🩱";
+  if (t.includes("camera")) return "📷";
+  if (t.includes("bag") || t.includes("backpack")) return "🎒";
+  if (t.includes("water bottle") || t.includes("bottle")) return "🍶";
+  if (t.includes("towel")) return "🏖️";
+  if (t.includes("sunglasses") || t.includes("shades")) return "🕶️";
+  if (t.includes("hat") || t.includes("cap")) return "🧢";
+  if (t.includes("shoes") || t.includes("sandal") || t.includes("footwear")) return "👟";
+  if (t.includes("clothes") || t.includes("outfit") || t.includes("top") || t.includes("shirt")) return "👕";
+  if (t.includes("toiletries") || t.includes("hygiene")) return "🪥";
+  if (t.includes("first aid") || t.includes("kit")) return "🩹";
+  return "✅";
+}
+
 export default function TBChecklist({ dest, darkMode, tk }) {
   const storageKey = `gdx-tbchecklist-${dest.slug}`;
 
@@ -65,21 +91,34 @@ export default function TBChecklist({ dest, darkMode, tk }) {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         {dest.checklist.map((item) => {
           const done = !!checked[item];
+          const icon = getChecklistIcon(item);
           return (
             <motion.button
               key={item}
               whileTap={{ scale: 0.97 }}
               onClick={() => toggle(item)}
-              className="flex items-center gap-3 p-3 rounded-xl border text-left transition-all"
+              className="flex items-center gap-3 rounded-xl border text-left transition-all"
               style={{
-                borderColor: done
-                  ? "rgba(249,115,22,0.4)"
-                  : tk.borderColor,
-                backgroundColor: done
-                  ? "rgba(249,115,22,0.08)"
-                  : tk.surfaceBg,
+                minHeight: "52px",
+                padding: "10px 12px",
+                borderColor: done ? "rgba(249,115,22,0.4)" : tk.borderColor,
+                backgroundColor: done ? "rgba(249,115,22,0.08)" : tk.surfaceBg,
               }}
             >
+              {/* Item emoji icon */}
+              <span className="text-lg shrink-0 leading-none" style={{ opacity: done ? 0.45 : 1 }}>
+                {icon}
+              </span>
+              <span
+                className="text-sm leading-snug flex-1 transition-all"
+                style={{
+                  color: done ? tk.textMuted : tk.textPrimary,
+                  textDecoration: done ? "line-through" : "none",
+                }}
+              >
+                {item}
+              </span>
+              {/* Checkbox */}
               <div
                 className="shrink-0 w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all"
                 style={{
@@ -89,15 +128,6 @@ export default function TBChecklist({ dest, darkMode, tk }) {
               >
                 {done && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
               </div>
-              <span
-                className="text-sm leading-snug transition-all"
-                style={{
-                  color: done ? tk.textMuted : tk.textPrimary,
-                  textDecoration: done ? "line-through" : "none",
-                }}
-              >
-                {item}
-              </span>
             </motion.button>
           );
         })}
@@ -114,7 +144,7 @@ export default function TBChecklist({ dest, darkMode, tk }) {
             border: "1px solid rgba(34,197,94,0.25)",
           }}
         >
-          🎉 You're all packed and ready to go!
+          All packed and ready to go!
         </motion.div>
       )}
     </div>

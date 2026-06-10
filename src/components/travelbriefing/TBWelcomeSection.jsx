@@ -101,11 +101,11 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
         initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.18, duration: 0.55 }}
-        className={`font-black text-center leading-tight mb-4 ${compact ? "text-3xl sm:text-4xl" : "text-4xl sm:text-5xl md:text-6xl"}`}
-        style={{ color: textPrimary, letterSpacing: "-0.025em", maxWidth: "720px" }}
+        className={`font-black text-center leading-tight mb-4 whitespace-nowrap ${compact ? "text-xl sm:text-2xl" : "text-2xl sm:text-3xl md:text-4xl"}`}
+        style={{ color: textPrimary, letterSpacing: "-0.02em" }}
       >
         Your Trip Is{" "}
-        <span style={{ color: "#f97316" }}>Confirmed!</span>
+        <span style={{ color: "#f97316" }}>Confirmed! 🧡</span>
       </motion.h1>
 
       {/* Subheadline */}
@@ -113,11 +113,10 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.26, duration: 0.5 }}
-        className="text-center text-sm sm:text-base leading-relaxed mb-10"
-        style={{ color: textMuted, maxWidth: "540px" }}
+        className="text-center text-sm leading-relaxed mb-10"
+        style={{ color: textMuted, maxWidth: "460px" }}
       >
-        Enter your GDX Confirmation Number or Tour Voucher Number to access your
-        personalized travel briefing, vouchers, reminders, optional tours, and add-ons.
+        Enter your GDX Confirmation Number or Tour Voucher Number to access your personalized travel briefing, vouchers, reminders, optional tours, and add ons.
       </motion.p>
 
       {/* Search card */}
@@ -195,7 +194,7 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
           style={{ borderColor, backgroundColor: surfaceBg }}
         >
           <span className="text-[10px]" style={{ color: textMuted }}>
-            🔒 Your data is securely retrieved from Gladex booking records.
+            Secured — your data is retrieved from Gladex booking records.
           </span>
         </div>
       </motion.div>
@@ -212,9 +211,9 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
             Or preview a destination briefing:
           </p>
           {[
-            { slug: "boracay", label: "🏖️ Boracay", color: "#f97316" },
-            { slug: "cebu",    label: "🌊 Cebu",    color: "#0ea5e9" },
-            { slug: "elnido",  label: "🏝️ El Nido", color: "#10b981" },
+            { slug: "boracay", label: "Boracay", color: "#f97316" },
+            { slug: "cebu",    label: "Cebu",    color: "#0ea5e9" },
+            { slug: "elnido",  label: "El Nido", color: "#10b981" },
           ].map(({ slug, label, color }) => (
             <button
               key={slug}

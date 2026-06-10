@@ -148,20 +148,76 @@ export const resendVoucherEmail = async (referenceNumber) => {
 
 // ── Gladex destination → GlobalTix product IDs ───────────────────
 // Verified from /api/product/list?countryCode=PH (2026-06-04)
+// fallbackPrice / fallbackSchedule / fallbackHighlights are used when
+// the GlobalTix API is unreachable so the UI always shows real values.
 export const GLADEX_TOUR_PRODUCTS = {
   boracay: [
-    { id: 41478, name: "Island Hopping with BBQ Lunch",        icon: "⛵", badge: "Most Popular" },
-    { id: 41482, name: "Island Hopping + BBQ Lunch & Crab",    icon: "⛵", badge: null },
-    { id: 41487, name: "Helmet Diving",                         icon: "🤿", badge: null },
-    { id: 41486, name: "Discover Scuba Diving",                 icon: "🐠", badge: null },
-    { id: 42130, name: "ATV Adventure",                         icon: "🏍️", badge: null },
-    { id: 41507, name: "Banana Boat",                           icon: "🚤", badge: null },
-    { id: 41505, name: "JetSki (Good for 2)",                   icon: "💨", badge: null },
-    { id: 42135, name: "Helicopter Beach Tour",                 icon: "🚁", badge: "Premium" },
+    {
+      id: 41478, name: "Island Hopping with BBQ Lunch", icon: "⛵", badge: "Most Popular",
+      fallbackPrice:      999,
+      fallbackDuration:   "Full Day · 8 AM – 3 PM",
+      fallbackSchedule:   "Daily · 8:00 AM – 3:00 PM",
+      fallbackHighlights: ["BBQ Lunch on the beach", "Multiple island stops", "Snorkeling gear included"],
+    },
+    {
+      id: 41482, name: "Island Hopping + BBQ Lunch & Crab", icon: "⛵", badge: null,
+      fallbackPrice:      1200,
+      fallbackDuration:   "Full Day · 8 AM – 3 PM",
+      fallbackSchedule:   "Daily · 8:00 AM – 3:00 PM",
+      fallbackHighlights: ["Crab & BBQ Lunch included", "Multiple island stops", "Snorkeling gear included"],
+    },
+    {
+      id: 41487, name: "Helmet Diving", icon: "🤿", badge: null,
+      fallbackPrice:      1200,
+      fallbackDuration:   "15–20 minutes",
+      fallbackSchedule:   "Daily · Morning slots",
+      fallbackHighlights: ["No swimming skills needed", "Walk on the ocean floor", "Feed reef fish underwater"],
+    },
+    {
+      id: 41486, name: "Discover Scuba Diving", icon: "🐠", badge: null,
+      fallbackPrice:      2500,
+      fallbackDuration:   "30–45 minutes",
+      fallbackSchedule:   "Daily · Morning slots",
+      fallbackHighlights: ["Certified instructor included", "No prior experience needed", "Dive up to 5 meters deep"],
+    },
+    {
+      id: 42130, name: "ATV Adventure", icon: "🏍️", badge: null,
+      fallbackPrice:      800,
+      fallbackDuration:   "30–60 minutes",
+      fallbackSchedule:   "Daily",
+      fallbackHighlights: ["Off-road island trails", "Panoramic island views", "Suitable for beginners"],
+    },
+    {
+      id: 41507, name: "Banana Boat", icon: "🚤", badge: null,
+      fallbackPrice:      600,
+      fallbackDuration:   "15–20 minutes",
+      fallbackSchedule:   "Daily",
+      fallbackHighlights: ["Group thrill activity", "Beachfront launch & landing", "Fun for all ages"],
+    },
+    {
+      id: 41505, name: "JetSki (Good for 2)", icon: "💨", badge: null,
+      fallbackPrice:      1500,
+      fallbackDuration:   "15–30 minutes",
+      fallbackSchedule:   "Daily",
+      fallbackHighlights: ["Solo or tandem ride", "Beachfront start & finish", "Thrill seeker activity"],
+    },
+    {
+      id: 42135, name: "Helicopter Beach Tour", icon: "🚁", badge: "Premium",
+      fallbackPrice:      8500,
+      fallbackDuration:   "10–15 minutes",
+      fallbackSchedule:   "Daily · Weather permitting",
+      fallbackHighlights: ["Aerial island panorama", "Private helicopter", "Unforgettable bird's-eye views"],
+    },
   ],
   cebu: [], // No Cebu products in account yet — contact GlobalTix to add
   elnido: [
-    { id: 49272, name: "3-in-1 Adventure in Sabang Puerto Princesa", icon: "🏝️", badge: null },
+    {
+      id: 49272, name: "3-in-1 Adventure in Sabang Puerto Princesa", icon: "🏝️", badge: null,
+      fallbackPrice:      1500,
+      fallbackDuration:   "Full Day",
+      fallbackSchedule:   "Daily · Pick-up 6:00 AM",
+      fallbackHighlights: ["Underground River visit", "Island hopping included", "Lunch included"],
+    },
   ],
 };
 
@@ -184,10 +240,13 @@ const normalizeGloabalTixProduct = (raw, def) => {
     image:       buildImageUrl(p),
     icon:        def.icon,
     badge:       def.badge,
-    duration:    p.duration || null,
-    price:       p.originalPrice || p.fromPrice || null,
+    duration:    p.duration || def.fallbackDuration || null,
+    schedule:    def.fallbackSchedule || null,
+    price:       p.originalPrice || p.fromPrice || def.fallbackPrice || null,
     currency:    p.currency || "PHP",
-    highlights:  Array.isArray(p.highlights) ? p.highlights : [],
+    highlights:  Array.isArray(p.highlights) && p.highlights.length
+                   ? p.highlights
+                   : (def.fallbackHighlights || []),
     stops:       Array.isArray(p.inclusions)
                    ? p.inclusions
                        .sort((a, b) => (a.placementOrder || 0) - (b.placementOrder || 0))
@@ -221,16 +280,19 @@ export const loadDestinationTours = async (destinationSlug) => {
       } catch (err) {
         const elapsed = Date.now() - startTime;
         console.warn(`[GlobalTix] Product ${def.id} (${def.name}) failed after ${elapsed}ms:`, err?.message || err);
-        // Return a static-only card so the UI still renders this activity
+        // Return a fully usable static card — price/schedule/highlights always present
         return {
           id:          String(def.id),
           name:        def.name,
           icon:        def.icon,
           badge:       def.badge,
           description: "",
+          image:       null,
+          duration:    def.fallbackDuration   || null,
+          schedule:    def.fallbackSchedule   || null,
+          price:       def.fallbackPrice      || null,
+          highlights:  def.fallbackHighlights || [],
           stops:       [],
-          highlights:  [],
-          price:       null,
           liveData:    false,
           apiError:    err?.message || "API unavailable",
         };

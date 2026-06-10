@@ -16,6 +16,7 @@ export const DESTINATION_DATA = {
     description:
       "Experience the Philippines' most iconic island destination with powdery white sand, crystal-clear waters, and world-famous sunsets.",
     airport: "Caticlan (MPH) or Kalibo (KLO)",
+    region: "Malay, Aklan",
     heroImage: boracayImgs.hero,
     heroImages: [
       boracayImgs.hero,
@@ -25,7 +26,7 @@ export const DESTINATION_DATA = {
     ],
     accentColor: "#f97316",
     video: {
-      url: "https://drive.google.com/file/d/1THzQAagycyXm8UYNztawslG7G_2Ak_J3/preview",
+      url: "https://www.youtube.com/embed/-JkORQ62UCs",
       title: "Boracay Pre-Departure Briefing",
       comingSoon: false,
     },
@@ -52,7 +53,14 @@ export const DESTINATION_DATA = {
         day: 1,
         title: "Arrival in Boracay",
         meals: "X / X / X",
-        image: boracayImgs.arrival,
+        image: boracayImgs.caticlanAirport,
+        photos: [
+          boracayImgs.caticlanAirport,
+          boracayImgs.bangkaPort,
+          boracayImgs.beachChairs,
+          boracayImgs.boracaySignSunset,
+          boracayImgs.dmallStrip,
+        ],
         activities: [
           "Arrive at Caticlan Airport or Kalibo Airport",
           "Transfer via van or coaster to Caticlan Jetty Port",
@@ -66,7 +74,15 @@ export const DESTINATION_DATA = {
         day: 2,
         title: "Complimentary Island Hopping Tour",
         meals: "B / X / X",
-        image: boracayImgs.islandHopping,
+        image: boracayImgs.islandHoppingBoat,
+        photos: [
+          boracayImgs.hotelBreakfast,
+          boracayImgs.islandHoppingBoat,
+          boracayImgs.pukaBeachAerial,
+          boracayImgs.pukaBeachHut,
+          boracayImgs.snorkeling,
+          boracayImgs.underwaterFish,
+        ],
         activities: [
           "After breakfast, get ready for one of the highlights of the trip",
           "Meet-up time: 8:00 AM – 9:00 AM at your hotel",
@@ -80,7 +96,14 @@ export const DESTINATION_DATA = {
         day: 3,
         title: "Departure Day",
         meals: "B / X / X",
-        image: boracayImgs.departure,
+        image: boracayImgs.balconyBreakfast,
+        photos: [
+          boracayImgs.balconyBreakfast,
+          boracayImgs.parasailingAction,
+          boracayImgs.departureFerry,
+          boracayImgs.caticlanJettyDock,
+          boracayImgs.caticlanJettyTerminal,
+        ],
         activities: [
           "After breakfast, enjoy free time at your own leisure",
           "Optional: avail water activities or explore the island",
@@ -175,9 +198,21 @@ export const DESTINATION_DATA = {
       ],
     },
     emergencyContacts: [
-      { label: "Gladex Customer Care", number: "+63 917 875 2200" },
-      { label: "Ms. Che (Local Operations)", number: "+63 985 045 3635" },
-      { label: "Mr. Mark (Local Operations)", number: "+63 995 416 7143" },
+      {
+        group: "Gladex Customer Care Team",
+        icon: "❤️",
+        contacts: [
+          { label: "Customer Care Hotline", number: "+63 917 875 2200" },
+        ],
+      },
+      {
+        group: "Local Tour Operations Team",
+        icon: "📍",
+        contacts: [
+          { label: "Ms. Che", number: "+63 985 045 3635" },
+          { label: "Mr. Mark", number: "+63 995 416 7143" },
+        ],
+      },
     ],
     dos: [
       "Practice responsible tourism",
@@ -209,11 +244,93 @@ export const DESTINATION_DATA = {
       beach: ["Swimwear", "Beach Towel", "Sunscreen", "Sunglasses", "Hat/Cap", "Waterproof Bag", "Waterproof Phone Case"],
       personal: ["Extra Clothes", "Toiletries", "Personal Medications"],
     },
+    packingGuide: {
+      documents: [
+        { name: "Valid ID / Passport", desc: "Government-issued photo ID", icon: "🛂", image: null },
+        { name: "Flight Tickets", desc: "Printed or saved on your phone", icon: "✈️", image: null },
+        { name: "Hotel Voucher", desc: "Print and save a digital copy", icon: "📄", image: null },
+        { name: "Tour Confirmations", desc: "All activity booking confirmations", icon: "🗓️", image: null },
+      ],
+      essentials: [
+        { name: "Cash & Cards", desc: "For expenses, food & shopping", icon: "💵", image: null },
+        { name: "Mobile & Charger", desc: "Phone + all device chargers", icon: "📱", image: null },
+        { name: "Power Bank", desc: "10,000mAh minimum recommended", icon: "🔋", image: null },
+        { name: "Medicines", desc: "Paracetamol, antidiarrheal, motion sickness", icon: "💊", image: null },
+      ],
+      destinationSpecific: [
+        { name: "Swimwear", desc: "Swimsuit, boardshorts & cover-up", icon: "🩱", image: boracayImgs.whiteBeach },
+        { name: "Reef-Safe Sunscreen", desc: "SPF 50+ — chemical sunscreen prohibited", icon: "🧴", image: null },
+        { name: "Waterproof Bag", desc: "Protect valuables near water", icon: "🎒", image: boracayImgs.islandHopping },
+        { name: "Slippers / Water Shoes", desc: "For beach & bangka boat trips", icon: "👡", image: null },
+        { name: "Hat & Sunglasses", desc: "Sun protection all day", icon: "🧢", image: null },
+        { name: "Beach Towel", desc: "Lightweight and quick-dry", icon: "🏖️", image: null },
+      ],
+    },
     outfitGuide: [
-      { occasion: "Day Tours", icon: "☀️", items: ["Light and breathable clothing", "Shorts and comfortable sandals", "Sunglasses and hat"] },
-      { occasion: "Island Hopping", icon: "🌊", items: ["Rash Guard or Swimwear", "Quick-dry clothing", "Waterproof footwear"] },
-      { occasion: "Evening Activities", icon: "🌙", items: ["Casual resort wear", "Light jacket (optional)"] },
-      { occasion: "Water Activities", icon: "🤿", items: ["Swimwear", "Rash Guard", "Waterproof accessories"] },
+      // ── PLACEHOLDER PHOTOS ─────────────────────────────────────────────
+      // Each photos[] array uses existing Boracay destination images as
+      // stand-ins. Replace with actual outfit inspiration photos when ready.
+      // ──────────────────────────────────────────────────────────────────
+      {
+        occasion: "Airport Outfit", icon: "✈️", image: boracayImgs.arrival,
+        tip: "Keep it breathable — you may be traveling 2–4 hours before reaching the island.",
+        variants: {
+          Female:  { photos: [boracayImgs.arrival, boracayImgs.whiteBeach],    tip: "Light linen dress or flowy co-ord set — layers for the AC onboard." },
+          Male:    { photos: [boracayImgs.arrival, boracayImgs.islandHopping], tip: "Linen polo or breathable shirt + comfy joggers or chinos." },
+          Couple:  { photos: [boracayImgs.arrival, boracayImgs.parawSailing],  tip: "Coordinate colors — light neutrals or matching prints for airport photos." },
+          Family:  { photos: [boracayImgs.arrival, boracayImgs.islandTour],    tip: "Keep it comfortable and practical — easy-on shoes for the whole family." },
+          Kids:    { photos: [boracayImgs.arrival, boracayImgs.crystalCove],   tip: "Loose, breathable clothing that's easy to change. Avoid belts and hard shoes." },
+          Senior:  { photos: [boracayImgs.arrival, boracayImgs.pukaBeach],     tip: "Airy fabrics, slip-on shoes, and a light jacket for the cold aircraft." },
+        },
+      },
+      {
+        occasion: "Beach Day", icon: "🏖️", image: boracayImgs.whiteBeach,
+        tip: "Reef-safe sunscreen only — chemical sunscreen is prohibited in Boracay's marine areas.",
+        variants: {
+          Female:  { photos: [boracayImgs.whiteBeach, boracayImgs.crystalCove],   tip: "Swimsuit or bikini under a flowy cover-up — reef-safe and camera-ready." },
+          Male:    { photos: [boracayImgs.whiteBeach, boracayImgs.islandHopping], tip: "Board shorts + rash guard — quick-dry is key on the sand." },
+          Couple:  { photos: [boracayImgs.whiteBeach, boracayImgs.parawSailing],  tip: "Matching rash guards or coordinated swimwear for beach photos." },
+          Family:  { photos: [boracayImgs.whiteBeach, boracayImgs.islandTour],    tip: "UV-protective rash guards for everyone — especially the kids." },
+          Kids:    { photos: [boracayImgs.whiteBeach, boracayImgs.crystalCove],   tip: "Full rash guard + water shoes — sun and reef protection." },
+          Senior:  { photos: [boracayImgs.whiteBeach, boracayImgs.pukaBeach],     tip: "Loose UV-protective shirt + water shoes for comfort on the beach." },
+        },
+      },
+      {
+        occasion: "Island Hopping", icon: "⛵", image: boracayImgs.islandHopping,
+        tip: "You'll be on a bangka boat all day — pack quick-dry clothes and water shoes.",
+        variants: {
+          Female:  { photos: [boracayImgs.islandHopping, boracayImgs.crystalCove],  tip: "Rash guard or one-piece under a sarong — you'll be on the boat all day." },
+          Male:    { photos: [boracayImgs.islandHopping, boracayImgs.islandTour],    tip: "Quick-dry board shorts + rash guard — you'll get splashed." },
+          Couple:  { photos: [boracayImgs.islandHopping, boracayImgs.parawSailing],  tip: "Matching quick-dry outfits look great for boat photos." },
+          Family:  { photos: [boracayImgs.islandHopping, boracayImgs.islandTour],    tip: "UV rash guards + sandals with straps — secure footwear on the bangka." },
+          Kids:    { photos: [boracayImgs.islandHopping, boracayImgs.crystalCove],   tip: "Full-body rash guard + water shoes — mandatory sun and splash protection." },
+          Senior:  { photos: [boracayImgs.islandHopping, boracayImgs.pukaBeach],     tip: "Comfortable, loose UV shirt + sport sandals with straps for grip." },
+        },
+      },
+      {
+        occasion: "Dinner & Nightlife", icon: "🌙", image: boracayImgs.sunset,
+        tip: "D'Mall and beachfront bars are casual — smart-casual is perfectly fine.",
+        variants: {
+          Female:  { photos: [boracayImgs.sunset, boracayImgs.diniwid],      tip: "Light summer dress or linen co-ord — smart casual at D'Mall." },
+          Male:    { photos: [boracayImgs.sunset, boracayImgs.willysRock],   tip: "Linen shirt or casual resort polo + clean shorts or chinos." },
+          Couple:  { photos: [boracayImgs.sunset, boracayImgs.parawSailing], tip: "Coordinate your evening look — soft tones in beachfront lighting." },
+          Family:  { photos: [boracayImgs.sunset, boracayImgs.diniwid],      tip: "Relaxed and presentable — matching family polos are a nice touch." },
+          Kids:    { photos: [boracayImgs.sunset, boracayImgs.crystalCove],  tip: "Clean casual outfit — nothing formal needed." },
+          Senior:  { photos: [boracayImgs.sunset, boracayImgs.pukaBeach],    tip: "Breathable linen or cotton — comfortable for a beachfront dinner." },
+        },
+      },
+      {
+        occasion: "Photo Spots", icon: "📸", image: boracayImgs.parawSailing,
+        tip: "Wear bright or pastel colors — they pop beautifully against white sand and blue water.",
+        variants: {
+          Female:  { photos: [boracayImgs.parawSailing, boracayImgs.sunset],      tip: "Bright or pastel tones pop against white sand — flowy maxi dress or linen set." },
+          Male:    { photos: [boracayImgs.parawSailing, boracayImgs.willysRock],  tip: "Bold color polo or printed linen shirt for beach portrait shots." },
+          Couple:  { photos: [boracayImgs.parawSailing, boracayImgs.sunset],      tip: "Coordinate in complementary colors — avoid exact match for a natural look." },
+          Family:  { photos: [boracayImgs.parawSailing, boracayImgs.islandTour],  tip: "Pick one accent color for everyone — keeps group photos cohesive." },
+          Kids:    { photos: [boracayImgs.parawSailing, boracayImgs.crystalCove], tip: "Bright, fun colors that stand out — avoid white against white sand." },
+          Senior:  { photos: [boracayImgs.parawSailing, boracayImgs.pukaBeach],   tip: "Pastel tones and wide-brim hats photograph beautifully at golden hour." },
+        },
+      },
     ],
     destinationGuide: {
       highlights: [
@@ -225,10 +342,10 @@ export const DESTINATION_DATA = {
         { name: "Paraw Sailing at Sunset", desc: "Board a traditional Filipino paraw sailboat as the sun goes down — one of the most romantic and iconic Boracay experiences available.", icon: "⛵", image: boracayImgs.parawSailing },
       ],
       food: [
-        { name: "Chori Burger", note: "Local favorite — chorizo patty with a Filipino twist", emoji: "🍔" },
-        { name: "Seafood Grill", note: "Fresh catch grilled right on the beachfront", emoji: "🦞" },
-        { name: "Halo-Halo", note: "Classic Filipino shaved ice dessert — perfect in the heat", emoji: "🧋" },
-        { name: "Mango Float", note: "Creamy chilled mango dessert loved by locals and tourists alike", emoji: "🥭" },
+        { name: "Chori Burger", note: "Local favorite — chorizo patty with a Filipino twist", emoji: "🍔", image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80" },
+        { name: "Seafood Grill", note: "Fresh catch grilled right on the beachfront", emoji: "🦞", image: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?w=400&q=80" },
+        { name: "Halo-Halo", note: "Classic Filipino shaved ice dessert — perfect in the heat", emoji: "🧋", image: "https://images.pexels.com/photos/3407777/pexels-photo-3407777.jpeg?w=400&q=80" },
+        { name: "Mango Float", note: "Creamy chilled mango dessert loved by locals and tourists alike", emoji: "🥭", image: "https://images.pexels.com/photos/1132047/pexels-photo-1132047.jpeg?w=400&q=80" },
       ],
       photoSpots: [
         { name: "White Beach — Morning Swim", note: "Early morning, calm water, no crowds — the clearest and most iconic Boracay shot", image: boracayImgs.whiteBeach },
@@ -278,6 +395,8 @@ export const DESTINATION_DATA = {
         highlights: ["Snorkeling gear included", "BBQ lunch on the beach", "Multiple island stops", "Mermaid tail photo op"],
         badge: "Most Popular",
         image: boracayImgs.islandHopping,
+        price: 999,
+        schedule: "Daily · 8:00 AM – 3:00 PM",
       },
       {
         name: "Helmet Diving",
@@ -288,6 +407,8 @@ export const DESTINATION_DATA = {
         highlights: ["No experience required", "Walk underwater", "Feed reef fish", "Safe for non-swimmers"],
         badge: null,
         image: boracayImgs.helmetDiving,
+        price: 1200,
+        schedule: "Daily · Morning slots",
       },
       {
         name: "Sunset Paraw Sailing",
@@ -298,6 +419,8 @@ export const DESTINATION_DATA = {
         highlights: ["Traditional Filipino sailboat", "World-famous Boracay sunset", "Peaceful & romantic", "Open water views"],
         badge: "Best Experience",
         image: boracayImgs.parawSailing,
+        price: 850,
+        schedule: "Daily · 5:00 PM – 6:00 PM",
       },
       {
         name: "Snorkeling Adventure",
@@ -308,6 +431,8 @@ export const DESTINATION_DATA = {
         highlights: ["All snorkeling gear provided", "Sea turtles & reef fish", "Coral garden exploration", "Suitable for beginners"],
         badge: null,
         image: boracayImgs.helmetDiving,
+        price: 599,
+        schedule: "Daily",
       },
       {
         name: "ATV Beach Adventure",
@@ -318,6 +443,8 @@ export const DESTINATION_DATA = {
         highlights: ["Off-road island trails", "Island panoramic views", "Suitable for beginners", "Thrilling experience"],
         badge: null,
         image: boracayImgs.atv,
+        price: 800,
+        schedule: "Daily",
       },
       {
         name: "Parasailing Adventure",
@@ -328,6 +455,8 @@ export const DESTINATION_DATA = {
         highlights: ["Aerial views of White Beach", "Solo or tandem available", "Safe harness equipment", "Thrill seeker activity"],
         badge: "Thrill Seeker",
         image: boracayImgs.parasailing,
+        price: 1500,
+        schedule: "Daily · Weather permitting",
       },
     ],
     notes: [
@@ -361,6 +490,7 @@ export const DESTINATION_DATA = {
     description:
       "Discover Cebu's perfect blend of rich history, vibrant city life, stunning waterfalls, pristine beaches, and world-famous marine encounters.",
     airport: "Mactan-Cebu International Airport (CEB)",
+    region: "Cebu, Philippines",
     heroImage:
       "https://images.pexels.com/photos/3601425/pexels-photo-3601425.jpeg?w=1600&q=85",
     heroImages: [
@@ -371,7 +501,7 @@ export const DESTINATION_DATA = {
     ],
     accentColor: "#0ea5e9",
     video: {
-      url: "https://drive.google.com/file/d/1ad6Nwx84ASOIqOqkYzkQsKDhzQGEC3Ro/preview",
+      url: "https://www.youtube.com/embed/mWs3Od2qMkQ",
       title: "Cebu Pre-Departure Briefing",
       comingSoon: false,
     },
@@ -505,8 +635,20 @@ export const DESTINATION_DATA = {
       ],
     },
     emergencyContacts: [
-      { label: "Gladex Customer Care", number: "+63 917 875 2200" },
-      { label: "Local Tour Operations", number: "Refer to your travel voucher" },
+      {
+        group: "Gladex Customer Care Team",
+        icon: "❤️",
+        contacts: [
+          { label: "Customer Care Hotline", number: "+63 917 875 2200" },
+        ],
+      },
+      {
+        group: "Local Tour Operations Team",
+        icon: "📍",
+        contacts: [
+          { label: "Tour Operations", number: "Refer to your travel voucher" },
+        ],
+      },
     ],
     dos: [
       "Practice responsible tourism",
@@ -538,11 +680,34 @@ export const DESTINATION_DATA = {
       beach: ["Swimwear", "Beach Towel", "Sunscreen", "Sunglasses", "Hat/Cap", "Waterproof Bag", "Waterproof Phone Case"],
       personal: ["Extra Clothes", "Toiletries", "Personal Medications"],
     },
+    packingGuide: {
+      documents: [
+        { name: "Valid ID / Passport", desc: "Government-issued photo ID", icon: "🛂", image: null },
+        { name: "Flight Tickets", desc: "Printed or saved on your phone", icon: "✈️", image: null },
+        { name: "Hotel Voucher", desc: "Print and save a digital copy", icon: "📄", image: null },
+        { name: "Tour Confirmations", desc: "All activity booking confirmations", icon: "🗓️", image: null },
+      ],
+      essentials: [
+        { name: "Cash & Cards", desc: "For expenses, food & shopping", icon: "💵", image: null },
+        { name: "Mobile & Charger", desc: "Phone + all device chargers", icon: "📱", image: null },
+        { name: "Power Bank", desc: "10,000mAh minimum recommended", icon: "🔋", image: null },
+        { name: "Medicines", desc: "Paracetamol, antidiarrheal, motion sickness", icon: "💊", image: null },
+      ],
+      destinationSpecific: [
+        { name: "Swimwear", desc: "For Moalboal, Oslob & island hopping", icon: "🩱", image: null },
+        { name: "Reef-Safe Sunscreen", desc: "SPF 50+ for outdoor tours all day", icon: "🧴", image: null },
+        { name: "Waterproof Bag", desc: "Protect valuables during water tours", icon: "🎒", image: null },
+        { name: "Aqua / Walking Shoes", desc: "For rocky shorelines & city heritage walks", icon: "👟", image: null },
+        { name: "Light Jacket", desc: "For cold early-morning pick-ups (3–4 AM)", icon: "🧥", image: null },
+        { name: "Hat & Sunglasses", desc: "Sun protection for outdoor tours", icon: "🧢", image: null },
+      ],
+    },
     outfitGuide: [
-      { occasion: "Day Tours", icon: "☀️", items: ["Light and breathable clothing", "Shorts and comfortable sandals", "Sunglasses and hat"] },
-      { occasion: "Island Hopping", icon: "🌊", items: ["Rash Guard or Swimwear", "Quick-dry clothing", "Waterproof footwear"] },
-      { occasion: "Evening Activities", icon: "🌙", items: ["Casual resort wear", "Light jacket (optional)"] },
-      { occasion: "Water Activities", icon: "🤿", items: ["Swimwear", "Rash Guard", "Waterproof accessories"] },
+      { occasion: "Airport Outfit", icon: "✈️", tip: "Cebu airport is modern — Grab/taxi transfers take 20–40 min through traffic.", items: ["Lightweight tops and comfortable trousers", "Sneakers or slip-on sandals", "Light jacket for air-conditioned airport and vehicle"] },
+      { occasion: "Beach & Island", icon: "🏖️", tip: "Moalboal and Mactan beaches are saltwater — quick-dry clothing saves the day.", items: ["Swimwear and a rash guard", "Quick-dry shorts or a sarong", "Aqua shoes for rocky shorelines"] },
+      { occasion: "Tour Day", icon: "☀️", tip: "Cebu heritage and Oslob tours involve lots of walking — dress for comfort and sun protection.", items: ["Breathable cotton or linen shirt", "Comfortable walking shoes", "Hat, sunglasses, and reef-safe sunscreen"] },
+      { occasion: "Dinner & City", icon: "🌙", tip: "IT Park and The Terraces have a smart-casual vibe — dressing up is always optional.", items: ["Casual dress or polo shirt", "Dark jeans or linen trousers", "Clean sneakers or flats"] },
+      { occasion: "Photo Spots", icon: "📸", tip: "Temple of Leah and Kawasan's pools look incredible with bright, solid-color outfits.", items: ["Bold or solid-color outfit", "Flowing dress or a classic white set", "Sunglasses and a hat for dramatic effect"] },
     ],
     destinationGuide: {
       highlights: [
@@ -554,10 +719,10 @@ export const DESTINATION_DATA = {
         { name: "Bohol Day Tour", desc: "A short ferry ride to Bohol reveals the famous Chocolate Hills, Philippine Tarsiers, Man-made Forest, and the scenic Loboc River cruise.", icon: "🌿", image: "https://images.pexels.com/photos/3408744/pexels-photo-3408744.jpeg?w=900&q=85" },
       ],
       food: [
-        { name: "Lechon Cebu", note: "Famous roasted pig — the most celebrated dish in Cebu", emoji: "🍖" },
-        { name: "Puso (Hanging Rice)", note: "Rice cooked in woven palm leaf packets — a Cebu staple", emoji: "🍚" },
-        { name: "Sutukil Seafood", note: "Sugba (grill), Tula (stew), Kilaw (ceviche) — fresh seafood three ways", emoji: "🦐" },
-        { name: "Mango Desserts", note: "Dried mangoes and mango-based sweets — the best pasalubong from Cebu", emoji: "🥭" },
+        { name: "Lechon Cebu", note: "Famous roasted pig — the most celebrated dish in Cebu", emoji: "🍖", image: "https://images.pexels.com/photos/6896379/pexels-photo-6896379.jpeg?w=400&q=80" },
+        { name: "Puso (Hanging Rice)", note: "Rice cooked in woven palm leaf packets — a Cebu staple", emoji: "🍚", image: "https://images.pexels.com/photos/723198/pexels-photo-723198.jpeg?w=400&q=80" },
+        { name: "Sutukil Seafood", note: "Sugba (grill), Tula (stew), Kilaw (ceviche) — fresh seafood three ways", emoji: "🦐", image: "https://images.pexels.com/photos/1268549/pexels-photo-1268549.jpeg?w=400&q=80" },
+        { name: "Mango Desserts", note: "Dried mangoes and mango-based sweets — the best pasalubong from Cebu", emoji: "🥭", image: "https://images.pexels.com/photos/918327/pexels-photo-918327.jpeg?w=400&q=80" },
       ],
       photoSpots: [
         { name: "Tops Lookout", note: "Best panoramic city view of Cebu — breathtaking at sunset", image: "https://images.pexels.com/photos/2832034/pexels-photo-2832034.jpeg?w=900&q=85" },
@@ -607,6 +772,8 @@ export const DESTINATION_DATA = {
         highlights: ["Whale shark interaction", "Sumilon Island", "Simala Church visit"],
         badge: "Most Popular",
         image: "https://images.pexels.com/photos/3723493/pexels-photo-3723493.jpeg?w=900&q=85",
+        price: 2500,
+        schedule: "Daily · Pick-up 3:00 AM",
       },
       {
         name: "Moalboal Sardine Run (Joiners)",
@@ -616,7 +783,9 @@ export const DESTINATION_DATA = {
         duration: "Full Day (~12 hours)",
         highlights: ["Sardine tornado run", "Sea turtle encounter", "Kawasan Falls swimming"],
         badge: null,
-        image: "https://images.pexels.com/photos/3586966/pexels-photo-3586966.jpeg?w=900&q=85", // Sardine school underwater
+        image: "https://images.pexels.com/photos/3586966/pexels-photo-3586966.jpeg?w=900&q=85",
+        price: 2200,
+        schedule: "Daily · Pick-up 3:00 AM",
       },
       {
         name: "Kawasan Canyoneering (Joiners)",
@@ -626,7 +795,9 @@ export const DESTINATION_DATA = {
         duration: "Full Day (~12 hours)",
         highlights: ["Cliff jumping at Kawasan Falls", "River canyon trekking", "Sardine run snorkeling"],
         badge: "Adventure Pick",
-        image: "https://images.pexels.com/photos/2739664/pexels-photo-2739664.jpeg?w=900&q=85", // Kawasan Falls turquoise water
+        image: "https://images.pexels.com/photos/2739664/pexels-photo-2739664.jpeg?w=900&q=85",
+        price: 2200,
+        schedule: "Daily · Pick-up 3:00 AM",
       },
       {
         name: "Bohol Day Tour (Sidetrip)",
@@ -637,6 +808,8 @@ export const DESTINATION_DATA = {
         highlights: ["Chocolate Hills", "Philippine Tarsiers", "Ferry crossing included"],
         badge: null,
         image: "https://images.pexels.com/photos/1287460/pexels-photo-1287460.jpeg?w=900&q=85",
+        price: 2800,
+        schedule: "Daily · Pick-up 4:00 AM–5:00 AM",
       },
       {
         name: "Simala Tour (Private)",
@@ -647,6 +820,8 @@ export const DESTINATION_DATA = {
         highlights: ["Private vehicle", "Hilltop shrine visit", "Carcar heritage stop"],
         badge: null,
         image: "https://images.pexels.com/photos/3601425/pexels-photo-3601425.jpeg?w=900&q=85",
+        price: 3500,
+        schedule: "Daily · Pick-up 6:00 AM",
       },
     ],
     notes: [
@@ -679,6 +854,7 @@ export const DESTINATION_DATA = {
     description:
       "Discover one of the world's most beautiful island destinations — dramatic limestone cliffs, crystal-clear hidden lagoons, and pristine white-sand beaches.",
     airport: "Puerto Princesa Airport (PPS) or El Nido Airport (LIO)",
+    region: "El Nido, Palawan",
     heroImage:
       "https://images.pexels.com/photos/3155666/pexels-photo-3155666.jpeg?w=1600&q=85",
     heroImages: [
@@ -689,9 +865,9 @@ export const DESTINATION_DATA = {
     ],
     accentColor: "#10b981",
     video: {
-      url: "",
+      url: "https://www.youtube.com/embed/iwK8da0L2Co",
       title: "El Nido Pre-Departure Briefing",
-      comingSoon: true,
+      comingSoon: false,
       thumbnail: "https://images.pexels.com/photos/3155666/pexels-photo-3155666.jpeg?w=900&q=85",
     },
     inclusions: [
@@ -848,8 +1024,20 @@ export const DESTINATION_DATA = {
       ],
     },
     emergencyContacts: [
-      { label: "Gladex Customer Care", number: "+63 917 875 2200" },
-      { label: "Local Tour Operations", number: "Refer to your travel voucher" },
+      {
+        group: "Gladex Customer Care Team",
+        icon: "❤️",
+        contacts: [
+          { label: "Customer Care Hotline", number: "+63 917 875 2200" },
+        ],
+      },
+      {
+        group: "Local Tour Operations Team",
+        icon: "📍",
+        contacts: [
+          { label: "Tour Operations", number: "Refer to your travel voucher" },
+        ],
+      },
     ],
     dos: [
       "Practice responsible tourism",
@@ -881,11 +1069,34 @@ export const DESTINATION_DATA = {
       beach: ["Swimwear", "Sunscreen", "Sunglasses", "Hat/Cap", "Waterproof Bag", "Waterproof Phone Case"],
       personal: ["Extra Clothes", "Toiletries", "Personal Medications"],
     },
+    packingGuide: {
+      documents: [
+        { name: "Valid ID / Passport", desc: "Government-issued photo ID", icon: "🛂", image: null },
+        { name: "Flight Tickets", desc: "Printed or saved on your phone", icon: "✈️", image: null },
+        { name: "Hotel Voucher", desc: "Print and save a digital copy", icon: "📄", image: null },
+        { name: "Tour Confirmations", desc: "All activity booking confirmations", icon: "🗓️", image: null },
+      ],
+      essentials: [
+        { name: "Cash & Cards", desc: "Very limited ATMs — bring enough cash", icon: "💵", image: null },
+        { name: "Mobile & Charger", desc: "Phone + all device chargers", icon: "📱", image: null },
+        { name: "Power Bank", desc: "10,000mAh minimum recommended", icon: "🔋", image: null },
+        { name: "Medicines", desc: "Motion sickness tabs — essential for boat tours", icon: "💊", image: null },
+      ],
+      destinationSpecific: [
+        { name: "Swimwear", desc: "Full rash guard for all-day island tours", icon: "🩱", image: null },
+        { name: "Reef-Safe Sunscreen", desc: "SPF 50+ to protect UNESCO marine sanctuary", icon: "🧴", image: null },
+        { name: "Waterproof Bag", desc: "Everything gets wet on island hopping tours", icon: "🎒", image: null },
+        { name: "Reef / Water Shoes", desc: "For rocky lagoon entries and coral areas", icon: "👡", image: null },
+        { name: "Hat & Sunglasses", desc: "Strong sun exposure all day on the boat", icon: "🧢", image: null },
+        { name: "Waterproof Phone Case", desc: "Protect your gadgets — water is unavoidable", icon: "📷", image: null },
+      ],
+    },
     outfitGuide: [
-      { occasion: "Day Tours", icon: "☀️", items: ["Light, breathable clothing", "Shorts and sandals", "Sunglasses and hat"] },
-      { occasion: "Island Hopping", icon: "🌊", items: ["Swimwear or rash guard", "Quick-dry clothing", "Waterproof footwear"] },
-      { occasion: "Evening Activities", icon: "🌙", items: ["Casual resort wear", "Light jacket (optional)"] },
-      { occasion: "Water Activities", icon: "🤿", items: ["Swimwear", "Rash guard", "Waterproof accessories"] },
+      { occasion: "Airport Outfit", icon: "✈️", tip: "El Nido van transfers from Puerto Princesa take 5–6 hours — dress ultra-comfortably.", items: ["Loose, breathable top and pants", "Compression socks for the long van ride", "Slip-on shoes for easy on/off"] },
+      { occasion: "Island Hopping", icon: "⛵", tip: "You'll be in and out of the water all day — plan for wet clothes and strong sun.", items: ["Full rash guard or swim shirt", "Board shorts or swim bottoms", "Water sandals or reef shoes"] },
+      { occasion: "Beach Day", icon: "🏖️", tip: "Wear reef-safe sunscreen to protect El Nido's UNESCO-protected marine sanctuary.", items: ["Swimwear and a light beach cover-up", "Waterproof dry bag for gadgets", "Waterproof phone case — everything gets wet"] },
+      { occasion: "El Nido Town", icon: "🌙", tip: "El Nido town is relaxed and walkable — no dress code for most restaurants and bars.", items: ["Casual linen or cotton shirt", "Comfortable shorts or trousers", "Sandals — town streets are uneven"] },
+      { occasion: "Photo Spots", icon: "📸", tip: "Contrasting colors against blue-green water and white limestone cliffs make stunning shots.", items: ["Bright or tropical-patterned outfits", "Flowing cover-ups for lagoon photos", "Waterproof accessories only — everything gets wet"] },
     ],
     destinationGuide: {
       highlights: [
@@ -897,10 +1108,10 @@ export const DESTINATION_DATA = {
         { name: "Tropical Waters & Marine Life", desc: "El Nido's UNESCO-protected marine sanctuary is home to one of the richest ecosystems in the Philippines — sea turtles, reef sharks, and thousands of fish species.", icon: "🌊", image: "https://images.pexels.com/photos/1450361/pexels-photo-1450361.jpeg?w=900&q=85" },
       ],
       food: [
-        { name: "Fresh Seafood Grill", note: "Straight from the sea to the grill — authentic Palawan flavors", emoji: "🦞" },
-        { name: "Tamilok", note: "Woodworm delicacy — optional but adventurous local treat", emoji: "🐛" },
-        { name: "Coconut-Based Dishes", note: "Rich local curries and coconut milk seafood dishes", emoji: "🥥" },
-        { name: "Filipino Beach Meals", note: "Adobo, sinigang, and kare-kare in beachside restaurants", emoji: "🍲" },
+        { name: "Fresh Seafood Grill", note: "Straight from the sea to the grill — authentic Palawan flavors", emoji: "🦞", image: "https://images.pexels.com/photos/1267320/pexels-photo-1267320.jpeg?w=400&q=80" },
+        { name: "Tamilok", note: "Woodworm delicacy — optional but adventurous local treat", emoji: "🐛", image: "https://images.pexels.com/photos/566345/pexels-photo-566345.jpeg?w=400&q=80" },
+        { name: "Coconut-Based Dishes", note: "Rich local curries and coconut milk seafood dishes", emoji: "🥥", image: "https://images.pexels.com/photos/2347311/pexels-photo-2347311.jpeg?w=400&q=80" },
+        { name: "Filipino Beach Meals", note: "Adobo, sinigang, and kare-kare in beachside restaurants", emoji: "🍲", image: "https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?w=400&q=80" },
       ],
       photoSpots: [
         { name: "Snake Island Hilltop", note: "Best aerial view of the famous sandbar — bring good shoes for the climb", image: "https://images.pexels.com/photos/3155666/pexels-photo-3155666.jpeg?w=900&q=85" },
@@ -950,6 +1161,8 @@ export const DESTINATION_DATA = {
         highlights: ["Snorkeling at Shimizu", "Hidden lagoon", "Premium beach stop"],
         badge: "Most Popular",
         image: "https://images.pexels.com/photos/3155666/pexels-photo-3155666.jpeg?w=900&q=85",
+        price: 1500,
+        schedule: "Daily · 9:00 AM – 4:00 PM",
       },
       {
         name: "Tour B — Caves & Coves (Joiner)",
@@ -960,6 +1173,8 @@ export const DESTINATION_DATA = {
         highlights: ["Sea caves", "Unique sandbar", "Snorkeling"],
         badge: null,
         image: "https://images.pexels.com/photos/2168974/pexels-photo-2168974.jpeg?w=900&q=85",
+        price: 1500,
+        schedule: "Daily · 9:00 AM – 4:00 PM",
       },
       {
         name: "Tour C — Hidden Beaches (Joiner)",
@@ -970,6 +1185,8 @@ export const DESTINATION_DATA = {
         highlights: ["Hidden Beach", "Secret Beach", "Limestone cliffs"],
         badge: "Adventure Pick",
         image: "https://images.pexels.com/photos/1450361/pexels-photo-1450361.jpeg?w=900&q=85",
+        price: 1500,
+        schedule: "Daily · 9:00 AM – 4:00 PM",
       },
       {
         name: "Tour D — Northern Lagoons (Joiner)",
@@ -980,6 +1197,8 @@ export const DESTINATION_DATA = {
         highlights: ["Kayaking", "Secluded beaches", "Cadlao Lagoon"],
         badge: null,
         image: "https://images.pexels.com/photos/1591056/pexels-photo-1591056.jpeg?w=900&q=85",
+        price: 1500,
+        schedule: "Daily · 9:00 AM – 4:00 PM",
       },
     ],
     notes: [
