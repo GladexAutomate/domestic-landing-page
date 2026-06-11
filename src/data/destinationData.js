@@ -770,24 +770,24 @@ export const DESTINATION_DATA = {
     ],
     destinationGuide: {
       highlights: [
-        { name: "Whale Shark Watching — Oslob", desc: "One of the world's most unique wildlife encounters — swim alongside gentle whale sharks in the warm waters of Oslob. An experience unlike anything else in the Philippines.", icon: "🐋", image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=900&q=85" },
-        { name: "Moalboal Sardine Run", desc: "Millions of sardines swirl in a mesmerizing tornado just meters from shore — snorkel into an underwater spectacle that rivals any dive destination in the world.", icon: "🐟", image: "https://images.pexels.com/photos/3586966/pexels-photo-3586966.jpeg?w=900&q=85" }, // Sardine school underwater
-        { name: "Kawasan Falls & Canyoneering", desc: "Iconic turquoise waterfalls deep in South Cebu's jungle canyon — swim at the base or conquer the full canyoneering route with cliff jumps and river trekking.", icon: "💧", image: "https://images.pexels.com/photos/2739664/pexels-photo-2739664.jpeg?w=900&q=85" },
-        { name: "Cebu City Heritage Tour", desc: "Walk through 500 years of Philippine history — from Magellan's Cross and Fort San Pedro to Colon Street, the oldest street in the country.", icon: "🏛️", image: "https://images.pexels.com/photos/3223517/pexels-photo-3223517.jpeg?w=900&q=85" },
-        { name: "Marine Life & Island Hopping", desc: "Cebu's Mactan waters are home to thriving coral reefs, sea turtles, and diverse marine life. Island hopping tours visit Hilutungan, Nalusuan, and Caohagan.", icon: "🐠", image: "https://images.pexels.com/photos/3601427/pexels-photo-3601427.jpeg?w=900&q=85" },
+        { name: "Whale Shark Watching — Oslob", desc: "One of the world's most unique wildlife encounters — swim alongside gentle whale sharks in the warm waters of Oslob. An experience unlike anything else in the Philippines.", icon: "🐋", image: "https://i.pinimg.com/1200x/5d/41/b6/5d41b65349a97deeeb8f9ccaa6c1d4d1.jpg" },
+        { name: "Moalboal Sardine Run", desc: "Millions of sardines swirl in a mesmerizing tornado just meters from shore — snorkel into an underwater spectacle that rivals any dive destination in the world.", icon: "🐟", image: "https://i.pinimg.com/1200x/76/c9/d4/76c9d4af823d5d9d01cf2f77dcfe245c.jpg" },
+        { name: "Kawasan Falls & Canyoneering", desc: "Iconic turquoise waterfalls deep in South Cebu's jungle canyon — swim at the base or conquer the full canyoneering route with cliff jumps and river trekking.", icon: "💧", image: "https://i.pinimg.com/736x/10/45/22/104522e091e22eadc9e27768c42bd6f2.jpg" },
+        { name: "Cebu City Heritage Tour", desc: "Walk through 500 years of Philippine history — from Magellan's Cross and Fort San Pedro to Colon Street, the oldest street in the country.", icon: "🏛️", image: "https://i.pinimg.com/736x/1c/21/76/1c21768da01892fed56c3aa3f7033ede.jpg" },
+        { name: "Marine Life & Island Hopping", desc: "Cebu's Mactan waters are home to thriving coral reefs, sea turtles, and diverse marine life. Island hopping tours visit Hilutungan, Nalusuan, and Caohagan.", icon: "🐠", image: "https://i.pinimg.com/736x/51/c8/cd/51c8cd82846528131b0fe581a1ddccd2.jpg" },
         { name: "Bohol Day Tour", desc: "A short ferry ride to Bohol reveals the famous Chocolate Hills, Philippine Tarsiers, Man-made Forest, and the scenic Loboc River cruise.", icon: "🌿", image: "https://images.pexels.com/photos/3408744/pexels-photo-3408744.jpeg?w=900&q=85" },
       ],
       food: [
-        { name: "Lechon Cebu", note: "Famous roasted pig — the most celebrated dish in Cebu", emoji: "🍖", image: "https://images.pexels.com/photos/6896379/pexels-photo-6896379.jpeg?w=400&q=80" },
-        { name: "Puso (Hanging Rice)", note: "Rice cooked in woven palm leaf packets — a Cebu staple", emoji: "🍚", image: "https://images.pexels.com/photos/723198/pexels-photo-723198.jpeg?w=400&q=80" },
-        { name: "Sutukil Seafood", note: "Sugba (grill), Tula (stew), Kilaw (ceviche) — fresh seafood three ways", emoji: "🦐", image: "https://images.pexels.com/photos/1268549/pexels-photo-1268549.jpeg?w=400&q=80" },
-        { name: "Mango Desserts", note: "Dried mangoes and mango-based sweets — the best pasalubong from Cebu", emoji: "🥭", image: "https://images.pexels.com/photos/918327/pexels-photo-918327.jpeg?w=400&q=80" },
+        { name: "Lechon Cebu", note: "Famous roasted pig — the most celebrated dish in Cebu", emoji: "🍖", image: "https://i.pinimg.com/1200x/9e/82/35/9e82351392640c0b5bd8effe45e9e81e.jpg" },
+        { name: "Puso (Hanging Rice)", note: "Rice cooked in woven palm leaf packets — a Cebu staple", emoji: "🍚", image: "https://i.pinimg.com/736x/c1/81/67/c1816760197d5594f3c12a83d6983e57.jpg" },
+        { name: "Sutukil Seafood", note: "Sugba (grill), Tula (stew), Kilaw (ceviche) — fresh seafood three ways", emoji: "🦐", image: "https://i.pinimg.com/1200x/42/69/a1/4269a1020c24620fb5fb6321d83bd562.jpg" },
+        { name: "Mango Desserts", note: "Dried mangoes and mango-based sweets — the best pasalubong from Cebu", emoji: "🥭", image: "https://i.pinimg.com/1200x/eb/de/ff/ebdeff6c13dc36e3920a5d2019304813.jpg" },
       ],
       photoSpots: [
-        { name: "Tops Lookout", note: "Best panoramic city view of Cebu — breathtaking at sunset", image: "https://images.pexels.com/photos/2832034/pexels-photo-2832034.jpeg?w=900&q=85" },
-        { name: "Temple of Leah", note: "Roman-inspired hilltop temple — striking architecture and city views", image: "https://images.pexels.com/photos/3601430/pexels-photo-3601430.jpeg?w=900&q=85" },
-        { name: "Kawasan Falls Blue Pool", note: "Iconic turquoise water — best mid-morning lighting", image: "https://images.pexels.com/photos/2739664/pexels-photo-2739664.jpeg?w=900&q=85" },
-        { name: "CCLEX Bridge", note: "Cebu's stunning cable-stayed bridge over the Mactan Channel", image: "https://images.pexels.com/photos/2775196/pexels-photo-2775196.jpeg?w=900&q=85" },
+        { name: "Tops Lookout", note: "Best panoramic city view of Cebu — breathtaking at sunset", image: "https://i.pinimg.com/1200x/c8/f8/14/c8f81486b979b2c4a580fc51c5fa9881.jpg" },
+        { name: "Temple of Leah", note: "Roman-inspired hilltop temple — striking architecture and city views", image: "https://i.pinimg.com/736x/3e/41/04/3e4104548a4efd9a216fa6af0b28812d.jpg" },
+        { name: "Kawasan Falls Blue Pool", note: "Iconic turquoise water — best mid-morning lighting", image: "https://i.pinimg.com/1200x/a1/1d/74/a11d7465c5f5ac834ff1505f78ba38ea.jpg" },
+        { name: "CCLEX Bridge", note: "Cebu's stunning cable-stayed bridge over the Mactan Channel", image: "https://i.pinimg.com/736x/54/a7/ce/54a7cec3766d0954ecec9e3515ff12f7.jpg" },
       ],
       bestTime: "December to May (dry season) is ideal for beaches and outdoor tours. June to November is rainy season.",
       localTips: [
