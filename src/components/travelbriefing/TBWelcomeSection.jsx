@@ -61,20 +61,15 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
 
   return (
     <section
-      className="w-full flex flex-col items-center justify-start sm:justify-center px-4"
-      style={{
-        minHeight: compact ? "auto" : "100dvh",
-        backgroundColor: bg,
-        paddingTop: compact ? "2rem" : "3rem",
-        paddingBottom: compact ? "2rem" : "3rem",
-      }}
+      className={`w-full flex flex-col items-center justify-center px-4 ${compact ? "py-8" : "py-10 sm:min-h-dvh sm:py-24"}`}
+      style={{ backgroundColor: bg }}
     >
       {/* Confirmed badge */}
       <motion.div
         initial={{ opacity: 0, scale: 0.85 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.1, duration: 0.45, type: "spring" }}
-        className="flex items-center gap-2 px-4 py-2 rounded-full border mb-4 sm:mb-6"
+        className="flex items-center gap-2 px-4 py-2 rounded-full border mb-3 sm:mb-6"
         style={{ borderColor: "rgba(249,115,22,0.35)", backgroundColor: "rgba(249,115,22,0.08)" }}
       >
         <BadgeCheck className="w-4 h-4" style={{ color: "#f97316" }} />
@@ -100,7 +95,7 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.26, duration: 0.5 }}
-        className="text-center text-sm leading-relaxed mb-5 sm:mb-10"
+        className="text-center text-sm leading-relaxed mb-4 sm:mb-10"
         style={{ color: textMuted, maxWidth: "460px" }}
       >
         Enter your GDX Confirmation Number or Tour Voucher Number to access your personalized travel briefing, vouchers, reminders, optional tours, and add ons.
