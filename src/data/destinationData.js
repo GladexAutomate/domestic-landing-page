@@ -287,12 +287,12 @@ export const DESTINATION_DATA = {
         occasion: "Beach Outfit", icon: "", image: boracayImgs.whiteBeach,
         tip: "Reef-safe sunscreen only — chemical sunscreen is prohibited in Boracay's marine areas.",
         variants: {
-          Female:  { photos: [boracayImgs.outfitBeachFemale1, boracayImgs.outfitBeachFemale2, null, null], tip: "Swimsuit or bikini under a flowy cover-up — reef-safe and camera-ready." },
-          Male:    { photos: [boracayImgs.outfitBeachMale1,   boracayImgs.outfitBeachMale2,   null, null], tip: "Board shorts + rash guard — quick-dry is key on the sand." },
-          Couple:  { photos: [boracayImgs.outfitCouple1,      boracayImgs.outfitCouple2,       null, null], tip: "Matching rash guards or coordinated swimwear for beach photos." },
-          Family:  { photos: [boracayImgs.whiteBeach, boracayImgs.islandTour,    null, null], tip: "UV-protective rash guards for everyone — especially the kids." },
-          Kids:    { photos: [boracayImgs.whiteBeach, boracayImgs.crystalCove,   null, null], tip: "Full rash guard + water shoes — sun and reef protection." },
-          Senior:  { photos: [boracayImgs.whiteBeach, boracayImgs.pukaBeach,     null, null], tip: "Loose UV-protective shirt + water shoes for comfort on the beach." },
+          Female:  { photos: [boracayImgs.outfitBeachFemale1, boracayImgs.outfitBeachFemale2, "https://i.pinimg.com/736x/ad/d5/55/add55525f0ead26fecf7e748a826b1b5.jpg"], tip: "Swimsuit or bikini under a flowy cover-up — reef-safe and camera-ready." },
+          Male:    { photos: ["https://i.pinimg.com/736x/3e/f1/1f/3ef11f7cb450f04cbf28d0f21d6cb7de.jpg","https://i.pinimg.com/736x/53/59/cc/5359ccf52d2d5d2ed26b938509da1b8d.jpg","https://i.pinimg.com/736x/8e/71/ef/8e71eff673f712181bcffefbbe29af90.jpg"], tip: "Board shorts + rash guard — quick-dry is key on the sand." },
+          Couple:  { photos: ["https://i.pinimg.com/736x/cf/9b/e6/cf9be6733b5235f9d4fee77ff955b5ec.jpg","https://i.pinimg.com/736x/95/da/00/95da00decd4bd5cac3fdb46fcfee411c.jpg","https://i.pinimg.com/736x/41/eb/0c/41eb0c27700f8ba41fee8dd1dab3fdaf.jpg"], tip: "Matching rash guards or coordinated swimwear for beach photos." },
+          Family:  { photos: ["https://i.pinimg.com/736x/9f/e7/04/9fe70483a00a98ba505c395d0de5f7fb.jpg","https://i.pinimg.com/736x/15/d0/1a/15d01ae6141c608ea81307e813dc35b8.jpg","https://i.pinimg.com/736x/77/66/9a/77669a1eecebb3e3e30e1951263f2714.jpg","https://i.pinimg.com/736x/cf/b3/4d/cfb34d5a170a0f7c63a369948a80fd08.jpg"], tip: "UV-protective rash guards for everyone — especially the kids." },
+          Kids:    { photos: ["https://i.pinimg.com/736x/d1/20/ba/d120ba619fa4d1d2029100decf526883.jpg","https://i.pinimg.com/736x/c1/9a/72/c19a7218e0b13405c1965d631f9380d1.jpg","https://i.pinimg.com/736x/e7/51/49/e751497bdb06e93b52d11cccb31c5e9e.jpg","https://i.pinimg.com/736x/91/c9/b6/91c9b6a2fc7a2c3bb81e4e0b5f23dc7f.jpg"], tip: "Full rash guard + water shoes — sun and reef protection." },
+          Senior:  { photos: ["https://i.pinimg.com/736x/ad/f8/b9/adf8b9c42365838b7ba3154c7c7f8c42.jpg","https://i.pinimg.com/736x/0b/02/59/0b0259f3d7baa5bde19f106657fecc72.jpg","https://i.pinimg.com/736x/5c/90/81/5c9081f8c9e4d803e00c98c4906675a6.jpg","https://i.pinimg.com/736x/68/68/b9/6868b9728f7f66f80113badaead6e96f.jpg"], tip: "Loose UV-protective shirt + water shoes for comfort on the beach." },
         },
       },
       {
