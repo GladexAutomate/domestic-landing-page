@@ -390,7 +390,7 @@ function OutfitCard({ occasion, darkMode, textPrimary, textMuted, cardBg, border
 
         {/* Occasion label */}
         <div className="absolute bottom-0 left-0 right-0 p-3">
-          <p className="font-black text-sm text-white leading-snug">{occasion.icon} {occasion.occasion}</p>
+          <p className="font-black text-sm text-white leading-snug">{occasion.occasion}</p>
         </div>
       </div>
 

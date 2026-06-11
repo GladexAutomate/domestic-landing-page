@@ -247,7 +247,7 @@ export const DESTINATION_DATA = {
     packingGuide: {
       documents: [
         { name: "Valid ID / Passport", desc: "Government-issued photo ID", icon: "🛂", image: boracayImgs.packValidId },
-        { name: "Flight Tickets", desc: "Printed or saved on your phone", icon: "✈️", image: boracayImgs.packFlightTickets },
+        { name: "Flight Tickets", desc: "Printed or saved on your phone", icon: "", image: boracayImgs.packFlightTickets },
         { name: "Hotel Voucher", desc: "Print and save a digital copy", icon: "📄", image: boracayImgs.packHotelVoucher },
         { name: "Tour Confirmations", desc: "All activity booking confirmations", icon: "🗓️", image: boracayImgs.packTourConfirmations },
       ],
@@ -263,7 +263,7 @@ export const DESTINATION_DATA = {
         { name: "Waterproof Bag", desc: "Protect valuables near water", icon: "🎒", image: boracayImgs.packWaterproofBag },
         { name: "Slippers / Water Shoes", desc: "For beach & bangka boat trips", icon: "👡", image: boracayImgs.packSlippers },
         { name: "Hat & Sunglasses", desc: "Sun protection all day", icon: "🧢", image: boracayImgs.packHatSunglasses },
-        { name: "Beach Towel", desc: "Lightweight and quick-dry", icon: "🏖️", image: boracayImgs.packBeachTowel },
+        { name: "Beach Towel", desc: "Lightweight and quick-dry", icon: "", image: boracayImgs.packBeachTowel },
       ],
     },
     outfitGuide: [
@@ -272,7 +272,7 @@ export const DESTINATION_DATA = {
       // stand-ins. Replace with actual outfit inspiration photos when ready.
       // ──────────────────────────────────────────────────────────────────
       {
-        occasion: "Airport Outfit", icon: "✈️", image: boracayImgs.arrival,
+        occasion: "Airport Outfit", icon: "", image: boracayImgs.arrival,
         tip: "Keep it breathable — you may be traveling 2–4 hours before reaching the island.",
         variants: {
           Female:  { photos: [boracayImgs.outfitAirportFemale1, boracayImgs.outfitAirportFemale2, boracayImgs.outfitAirportFemale3, boracayImgs.outfitAirportFemale4], tip: "Light linen dress or flowy co-ord set — layers for the AC onboard." },
@@ -284,7 +284,7 @@ export const DESTINATION_DATA = {
         },
       },
       {
-        occasion: "Beach Day", icon: "🏖️", image: boracayImgs.whiteBeach,
+        occasion: "Beach Day", icon: "", image: boracayImgs.whiteBeach,
         tip: "Reef-safe sunscreen only — chemical sunscreen is prohibited in Boracay's marine areas.",
         variants: {
           Female:  { photos: [boracayImgs.outfitBeachFemale1, boracayImgs.outfitBeachFemale2, null, null], tip: "Swimsuit or bikini under a flowy cover-up — reef-safe and camera-ready." },
@@ -296,7 +296,7 @@ export const DESTINATION_DATA = {
         },
       },
       {
-        occasion: "Island Hopping", icon: "⛵", image: boracayImgs.islandHopping,
+        occasion: "Island Hopping", icon: "", image: boracayImgs.islandHopping,
         tip: "You'll be on a bangka boat all day — pack quick-dry clothes and water shoes.",
         variants: {
           Female:  { photos: [boracayImgs.outfitBeachFemale1, boracayImgs.outfitBeachFemale2, null, null], tip: "Rash guard or one-piece under a sarong — you'll be on the boat all day." },
@@ -308,7 +308,7 @@ export const DESTINATION_DATA = {
         },
       },
       {
-        occasion: "Dinner & Nightlife", icon: "🌙", image: boracayImgs.sunset,
+        occasion: "Dinner & Nightlife", icon: "", image: boracayImgs.sunset,
         tip: "D'Mall and beachfront bars are casual — smart-casual is perfectly fine.",
         variants: {
           Female:  { photos: [boracayImgs.outfitDinnerFemale1, boracayImgs.outfitDinnerFemale2, null, null], tip: "Light summer dress or linen co-ord — smart casual at D'Mall." },
@@ -320,7 +320,7 @@ export const DESTINATION_DATA = {
         },
       },
       {
-        occasion: "Photo Spots", icon: "📸", image: boracayImgs.parawSailing,
+        occasion: "Photo Spots", icon: "", image: boracayImgs.parawSailing,
         tip: "Wear bright or pastel colors — they pop beautifully against white sand and blue water.",
         variants: {
           Female:  { photos: [boracayImgs.parawSailing, boracayImgs.sunset,      null, null], tip: "Bright or pastel tones pop against white sand — flowy maxi dress or linen set." },
@@ -334,12 +334,12 @@ export const DESTINATION_DATA = {
     ],
     destinationGuide: {
       highlights: [
-        { name: "White Beach — Boracay", desc: "4.3 km of powdery white sand and crystal-clear turquoise water. Swim, relax, or walk the full stretch of the most beautiful beach in the Philippines.", icon: "🏖️", image: boracayImgs.whiteBeach },
-        { name: "Island Hopping by Bangka Boat", desc: "Ride a traditional Filipino bangka boat to Puka Beach, Crystal Cove, Crocodile Island, and private beach stops — the #1 Boracay experience.", icon: "⛵", image: boracayImgs.islandHopping },
+        { name: "White Beach — Boracay", desc: "4.3 km of powdery white sand and crystal-clear turquoise water. Swim, relax, or walk the full stretch of the most beautiful beach in the Philippines.", icon: "", image: boracayImgs.whiteBeach },
+        { name: "Island Hopping by Bangka Boat", desc: "Ride a traditional Filipino bangka boat to Puka Beach, Crystal Cove, Crocodile Island, and private beach stops — the #1 Boracay experience.", icon: "", image: boracayImgs.islandHopping },
         { name: "Swimming in Crystal Clear Water", desc: "Boracay's calm, shallow waters are perfect for swimming. The turquoise color comes from the pure white sand below — unlike anywhere else in the world.", icon: "🏊", image: boracayImgs.crystalCove },
         { name: "World-Famous Boracay Sunset", desc: "Every evening, the sky above White Beach turns shades of gold, orange, and pink. Widely ranked as one of the top sunsets in all of Asia.", icon: "🌅", image: boracayImgs.sunset },
         { name: "Snorkeling & Helmet Diving", desc: "Explore Boracay's vibrant underwater world — colorful reef fish, coral gardens, and sea turtles. No experience needed for helmet diving.", icon: "🤿", image: boracayImgs.helmetDiving },
-        { name: "Paraw Sailing at Sunset", desc: "Board a traditional Filipino paraw sailboat as the sun goes down — one of the most romantic and iconic Boracay experiences available.", icon: "⛵", image: boracayImgs.parawSailing },
+        { name: "Paraw Sailing at Sunset", desc: "Board a traditional Filipino paraw sailboat as the sun goes down — one of the most romantic and iconic Boracay experiences available.", icon: "", image: boracayImgs.parawSailing },
       ],
       food: [
         { name: "Chori Burger", note: "Iconic Boracay street food — chorizo patty with a local Filipino twist", emoji: "🍔", image: boracayImgs.foodChoriBurger },
@@ -394,7 +394,7 @@ export const DESTINATION_DATA = {
         name: "Island Hopping Tour",
         description: "Ride a traditional Filipino bangka boat to Boracay's most beautiful surrounding islands. Visit Puka Beach, Crystal Cove, Crocodile Island, and snorkel in pristine crystal-clear waters.",
         stops: ["Crystal Cove", "Crocodile Island", "Puka Beach", "Snorkeling at Coral Garden"],
-        icon: "⛵",
+        icon: "",
         duration: "Full Day · 8 AM – 3 PM",
         highlights: ["Snorkeling gear included", "BBQ lunch on the beach", "Multiple island stops", "Mermaid tail photo op"],
         badge: "Most Popular",
@@ -687,7 +687,7 @@ export const DESTINATION_DATA = {
     packingGuide: {
       documents: [
         { name: "Valid ID / Passport", desc: "Government-issued photo ID", icon: "🛂", image: null },
-        { name: "Flight Tickets", desc: "Printed or saved on your phone", icon: "✈️", image: null },
+        { name: "Flight Tickets", desc: "Printed or saved on your phone", icon: "", image: null },
         { name: "Hotel Voucher", desc: "Print and save a digital copy", icon: "📄", image: null },
         { name: "Tour Confirmations", desc: "All activity booking confirmations", icon: "🗓️", image: null },
       ],
@@ -708,7 +708,7 @@ export const DESTINATION_DATA = {
     },
     outfitGuide: [
       {
-        occasion: "Airport Outfit", icon: "✈️", image: boracayImgs.arrival,
+        occasion: "Airport Outfit", icon: "", image: boracayImgs.arrival,
         tip: "Cebu airport is modern — Grab/taxi transfers take 20–40 min through traffic.",
         variants: {
           Female:  { photos: [boracayImgs.arrival, boracayImgs.whiteBeach,    null, null], tip: "Cebu airport is modern — Grab/taxi transfers take 20–40 min through traffic." },
@@ -720,7 +720,7 @@ export const DESTINATION_DATA = {
         },
       },
       {
-        occasion: "Beach & Island", icon: "🏖️", image: boracayImgs.whiteBeach,
+        occasion: "Beach & Island", icon: "", image: boracayImgs.whiteBeach,
         tip: "Moalboal and Mactan beaches are saltwater — quick-dry clothing saves the day.",
         variants: {
           Female:  { photos: [boracayImgs.whiteBeach, boracayImgs.crystalCove,   null, null], tip: "Moalboal and Mactan beaches are saltwater — quick-dry clothing saves the day." },
@@ -744,7 +744,7 @@ export const DESTINATION_DATA = {
         },
       },
       {
-        occasion: "Dinner & City", icon: "🌙", image: boracayImgs.sunset,
+        occasion: "Dinner & City", icon: "", image: boracayImgs.sunset,
         tip: "IT Park and The Terraces have a smart-casual vibe — dressing up is always optional.",
         variants: {
           Female:  { photos: [boracayImgs.sunset, boracayImgs.diniwid,      null, null], tip: "IT Park and The Terraces have a smart-casual vibe — dressing up is always optional." },
@@ -756,7 +756,7 @@ export const DESTINATION_DATA = {
         },
       },
       {
-        occasion: "Photo Spots", icon: "📸", image: boracayImgs.parawSailing,
+        occasion: "Photo Spots", icon: "", image: boracayImgs.parawSailing,
         tip: "Temple of Leah and Kawasan's pools look incredible with bright, solid-color outfits.",
         variants: {
           Female:  { photos: [boracayImgs.parawSailing, boracayImgs.sunset,      null, null], tip: "Temple of Leah and Kawasan's pools look incredible with bright, solid-color outfits." },
@@ -1131,7 +1131,7 @@ export const DESTINATION_DATA = {
     packingGuide: {
       documents: [
         { name: "Valid ID / Passport", desc: "Government-issued photo ID", icon: "🛂", image: null },
-        { name: "Flight Tickets", desc: "Printed or saved on your phone", icon: "✈️", image: null },
+        { name: "Flight Tickets", desc: "Printed or saved on your phone", icon: "", image: null },
         { name: "Hotel Voucher", desc: "Print and save a digital copy", icon: "📄", image: null },
         { name: "Tour Confirmations", desc: "All activity booking confirmations", icon: "🗓️", image: null },
       ],
@@ -1152,7 +1152,7 @@ export const DESTINATION_DATA = {
     },
     outfitGuide: [
       {
-        occasion: "Airport Outfit", icon: "✈️", image: boracayImgs.arrival,
+        occasion: "Airport Outfit", icon: "", image: boracayImgs.arrival,
         tip: "El Nido van transfers from Puerto Princesa take 5–6 hours — dress ultra-comfortably.",
         variants: {
           Female:  { photos: [boracayImgs.arrival, boracayImgs.whiteBeach,    null, null], tip: "El Nido van transfers from Puerto Princesa take 5–6 hours — dress ultra-comfortably." },
@@ -1164,7 +1164,7 @@ export const DESTINATION_DATA = {
         },
       },
       {
-        occasion: "Island Hopping", icon: "⛵", image: boracayImgs.islandHopping,
+        occasion: "Island Hopping", icon: "", image: boracayImgs.islandHopping,
         tip: "You'll be in and out of the water all day — plan for wet clothes and strong sun.",
         variants: {
           Female:  { photos: [boracayImgs.islandHopping, boracayImgs.crystalCove,  null, null], tip: "You'll be in and out of the water all day — plan for wet clothes and strong sun." },
@@ -1176,7 +1176,7 @@ export const DESTINATION_DATA = {
         },
       },
       {
-        occasion: "Beach Day", icon: "🏖️", image: boracayImgs.whiteBeach,
+        occasion: "Beach Day", icon: "", image: boracayImgs.whiteBeach,
         tip: "Wear reef-safe sunscreen to protect El Nido's UNESCO-protected marine sanctuary.",
         variants: {
           Female:  { photos: [boracayImgs.whiteBeach, boracayImgs.crystalCove,   null, null], tip: "Wear reef-safe sunscreen to protect El Nido's UNESCO-protected marine sanctuary." },
@@ -1188,7 +1188,7 @@ export const DESTINATION_DATA = {
         },
       },
       {
-        occasion: "El Nido Town", icon: "🌙", image: boracayImgs.sunset,
+        occasion: "El Nido Town", icon: "", image: boracayImgs.sunset,
         tip: "El Nido town is relaxed and walkable — no dress code for most restaurants and bars.",
         variants: {
           Female:  { photos: [boracayImgs.sunset, boracayImgs.diniwid,      null, null], tip: "El Nido town is relaxed and walkable — no dress code for most restaurants and bars." },
@@ -1200,7 +1200,7 @@ export const DESTINATION_DATA = {
         },
       },
       {
-        occasion: "Photo Spots", icon: "📸", image: boracayImgs.parawSailing,
+        occasion: "Photo Spots", icon: "", image: boracayImgs.parawSailing,
         tip: "Contrasting colors against blue-green water and white limestone cliffs make stunning shots.",
         variants: {
           Female:  { photos: [boracayImgs.parawSailing, boracayImgs.sunset,      null, null], tip: "Contrasting colors against blue-green water and white limestone cliffs make stunning shots." },
@@ -1270,7 +1270,7 @@ export const DESTINATION_DATA = {
         name: "Tour A — West Lagoon Classics (Joiner)",
         description: "El Nido's most iconic tour — visit the Secret Lagoon, Shimizu Island, and 7th Commando Beach.",
         stops: ["Shimizu Island", "Secret Lagoon", "7th Commando Beach", "Payong-payong Beach", "Big Lagoon (optional +₱200)"],
-        icon: "⛵",
+        icon: "",
         duration: "9:00 AM – 4:00 PM",
         highlights: ["Snorkeling at Shimizu", "Hidden lagoon", "Premium beach stop"],
         badge: "Most Popular",
@@ -1294,7 +1294,7 @@ export const DESTINATION_DATA = {
         name: "Tour C — Hidden Beaches (Joiner)",
         description: "Explore El Nido's secret beaches — hidden gems accessible only by boat and through narrow rock passages.",
         stops: ["Helicopter Island", "Hidden Beach", "Matinloc Island", "Secret Beach", "Talisay Beach"],
-        icon: "🏖️",
+        icon: "",
         duration: "9:00 AM – 4:00 PM",
         highlights: ["Hidden Beach", "Secret Beach", "Limestone cliffs"],
         badge: "Adventure Pick",
