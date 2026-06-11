@@ -740,7 +740,7 @@ export default function TravelBriefingLanding() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: bg }}>
-      <DestinationNavbar />
+      <DestinationNavbar hideLogo={!activeBooking} />
 
       {/* ── DESTINATION HERO IMAGE ── */}
       <div className="relative w-full overflow-hidden" style={{ minHeight: "380px", maxHeight: "480px" }}>
