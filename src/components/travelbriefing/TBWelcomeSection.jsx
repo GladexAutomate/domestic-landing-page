@@ -64,6 +64,19 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
       className={`w-full flex flex-col items-center justify-center px-4 ${compact ? "py-8" : "pt-16 pb-12 sm:min-h-dvh sm:py-24"}`}
       style={{ backgroundColor: bg }}
     >
+      {/* Logo */}
+      {!compact && (
+        <motion.img
+          src={GLADEX_LOGO}
+          alt="Gladex Travel and Tours"
+          initial={{ opacity: 0, y: -12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="h-10 sm:h-12 w-auto object-contain mb-5 sm:mb-8"
+          style={{ filter: "drop-shadow(0 0 12px rgba(255,140,0,0.3))" }}
+        />
+      )}
+
       {/* Confirmed badge */}
       <motion.div
         initial={{ opacity: 0, scale: 0.85 }}
