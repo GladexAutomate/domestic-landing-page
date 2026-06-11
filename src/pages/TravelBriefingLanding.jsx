@@ -310,9 +310,35 @@ function OutfitCard({ occasion, darkMode, textPrimary, textMuted, cardBg, border
   const photos     = rawPhotos.length ? rawPhotos : (occasion.image ? [occasion.image] : []);
   const tip        = variant?.tip || occasion.tip || "";
 
+  const getTabPhotos = (tab) => {
+    const v = occasion.variants?.[tab];
+    const raw = v?.photos?.filter(Boolean) ?? [];
+    return raw.length ? raw : (occasion.image ? [occasion.image] : []);
+  };
+
   const handleTabChange = (tab) => { setActiveTab(tab); setPhotoIdx(0); };
-  const prevPhoto = () => setPhotoIdx((c) => (c - 1 + photos.length) % photos.length);
-  const nextPhoto = () => setPhotoIdx((c) => (c + 1) % photos.length);
+
+  const nextPhoto = () => {
+    if (photoIdx < photos.length - 1) {
+      setPhotoIdx((c) => c + 1);
+    } else {
+      const nextTabIndex = (OUTFIT_TABS.indexOf(activeTab) + 1) % OUTFIT_TABS.length;
+      setActiveTab(OUTFIT_TABS[nextTabIndex]);
+      setPhotoIdx(0);
+    }
+  };
+
+  const prevPhoto = () => {
+    if (photoIdx > 0) {
+      setPhotoIdx((c) => c - 1);
+    } else {
+      const prevTabIndex = (OUTFIT_TABS.indexOf(activeTab) - 1 + OUTFIT_TABS.length) % OUTFIT_TABS.length;
+      const prevTab = OUTFIT_TABS[prevTabIndex];
+      const prevPhotos = getTabPhotos(prevTab);
+      setActiveTab(prevTab);
+      setPhotoIdx(Math.max(0, prevPhotos.length - 1));
+    }
+  };
 
   return (
     <div className="rounded-2xl border overflow-hidden flex flex-col" style={{ backgroundColor: cardBg, borderColor, boxShadow: cardShadow }}>
@@ -357,23 +383,21 @@ function OutfitCard({ occasion, darkMode, textPrimary, textMuted, cardBg, border
           {activeTab}
         </div>
 
-        {/* Prev/Next arrows — only when multiple photos */}
-        {photos.length > 1 && (
-          <>
-            <button
-              onClick={prevPhoto}
-              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center"
-              style={{ background: "rgba(0,0,0,0.45)", color: "#fff", fontSize: "1.1rem", lineHeight: 1 }}
-              aria-label="Previous photo"
-            >‹</button>
-            <button
-              onClick={nextPhoto}
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center"
-              style={{ background: "rgba(0,0,0,0.45)", color: "#fff", fontSize: "1.1rem", lineHeight: 1 }}
-              aria-label="Next photo"
-            >›</button>
-          </>
-        )}
+        {/* Prev/Next arrows — always visible, flows across tabs */}
+        <>
+          <button
+            onClick={prevPhoto}
+            className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center"
+            style={{ background: "rgba(0,0,0,0.45)", color: "#fff", fontSize: "1.1rem", lineHeight: 1 }}
+            aria-label="Previous photo"
+          >‹</button>
+          <button
+            onClick={nextPhoto}
+            className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center"
+            style={{ background: "rgba(0,0,0,0.45)", color: "#fff", fontSize: "1.1rem", lineHeight: 1 }}
+            aria-label="Next photo"
+          >›</button>
+        </>
 
         {/* Photo dots (inside image, above label) */}
         {photos.length > 1 && (
