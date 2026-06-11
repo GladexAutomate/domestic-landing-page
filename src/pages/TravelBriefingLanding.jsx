@@ -1968,6 +1968,15 @@ export default function TravelBriefingLanding() {
                   >
                     {reviewEditing ? "Update Review" : "Submit Review"}
                   </button>
+                  {reviewEditing && (
+                    <button
+                      onClick={() => setReviewEditing(false)}
+                      className="w-full mt-2 py-2.5 rounded-xl text-sm font-bold transition-all"
+                      style={{ color: textMuted, backgroundColor: darkMode ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)" }}
+                    >
+                      Cancel
+                    </button>
+                  )}
                 </>
               )}
             </div>
