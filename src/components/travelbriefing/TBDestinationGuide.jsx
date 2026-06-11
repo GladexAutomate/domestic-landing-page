@@ -368,7 +368,6 @@ export default function TBDestinationGuide({ dest, darkMode, tk }) {
                 className="flex items-start gap-2.5 px-4 py-3 rounded-2xl border"
                 style={{ borderColor: "rgba(239,68,68,0.15)", backgroundColor: "rgba(239,68,68,0.04)" }}
               >
-                <span className="text-sm shrink-0 mt-0.5">🛡️</span>
                 <p className="text-xs leading-relaxed" style={{ color: tk.textPrimary }}>{tip}</p>
               </div>
             ))}
@@ -389,7 +388,6 @@ export default function TBDestinationGuide({ dest, darkMode, tk }) {
                 className="flex items-start gap-2.5 px-4 py-3 rounded-2xl border"
                 style={{ borderColor: tk.borderColor, backgroundColor: tk.cardBg, boxShadow: tk.cardShadow }}
               >
-                <span className="text-sm shrink-0 mt-0.5">💡</span>
                 <p className="text-xs leading-relaxed" style={{ color: tk.textPrimary }}>{tip}</p>
               </div>
             ))}
