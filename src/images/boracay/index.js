@@ -76,6 +76,16 @@ export { default as outfitAirportMale1 }   from "./outfits/outfit-airport-male-1
 export { default as outfitAirportMale2 }   from "./outfits/outfit-airport-male-2.jpg";
 export { default as outfitAirportMale3 }   from "./outfits/outfit-airport-male-3.jpg";
 export { default as outfitAirportMale4 }   from "./outfits/outfit-airport-male-4.jpg";
+export { default as outfitAirportCouple1 } from "./outfits/outfit-airport-couple-1.jpg";
+export { default as outfitAirportCouple2 } from "./outfits/outfit-airport-couple-2.jpg";
+export { default as outfitAirportFamily1 } from "./outfits/outfit-airport-family-1.jpg";
+export { default as outfitAirportFamily2 } from "./outfits/outfit-airport-family-2.jpg";
+export { default as outfitAirportKids1 }   from "./outfits/outfit-airport-kids-1.jpg";
+export { default as outfitAirportKids2 }   from "./outfits/outfit-airport-kids-2.jpg";
+export { default as outfitAirportSenior1 } from "./outfits/outfit-airport-senior-1.jpg";
+export { default as outfitAirportSenior2 } from "./outfits/outfit-airport-senior-2.jpg";
+export { default as outfitAirportSenior3 } from "./outfits/outfit-airport-senior-3.jpg";
+export { default as outfitAirportSenior4 } from "./outfits/outfit-airport-senior-4.jpg";
 
 // ── OUTFIT INSPIRATION — BEACH DAY ────────────────────────────────────
 export { default as outfitBeachFemale1 }   from "./outfits/outfit-beach-female-1.jpg";
