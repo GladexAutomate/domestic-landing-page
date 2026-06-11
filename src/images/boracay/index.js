@@ -45,8 +45,24 @@ export { default as underwaterFish }    from "./underwater-fish.jpg";
 export { default as pukaBeachAerial }   from "./puka-beach-aerial.jpg";
 
 // ── DAY 3 — DEPARTURE PHOTOS ─────────────────────────────────────────
-export { default as balconyBreakfast }    from "./balcony-breakfast.jpg";
-export { default as parasailingAction }   from "./parasailing-action.jpg";
-export { default as departureFerry }      from "./departure-ferry.jpg";
-export { default as caticlanJettyDock }   from "./caticlan-jetty-dock.jpg";
+export { default as balconyBreakfast }      from "./balcony-breakfast.jpg";
+export { default as parasailingAction }     from "./parasailing-action.jpg";
+export { default as departureFerry }        from "./departure-ferry.jpg";
+export { default as caticlanJettyDock }     from "./caticlan-jetty-dock.jpg";
 export { default as caticlanJettyTerminal } from "./caticlan-jetty-terminal.jpg";
+
+// ── PACKING GUIDE ─────────────────────────────────────────────────────
+export { default as packValidId }           from "./pack-valid-id.jpg";
+export { default as packFlightTickets }     from "./pack-flight-tickets.jpg";
+export { default as packHotelVoucher }      from "./pack-hotel-voucher.jpg";
+export { default as packTourConfirmations } from "./pack-tour-confirmations.jpg";
+export { default as packCashCards }         from "./pack-cash-cards.jpg";
+export { default as packMobileCharger }     from "./pack-mobile-charger.jpg";
+export { default as packPowerBank }         from "./pack-power-bank.jpg";
+export { default as packMedicines }         from "./pack-medicines.jpg";
+export { default as packSunscreen }         from "./pack-sunscreen.jpg";
+export { default as packSlippers }          from "./pack-slippers.jpg";
+export { default as packHatSunglasses }     from "./pack-hat-sunglasses.jpg";
+export { default as packBeachTowel }        from "./pack-beach-towel.jpg";
+export { default as packSwimwear }          from "./pack-swimwear.jpg";
+export { default as packWaterproofBag }     from "./pack-waterproof-bag.jpg";

@@ -199,33 +199,6 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
         </div>
       </motion.div>
 
-      {/* Destination quick-links — home page only */}
-      {!compact && (
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.45 }}
-          className="mt-10 flex flex-wrap items-center justify-center gap-3"
-        >
-          <p className="text-xs w-full text-center mb-1" style={{ color: textMuted }}>
-            Or preview a destination briefing:
-          </p>
-          {[
-            { slug: "boracay", label: "Boracay", color: "#f97316" },
-            { slug: "cebu",    label: "Cebu",    color: "#0ea5e9" },
-            { slug: "elnido",  label: "El Nido", color: "#10b981" },
-          ].map(({ slug, label, color }) => (
-            <button
-              key={slug}
-              onClick={() => navigate(`/destination/${slug}`)}
-              className="text-xs font-semibold px-4 py-2 rounded-full border transition-all hover:scale-105 active:scale-95"
-              style={{ borderColor: `${color}40`, backgroundColor: `${color}0f`, color }}
-            >
-              {label}
-            </button>
-          ))}
-        </motion.div>
-      )}
     </section>
   );
 }
