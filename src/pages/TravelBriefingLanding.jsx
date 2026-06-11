@@ -2006,24 +2006,6 @@ export default function TravelBriefingLanding() {
           </div>
         </FadeIn>
 
-        {/* ══════════════════════════════════════════════════
-            16. REFERRAL SECTION (Phase 1 placeholder)
-           ══════════════════════════════════════════════════ */}
-        <FadeIn>
-          <div className={sectionGap}>
-            <div className="rounded-2xl border p-6 text-center" style={{ borderColor: "rgba(249,115,22,0.3)", background: darkMode ? "linear-gradient(135deg, rgba(249,115,22,0.08), rgba(0,0,0,0))" : "linear-gradient(135deg, rgba(249,115,22,0.06), rgba(249,115,22,0.02))" }}>
-              <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: "linear-gradient(135deg, #f97316, #b45309)" }}>
-                <Gift className="w-6 h-6 text-white" />
-              </div>
-              <p className="font-black text-xl mb-2" style={{ color: textPrimary }}>Know Someone Who Wants To Travel?</p>
-              <p className="text-sm mb-5" style={muted}>Refer a friend and receive travel rewards or discounts on your next booking with Gladex.</p>
-              <button disabled className="px-8 py-3 rounded-full text-sm font-bold opacity-60" style={{ background: "linear-gradient(135deg, #f97316, #b45309)", color: "#fff", boxShadow: "0 4px 18px rgba(249,115,22,0.3)" }}>
-                Refer A Friend
-              </button>
-              <p className="text-[10px] mt-3" style={muted}>🔒 Referral program available in Phase 2.</p>
-            </div>
-          </div>
-        </FadeIn>
 
         {/* ══════════════════════════════════════════════════
             Important Notes
