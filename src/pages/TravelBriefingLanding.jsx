@@ -11,7 +11,7 @@ import TBItinerary from "@/components/travelbriefing/TBItinerary";
 import TBChecklist from "@/components/travelbriefing/TBChecklist";
 import TBDestinationGuide from "@/components/travelbriefing/TBDestinationGuide";
 import TBFAQs from "@/components/travelbriefing/TBFAQs";
-import { lookupBooking } from "@/services/supabaseService";
+import { lookupBooking, submitReview } from "@/services/supabaseService";
 import {
   Check, X, AlertTriangle, ArrowUp, Phone,
   Download, Star, Gift,
@@ -595,6 +595,7 @@ export default function TravelBriefingLanding() {
     setMyReview(review);
     setReviewSubmitted(true);
     setReviewEditing(false);
+    submitReview({ gdx_reference: gdx, rating: reviewStars, comment: reviewComment.trim() }).catch(() => {});
   };
 
   // ── Restore booking from sessionStorage on page refresh ──────
