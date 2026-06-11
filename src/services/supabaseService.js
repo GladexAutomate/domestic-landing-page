@@ -67,7 +67,6 @@ export const submitReview = async ({ gdx, name, destination, rating, comment }) 
     destination,
     rating,
     comment: comment || null,
-    created_at: new Date().toISOString(),
   });
   if (error) throw new Error(error.message);
 };

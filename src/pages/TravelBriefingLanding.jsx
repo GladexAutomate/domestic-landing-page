@@ -561,6 +561,7 @@ export default function TravelBriefingLanding() {
   const [reviewComment, setReviewComment] = useState("");
   const [reviewLoading, setReviewLoading] = useState(false);
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
+  const [reviewError, setReviewError] = useState(null);
   const [myReview, setMyReview] = useState(() => {
     try {
       const gdx = JSON.parse(sessionStorage.getItem("gladex-session") || "{}").gdx;
@@ -595,11 +596,14 @@ export default function TravelBriefingLanding() {
     };
     try {
       await submitReview({ gdx, name, destination, rating: reviewStars, comment: reviewComment.trim() });
-    } catch (_) {}
-    try { localStorage.setItem(`gladex-review-${gdx}`, JSON.stringify(review)); } catch {}
-    setMyReview(review);
-    setReviewSubmitted(true);
-    setReviewLoading(false);
+      try { localStorage.setItem(`gladex-review-${gdx}`, JSON.stringify(review)); } catch {}
+      setMyReview(review);
+      setReviewSubmitted(true);
+    } catch (err) {
+      setReviewError(err.message || "Failed to submit review. Please try again.");
+    } finally {
+      setReviewLoading(false);
+    }
   };
 
   // ── Restore booking from sessionStorage on page refresh ──────
@@ -1944,6 +1948,9 @@ export default function TravelBriefingLanding() {
                       <><svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" strokeOpacity="0.25"/><path d="M12 2a10 10 0 0 1 10 10" strokeLinecap="round"/></svg> Submitting…</>
                     ) : "Submit Review"}
                   </button>
+                  {reviewError && (
+                    <p className="text-[11px] text-center mt-2 text-red-500">{reviewError}</p>
+                  )}
                   <p className="text-[10px] text-center mt-3" style={muted}>Only you can see your review after submitting.</p>
                 </>
               )}
