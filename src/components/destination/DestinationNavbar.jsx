@@ -4,7 +4,7 @@ import { useTheme } from "@/lib/ThemeContext";
 
 const GLADEX_LOGO = "https://media.base44.com/images/public/6a0d6ad01d34ead888ecdd6f/5ecc9b2cd_Untitled-design-75.png";
 
-export default function DestinationNavbar({ hideLogo = false }) {
+export default function DestinationNavbar() {
   const [scrolled, setScrolled] = useState(false);
   const { darkMode, toggleTheme } = useTheme();
 
@@ -41,13 +41,13 @@ export default function DestinationNavbar({ hideLogo = false }) {
       }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 h-16 flex items-center justify-between gap-3">
-        {!hideLogo ? (
+        {scrolled ? (
           <Link to="/" className="flex items-center shrink-0" style={{ maxWidth: "clamp(100px, 40vw, 160px)" }}>
             <img
               src={GLADEX_LOGO}
               alt="Gladex Travel and Tours Corp."
               className="h-8 w-auto max-w-full object-contain"
-              style={{ filter: "drop-shadow(0 0 12px rgba(255,140,0,0.3))" }}
+              style={{ filter: "drop-shadow(0 0 12px rgba(255,140,0,0.3))", opacity: 1, transition: "opacity 0.3s" }}
             />
           </Link>
         ) : (
