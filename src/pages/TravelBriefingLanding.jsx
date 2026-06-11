@@ -11,7 +11,7 @@ import TBItinerary from "@/components/travelbriefing/TBItinerary";
 import TBChecklist from "@/components/travelbriefing/TBChecklist";
 import TBDestinationGuide from "@/components/travelbriefing/TBDestinationGuide";
 import TBFAQs from "@/components/travelbriefing/TBFAQs";
-import { lookupBooking, submitReview } from "@/services/supabaseService";
+import { lookupBooking } from "@/services/supabaseService";
 import {
   Check, X, AlertTriangle, ArrowUp, Phone,
   Download, Star, Gift,
@@ -559,10 +559,8 @@ export default function TravelBriefingLanding() {
   // ── Rate My Service ───────────────────────────────────────────
   const [reviewStars, setReviewStars] = useState(0);
   const [reviewComment, setReviewComment] = useState("");
-  const [reviewLoading, setReviewLoading] = useState(false);
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
   const [reviewEditing, setReviewEditing] = useState(false);
-  const [reviewError, setReviewError] = useState(null);
   const [myReview, setMyReview] = useState(() => {
     try {
       const gdx = JSON.parse(sessionStorage.getItem("gladex-session") || "{}").gdx;
@@ -580,11 +578,9 @@ export default function TravelBriefingLanding() {
     return () => mq.removeEventListener("change", handler);
   }, []);
 
-  const handleSubmitReview = async () => {
-    if (reviewStars === 0 || reviewLoading || reviewSubmitted) return;
-    setReviewLoading(true);
-    const gdx = activeBooking?.gdx ?? "";
-    const name = activeBooking?.name ?? "Gladex Traveler";
+  const handleSubmitReview = () => {
+    if (reviewStars === 0) return;
+    const gdx = activeBooking?.gdx ?? "guest";
     const destination = slug ?? "boracay";
     const now = new Date();
     const monthYear = now.toLocaleString("en-US", { month: "long", year: "numeric" });
@@ -595,17 +591,10 @@ export default function TravelBriefingLanding() {
       review: reviewComment.trim() || `${reviewStars === 5 ? "Amazing" : reviewStars >= 4 ? "Great" : "Good"} experience with Gladex Tours!`,
       rating: reviewStars,
     };
-    try {
-      await submitReview({ gdx, name, rating: reviewStars, comment: reviewComment.trim() });
-      try { localStorage.setItem(`gladex-review-${gdx}`, JSON.stringify(review)); } catch {}
-      setMyReview(review);
-      setReviewSubmitted(true);
-      setReviewEditing(false);
-    } catch (err) {
-      setReviewError(err.message || "Failed to submit review. Please try again.");
-    } finally {
-      setReviewLoading(false);
-    }
+    try { localStorage.setItem(`gladex-review-${gdx}`, JSON.stringify(review)); } catch {}
+    setMyReview(review);
+    setReviewSubmitted(true);
+    setReviewEditing(false);
   };
 
   // ── Restore booking from sessionStorage on page refresh ──────
@@ -1968,22 +1957,16 @@ export default function TravelBriefingLanding() {
 
                   <button
                     onClick={handleSubmitReview}
-                    disabled={reviewStars === 0 || reviewLoading}
-                    className="w-full mt-4 py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2"
+                    disabled={reviewStars === 0}
+                    className="w-full mt-4 py-3 rounded-xl text-sm font-bold transition-all"
                     style={{
                       backgroundColor: reviewStars > 0 ? "#f97316" : (darkMode ? "rgba(249,115,22,0.25)" : "rgba(249,115,22,0.2)"),
                       color: reviewStars > 0 ? "#fff" : "#f97316",
-                      opacity: (reviewStars === 0 || reviewLoading) ? 0.6 : 1,
+                      opacity: reviewStars === 0 ? 0.6 : 1,
                     }}
                   >
-                    {reviewLoading ? (
-                      <><svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" strokeOpacity="0.25"/><path d="M12 2a10 10 0 0 1 10 10" strokeLinecap="round"/></svg> Submitting…</>
-                    ) : reviewEditing ? "Update Review" : "Submit Review"}
+                    {reviewEditing ? "Update Review" : "Submit Review"}
                   </button>
-                  {reviewError && (
-                    <p className="text-[11px] text-center mt-2 text-red-500">{reviewError}</p>
-                  )}
-                  <p className="text-[10px] text-center mt-3" style={muted}>Only you can see your review after submitting.</p>
                 </>
               )}
             </div>
