@@ -1775,7 +1775,7 @@ export default function TravelBriefingLanding() {
                 <>
                   <div className={`grid gap-3 mb-4 ${testimonialsMobile ? "grid-cols-1" : "grid-cols-3"}`}>
                     {visible.map((t, i) => {
-                      const isOwn = t.name === "You";
+                      const isOwn = t === myReview;
                       return (
                       <motion.div
                         key={`${safePage}-${i}`}
