@@ -5,9 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { Search, ArrowRight, BadgeCheck, Loader, AlertCircle } from "lucide-react";
 import { lookupBooking, detectDestinationSlug } from "@/services/supabaseService";
 
-const GLADEX_LOGO =
-  "https://media.base44.com/images/public/6a0d6ad01d34ead888ecdd6f/5ecc9b2cd_Untitled-design-75.png";
-
 export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
   const navigate = useNavigate();
   const [code, setCode] = useState("");
@@ -64,19 +61,6 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
       className={`w-full flex flex-col items-center justify-center px-4 ${compact ? "py-8" : "pt-16 pb-12 sm:min-h-dvh sm:py-24"}`}
       style={{ backgroundColor: bg }}
     >
-      {/* Logo */}
-      {!compact && (
-        <motion.img
-          src={GLADEX_LOGO}
-          alt="Gladex Travel and Tours"
-          initial={{ opacity: 0, y: -12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="h-10 sm:h-12 w-auto object-contain mb-5 sm:mb-8"
-          style={{ filter: "drop-shadow(0 0 12px rgba(255,140,0,0.3))" }}
-        />
-      )}
-
       {/* Confirmed badge */}
       <motion.div
         initial={{ opacity: 0, scale: 0.85 }}
