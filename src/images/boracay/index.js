@@ -70,5 +70,35 @@ export { default as packWaterproofBag }     from "./packing/pack-waterproof-bag.
 // ── OUTFIT INSPIRATION — AIRPORT ──────────────────────────────────────
 export { default as outfitAirportFemale1 } from "./outfits/outfit-airport-female-1.jpg";
 export { default as outfitAirportFemale2 } from "./outfits/outfit-airport-female-2.jpg";
+export { default as outfitAirportFemale3 } from "./outfits/outfit-airport-female-3.jpg";
+export { default as outfitAirportFemale4 } from "./outfits/outfit-airport-female-4.jpg";
 export { default as outfitAirportMale1 }   from "./outfits/outfit-airport-male-1.jpg";
 export { default as outfitAirportMale2 }   from "./outfits/outfit-airport-male-2.jpg";
+export { default as outfitAirportMale3 }   from "./outfits/outfit-airport-male-3.jpg";
+export { default as outfitAirportMale4 }   from "./outfits/outfit-airport-male-4.jpg";
+
+// ── OUTFIT INSPIRATION — BEACH DAY ────────────────────────────────────
+export { default as outfitBeachFemale1 }   from "./outfits/outfit-beach-female-1.jpg";
+export { default as outfitBeachFemale2 }   from "./outfits/outfit-beach-female-2.jpg";
+export { default as outfitBeachMale1 }     from "./outfits/outfit-beach-male-1.jpg";
+export { default as outfitBeachMale2 }     from "./outfits/outfit-beach-male-2.jpg";
+
+// ── OUTFIT INSPIRATION — DINNER & NIGHTLIFE ───────────────────────────
+export { default as outfitDinnerFemale1 }  from "./outfits/outfit-dinner-female-1.jpg";
+export { default as outfitDinnerFemale2 }  from "./outfits/outfit-dinner-female-2.jpg";
+export { default as outfitDinnerMale1 }    from "./outfits/outfit-dinner-male-1.jpg";
+export { default as outfitDinnerMale2 }    from "./outfits/outfit-dinner-male-2.jpg";
+
+// ── OUTFIT INSPIRATION — COUPLE ───────────────────────────────────────
+export { default as outfitCouple1 }        from "./outfits/outfit-couple-1.jpg";
+export { default as outfitCouple2 }        from "./outfits/outfit-couple-2.jpg";
+
+// ── BEST FOOD & DINING ────────────────────────────────────────────────
+export { default as foodChoriBurger }      from "./food/food-chori-burger.jpg";
+export { default as foodSeafoodGrill }     from "./food/food-seafood-grill.jpg";
+export { default as foodMangoShake }       from "./food/food-mango-shake.jpg";
+export { default as foodTalaba }           from "./food/food-talaba.jpg";
+export { default as foodHaloHalo }         from "./food/food-halo-halo.jpg";
+export { default as foodBukoJuice }        from "./food/food-buko-juice.jpg";
+export { default as foodInihaw }           from "./food/food-inihaw.jpg";
+export { default as foodTamilok }          from "./food/food-tamilok.jpg";
