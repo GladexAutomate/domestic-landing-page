@@ -587,7 +587,7 @@ export default function TravelBriefingLanding() {
     const now = new Date();
     const monthYear = now.toLocaleString("en-US", { month: "long", year: "numeric" });
     const review = {
-      name,
+      name: "You",
       location: destination.charAt(0).toUpperCase() + destination.slice(1),
       date: monthYear,
       review: reviewComment.trim() || `${reviewStars === 5 ? "Amazing" : reviewStars >= 4 ? "Great" : "Good"} experience with Gladex Tours!`,
@@ -1801,12 +1801,12 @@ export default function TravelBriefingLanding() {
                         <div className="flex items-center gap-2.5 pt-2 border-t" style={{ borderColor }}>
                           <div
                             className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black shrink-0"
-                            style={{ background: "#1a1a1a", color: "#fff" }}
+                            style={{ background: t.name === "You" ? "#f97316" : "#1a1a1a", color: "#fff" }}
                           >
-                            {t.name.charAt(0)}
+                            {t.name === "You" ? "★" : t.name.charAt(0)}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="font-black text-xs" style={{ color: textPrimary }}>{t.name}</p>
+                            <p className="font-black text-xs" style={{ color: t.name === "You" ? "#f97316" : textPrimary }}>{t.name}</p>
                             <p className="text-[10px]" style={{ color: "#f97316" }}>{t.location} · {t.date}</p>
                           </div>
                         </div>
