@@ -275,8 +275,8 @@ export const DESTINATION_DATA = {
         occasion: "Airport Outfit", icon: "✈️", image: boracayImgs.arrival,
         tip: "Keep it breathable — you may be traveling 2–4 hours before reaching the island.",
         variants: {
-          Female:  { photos: [boracayImgs.arrival, boracayImgs.whiteBeach,    null, null], tip: "Light linen dress or flowy co-ord set — layers for the AC onboard." },
-          Male:    { photos: [boracayImgs.arrival, boracayImgs.islandHopping, null, null], tip: "Linen polo or breathable shirt + comfy joggers or chinos." },
+          Female:  { photos: [boracayImgs.outfitAirportFemale1, boracayImgs.outfitAirportFemale2, null, null], tip: "Light linen dress or flowy co-ord set — layers for the AC onboard." },
+          Male:    { photos: [boracayImgs.outfitAirportMale1,   boracayImgs.outfitAirportMale2,   null, null], tip: "Linen polo or breathable shirt + comfy joggers or chinos." },
           Couple:  { photos: [boracayImgs.arrival, boracayImgs.parawSailing,  null, null], tip: "Coordinate colors — light neutrals or matching prints for airport photos." },
           Family:  { photos: [boracayImgs.arrival, boracayImgs.islandTour,    null, null], tip: "Keep it comfortable and practical — easy-on shoes for the whole family." },
           Kids:    { photos: [boracayImgs.arrival, boracayImgs.crystalCove,   null, null], tip: "Loose, breathable clothing that's easy to change. Avoid belts and hard shoes." },

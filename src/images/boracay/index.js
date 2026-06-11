@@ -66,3 +66,9 @@ export { default as packHatSunglasses }     from "./packing/pack-hat-sunglasses.
 export { default as packBeachTowel }        from "./packing/pack-beach-towel.jpg";
 export { default as packSwimwear }          from "./packing/pack-swimwear.jpg";
 export { default as packWaterproofBag }     from "./packing/pack-waterproof-bag.jpg";
+
+// ── OUTFIT INSPIRATION — AIRPORT ──────────────────────────────────────
+export { default as outfitAirportFemale1 } from "./outfits/outfit-airport-female-1.jpg";
+export { default as outfitAirportFemale2 } from "./outfits/outfit-airport-female-2.jpg";
+export { default as outfitAirportMale1 }   from "./outfits/outfit-airport-male-1.jpg";
+export { default as outfitAirportMale2 }   from "./outfits/outfit-airport-male-2.jpg";
