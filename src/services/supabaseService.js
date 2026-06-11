@@ -59,12 +59,11 @@ const supabase = (_supabaseUrl && _supabaseKey)
 // ═══════════════════════════════════════════════════════════════
 // REVIEW SUBMISSION — saves to reviews table
 // ═══════════════════════════════════════════════════════════════
-export const submitReview = async ({ gdx, name, destination, rating, comment }) => {
+export const submitReview = async ({ gdx, name, rating, comment }) => {
   if (!supabase) throw new Error("Review submission is not configured on this deployment.");
   const { error } = await supabase.from("reviews").insert({
     gdx,
     name,
-    destination,
     rating,
     comment: comment || null,
   });

@@ -596,7 +596,7 @@ export default function TravelBriefingLanding() {
       rating: reviewStars,
     };
     try {
-      await submitReview({ gdx, name, destination, rating: reviewStars, comment: reviewComment.trim() });
+      await submitReview({ gdx, name, rating: reviewStars, comment: reviewComment.trim() });
       try { localStorage.setItem(`gladex-review-${gdx}`, JSON.stringify(review)); } catch {}
       setMyReview(review);
       setReviewSubmitted(true);
