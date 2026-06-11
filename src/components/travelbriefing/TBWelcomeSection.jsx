@@ -61,12 +61,12 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
 
   return (
     <section
-      className="w-full flex flex-col items-center justify-center px-4"
+      className="w-full flex flex-col items-center justify-start sm:justify-center px-4"
       style={{
-        minHeight: compact ? "auto" : "100vh",
+        minHeight: compact ? "auto" : "100dvh",
         backgroundColor: bg,
-        paddingTop: compact ? "2rem" : "6rem",
-        paddingBottom: compact ? "2rem" : "5rem",
+        paddingTop: compact ? "2rem" : "3rem",
+        paddingBottom: compact ? "2rem" : "3rem",
       }}
     >
       {/* Logo — full page only */}
@@ -77,7 +77,7 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="h-12 w-auto object-contain mb-10"
+          className="h-10 sm:h-12 w-auto object-contain mb-5 sm:mb-10"
           style={{ filter: "drop-shadow(0 0 12px rgba(255,140,0,0.3))" }}
         />
       )}
@@ -87,7 +87,7 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
         initial={{ opacity: 0, scale: 0.85 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.1, duration: 0.45, type: "spring" }}
-        className="flex items-center gap-2 px-4 py-2 rounded-full border mb-6"
+        className="flex items-center gap-2 px-4 py-2 rounded-full border mb-4 sm:mb-6"
         style={{ borderColor: "rgba(249,115,22,0.35)", backgroundColor: "rgba(249,115,22,0.08)" }}
       >
         <BadgeCheck className="w-4 h-4" style={{ color: "#f97316" }} />
@@ -101,7 +101,7 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
         initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.18, duration: 0.55 }}
-        className={`font-black text-center leading-tight mb-4 whitespace-nowrap ${compact ? "text-xl sm:text-2xl" : "text-2xl sm:text-3xl md:text-4xl"}`}
+        className={`font-black text-center leading-tight mb-3 sm:mb-4 whitespace-nowrap ${compact ? "text-xl sm:text-2xl" : "text-2xl sm:text-3xl md:text-4xl"}`}
         style={{ color: textPrimary, letterSpacing: "-0.02em" }}
       >
         Your Trip Is{" "}
@@ -113,7 +113,7 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.26, duration: 0.5 }}
-        className="text-center text-sm leading-relaxed mb-10"
+        className="text-center text-sm leading-relaxed mb-5 sm:mb-10"
         style={{ color: textMuted, maxWidth: "460px" }}
       >
         Enter your GDX Confirmation Number or Tour Voucher Number to access your personalized travel briefing, vouchers, reminders, optional tours, and add ons.
