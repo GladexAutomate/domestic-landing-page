@@ -49,15 +49,18 @@ const FUSIOO_DEST_MAP = {
 };
 
 // ── Supabase client ───────────────────────────────────────────────
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-);
+// Guard: env vars are injected at build time; missing = null client (page still renders)
+const _supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const _supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabase = (_supabaseUrl && _supabaseKey)
+  ? createClient(_supabaseUrl, _supabaseKey)
+  : null;
 
 // ═══════════════════════════════════════════════════════════════
 // PRIMARY LOOKUP — GDX code → full booking with all details
 // ═══════════════════════════════════════════════════════════════
 export const lookupBooking = async (gdxCode) => {
+  if (!supabase) throw new Error("Booking lookup is not configured on this deployment.");
   const clean = String(gdxCode).trim().replace(/^gdx[-\s]*/i, "");
   if (!clean) throw new Error("Please enter your GDX Confirmation Number.");
 
