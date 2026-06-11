@@ -61,7 +61,7 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
 
   return (
     <section
-      className={`w-full flex flex-col items-center justify-center px-4 ${compact ? "py-8" : "py-10 sm:min-h-dvh sm:py-24"}`}
+      className={`w-full flex flex-col items-center justify-center px-4 ${compact ? "py-8" : "pt-16 pb-12 sm:min-h-dvh sm:py-24"}`}
       style={{ backgroundColor: bg }}
     >
       {/* Confirmed badge */}
