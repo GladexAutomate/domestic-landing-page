@@ -561,6 +561,7 @@ export default function TravelBriefingLanding() {
   const [reviewComment, setReviewComment] = useState("");
   const [reviewLoading, setReviewLoading] = useState(false);
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
+  const [reviewEditing, setReviewEditing] = useState(false);
   const [reviewError, setReviewError] = useState(null);
   const [myReview, setMyReview] = useState(() => {
     try {
@@ -599,6 +600,7 @@ export default function TravelBriefingLanding() {
       try { localStorage.setItem(`gladex-review-${gdx}`, JSON.stringify(review)); } catch {}
       setMyReview(review);
       setReviewSubmitted(true);
+      setReviewEditing(false);
     } catch (err) {
       setReviewError(err.message || "Failed to submit review. Please try again.");
     } finally {
@@ -1782,15 +1784,44 @@ export default function TravelBriefingLanding() {
               return (
                 <>
                   <div className={`grid gap-3 mb-4 ${testimonialsMobile ? "grid-cols-1" : "grid-cols-3"}`}>
-                    {visible.map((t, i) => (
+                    {visible.map((t, i) => {
+                      const isOwn = t.name === "You";
+                      return (
                       <motion.div
                         key={`${safePage}-${i}`}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.06, duration: 0.3 }}
                         className="rounded-2xl border p-4 flex flex-col gap-3"
-                        style={{ backgroundColor: cardBg, borderColor, boxShadow: cardShadow }}
+                        style={{
+                          backgroundColor: isOwn ? "rgba(249,115,22,0.05)" : cardBg,
+                          borderColor: isOwn ? "#f97316" : borderColor,
+                          boxShadow: isOwn ? "0 0 0 1px #f97316, 0 4px 20px rgba(249,115,22,0.15)" : cardShadow,
+                        }}
                       >
+                        {/* YOUR REVIEW badge + edit button */}
+                        {isOwn && (
+                          <div className="flex items-center justify-between">
+                            <span className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full" style={{ backgroundColor: "rgba(249,115,22,0.15)", color: "#f97316" }}>
+                              Your Review
+                            </span>
+                            <button
+                              onClick={() => {
+                                setReviewStars(myReview?.rating ?? 0);
+                                setReviewComment(myReview?.review ?? "");
+                                setReviewSubmitted(false);
+                                setReviewEditing(true);
+                                setReviewError(null);
+                                document.getElementById("review-form-section")?.scrollIntoView({ behavior: "smooth", block: "center" });
+                              }}
+                              className="flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-lg transition-all hover:opacity-80"
+                              style={{ color: "#f97316", backgroundColor: "rgba(249,115,22,0.1)" }}
+                            >
+                              <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                              Edit
+                            </button>
+                          </div>
+                        )}
                         {/* Stars */}
                         <div className="flex gap-0.5">
                           {[1,2,3,4,5].map((s) => (
@@ -1802,20 +1833,21 @@ export default function TravelBriefingLanding() {
                           "{t.review}"
                         </p>
                         {/* Reviewer */}
-                        <div className="flex items-center gap-2.5 pt-2 border-t" style={{ borderColor }}>
+                        <div className="flex items-center gap-2.5 pt-2 border-t" style={{ borderColor: isOwn ? "rgba(249,115,22,0.2)" : borderColor }}>
                           <div
                             className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black shrink-0"
-                            style={{ background: t.name === "You" ? "#f97316" : "#1a1a1a", color: "#fff" }}
+                            style={{ background: isOwn ? "#f97316" : "#1a1a1a", color: "#fff" }}
                           >
-                            {t.name === "You" ? "★" : t.name.charAt(0)}
+                            {isOwn ? "★" : t.name.charAt(0)}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="font-black text-xs" style={{ color: t.name === "You" ? "#f97316" : textPrimary }}>{t.name}</p>
+                            <p className="font-black text-xs" style={{ color: isOwn ? "#f97316" : textPrimary }}>{t.name}</p>
                             <p className="text-[10px]" style={{ color: "#f97316" }}>{t.location} · {t.date}</p>
                           </div>
                         </div>
                       </motion.div>
-                    ))}
+                      );
+                    })}
                   </div>
 
                   {/* Navigation row — dots left, arrows right */}
@@ -1873,10 +1905,10 @@ export default function TravelBriefingLanding() {
             15. RATE MY SERVICE
            ══════════════════════════════════════════════════ */}
         <FadeIn>
-          <div className={sectionGap}>
+          <div id="review-form-section" className={sectionGap}>
             <SectionHeader eyebrow="Your Experience" title="Review Our Service" tk={tk} />
             <div className="rounded-2xl border p-5" style={{ ...card }}>
-              {reviewSubmitted || myReview ? (
+              {(reviewSubmitted || myReview) && !reviewEditing ? (
                 /* ── Already submitted ── */
                 <div className="flex flex-col items-center gap-3 py-4 text-center">
                   <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: "rgba(249,115,22,0.12)" }}>
@@ -1946,7 +1978,7 @@ export default function TravelBriefingLanding() {
                   >
                     {reviewLoading ? (
                       <><svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" strokeOpacity="0.25"/><path d="M12 2a10 10 0 0 1 10 10" strokeLinecap="round"/></svg> Submitting…</>
-                    ) : "Submit Review"}
+                    ) : reviewEditing ? "Update Review" : "Submit Review"}
                   </button>
                   {reviewError && (
                     <p className="text-[11px] text-center mt-2 text-red-500">{reviewError}</p>
