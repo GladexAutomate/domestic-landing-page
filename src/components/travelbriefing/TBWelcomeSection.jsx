@@ -83,7 +83,7 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
         initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.18, duration: 0.55 }}
-        className={`font-black text-center leading-tight mb-3 sm:mb-4 whitespace-nowrap ${compact ? "text-xl sm:text-2xl" : "text-2xl sm:text-3xl md:text-4xl"}`}
+        className={`font-black text-center leading-tight mb-3 sm:mb-4 ${compact ? "text-xl sm:text-2xl" : "text-2xl sm:text-3xl md:text-4xl"}`}
         style={{ color: textPrimary, letterSpacing: "-0.02em" }}
       >
         Your Trip Is{" "}
