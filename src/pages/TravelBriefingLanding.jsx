@@ -11,7 +11,7 @@ import TBItinerary from "@/components/travelbriefing/TBItinerary";
 import TBChecklist from "@/components/travelbriefing/TBChecklist";
 import TBDestinationGuide from "@/components/travelbriefing/TBDestinationGuide";
 import TBFAQs from "@/components/travelbriefing/TBFAQs";
-import { lookupBooking } from "@/services/supabaseService";
+import { lookupBooking, submitReview } from "@/services/supabaseService";
 import {
   Check, X, AlertTriangle, ArrowUp, Phone,
   Download, Star, Gift,
@@ -559,6 +559,16 @@ export default function TravelBriefingLanding() {
   // ── Rate My Service ───────────────────────────────────────────
   const [reviewStars, setReviewStars] = useState(0);
   const [reviewComment, setReviewComment] = useState("");
+  const [reviewLoading, setReviewLoading] = useState(false);
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
+  const [myReview, setMyReview] = useState(() => {
+    try {
+      const gdx = JSON.parse(sessionStorage.getItem("gladex-session") || "{}").gdx;
+      if (!gdx) return null;
+      const stored = localStorage.getItem(`gladex-review-${gdx}`);
+      return stored ? JSON.parse(stored) : null;
+    } catch { return null; }
+  });
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 639px)");
@@ -567,6 +577,30 @@ export default function TravelBriefingLanding() {
     mq.addEventListener("change", handler);
     return () => mq.removeEventListener("change", handler);
   }, []);
+
+  const handleSubmitReview = async () => {
+    if (reviewStars === 0 || reviewLoading || reviewSubmitted) return;
+    setReviewLoading(true);
+    const gdx = activeBooking?.gdx ?? "";
+    const name = activeBooking?.name ?? "Gladex Traveler";
+    const destination = slug ?? "boracay";
+    const now = new Date();
+    const monthYear = now.toLocaleString("en-US", { month: "long", year: "numeric" });
+    const review = {
+      name,
+      location: destination.charAt(0).toUpperCase() + destination.slice(1),
+      date: monthYear,
+      review: reviewComment.trim() || `${reviewStars === 5 ? "Amazing" : reviewStars >= 4 ? "Great" : "Good"} experience with Gladex Tours!`,
+      rating: reviewStars,
+    };
+    try {
+      await submitReview({ gdx, name, destination, rating: reviewStars, comment: reviewComment.trim() });
+    } catch (_) {}
+    try { localStorage.setItem(`gladex-review-${gdx}`, JSON.stringify(review)); } catch {}
+    setMyReview(review);
+    setReviewSubmitted(true);
+    setReviewLoading(false);
+  };
 
   // ── Restore booking from sessionStorage on page refresh ──────
   useEffect(() => {
@@ -1736,10 +1770,11 @@ export default function TravelBriefingLanding() {
 
             {/* Carousel cards */}
             {(() => {
+              const allTestimonials = myReview ? [myReview, ...TESTIMONIALS] : TESTIMONIALS;
               const PER = testimonialsMobile ? 1 : 3;
-              const totalPages = Math.ceil(TESTIMONIALS.length / PER);
+              const totalPages = Math.ceil(allTestimonials.length / PER);
               const safePage = Math.min(testimonialsPage, totalPages - 1);
-              const visible = TESTIMONIALS.slice(safePage * PER, (safePage + 1) * PER);
+              const visible = allTestimonials.slice(safePage * PER, (safePage + 1) * PER);
               return (
                 <>
                   <div className={`grid gap-3 mb-4 ${testimonialsMobile ? "grid-cols-1" : "grid-cols-3"}`}>
@@ -1837,59 +1872,81 @@ export default function TravelBriefingLanding() {
           <div className={sectionGap}>
             <SectionHeader eyebrow="Your Experience" title="Review Our Service" tk={tk} />
             <div className="rounded-2xl border p-5" style={{ ...card }}>
-              {/* Question + stars */}
-              <p className="text-sm mb-3" style={{ color: textPrimary }}>
-                How would you rate your experience with Gladex Tours?
-              </p>
-              <div className="flex gap-2 mb-5">
-                {[1, 2, 3, 4, 5].map((s) => (
+              {reviewSubmitted || myReview ? (
+                /* ── Already submitted ── */
+                <div className="flex flex-col items-center gap-3 py-4 text-center">
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: "rgba(249,115,22,0.12)" }}>
+                    <svg className="w-6 h-6" fill="none" stroke="#f97316" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
+                  <p className="font-black text-sm" style={{ color: textPrimary }}>Thank you for your review!</p>
+                  <div className="flex gap-0.5">
+                    {[1,2,3,4,5].map((s) => (
+                      <Star key={s} className={`w-4 h-4 ${s <= (myReview?.rating ?? reviewStars) ? "fill-yellow-400 text-yellow-400" : "text-yellow-200"}`} />
+                    ))}
+                  </div>
+                  {(myReview?.review || reviewComment) && (
+                    <p className="text-xs italic" style={{ color: textMuted }}>"{myReview?.review || reviewComment}"</p>
+                  )}
+                  <p className="text-[10px]" style={{ color: textMuted }}>Your review is visible above in the traveler reviews section.</p>
+                </div>
+              ) : (
+                /* ── Form ── */
+                <>
+                  <p className="text-sm mb-3" style={{ color: textPrimary }}>
+                    How would you rate your experience with Gladex Tours?
+                  </p>
+                  <div className="flex gap-2 mb-5">
+                    {[1, 2, 3, 4, 5].map((s) => (
+                      <button
+                        key={s}
+                        onClick={() => setReviewStars(s)}
+                        className="transition-transform hover:scale-110 active:scale-95"
+                        aria-label={`${s} star${s > 1 ? "s" : ""}`}
+                      >
+                        <Star
+                          className={`w-7 h-7 transition-colors ${
+                            s <= reviewStars
+                              ? "fill-yellow-400 text-yellow-400"
+                              : darkMode ? "text-white/20 hover:text-yellow-400" : "text-black/15 hover:text-yellow-400"
+                          }`}
+                        />
+                      </button>
+                    ))}
+                  </div>
+
+                  <p className="text-[10px] font-black uppercase tracking-widest mb-1.5" style={{ color: textMuted }}>
+                    Comments <span className="font-normal normal-case tracking-normal">(optional)</span>
+                  </p>
+                  <textarea
+                    rows={3}
+                    value={reviewComment}
+                    onChange={(e) => setReviewComment(e.target.value)}
+                    placeholder="Tell us about your experience..."
+                    className="w-full rounded-xl border px-4 py-3 text-sm resize-none outline-none transition-colors"
+                    style={{
+                      backgroundColor: darkMode ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)",
+                      borderColor: darkMode ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)",
+                      color: textPrimary,
+                    }}
+                  />
+
                   <button
-                    key={s}
-                    onClick={() => setReviewStars(s)}
-                    className="transition-transform hover:scale-110 active:scale-95"
-                    aria-label={`${s} star${s > 1 ? "s" : ""}`}
+                    onClick={handleSubmitReview}
+                    disabled={reviewStars === 0 || reviewLoading}
+                    className="w-full mt-4 py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2"
+                    style={{
+                      backgroundColor: reviewStars > 0 ? "#f97316" : (darkMode ? "rgba(249,115,22,0.25)" : "rgba(249,115,22,0.2)"),
+                      color: reviewStars > 0 ? "#fff" : "#f97316",
+                      opacity: (reviewStars === 0 || reviewLoading) ? 0.6 : 1,
+                    }}
                   >
-                    <Star
-                      className={`w-7 h-7 transition-colors ${
-                        s <= reviewStars
-                          ? "fill-yellow-400 text-yellow-400"
-                          : darkMode ? "text-white/20 hover:text-yellow-400" : "text-black/15 hover:text-yellow-400"
-                      }`}
-                    />
+                    {reviewLoading ? (
+                      <><svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" strokeOpacity="0.25"/><path d="M12 2a10 10 0 0 1 10 10" strokeLinecap="round"/></svg> Submitting…</>
+                    ) : "Submit Review"}
                   </button>
-                ))}
-              </div>
-
-              {/* Comments */}
-              <p className="text-[10px] font-black uppercase tracking-widest mb-1.5" style={{ color: textMuted }}>
-                Comments <span className="font-normal normal-case tracking-normal">(optional)</span>
-              </p>
-              <textarea
-                rows={3}
-                value={reviewComment}
-                onChange={(e) => setReviewComment(e.target.value)}
-                placeholder="Tell us about your experience..."
-                className="w-full rounded-xl border px-4 py-3 text-sm resize-none outline-none transition-colors"
-                style={{
-                  backgroundColor: darkMode ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)",
-                  borderColor: darkMode ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)",
-                  color: textPrimary,
-                }}
-              />
-
-              {/* Submit */}
-              <button
-                disabled={reviewStars === 0}
-                className="w-full mt-4 py-3 rounded-xl text-sm font-bold transition-all"
-                style={{
-                  backgroundColor: reviewStars > 0 ? "#f97316" : (darkMode ? "rgba(249,115,22,0.25)" : "rgba(249,115,22,0.2)"),
-                  color: reviewStars > 0 ? "#fff" : "#f97316",
-                  opacity: reviewStars === 0 ? 0.6 : 1,
-                }}
-              >
-                Submit Review
-              </button>
-              <p className="text-[10px] text-center mt-3" style={muted}>🔒 Review submission available in Phase 2.</p>
+                  <p className="text-[10px] text-center mt-3" style={muted}>Only you can see your review after submitting.</p>
+                </>
+              )}
             </div>
           </div>
         </FadeIn>

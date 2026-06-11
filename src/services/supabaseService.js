@@ -57,6 +57,22 @@ const supabase = (_supabaseUrl && _supabaseKey)
   : null;
 
 // ═══════════════════════════════════════════════════════════════
+// REVIEW SUBMISSION — saves to reviews table
+// ═══════════════════════════════════════════════════════════════
+export const submitReview = async ({ gdx, name, destination, rating, comment }) => {
+  if (!supabase) throw new Error("Review submission is not configured on this deployment.");
+  const { error } = await supabase.from("reviews").insert({
+    gdx,
+    name,
+    destination,
+    rating,
+    comment: comment || null,
+    created_at: new Date().toISOString(),
+  });
+  if (error) throw new Error(error.message);
+};
+
+// ═══════════════════════════════════════════════════════════════
 // PRIMARY LOOKUP — GDX code → full booking with all details
 // ═══════════════════════════════════════════════════════════════
 export const lookupBooking = async (gdxCode) => {
