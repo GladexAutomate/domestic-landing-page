@@ -69,19 +69,6 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
         paddingBottom: compact ? "2rem" : "3rem",
       }}
     >
-      {/* Logo — full page only */}
-      {!compact && (
-        <motion.img
-          src={GLADEX_LOGO}
-          alt="Gladex Travel and Tours"
-          initial={{ opacity: 0, y: -12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="h-10 sm:h-12 w-auto object-contain mb-5 sm:mb-10"
-          style={{ filter: "drop-shadow(0 0 12px rgba(255,140,0,0.3))" }}
-        />
-      )}
-
       {/* Confirmed badge */}
       <motion.div
         initial={{ opacity: 0, scale: 0.85 }}
