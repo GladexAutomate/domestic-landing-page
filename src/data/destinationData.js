@@ -284,7 +284,7 @@ export const DESTINATION_DATA = {
         },
       },
       {
-        occasion: "Beach Day", icon: "", image: boracayImgs.whiteBeach,
+        occasion: "Beach Outfit", icon: "", image: boracayImgs.whiteBeach,
         tip: "Reef-safe sunscreen only — chemical sunscreen is prohibited in Boracay's marine areas.",
         variants: {
           Female:  { photos: [boracayImgs.outfitBeachFemale1, boracayImgs.outfitBeachFemale2, null, null], tip: "Swimsuit or bikini under a flowy cover-up — reef-safe and camera-ready." },
@@ -296,7 +296,7 @@ export const DESTINATION_DATA = {
         },
       },
       {
-        occasion: "Island Hopping", icon: "", image: boracayImgs.islandHopping,
+        occasion: "Island Outfit", icon: "", image: boracayImgs.islandHopping,
         tip: "You'll be on a bangka boat all day — pack quick-dry clothes and water shoes.",
         variants: {
           Female:  { photos: [boracayImgs.outfitBeachFemale1, boracayImgs.outfitBeachFemale2, null, null], tip: "Rash guard or one-piece under a sarong — you'll be on the boat all day." },
@@ -308,7 +308,7 @@ export const DESTINATION_DATA = {
         },
       },
       {
-        occasion: "Dinner & Nightlife", icon: "", image: boracayImgs.sunset,
+        occasion: "Dinner Outfit", icon: "", image: boracayImgs.sunset,
         tip: "D'Mall and beachfront bars are casual — smart-casual is perfectly fine.",
         variants: {
           Female:  { photos: [boracayImgs.outfitDinnerFemale1, boracayImgs.outfitDinnerFemale2, null, null], tip: "Light summer dress or linen co-ord — smart casual at D'Mall." },
@@ -320,7 +320,7 @@ export const DESTINATION_DATA = {
         },
       },
       {
-        occasion: "Photo Spots", icon: "", image: boracayImgs.parawSailing,
+        occasion: "Photo Outfit", icon: "", image: boracayImgs.parawSailing,
         tip: "Wear bright or pastel colors — they pop beautifully against white sand and blue water.",
         variants: {
           Female:  { photos: [boracayImgs.parawSailing, boracayImgs.sunset,      null, null], tip: "Bright or pastel tones pop against white sand — flowy maxi dress or linen set." },
@@ -720,7 +720,7 @@ export const DESTINATION_DATA = {
         },
       },
       {
-        occasion: "Beach & Island", icon: "", image: boracayImgs.whiteBeach,
+        occasion: "Beach Outfit", icon: "", image: boracayImgs.whiteBeach,
         tip: "Moalboal and Mactan beaches are saltwater — quick-dry clothing saves the day.",
         variants: {
           Female:  { photos: [boracayImgs.whiteBeach, boracayImgs.crystalCove,   null, null], tip: "Moalboal and Mactan beaches are saltwater — quick-dry clothing saves the day." },
@@ -732,7 +732,7 @@ export const DESTINATION_DATA = {
         },
       },
       {
-        occasion: "Tour Day", icon: "☀️", image: boracayImgs.islandTour,
+        occasion: "Tour Outfit", icon: "", image: boracayImgs.islandTour,
         tip: "Cebu heritage and Oslob tours involve lots of walking — dress for comfort and sun protection.",
         variants: {
           Female:  { photos: [boracayImgs.islandTour, boracayImgs.crystalCove,  null, null], tip: "Cebu heritage and Oslob tours involve lots of walking — dress for comfort and sun protection." },
@@ -744,7 +744,7 @@ export const DESTINATION_DATA = {
         },
       },
       {
-        occasion: "Dinner & City", icon: "", image: boracayImgs.sunset,
+        occasion: "Dinner Outfit", icon: "", image: boracayImgs.sunset,
         tip: "IT Park and The Terraces have a smart-casual vibe — dressing up is always optional.",
         variants: {
           Female:  { photos: [boracayImgs.sunset, boracayImgs.diniwid,      null, null], tip: "IT Park and The Terraces have a smart-casual vibe — dressing up is always optional." },
@@ -756,7 +756,7 @@ export const DESTINATION_DATA = {
         },
       },
       {
-        occasion: "Photo Spots", icon: "", image: boracayImgs.parawSailing,
+        occasion: "Photo Outfit", icon: "", image: boracayImgs.parawSailing,
         tip: "Temple of Leah and Kawasan's pools look incredible with bright, solid-color outfits.",
         variants: {
           Female:  { photos: [boracayImgs.parawSailing, boracayImgs.sunset,      null, null], tip: "Temple of Leah and Kawasan's pools look incredible with bright, solid-color outfits." },
@@ -1164,7 +1164,7 @@ export const DESTINATION_DATA = {
         },
       },
       {
-        occasion: "Island Hopping", icon: "", image: boracayImgs.islandHopping,
+        occasion: "Island Outfit", icon: "", image: boracayImgs.islandHopping,
         tip: "You'll be in and out of the water all day — plan for wet clothes and strong sun.",
         variants: {
           Female:  { photos: [boracayImgs.islandHopping, boracayImgs.crystalCove,  null, null], tip: "You'll be in and out of the water all day — plan for wet clothes and strong sun." },
@@ -1176,7 +1176,7 @@ export const DESTINATION_DATA = {
         },
       },
       {
-        occasion: "Beach Day", icon: "", image: boracayImgs.whiteBeach,
+        occasion: "Beach Outfit", icon: "", image: boracayImgs.whiteBeach,
         tip: "Wear reef-safe sunscreen to protect El Nido's UNESCO-protected marine sanctuary.",
         variants: {
           Female:  { photos: [boracayImgs.whiteBeach, boracayImgs.crystalCove,   null, null], tip: "Wear reef-safe sunscreen to protect El Nido's UNESCO-protected marine sanctuary." },
@@ -1188,7 +1188,7 @@ export const DESTINATION_DATA = {
         },
       },
       {
-        occasion: "El Nido Town", icon: "", image: boracayImgs.sunset,
+        occasion: "Town Outfit", icon: "", image: boracayImgs.sunset,
         tip: "El Nido town is relaxed and walkable — no dress code for most restaurants and bars.",
         variants: {
           Female:  { photos: [boracayImgs.sunset, boracayImgs.diniwid,      null, null], tip: "El Nido town is relaxed and walkable — no dress code for most restaurants and bars." },
@@ -1200,7 +1200,7 @@ export const DESTINATION_DATA = {
         },
       },
       {
-        occasion: "Photo Spots", icon: "", image: boracayImgs.parawSailing,
+        occasion: "Photo Outfit", icon: "", image: boracayImgs.parawSailing,
         tip: "Contrasting colors against blue-green water and white limestone cliffs make stunning shots.",
         variants: {
           Female:  { photos: [boracayImgs.parawSailing, boracayImgs.sunset,      null, null], tip: "Contrasting colors against blue-green water and white limestone cliffs make stunning shots." },
