@@ -298,7 +298,6 @@ export default function TBDestinationGuide({ dest, darkMode, tk }) {
       {guide.weather && (
         <div>
           <div className="flex items-center gap-1.5 mb-4">
-            <span className="text-sm">🌤️</span>
             <p className="text-xs font-black uppercase tracking-widest" style={{ color: "#f97316" }}>Weather & Practical Info</p>
           </div>
           <div className="flex flex-col gap-2">
@@ -329,7 +328,6 @@ export default function TBDestinationGuide({ dest, darkMode, tk }) {
       {guide.currency && (
         <div>
           <div className="flex items-center gap-1.5 mb-4">
-            <span className="text-sm">💱</span>
             <p className="text-xs font-black uppercase tracking-widest" style={{ color: "#f97316" }}>Currency Guide</p>
           </div>
           {/* PHP identity — full-width header card */}
@@ -361,7 +359,6 @@ export default function TBDestinationGuide({ dest, darkMode, tk }) {
       {guide.safetyTips?.length > 0 && (
         <div>
           <div className="flex items-center gap-1.5 mb-4">
-            <span className="text-sm">🛡️</span>
             <p className="text-xs font-black uppercase tracking-widest" style={{ color: "#f97316" }}>Safety Tips</p>
           </div>
           <div className="flex flex-col gap-2">
@@ -383,7 +380,6 @@ export default function TBDestinationGuide({ dest, darkMode, tk }) {
       {guide.localTips?.length > 0 && (
         <div>
           <div className="flex items-center gap-1.5 mb-3">
-            <span className="text-sm">💡</span>
             <p className="text-xs font-black uppercase tracking-widest" style={{ color: "#f97316" }}>Local Tips</p>
           </div>
           <div className="flex flex-col gap-2">

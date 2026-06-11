@@ -114,9 +114,8 @@ export default function TBItinerary({ dest, darkMode, tk }) {
     if (!meals) return null;
     const parts = meals.split("/").map((s) => s.trim());
     const labels = ["Breakfast", "Lunch", "Dinner"];
-    const icons  = ["🍳", "🍱", "🌙"];
     const included = parts
-      .map((v, i) => v !== "X" ? `${icons[i]} ${labels[i]}` : null)
+      .map((v, i) => v !== "X" ? labels[i] : null)
       .filter(Boolean);
     return included.length ? included.join("  ·  ") : null;
   };
@@ -193,7 +192,6 @@ export default function TBItinerary({ dest, darkMode, tk }) {
                       className="px-4 py-2 flex items-center gap-1.5"
                       style={{ backgroundColor: darkMode ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.018)" }}
                     >
-                      <span className="text-base">📷</span>
                       <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: textMuted }}>
                         {photos.length} {photos.length === 1 ? "Photo" : "Photos"}
                       </span>

@@ -105,10 +105,6 @@ export default function TBChecklist({ dest, darkMode, tk }) {
                 backgroundColor: done ? "rgba(249,115,22,0.08)" : tk.surfaceBg,
               }}
             >
-              {/* Item emoji icon */}
-              <span className="text-lg shrink-0 leading-none" style={{ opacity: done ? 0.45 : 1 }}>
-                {icon}
-              </span>
               <span
                 className="text-sm leading-snug flex-1 transition-all"
                 style={{

@@ -1706,16 +1706,15 @@ export default function TravelBriefingLanding() {
                 What to Bring
               </h2>
               {[
-                { key: "documents",           label: "Documents",            emoji: "📋" },
-                { key: "essentials",          label: "Essentials",           emoji: "🧳" },
-                { key: "destinationSpecific", label: "Destination Specific", emoji: "🌴" },
-              ].map(({ key, label, emoji }) => {
+                { key: "documents",           label: "Documents" },
+                { key: "essentials",          label: "Essentials" },
+                { key: "destinationSpecific", label: "Destination Specific" },
+              ].map(({ key, label }) => {
                 const items = dest.packingGuide[key];
                 if (!items?.length) return null;
                 return (
                   <div key={key} className="mb-6">
                     <div className="flex items-center gap-2 mb-3">
-                      <span>{emoji}</span>
                       <p className="text-xs font-black uppercase tracking-widest" style={{ color: textMuted }}>{label}</p>
                     </div>
                     <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))" }}>
