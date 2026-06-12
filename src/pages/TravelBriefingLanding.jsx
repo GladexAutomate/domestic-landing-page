@@ -900,6 +900,16 @@ export default function TravelBriefingLanding() {
   const sectionGap = "mb-16";
   const pad = "px-4 sm:px-6 max-w-4xl mx-auto";
 
+  // High-quality Unsplash banner images — dest.bannerImages overrides per section
+  const BANNER = {
+    travelInfo:  dest?.bannerImages?.travelInfo  || "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1400&q=85",
+    currency:    dest?.bannerImages?.currency    || "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=1400&q=85",
+    safety:      dest?.bannerImages?.safety      || "https://images.unsplash.com/photo-1508739773434-c26b3d09e071?auto=format&fit=crop&w=1400&q=85",
+    packing:     dest?.bannerImages?.packing     || "https://images.unsplash.com/photo-1553531384-cc64ac80a234?auto=format&fit=crop&w=1400&q=85",
+    destination: dest?.bannerImages?.destination || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=85",
+    faq:         dest?.bannerImages?.faq         || "https://images.unsplash.com/photo-1488085061387-422e29b40080?auto=format&fit=crop&w=1400&q=85",
+  };
+
   // ── 404 ─────────────────────────────────────────────────────
   if (!dest) {
     return (
@@ -1655,7 +1665,7 @@ export default function TravelBriefingLanding() {
 
         <FadeIn>
           <div className={sectionGap}>
-            <SectionBanner eyebrow="Operational Information" title="Travel Information Center" imageUrl={dest.itinerary?.[0]?.photos?.[0] || dest.itinerary?.[1]?.photos?.[0]} tk={tk} />
+            <SectionBanner eyebrow="Operational Information" title="Travel Information Center" imageUrl={BANNER.travelInfo} tk={tk} />
             <div className="space-y-4">
 
               {/* 5a. Arrival Instructions — all airports shown vertically, no tabs */}
@@ -1892,7 +1902,7 @@ export default function TravelBriefingLanding() {
         {dest.currency && (
           <FadeIn>
             <div className={sectionGap}>
-              <SectionBanner eyebrow="Money Matters" title="Currency Guide" imageUrl={dest.itinerary?.[1]?.photos?.[2] || dest.itinerary?.[0]?.photos?.[3]} tk={tk} />
+              <SectionBanner eyebrow="Money Matters" title="Currency Guide" imageUrl={BANNER.currency} tk={tk} />
               <div className="rounded-2xl border overflow-hidden" style={{ ...card }}>
                 <div className="px-5 pt-4 pb-3 border-b" style={{ borderColor }}>
                   <p className="font-bold text-base" style={{ color: textPrimary }}>{dest.currency.name}</p>
@@ -1917,7 +1927,7 @@ export default function TravelBriefingLanding() {
         {dest.safetyTips?.length > 0 && (
           <FadeIn>
             <div className={sectionGap}>
-              <SectionBanner eyebrow="Stay Safe" title="Safety Tips" imageUrl={dest.itinerary?.[2]?.photos?.[0] || dest.itinerary?.[1]?.photos?.[1]} tk={tk} />
+              <SectionBanner eyebrow="Stay Safe" title="Safety Tips" imageUrl={BANNER.safety} tk={tk} />
               <div className="rounded-2xl border overflow-hidden" style={{ ...card }}>
                 <div className="px-5 pt-4 pb-3 border-b" style={{ borderColor }}>
                   <p className="font-bold text-base" style={{ color: textPrimary }}>Important Safety Guidelines</p>
@@ -1954,7 +1964,7 @@ export default function TravelBriefingLanding() {
         {dest.packingGuide && (
           <FadeIn>
             <div className={sectionGap}>
-              <SectionBanner eyebrow="Packing Guide" title="What to Bring" imageUrl={dest.packingGuide.destinationSpecific?.find(i => i.image)?.image || dest.packingGuide.essentials?.find(i => i.image)?.image} tk={tk} />
+              <SectionBanner eyebrow="Packing Guide" title="What to Bring" imageUrl={BANNER.packing} tk={tk} />
               {[
                 { key: "documents",           label: "Documents" },
                 { key: "essentials",          label: "Essentials" },
@@ -2014,18 +2024,19 @@ export default function TravelBriefingLanding() {
            ══════════════════════════════════════════════════ */}
         <FadeIn>
           <div className={sectionGap}>
-            <SectionBanner eyebrow="Know Your Destination" title="Destination Guide" imageUrl={dest.destinationGuide?.highlights?.[0]?.image} tk={tk} />
+            <SectionBanner eyebrow="Know Your Destination" title="Destination Guide" imageUrl={BANNER.destination} tk={tk} />
             <TBDestinationGuide dest={dest} darkMode={darkMode} tk={tk} />
           </div>
         </FadeIn>
 
         {/* ══════════════════════════════════════════════════
-            10. OPTIONAL TOURS
+            10. OPTIONAL TOURS — hidden until tours/pricing/upsell flow are finalized
            ══════════════════════════════════════════════════ */}
+        {/* Optional Tours intentionally not rendered — uncomment when ready
         {dest.optionalTours?.length > 0 && (
           <FadeIn>
             <div className={sectionGap}>
-              <SectionBanner eyebrow="Enhance Your Trip" title="Optional Tours & Add-Ons" imageUrl={dest.itinerary?.[1]?.photos?.[0] || dest.itinerary?.[0]?.photos?.[0]} tk={tk} />
+              <SectionBanner eyebrow="Enhance Your Trip" title="Optional Tours & Add-Ons" imageUrl={BANNER.destination} tk={tk} />
               <TBOptionalTours
                 dest={dest}
                 darkMode={darkMode}
@@ -2036,13 +2047,14 @@ export default function TravelBriefingLanding() {
             </div>
           </FadeIn>
         )}
+        */}
 
         {/* ══════════════════════════════════════════════════
             13. FREQUENTLY ASKED QUESTIONS
            ══════════════════════════════════════════════════ */}
         <FadeIn>
           <div className={sectionGap}>
-            <SectionBanner eyebrow="Have Questions?" title="Frequently Asked Questions" imageUrl={dest.destinationGuide?.highlights?.[2]?.image || dest.destinationGuide?.highlights?.[1]?.image} tk={tk} />
+            <SectionBanner eyebrow="Have Questions?" title="Frequently Asked Questions" imageUrl={BANNER.faq} tk={tk} />
             <TBFAQs dest={dest} darkMode={darkMode} tk={tk} />
           </div>
         </FadeIn>

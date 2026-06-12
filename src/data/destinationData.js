@@ -13,6 +13,14 @@ export const DESTINATION_DATA = {
     slug: "boracay",
     name: "Boracay",
     tagline: "3D2N All-In Package",
+    bannerImages: {
+      travelInfo:  "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1400&q=85",
+      currency:    "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=1400&q=85",
+      safety:      "https://images.unsplash.com/photo-1508739773434-c26b3d09e071?auto=format&fit=crop&w=1400&q=85",
+      packing:     "https://images.unsplash.com/photo-1553531384-cc64ac80a234?auto=format&fit=crop&w=1400&q=85",
+      destination: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=85",
+      faq:         "https://images.unsplash.com/photo-1488085061387-422e29b40080?auto=format&fit=crop&w=1400&q=85",
+    },
     description:
       "Experience the Philippines' most iconic island destination with powdery white sand, crystal-clear waters, and world-famous sunsets.",
     airport: "Caticlan (MPH) or Kalibo (KLO)",
@@ -492,6 +500,14 @@ export const DESTINATION_DATA = {
     slug: "cebu",
     name: "Cebu",
     tagline: "Cebu Package",
+    bannerImages: {
+      travelInfo:  "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1400&q=85",
+      currency:    "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=1400&q=85",
+      safety:      "https://images.unsplash.com/photo-1508739773434-c26b3d09e071?auto=format&fit=crop&w=1400&q=85",
+      packing:     "https://images.unsplash.com/photo-1553531384-cc64ac80a234?auto=format&fit=crop&w=1400&q=85",
+      destination: "https://images.unsplash.com/photo-1559628233-100c798642d6?auto=format&fit=crop&w=1400&q=85",
+      faq:         "https://images.unsplash.com/photo-1488085061387-422e29b40080?auto=format&fit=crop&w=1400&q=85",
+    },
     description:
       "Discover Cebu's perfect blend of rich history, vibrant city life, stunning waterfalls, pristine beaches, and world-famous marine encounters.",
     airport: "Mactan-Cebu International Airport (CEB)",
@@ -911,6 +927,14 @@ export const DESTINATION_DATA = {
     slug: "elnido",
     name: "El Nido",
     tagline: "El Nido, Palawan Package",
+    bannerImages: {
+      travelInfo:  "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1400&q=85",
+      currency:    "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=1400&q=85",
+      safety:      "https://images.unsplash.com/photo-1508739773434-c26b3d09e071?auto=format&fit=crop&w=1400&q=85",
+      packing:     "https://images.unsplash.com/photo-1553531384-cc64ac80a234?auto=format&fit=crop&w=1400&q=85",
+      destination: "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=1400&q=85",
+      faq:         "https://images.unsplash.com/photo-1488085061387-422e29b40080?auto=format&fit=crop&w=1400&q=85",
+    },
     description:
       "Discover one of the world's most beautiful island destinations — dramatic limestone cliffs, crystal-clear hidden lagoons, and pristine white-sand beaches.",
     airport: "Puerto Princesa Airport (PPS) or El Nido Airport (LIO)",
