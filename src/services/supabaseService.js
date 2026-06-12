@@ -193,7 +193,7 @@ function normalizeBooking(raw, { tourData, ticketData, hotelData, transferData }
     travelDate:       raw.travel_date || null,
     arrivalDate:      raw.arrival_date || null,
     departureDate:    raw.departure_date || null,
-    duration:         raw.duration || null,
+    duration:         normalizeDuration(raw.duration),
 
     // Detail records
     tour,
@@ -216,10 +216,11 @@ function normalizeBooking(raw, { tourData, ticketData, hotelData, transferData }
     attachments:      normalizeAttachments(raw.attachments),
     tourVoucherUrl:   extractFusiooUrl(raw.tour_voucher),
 
-    // Agent
+    // Agent — note: raw.travel_consultant often contains a commission status like
+    // "Commission Accomplished", not the person's name; use agent_name instead.
     agentName:        raw.agent_name || null,
     salesAgent:       raw.name_of_agent || null,
-    consultantName:   raw.consultant_name || raw.travel_consultant || null,
+    consultantName:   raw.consultant_name || raw.agent_name || raw.name_of_agent || null,
     consultantPhone:  raw.consultant_phone || raw.consultant_mobile || null,
 
     // Raw data for destination detection
@@ -255,6 +256,9 @@ function normalizeTicket(d) {
 
 function normalizeHotel(d, raw) {
   if (!d) return null;
+  // hotel_number in Fusioo is an ordinal reference ("1st Hotel", "2nd Hotel") — not a confirmation number
+  const rawHotelNum = d.hotel_number || "";
+  const isOrdinalRef = /^\d+(st|nd|rd|th)\s+hotel/i.test(rawHotelNum);
   return {
     stayDates:          d.hotel_stay_dates || null,
     roomType:           d.room_type || null,
@@ -262,10 +266,10 @@ function normalizeHotel(d, raw) {
     checkOut:           d.stay_date_to || null,
     nights:             d.number_of_nights || null,
     requests:           stripHtml(d.hotel_requests || ""),
-    hotelConfirmation:  d.hotel_confirmation_number || d.confirmation_number || d.hotel_number || null,
+    hotelConfirmation:  d.hotel_confirmation_number || d.confirmation_number || (!isOrdinalRef ? rawHotelNum : null) || null,
     hotelPhone:         d.hotel_phone || d.hotel_contact || d.contact_number || null,
     // Hotel name — Fusioo may store it under several field names
-    hotelName:          d.hotel_name || d.property_name || d.accommodation_name || d.hotel_property || null,
+    hotelName:          d.hotel_name || d.hotel_property_name || d.property_name || d.accommodation_name || d.hotel_property || null,
   };
 }
 
@@ -313,6 +317,15 @@ function normalizeAttachments(raw) {
     }).filter((a) => a.url);
   }
   return [];
+}
+
+// ── Duration normalizer ──────────────────────────────────────────
+// Fusioo may store duration as "3 Days & 2" (truncated) — append "Nights" if missing
+function normalizeDuration(dur) {
+  if (!dur) return null;
+  const s = String(dur).trim();
+  if (/&\s*\d+\s*$/i.test(s) && !/nights?/i.test(s)) return s + " Nights";
+  return s;
 }
 
 // ── String helpers ────────────────────────────────────────────────

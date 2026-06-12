@@ -659,6 +659,14 @@ export default function TravelBriefingLanding() {
     return () => mq.removeEventListener("change", handler);
   }, []);
 
+  // Sync edit form with stored review whenever the edit panel opens
+  useEffect(() => {
+    if (reviewEditing && myReview) {
+      setReviewStars(myReview.rating ?? myReview.stars ?? 0);
+      setReviewComment(myReview.review ?? myReview.comment ?? "");
+    }
+  }, [reviewEditing]);
+
   const handleSubmitReview = () => {
     if (reviewStars === 0) return;
     const gdx = activeBooking?.gdx ?? "guest";
@@ -834,7 +842,7 @@ export default function TravelBriefingLanding() {
   const muted = { color: textMuted };
   const tk    = { bg, cardBg, surfaceBg, textPrimary, textMuted, borderColor, cardShadow, card, muted };
   const sectionGap = "mb-16";
-  const pad = "px-4 sm:px-6 max-w-2xl mx-auto";
+  const pad = "px-4 sm:px-6 max-w-4xl mx-auto";
 
   // ── 404 ─────────────────────────────────────────────────────
   if (!dest) {
@@ -1318,6 +1326,64 @@ export default function TravelBriefingLanding() {
               )}
             </div>
 
+        {/* ── QUICK CONTACTS — always visible near top ── */}
+        <FadeIn>
+          <div className={sectionGap}>
+            <div className="rounded-2xl border overflow-hidden" style={{ borderColor: "rgba(249,115,22,0.4)", backgroundColor: "rgba(249,115,22,0.04)" }}>
+              <div className="px-5 pt-4 pb-3 border-b" style={{ borderColor: "rgba(249,115,22,0.2)" }}>
+                <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: "#f97316" }}>Save These Numbers</p>
+                <p className="font-black text-base" style={{ color: textPrimary }}>Important Contacts</p>
+              </div>
+              <div className="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                <div className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor, backgroundColor: cardBg }}>
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(249,115,22,0.12)" }}>📞</div>
+                  <div>
+                    <p className="text-[9px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Gladex Hotline</p>
+                    <a href="tel:+639178752200" className="text-sm font-black" style={{ color: "#f97316" }}>+63 917 875 2200</a>
+                    <p className="text-[10px] mt-0.5" style={{ color: textMuted }}>Available 8AM–8PM</p>
+                  </div>
+                </div>
+                {(activeBooking?.consultantName || activeBooking?.agentName) && (
+                  <div className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor, backgroundColor: cardBg }}>
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(249,115,22,0.12)" }}>👤</div>
+                    <div>
+                      <p className="text-[9px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Your Coordinator</p>
+                      <p className="text-sm font-black" style={{ color: textPrimary }}>{activeBooking.consultantName || activeBooking.agentName}</p>
+                      {activeBooking.consultantPhone && (
+                        <a href={`tel:${activeBooking.consultantPhone.replace(/\s/g,"")}`} className="text-xs font-bold" style={{ color: "#f97316" }}>{activeBooking.consultantPhone}</a>
+                      )}
+                    </div>
+                  </div>
+                )}
+                {activeBooking?.hotel?.hotelName && (
+                  <div className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor, backgroundColor: cardBg }}>
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(249,115,22,0.12)" }}>🏨</div>
+                    <div>
+                      <p className="text-[9px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Hotel</p>
+                      <p className="text-sm font-black" style={{ color: textPrimary }}>{activeBooking.hotel.hotelName}</p>
+                      {activeBooking.hotel.hotelPhone ? (
+                        <a href={`tel:${activeBooking.hotel.hotelPhone.replace(/\s/g,"")}`} className="text-xs font-bold" style={{ color: "#f97316" }}>{activeBooking.hotel.hotelPhone}</a>
+                      ) : activeBooking.hotel.hotelConfirmation ? (
+                        <p className="text-xs" style={{ color: textMuted }}>Conf. #{activeBooking.hotel.hotelConfirmation}</p>
+                      ) : null}
+                    </div>
+                  </div>
+                )}
+                {activeBooking?.transfer?.transferContact && (
+                  <div className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor, backgroundColor: cardBg }}>
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(249,115,22,0.12)" }}>🚌</div>
+                    <div>
+                      <p className="text-[9px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Transfer Contact</p>
+                      <p className="text-sm font-black" style={{ color: textPrimary }}>{activeBooking.transfer.supplier || "Transfer Coordinator"}</p>
+                      <a href={`tel:${activeBooking.transfer.transferContact.replace(/\s/g,"")}`} className="text-xs font-bold" style={{ color: "#f97316" }}>{activeBooking.transfer.transferContact}</a>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </FadeIn>
+
         {/* ══════════════════════════════════════════════════
             2. TRAVEL BRIEFING VIDEO
            ══════════════════════════════════════════════════ */}
@@ -1535,57 +1601,6 @@ export default function TravelBriefingLanding() {
           <div className={sectionGap}>
             <SectionBanner eyebrow="Operational Information" title="Travel Information Center" imageUrl={dest.itinerary?.[0]?.photos?.[0] || dest.itinerary?.[1]?.photos?.[0]} tk={tk} />
             <div className="space-y-4">
-
-              {/* Quick Contacts — always visible near the top */}
-              <div className="rounded-2xl border overflow-hidden" style={{ borderColor: "rgba(249,115,22,0.4)", backgroundColor: "rgba(249,115,22,0.04)" }}>
-                <div className="px-5 pt-4 pb-3 border-b" style={{ borderColor: "rgba(249,115,22,0.2)" }}>
-                  <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: "#f97316" }}>Save These Numbers</p>
-                  <p className="font-black text-base" style={{ color: textPrimary }}>Your Quick Contacts</p>
-                </div>
-                <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor, backgroundColor: cardBg }}>
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(249,115,22,0.12)" }}>📞</div>
-                    <div>
-                      <p className="text-[9px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Gladex Hotline</p>
-                      <a href="tel:+639178752200" className="text-sm font-black" style={{ color: "#f97316" }}>+63 917 875 2200</a>
-                    </div>
-                  </div>
-                  {(activeBooking?.consultantName || activeBooking?.agentName) && (
-                    <div className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor, backgroundColor: cardBg }}>
-                      <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(249,115,22,0.12)" }}>👤</div>
-                      <div>
-                        <p className="text-[9px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Your Coordinator</p>
-                        <p className="text-sm font-black" style={{ color: textPrimary }}>{activeBooking.consultantName || activeBooking.agentName}</p>
-                        {activeBooking.consultantPhone && (
-                          <a href={`tel:${activeBooking.consultantPhone.replace(/\s/g,"")}`} className="text-xs font-bold" style={{ color: "#f97316" }}>{activeBooking.consultantPhone}</a>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                  {(activeBooking?.hotel?.hotelName && (activeBooking?.hotel?.hotelPhone || activeBooking?.hotel?.hotelConfirmation)) && (
-                    <div className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor, backgroundColor: cardBg }}>
-                      <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(249,115,22,0.12)" }}>🏨</div>
-                      <div>
-                        <p className="text-[9px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Hotel</p>
-                        <p className="text-sm font-black" style={{ color: textPrimary }}>{activeBooking.hotel.hotelName}</p>
-                        {activeBooking.hotel.hotelPhone && (
-                          <a href={`tel:${activeBooking.hotel.hotelPhone.replace(/\s/g,"")}`} className="text-xs font-bold" style={{ color: "#f97316" }}>{activeBooking.hotel.hotelPhone}</a>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                  {activeBooking?.transfer?.transferContact && (
-                    <div className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor, backgroundColor: cardBg }}>
-                      <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(249,115,22,0.12)" }}>🚌</div>
-                      <div>
-                        <p className="text-[9px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Transfer Contact</p>
-                        <p className="text-sm font-black" style={{ color: textPrimary }}>{activeBooking.transfer.supplier || "Transfer Coordinator"}</p>
-                        <a href={`tel:${activeBooking.transfer.transferContact.replace(/\s/g,"")}`} className="text-xs font-bold" style={{ color: "#f97316" }}>{activeBooking.transfer.transferContact}</a>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
 
               {/* 5a. Arrival Instructions — all airports shown vertically, no tabs */}
               <div className="rounded-2xl border overflow-hidden" style={{ ...card }}>
@@ -1954,7 +1969,7 @@ export default function TravelBriefingLanding() {
            ══════════════════════════════════════════════════ */}
         <FadeIn>
           <div className={sectionGap}>
-            <SectionHeader eyebrow="Have Questions?" title="Frequently Asked Questions" tk={tk} />
+            <SectionBanner eyebrow="Have Questions?" title="Frequently Asked Questions" imageUrl={dest.destinationGuide?.highlights?.[2]?.image || dest.destinationGuide?.highlights?.[1]?.image} tk={tk} />
             <TBFAQs dest={dest} darkMode={darkMode} tk={tk} />
           </div>
         </FadeIn>
