@@ -1116,7 +1116,7 @@ export default function TravelBriefingLanding() {
                             textPrimary={textPrimary} textMuted={textMuted}
                           />
                           <BookingRow
-                            label1="Guest Names"  value1={activeBooking.guestNames || activeBooking.leadName || "—"}
+                            label1="Guest Names"  value1={activeBooking.guestList?.join(", ") || activeBooking.leadName || "—"}
                             label2="Email"        value2={activeBooking.email || "—"}
                             textPrimary={textPrimary} textMuted={textMuted}
                           />
@@ -1874,7 +1874,9 @@ export default function TravelBriefingLanding() {
                                 setReviewSubmitted(false);
                                 setReviewEditing(true);
                                 setReviewError(null);
-                                document.getElementById("review-form-section")?.scrollIntoView({ behavior: "smooth", block: "center" });
+                                setTimeout(() => {
+                                  document.getElementById("review-edit-inline")?.scrollIntoView({ behavior: "smooth", block: "center" });
+                                }, 80);
                               }}
                               className="flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-lg transition-all hover:opacity-80"
                               style={{ color: "#f97316", backgroundColor: "rgba(249,115,22,0.1)" }}
@@ -1960,6 +1962,56 @@ export default function TravelBriefingLanding() {
                 </>
               );
             })()}
+
+            {/* ── Inline Edit Form ── */}
+            <AnimatePresence>
+              {reviewEditing && myReview && (
+                <motion.div
+                  id="review-edit-inline"
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.25 }}
+                  className="rounded-2xl border p-5 mt-4"
+                  style={{ backgroundColor: cardBg, borderColor: "#f97316", boxShadow: "0 0 0 1px #f97316, 0 4px 20px rgba(249,115,22,0.12)" }}
+                >
+                  <p className="text-[10px] font-black uppercase tracking-widest mb-3" style={{ color: "#f97316" }}>Update Your Review</p>
+                  <div className="flex gap-2 mb-4">
+                    {[1,2,3,4,5].map((s) => (
+                      <button key={s} onClick={() => setReviewStars(s)} className="transition-transform hover:scale-110 active:scale-95">
+                        <Star className={`w-7 h-7 transition-colors ${s <= reviewStars ? "fill-yellow-400 text-yellow-400" : darkMode ? "text-white/20 hover:text-yellow-400" : "text-black/15 hover:text-yellow-400"}`} />
+                      </button>
+                    ))}
+                  </div>
+                  <textarea
+                    rows={3}
+                    value={reviewComment}
+                    onChange={(e) => setReviewComment(e.target.value)}
+                    placeholder="Update your review..."
+                    className="w-full rounded-xl border px-4 py-3 text-sm resize-none outline-none transition-colors mb-3"
+                    style={{ backgroundColor: darkMode ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)", borderColor: darkMode ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)", color: textPrimary }}
+                  />
+                  {reviewError && <p className="text-xs mb-2" style={{ color: "#ef4444" }}>{reviewError}</p>}
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleSubmitReview}
+                      disabled={reviewStars === 0}
+                      className="flex-1 py-3 rounded-xl text-sm font-bold transition-all"
+                      style={{ backgroundColor: reviewStars > 0 ? "#f97316" : "rgba(249,115,22,0.2)", color: reviewStars > 0 ? "#fff" : "#f97316" }}
+                    >
+                      Update Review
+                    </button>
+                    <button
+                      onClick={() => setReviewEditing(false)}
+                      className="px-4 py-3 rounded-xl text-sm font-bold transition-all"
+                      style={{ color: textMuted, backgroundColor: darkMode ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)" }}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </FadeIn>
 
@@ -1970,7 +2022,7 @@ export default function TravelBriefingLanding() {
           <div id="review-form-section" className={sectionGap}>
             <SectionHeader eyebrow="Your Experience" title="Review Our Service" tk={tk} />
             <div className="rounded-2xl border p-5" style={{ ...card }}>
-              {(reviewSubmitted || myReview) && !reviewEditing ? (
+              {(reviewSubmitted || myReview) ? (
                 /* ── Already submitted ── */
                 <div className="flex flex-col items-center gap-3 py-4 text-center">
                   <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: "rgba(249,115,22,0.12)" }}>
