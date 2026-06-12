@@ -187,6 +187,8 @@ function normalizeBooking(raw, { tourData, ticketData, hotelData, transferData }
     transactionType:  raw.transaction_type || null,
     typeOfPackage:    raw.type_of_package || null,
     dateCreated:      raw.date_created || raw.created || null,
+    bookingDate:      raw.date_created || raw.created || raw.received_at || null,
+    lastModified:     raw.last_modified || raw.updated_at || raw.modified_at || null,
 
     // Travel (from main booking)
     destination:      raw.destination || null,

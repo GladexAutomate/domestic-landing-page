@@ -278,6 +278,9 @@ export default function TBDestinationGuide({ dest, darkMode, tk }) {
                 />
                 <div className="absolute bottom-0 left-0 right-0 p-3">
                   <p className="font-bold text-sm text-white leading-snug">{f.name}</p>
+                  {f.restaurant && (
+                    <p className="text-[10px] font-black mt-0.5" style={{ color: "#f97316" }}>@ {f.restaurant}</p>
+                  )}
                   {f.note && <p className="text-[10px] leading-snug mt-0.5" style={{ color: "rgba(255,255,255,0.65)" }}>{f.note}</p>}
                 </div>
               </div>

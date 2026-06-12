@@ -1194,8 +1194,8 @@ export default function TravelBriefingLanding() {
                             textPrimary={textPrimary} textMuted={textMuted}
                           />
                           <BookingRow
-                            label1="Booking Date"  value1={activeBooking.bookingDate || "—"}
-                            label2="Last Modified" value2={activeBooking.lastModified || "—"}
+                            label1="Booking Date"  value1={activeBooking.bookingDate || "Not Available"}
+                            label2="Last Modified" value2={activeBooking.lastModified || "Not Available"}
                             textPrimary={textPrimary} textMuted={textMuted}
                           />
                         </div>
@@ -1392,15 +1392,16 @@ export default function TravelBriefingLanding() {
               )}
             </div>
 
-        {/* ── QUICK CONTACTS — always visible near top ── */}
+        {/* ── EMERGENCY CONTACTS — consolidated, always visible near top ── */}
         <FadeIn>
           <div className={sectionGap}>
             <div className="rounded-2xl border overflow-hidden" style={{ borderColor: "rgba(249,115,22,0.4)", backgroundColor: "rgba(249,115,22,0.04)" }}>
               <div className="px-5 pt-4 pb-3 border-b" style={{ borderColor: "rgba(249,115,22,0.2)" }}>
                 <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: "#f97316" }}>Save These Numbers</p>
-                <p className="font-black text-base" style={{ color: textPrimary }}>Important Contacts</p>
+                <p className="font-black text-base" style={{ color: textPrimary }}>Emergency Contacts</p>
               </div>
               <div className="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {/* Gladex Hotline — always shown */}
                 <div className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor, backgroundColor: cardBg }}>
                   <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(249,115,22,0.12)" }}>📞</div>
                   <div>
@@ -1409,6 +1410,28 @@ export default function TravelBriefingLanding() {
                     <p className="text-[10px] mt-0.5" style={{ color: textMuted }}>Available 8AM–8PM</p>
                   </div>
                 </div>
+
+                {/* Destination-defined emergency contacts (Ms. Che, Mr. Mark, etc.) */}
+                {dest.emergencyContacts
+                  ?.flatMap((grp) => grp.contacts.map((c) => ({ ...c, group: grp.group, icon: grp.icon })))
+                  .filter((c) => c.number !== "+63 917 875 2200")
+                  .map((c) => (
+                    <div key={c.label} className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor, backgroundColor: cardBg }}>
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(249,115,22,0.12)" }}>{c.icon}</div>
+                      <div>
+                        <p className="text-[9px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>{c.group}</p>
+                        <p className="text-sm font-black" style={{ color: textPrimary }}>{c.label}</p>
+                        {c.number.startsWith("+") ? (
+                          <a href={`tel:${c.number.replace(/\s/g, "")}`} className="text-xs font-bold" style={{ color: "#f97316" }}>{c.number}</a>
+                        ) : (
+                          <p className="text-xs font-semibold" style={{ color: textMuted }}>{c.number}</p>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                }
+
+                {/* Booking-specific contacts */}
                 {(activeBooking?.consultantName || activeBooking?.agentName) && (
                   <div className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor, backgroundColor: cardBg }}>
                     <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(249,115,22,0.12)" }}>👤</div>
@@ -1831,52 +1854,7 @@ export default function TravelBriefingLanding() {
                 </div>
               </div>
 
-              {/* 5f. Emergency Contacts */}
-              <div className="rounded-2xl border overflow-hidden" style={{ ...card }}>
-                <div className="px-5 pt-4 pb-3 border-b" style={{ borderColor }}>
-                  <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: "#f97316" }}>Save These Now</p>
-                  <p className="font-black text-base" style={{ color: textPrimary, fontFamily: "'Montserrat', sans-serif", letterSpacing: "-0.01em" }}>Emergency Contacts</p>
-                </div>
-                <div className="p-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {dest.emergencyContacts.map((group) => (
-                      <div
-                        key={group.group}
-                        className="rounded-xl border p-4"
-                        style={{ borderColor, backgroundColor: surfaceBg }}
-                      >
-                        {/* Group header */}
-                        <div className="flex items-center gap-2 mb-3">
-                          <span className="text-lg">{group.icon}</span>
-                          <p className="font-black text-sm" style={{ color: textPrimary }}>{group.group}</p>
-                        </div>
-                        <div style={{ borderTop: `1px solid ${borderColor}` }} />
-                        {/* Contacts */}
-                        <div className="mt-3 space-y-2.5">
-                          {group.contacts.map((c) => (
-                            <div key={c.label} className="flex items-start justify-between gap-3">
-                              <p className="text-xs leading-snug" style={{ color: textMuted }}>{c.label}</p>
-                              {c.number.startsWith("+") ? (
-                                <a
-                                  href={`tel:${c.number.replace(/\s/g, "")}`}
-                                  className="text-xs font-black shrink-0 hover:opacity-80 transition-opacity"
-                                  style={{ color: "#f97316" }}
-                                >
-                                  {c.number}
-                                </a>
-                              ) : (
-                                <p className="text-xs font-semibold shrink-0 text-right" style={{ color: textMuted }}>{c.number}</p>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* 5g. Do's & Don'ts */}
+              {/* 5f. Do's & Don'ts */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="rounded-2xl border p-5" style={{ backgroundColor: darkMode ? "rgba(34,197,94,0.06)" : "#f0fdf4", borderColor: darkMode ? "rgba(34,197,94,0.18)" : "#bbf7d0" }}>
                   <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: "#16a34a" }}>Do's</p>
