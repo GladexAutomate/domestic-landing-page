@@ -1691,7 +1691,7 @@ export default function TravelBriefingLanding() {
 
         <FadeIn>
           <div className={sectionGap}>
-            <SectionBanner eyebrow="Operational Information" title="Travel Information Center" imageUrl={BANNER.travelInfo} tk={tk} />
+            <SectionHeader eyebrow="Operational Information" title="Travel Information Center" tk={tk} />
             <div className="space-y-4">
 
               {/* 5a. Arrival Instructions — all airports shown vertically, no tabs */}
@@ -1945,7 +1945,7 @@ export default function TravelBriefingLanding() {
         {dest.packingGuide && (
           <FadeIn>
             <div className={sectionGap}>
-              <SectionBanner eyebrow="Packing Guide" title="What to Bring" imageUrl={BANNER.packing} tk={tk} />
+              <SectionHeader eyebrow="Packing Guide" title="What to Bring" tk={tk} />
               {[
                 { key: "documents",           label: "Documents" },
                 { key: "essentials",          label: "Essentials" },
@@ -2005,7 +2005,7 @@ export default function TravelBriefingLanding() {
            ══════════════════════════════════════════════════ */}
         <FadeIn>
           <div className={sectionGap}>
-            <SectionBanner eyebrow="Know Your Destination" title="Destination Guide" imageUrl={BANNER.destination} tk={tk} />
+            <SectionHeader eyebrow="Know Your Destination" title="Destination Guide" tk={tk} />
             <TBDestinationGuide dest={dest} darkMode={darkMode} tk={tk} />
           </div>
         </FadeIn>
@@ -2035,7 +2035,7 @@ export default function TravelBriefingLanding() {
            ══════════════════════════════════════════════════ */}
         <FadeIn>
           <div className={sectionGap}>
-            <SectionBanner eyebrow="Have Questions?" title="Frequently Asked Questions" imageUrl={BANNER.faq} tk={tk} />
+            <SectionHeader eyebrow="Have Questions?" title="Frequently Asked Questions" tk={tk} />
             <TBFAQs dest={dest} darkMode={darkMode} tk={tk} />
           </div>
         </FadeIn>

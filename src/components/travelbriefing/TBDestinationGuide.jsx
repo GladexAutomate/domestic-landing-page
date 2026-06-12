@@ -274,8 +274,8 @@ export default function TBDestinationGuide({ dest, darkMode, tk }) {
       {/* ── Local Food To Try ── */}
       {guide.food?.length > 0 && (
         <div>
-          <SubBanner title="Best Food & Dining" eyebrow="Must Try" src={banners.food} />
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <p className="text-xs font-black uppercase tracking-widest mb-4" style={{ color: "#f97316" }}>Best Food & Dining</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {guide.food.map((f) => (
               <div
                 key={f.name}
