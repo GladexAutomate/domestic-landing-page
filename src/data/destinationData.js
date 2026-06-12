@@ -64,8 +64,9 @@ export const DESTINATION_DATA = {
         activities: [
           "Arrive at Caticlan Airport or Kalibo Airport",
           "Transfer via van or coaster to Caticlan Jetty Port",
-          "Boat transfer to Boracay Island (approximately 50–65 minutes)",
+          "Boat transfer to Boracay Island (Approximate Travel Time: 15 minutes)",
           "Transfer to your hotel for check-in",
+          "Hotel Check-In: Standard check-in time is 2:00 PM – 3:00 PM. Early check-in is subject to hotel availability.",
           "Enjoy free time at your own leisure — relax, explore the beach, or watch the sunset",
           "Overnight stay at the hotel",
         ],
@@ -246,7 +247,7 @@ export const DESTINATION_DATA = {
     },
     packingGuide: {
       documents: [
-        { name: "Valid ID / Passport", desc: "Government-issued photo ID", icon: "🛂", image: boracayImgs.packValidId },
+        { name: "Valid ID", desc: "Government-issued photo ID (Driver's License, PhilSys, etc.)", icon: "🪪", image: boracayImgs.packValidId },
         { name: "Flight Tickets", desc: "Printed or saved on your phone", icon: "", image: boracayImgs.packFlightTickets },
         { name: "Hotel Voucher", desc: "Print and save a digital copy", icon: "📄", image: boracayImgs.packHotelVoucher },
         { name: "Tour Confirmations", desc: "All activity booking confirmations", icon: "🗓️", image: boracayImgs.packTourConfirmations },
@@ -342,14 +343,14 @@ export const DESTINATION_DATA = {
         { name: "Paraw Sailing at Sunset", desc: "Board a traditional Filipino paraw sailboat as the sun goes down — one of the most romantic and iconic Boracay experiences available.", icon: "", image: boracayImgs.parawSailing },
       ],
       food: [
-        { name: "Chori Burger", note: "Iconic Boracay street food — chorizo patty with a local Filipino twist", emoji: "🍔", image: boracayImgs.foodChoriBurger },
-        { name: "Beachfront Seafood Grill", note: "Fresh catch BBQ'd right on the sand — best ordered straight from D'Talipapa Market", emoji: "🦞", image: boracayImgs.foodSeafoodGrill },
-        { name: "Fresh Mango Shake", note: "Boracay's most famous drink — thick, cold, creamy. Order it everywhere.", emoji: "🥭", image: boracayImgs.foodMangoShake },
-        { name: "Talaba (Fresh Oysters)", note: "Grilled or raw oysters from D'Talipapa — cheapest and freshest on the island", emoji: "🦪", image: boracayImgs.foodTalaba },
-        { name: "Halo-Halo", note: "Classic Filipino shaved ice dessert loaded with fruits, ube, and leche flan", emoji: "🧋", image: boracayImgs.foodHaloHalo },
-        { name: "Fresh Buko Juice", note: "Straight from the coconut — the most refreshing drink after a beach day", emoji: "🥥", image: boracayImgs.foodBukoJuice },
-        { name: "Inihaw na Isda", note: "Whole grilled fish, best eaten with sinangag and spiced vinegar dip", emoji: "🐟", image: boracayImgs.foodInihaw },
-        { name: "Tamilok", note: "Boracay's exotic delicacy — woodworm in spiced vinegar. For the adventurous!", emoji: "🐛", image: boracayImgs.foodTamilok },
+        { name: "Chori Burger", note: "Boracay's most iconic street food — best at Jonah's Fruit Shake & Restaurant on the beachfront", emoji: "🍔", image: boracayImgs.foodChoriBurger },
+        { name: "Fresh Seafood Grill", note: "Pick your catch at D'Talipapa Market, have it cooked right — the freshest BBQ on the island", emoji: "🦞", image: boracayImgs.foodSeafoodGrill },
+        { name: "Fresh Mango Shake", note: "Thick, cold, and creamy — Jonah's Fruit Shake is the #1 spot on White Beach", emoji: "🥭", image: boracayImgs.foodMangoShake },
+        { name: "Calamari", note: "Crispy fried squid rings — a Boracay beach bar staple, best paired with cold drinks", emoji: "🦑", image: boracayImgs.foodTalaba },
+        { name: "Four Cheese Pizza", note: "Signature wood-fired pizza at Two Seasons Boracay Resort — a guest favorite on the island", emoji: "🍕", image: boracayImgs.foodHaloHalo },
+        { name: "Oyster Sisig", note: "Fresh oysters from D'Talipapa sizzling in a classic Filipino sisig style — a must-try", emoji: "🦪", image: boracayImgs.foodBukoJuice },
+        { name: "Inihaw na Isda", note: "Whole grilled fish with sinangag and spiced vinegar dip — authentic Filipino beachside dining", emoji: "🐟", image: boracayImgs.foodInihaw },
+        { name: "Halo-Halo", note: "Classic Filipino shaved ice dessert — ube, leche flan, fruits, and sweet beans. Perfect beach cool-down", emoji: "🧋", image: boracayImgs.foodTamilok },
       ],
       photoSpots: [
         { name: "White Beach — Morning Swim", note: "Early morning, calm water, no crowds — the clearest and most iconic Boracay shot", image: boracayImgs.whiteBeach },
@@ -686,7 +687,7 @@ export const DESTINATION_DATA = {
     },
     packingGuide: {
       documents: [
-        { name: "Valid ID / Passport", desc: "Government-issued photo ID", icon: "🛂", image: boracayImgs.packValidId },
+        { name: "Valid ID", desc: "Government-issued photo ID (Driver's License, PhilSys, etc.)", icon: "🪪", image: boracayImgs.packValidId },
         { name: "Flight Tickets", desc: "Printed or saved on your phone", icon: "", image: boracayImgs.packFlightTickets },
         { name: "Hotel Voucher", desc: "Print and save a digital copy", icon: "📄", image: boracayImgs.packHotelVoucher },
         { name: "Tour Confirmations", desc: "All activity booking confirmations", icon: "🗓️", image: boracayImgs.packTourConfirmations },
@@ -1130,7 +1131,7 @@ export const DESTINATION_DATA = {
     },
     packingGuide: {
       documents: [
-        { name: "Valid ID / Passport", desc: "Government-issued photo ID", icon: "🛂", image: boracayImgs.packValidId },
+        { name: "Valid ID", desc: "Government-issued photo ID (Driver's License, PhilSys, etc.)", icon: "🪪", image: boracayImgs.packValidId },
         { name: "Flight Tickets", desc: "Printed or saved on your phone", icon: "", image: boracayImgs.packFlightTickets },
         { name: "Hotel Voucher", desc: "Print and save a digital copy", icon: "📄", image: boracayImgs.packHotelVoucher },
         { name: "Tour Confirmations", desc: "All activity booking confirmations", icon: "🗓️", image: boracayImgs.packTourConfirmations },

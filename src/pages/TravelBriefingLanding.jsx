@@ -21,37 +21,74 @@ import {
 const TESTIMONIALS = [
   {
     name: "Maria Santos",
-    location: "Da Nang, Vietnam",
+    location: "Boracay",
+    destination: "boracay",
     date: "May 2025",
-    review: "Gladex made our Vietnam trip absolutely seamless! The briefing page had everything we needed — no stress, no confusion. The itinerary was perfect from start to finish. 10/10!",
+    review: "The briefing page had everything we needed — the island hopping schedule, hotel check-in details, and boat transfer instructions were all spot on. Zero stress on arrival!",
     rating: 5,
   },
   {
     name: "Jose Reyes",
-    location: "Hong Kong",
+    location: "Boracay",
+    destination: "boracay",
     date: "March 2025",
-    review: "The pre-trip briefing page was incredibly detailed. I loved seeing all the tour options and insurance in one place. Our family of 5 had zero confusion during the entire trip!",
+    review: "Our family of 5 had zero confusion the entire trip. The jetty port instructions and boat transfer timing were explained so clearly. Gladex exceeded our expectations!",
     rating: 5,
   },
   {
     name: "Ana Villanueva",
-    location: "Singapore",
+    location: "Boracay",
+    destination: "boracay",
     date: "April 2025",
-    review: "Best travel experience ever! The team was so responsive and the itinerary was perfectly planned. We've already booked our Korea trip with Gladex for next year!",
+    review: "Best beach trip ever! The pre-trip briefing had everything — even the reef-safe sunscreen reminder. White Beach was stunning and the island hopping tour was the highlight!",
     rating: 5,
   },
   {
     name: "Joel T.",
-    location: "Cebu",
+    location: "Boracay",
+    destination: "boracay",
     date: "February 2025",
-    review: "The briefing portal made our entire arrival process smooth. We knew the van schedule, the terminal to go to, and the hotel check-in time before we even boarded. Highly recommended.",
-    rating: 5,
+    review: "The portal made our Boracay arrival completely seamless. We knew exactly which port to go to, which boat to take, and what time to be there. No confusion at all!",
+    rating: 4,
   },
   {
     name: "Christine B.",
-    location: "El Nido",
+    location: "Boracay",
+    destination: "boracay",
     date: "January 2025",
     review: "Having all the hotel and tour schedules in one place was so helpful. We referred to the portal several times during the trip and everything matched exactly what happened on the ground.",
+    rating: 5,
+  },
+  {
+    name: "Raul M.",
+    location: "Cebu",
+    destination: "cebu",
+    date: "March 2025",
+    review: "The Cebu briefing was incredibly detailed. Oslob instructions and pick-up reminders saved us — we were ready at 3 AM without any panic. Smooth trip from start to finish!",
+    rating: 5,
+  },
+  {
+    name: "Liza C.",
+    location: "Cebu",
+    destination: "cebu",
+    date: "April 2025",
+    review: "We referred to the briefing page constantly during our Cebu trip. The tour schedule, hotel info, and local tips were all accurate and super helpful. Highly recommended!",
+    rating: 5,
+  },
+  {
+    name: "Patrick D.",
+    location: "El Nido",
+    destination: "elnido",
+    date: "February 2025",
+    review: "The El Nido briefing prepared us perfectly for the long van transfer from Puerto Princesa. We knew what to expect every step of the way. Absolutely worth it!",
+    rating: 5,
+  },
+  {
+    name: "Sandra L.",
+    location: "El Nido",
+    destination: "elnido",
+    date: "May 2025",
+    review: "Island hopping in El Nido was a dream. The briefing page told us exactly what to bring, which tours to expect, and the environmental fee reminders were very helpful!",
     rating: 5,
   },
 ];
@@ -1127,6 +1164,13 @@ export default function TravelBriefingLanding() {
                               }
                               textPrimary={textPrimary} textMuted={textMuted}
                             />
+                            {activeBooking.hotel?.hotelNumber && (
+                              <BookingRow
+                                label1="Hotel Contact"  value1={activeBooking.hotel.hotelNumber}
+                                label2=""               value2=""
+                                textPrimary={textPrimary} textMuted={textMuted}
+                              />
+                            )}
                           </div>
                         </BookingSection>
                       )}
@@ -1177,12 +1221,14 @@ export default function TravelBriefingLanding() {
                       )}
 
                       {/* AGENT INFORMATION */}
-                      {activeBooking.travelConsultant && (
-                        <BookingSection label="Agent Information" darkMode={darkMode}>
-                          <div className="px-5 py-4">
+                      {(activeBooking.consultantName || activeBooking.consultantPhone || activeBooking.agentName) && (
+                        <BookingSection label="Your Coordinator" darkMode={darkMode}>
+                          <div className="px-5 py-4 space-y-4">
                             <BookingRow
-                              label1="Travel Consultant"  value1={activeBooking.travelConsultant}
-                              label2=""                   value2=""
+                              label1="Coordinator"
+                              value1={activeBooking.consultantName || activeBooking.agentName || "—"}
+                              label2="Contact"
+                              value2={activeBooking.consultantPhone || "Refer to your voucher"}
                               textPrimary={textPrimary} textMuted={textMuted}
                             />
                           </div>
@@ -1789,7 +1835,10 @@ export default function TravelBriefingLanding() {
 
             {/* Carousel cards */}
             {(() => {
-              const allTestimonials = myReview ? [myReview, ...TESTIMONIALS] : TESTIMONIALS;
+              const filteredTestimonials = TESTIMONIALS.filter(
+                (t) => (!t.destination || t.destination === slug) && t.rating >= 3
+              );
+              const allTestimonials = myReview ? [myReview, ...filteredTestimonials] : filteredTestimonials;
               const PER = testimonialsMobile ? 1 : 3;
               const totalPages = Math.ceil(allTestimonials.length / PER);
               const safePage = Math.min(testimonialsPage, totalPages - 1);
