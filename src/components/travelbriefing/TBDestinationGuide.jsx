@@ -223,8 +223,33 @@ function ImageCard({ item, darkMode, tk, priority = false }) {
   );
 }
 
+function SubBanner({ title, eyebrow, src }) {
+  if (!src) return (
+    <div className="flex items-center gap-1.5 mb-4">
+      <p className="text-xs font-black uppercase tracking-widest" style={{ color: "#f97316" }}>{title}</p>
+    </div>
+  );
+  return (
+    <div className="relative w-full rounded-2xl overflow-hidden mb-4" style={{ height: "140px" }}>
+      <img src={src} alt="" className="w-full h-full object-cover" loading="lazy" />
+      <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(249,115,22,0.65) 0%, rgba(0,0,0,0.72) 100%)" }} />
+      <div className="absolute inset-0 flex flex-col justify-end p-4">
+        {eyebrow && <p className="text-[9px] font-black uppercase tracking-widest mb-1" style={{ color: "rgba(255,255,255,0.68)" }}>{eyebrow}</p>}
+        <p className="font-black text-lg text-white" style={{ letterSpacing: "-0.02em" }}>{title}</p>
+      </div>
+    </div>
+  );
+}
+
 export default function TBDestinationGuide({ dest, darkMode, tk }) {
   const guide = dest.destinationGuide;
+  const banners = {
+    food:     dest.bannerImages?.food     || dest.heroImages?.[1] || dest.heroImage,
+    weather:  dest.bannerImages?.weather  || dest.heroImages?.[2] || dest.heroImage,
+    currency: dest.bannerImages?.currency || dest.heroImages?.[1] || dest.heroImage,
+    safety:   dest.bannerImages?.safety   || dest.heroImages?.[0] || dest.heroImage,
+    localTips: dest.bannerImages?.localTips || dest.heroImages?.[1] || dest.heroImage,
+  };
 
   return (
     <div className="space-y-10">
@@ -249,7 +274,7 @@ export default function TBDestinationGuide({ dest, darkMode, tk }) {
       {/* ── Local Food To Try ── */}
       {guide.food?.length > 0 && (
         <div>
-          <p className="text-xs font-black uppercase tracking-widest mb-4" style={{ color: "#f97316" }}>Best Food & Dining</p>
+          <SubBanner title="Best Food & Dining" eyebrow="Must Try" src={banners.food} />
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {guide.food.map((f) => (
               <div
@@ -300,9 +325,7 @@ export default function TBDestinationGuide({ dest, darkMode, tk }) {
       {/* ── Weather & Climate ── */}
       {guide.weather && (
         <div>
-          <div className="flex items-center gap-1.5 mb-4">
-            <p className="text-xs font-black uppercase tracking-widest" style={{ color: "#f97316" }}>Weather & Practical Info</p>
-          </div>
+          <SubBanner title="Weather & Practical Info" eyebrow="Before You Go" src={banners.weather} />
           <div className="flex flex-col gap-2">
             {[
               { label: "Best Season",  text: guide.weather.bestSeason },
@@ -330,9 +353,7 @@ export default function TBDestinationGuide({ dest, darkMode, tk }) {
       {/* ── Currency & Payments ── */}
       {guide.currency && (
         <div>
-          <div className="flex items-center gap-1.5 mb-4">
-            <p className="text-xs font-black uppercase tracking-widest" style={{ color: "#f97316" }}>Currency Guide</p>
-          </div>
+          <SubBanner title="Currency Guide" eyebrow="Money Matters" src={banners.currency} />
           {/* PHP identity — full-width header card */}
           <div
             className="px-4 py-3 rounded-2xl border mb-3"
@@ -361,9 +382,7 @@ export default function TBDestinationGuide({ dest, darkMode, tk }) {
       {/* ── Safety Tips ── */}
       {guide.safetyTips?.length > 0 && (
         <div>
-          <div className="flex items-center gap-1.5 mb-4">
-            <p className="text-xs font-black uppercase tracking-widest" style={{ color: "#f97316" }}>Safety Tips</p>
-          </div>
+          <SubBanner title="Safety Tips" eyebrow="Stay Safe" src={banners.safety} />
           <div className="flex flex-col gap-2">
             {guide.safetyTips.map((tip, i) => (
               <div
@@ -381,20 +400,7 @@ export default function TBDestinationGuide({ dest, darkMode, tk }) {
       {/* ── Local Tips ── */}
       {guide.localTips?.length > 0 && (
         <div>
-          {dest.bannerImages?.localTips ? (
-            <div className="relative w-full rounded-2xl overflow-hidden mb-4" style={{ height: "140px" }}>
-              <img src={dest.bannerImages.localTips} alt="" className="w-full h-full object-cover" loading="lazy" />
-              <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(249,115,22,0.65) 0%, rgba(0,0,0,0.72) 100%)" }} />
-              <div className="absolute inset-0 flex flex-col justify-end p-4">
-                <p className="text-[9px] font-black uppercase tracking-widest mb-1" style={{ color: "rgba(255,255,255,0.68)" }}>Insider Knowledge</p>
-                <p className="font-black text-lg text-white" style={{ letterSpacing: "-0.02em" }}>Local Tips</p>
-              </div>
-            </div>
-          ) : (
-            <div className="flex items-center gap-1.5 mb-3">
-              <p className="text-xs font-black uppercase tracking-widest" style={{ color: "#f97316" }}>Local Tips</p>
-            </div>
-          )}
+          <SubBanner title="Local Tips" eyebrow="Insider Knowledge" src={banners.localTips} />
           <div className="flex flex-col gap-2">
             {guide.localTips.map((tip, i) => (
               <div

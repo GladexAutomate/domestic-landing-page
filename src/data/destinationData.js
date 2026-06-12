@@ -21,6 +21,8 @@ export const DESTINATION_DATA = {
       destination: boracayImgs.hero,
       localTips:   boracayImgs.islandHopping,
       faq:         boracayImgs.sunset,
+      food:        boracayImgs.hotelBreakfast,
+      weather:     boracayImgs.pukaBeachAerial,
     },
     description:
       "Experience the Philippines' most iconic island destination with powdery white sand, crystal-clear waters, and world-famous sunsets.",
@@ -509,6 +511,8 @@ export const DESTINATION_DATA = {
       destination: "https://images.pexels.com/photos/2161449/pexels-photo-2161449.jpeg?auto=compress&cs=tinysrgb&w=1400",
       localTips:   "https://images.pexels.com/photos/3723493/pexels-photo-3723493.jpeg?auto=compress&cs=tinysrgb&w=1400",
       faq:         "https://images.pexels.com/photos/3601425/pexels-photo-3601425.jpeg?auto=compress&cs=tinysrgb&w=1400",
+      food:        "https://images.pexels.com/photos/3601425/pexels-photo-3601425.jpeg?auto=compress&cs=tinysrgb&w=1400",
+      weather:     "https://images.pexels.com/photos/2161449/pexels-photo-2161449.jpeg?auto=compress&cs=tinysrgb&w=1400",
     },
     description:
       "Discover Cebu's perfect blend of rich history, vibrant city life, stunning waterfalls, pristine beaches, and world-famous marine encounters.",
@@ -937,6 +941,8 @@ export const DESTINATION_DATA = {
       destination: "https://images.pexels.com/photos/3155666/pexels-photo-3155666.jpeg?auto=compress&cs=tinysrgb&w=1400",
       localTips:   "https://images.pexels.com/photos/1591056/pexels-photo-1591056.jpeg?auto=compress&cs=tinysrgb&w=1400",
       faq:         "https://images.pexels.com/photos/2168974/pexels-photo-2168974.jpeg?auto=compress&cs=tinysrgb&w=1400",
+      food:        "https://images.pexels.com/photos/3155666/pexels-photo-3155666.jpeg?auto=compress&cs=tinysrgb&w=1400",
+      weather:     "https://images.pexels.com/photos/1591056/pexels-photo-1591056.jpeg?auto=compress&cs=tinysrgb&w=1400",
     },
     description:
       "Discover one of the world's most beautiful island destinations — dramatic limestone cliffs, crystal-clear hidden lagoons, and pristine white-sand beaches.",
