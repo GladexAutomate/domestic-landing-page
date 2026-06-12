@@ -381,9 +381,20 @@ export default function TBDestinationGuide({ dest, darkMode, tk }) {
       {/* ── Local Tips ── */}
       {guide.localTips?.length > 0 && (
         <div>
-          <div className="flex items-center gap-1.5 mb-3">
-            <p className="text-xs font-black uppercase tracking-widest" style={{ color: "#f97316" }}>Local Tips</p>
-          </div>
+          {dest.bannerImages?.localTips ? (
+            <div className="relative w-full rounded-2xl overflow-hidden mb-4" style={{ height: "140px" }}>
+              <img src={dest.bannerImages.localTips} alt="" className="w-full h-full object-cover" loading="lazy" />
+              <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(249,115,22,0.65) 0%, rgba(0,0,0,0.72) 100%)" }} />
+              <div className="absolute inset-0 flex flex-col justify-end p-4">
+                <p className="text-[9px] font-black uppercase tracking-widest mb-1" style={{ color: "rgba(255,255,255,0.68)" }}>Insider Knowledge</p>
+                <p className="font-black text-lg text-white" style={{ letterSpacing: "-0.02em" }}>Local Tips</p>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center gap-1.5 mb-3">
+              <p className="text-xs font-black uppercase tracking-widest" style={{ color: "#f97316" }}>Local Tips</p>
+            </div>
+          )}
           <div className="flex flex-col gap-2">
             {guide.localTips.map((tip, i) => (
               <div

@@ -900,14 +900,15 @@ export default function TravelBriefingLanding() {
   const sectionGap = "mb-16";
   const pad = "px-4 sm:px-6 max-w-4xl mx-auto";
 
-  // High-quality Unsplash banner images — dest.bannerImages overrides per section
+  // Section banner images — sourced from dest.bannerImages (local assets or Pexels CDN)
   const BANNER = {
-    travelInfo:  dest?.bannerImages?.travelInfo  || "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1400&q=85",
-    currency:    dest?.bannerImages?.currency    || "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=1400&q=85",
-    safety:      dest?.bannerImages?.safety      || "https://images.unsplash.com/photo-1508739773434-c26b3d09e071?auto=format&fit=crop&w=1400&q=85",
-    packing:     dest?.bannerImages?.packing     || "https://images.unsplash.com/photo-1553531384-cc64ac80a234?auto=format&fit=crop&w=1400&q=85",
-    destination: dest?.bannerImages?.destination || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=85",
-    faq:         dest?.bannerImages?.faq         || "https://images.unsplash.com/photo-1488085061387-422e29b40080?auto=format&fit=crop&w=1400&q=85",
+    travelInfo:  dest?.bannerImages?.travelInfo  || dest?.itinerary?.[0]?.image,
+    currency:    dest?.bannerImages?.currency    || dest?.heroImages?.[1] || dest?.heroImage,
+    safety:      dest?.bannerImages?.safety      || dest?.heroImages?.[0] || dest?.heroImage,
+    packing:     dest?.bannerImages?.packing     || dest?.heroImages?.[2] || dest?.heroImage,
+    destination: dest?.bannerImages?.destination || dest?.heroImage,
+    localTips:   dest?.bannerImages?.localTips   || dest?.heroImages?.[1] || dest?.heroImage,
+    faq:         dest?.bannerImages?.faq         || dest?.heroImages?.[3] || dest?.heroImage,
   };
 
   // ── 404 ─────────────────────────────────────────────────────
@@ -1438,8 +1439,10 @@ export default function TravelBriefingLanding() {
                     <div>
                       <p className="text-[9px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Your Coordinator</p>
                       <p className="text-sm font-black" style={{ color: textPrimary }}>{activeBooking.consultantName || activeBooking.agentName}</p>
-                      {activeBooking.consultantPhone && (
+                      {activeBooking.consultantPhone ? (
                         <a href={`tel:${activeBooking.consultantPhone.replace(/\s/g,"")}`} className="text-xs font-bold" style={{ color: "#f97316" }}>{activeBooking.consultantPhone}</a>
+                      ) : (
+                        <p className="text-xs" style={{ color: textMuted }}>Contact via Gladex Hotline</p>
                       )}
                     </div>
                   </div>
