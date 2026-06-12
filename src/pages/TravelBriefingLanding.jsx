@@ -162,6 +162,26 @@ function SectionHeader({ eyebrow, title, tk }) {
   );
 }
 
+function SectionBanner({ eyebrow, title, imageUrl, tk }) {
+  if (!imageUrl) return <SectionHeader eyebrow={eyebrow} title={title} tk={tk} />;
+  return (
+    <div className="relative w-full rounded-2xl overflow-hidden mb-6" style={{ height: "180px" }}>
+      <img src={imageUrl} alt="" className="w-full h-full object-cover" loading="lazy" />
+      <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(249,115,22,0.65) 0%, rgba(0,0,0,0.72) 100%)" }} />
+      <div className="absolute inset-0 flex flex-col justify-end p-5">
+        {eyebrow && (
+          <p className="text-[10px] font-black uppercase tracking-widest mb-1.5" style={{ color: "rgba(255,255,255,0.68)" }}>
+            {eyebrow}
+          </p>
+        )}
+        <h2 className="font-black text-2xl sm:text-3xl text-white" style={{ letterSpacing: "-0.02em" }}>
+          {title}
+        </h2>
+      </div>
+    </div>
+  );
+}
+
 // ── Section divider ──────────────────────────────────────────────
 function SectionDivider({ tk }) {
   return <div className="border-t my-2" style={{ borderColor: tk.borderColor }} />;
@@ -306,14 +326,14 @@ function BookingSection({ label, children, darkMode }) {
 }
 
 // ── BookingRow ───────────────────────────────────────────────────
-function BookingRow({ label1, value1, label2, value2, textPrimary, textMuted }) {
+function BookingRow({ label1, value1, label2, value2, textPrimary, textMuted, preWrap1 }) {
   return (
     <div className="grid grid-cols-2 gap-x-4">
       <div>
         <p className="text-[9px] font-bold uppercase tracking-wider mb-0.5" style={{ color: textMuted }}>
           {label1}
         </p>
-        <p className="text-sm font-semibold leading-snug" style={{ color: textPrimary }}>
+        <p className={`text-sm font-semibold leading-snug${preWrap1 ? " whitespace-pre-line" : ""}`} style={{ color: textPrimary }}>
           {value1 || "—"}
         </p>
       </div>
@@ -1116,9 +1136,10 @@ export default function TravelBriefingLanding() {
                             textPrimary={textPrimary} textMuted={textMuted}
                           />
                           <BookingRow
-                            label1="Guest Names"  value1={activeBooking.guestList?.join(", ") || activeBooking.leadName || "—"}
+                            label1="Guest Names"  value1={activeBooking.guestList?.join("\n") || activeBooking.leadName || "—"}
                             label2="Email"        value2={activeBooking.email || "—"}
                             textPrimary={textPrimary} textMuted={textMuted}
+                            preWrap1
                           />
                           <BookingRow
                             label1="Mobile Number"  value1={activeBooking.mobile || activeBooking.phone || "—"}
@@ -1164,10 +1185,10 @@ export default function TravelBriefingLanding() {
                               }
                               textPrimary={textPrimary} textMuted={textMuted}
                             />
-                            {activeBooking.hotel?.hotelNumber && (
+                            {activeBooking.hotel?.hotelConfirmation && (
                               <BookingRow
-                                label1="Hotel Contact"  value1={activeBooking.hotel.hotelNumber}
-                                label2=""               value2=""
+                                label1="Confirmation No."  value1={activeBooking.hotel.hotelConfirmation}
+                                label2="Hotel Contact"     value2={activeBooking.hotel.hotelPhone || "See voucher"}
                                 textPrimary={textPrimary} textMuted={textMuted}
                               />
                             )}
@@ -1189,7 +1210,7 @@ export default function TravelBriefingLanding() {
                       )}
 
                       {/* TRANSFER INFORMATION */}
-                      {(activeBooking.ticket || activeBooking.transferDetails) && (
+                      {(activeBooking.ticket || activeBooking.transfer || activeBooking.transferDetails) && (
                         <BookingSection label="Transfer Information" darkMode={darkMode}>
                           <div className="px-5 py-4 space-y-4">
                             {activeBooking.ticket?.airline && (
@@ -1203,6 +1224,20 @@ export default function TravelBriefingLanding() {
                               <BookingRow
                                 label1="Terminal"  value1={activeBooking.ticket.terminal}
                                 label2=""          value2=""
+                                textPrimary={textPrimary} textMuted={textMuted}
+                              />
+                            )}
+                            {activeBooking.transfer?.supplier && (
+                              <BookingRow
+                                label1="Transfer Supplier"  value1={activeBooking.transfer.supplier}
+                                label2="Transfer Type"      value2={activeBooking.transfer.transferType || "—"}
+                                textPrimary={textPrimary} textMuted={textMuted}
+                              />
+                            )}
+                            {(activeBooking.transfer?.transferConfirmation || activeBooking.transfer?.transferContact) && (
+                              <BookingRow
+                                label1="Transfer Confirmation"  value1={activeBooking.transfer.transferConfirmation || "See voucher"}
+                                label2="Transfer Contact"       value2={activeBooking.transfer.transferContact || "See voucher"}
                                 textPrimary={textPrimary} textMuted={textMuted}
                               />
                             )}
@@ -1498,8 +1533,59 @@ export default function TravelBriefingLanding() {
 
         <FadeIn>
           <div className={sectionGap}>
-            <SectionHeader eyebrow="Operational Information" title="Travel Information Center" tk={tk} />
+            <SectionBanner eyebrow="Operational Information" title="Travel Information Center" imageUrl={dest.itinerary?.[0]?.photos?.[0] || dest.itinerary?.[1]?.photos?.[0]} tk={tk} />
             <div className="space-y-4">
+
+              {/* Quick Contacts — always visible near the top */}
+              <div className="rounded-2xl border overflow-hidden" style={{ borderColor: "rgba(249,115,22,0.4)", backgroundColor: "rgba(249,115,22,0.04)" }}>
+                <div className="px-5 pt-4 pb-3 border-b" style={{ borderColor: "rgba(249,115,22,0.2)" }}>
+                  <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: "#f97316" }}>Save These Numbers</p>
+                  <p className="font-black text-base" style={{ color: textPrimary }}>Your Quick Contacts</p>
+                </div>
+                <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor, backgroundColor: cardBg }}>
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(249,115,22,0.12)" }}>📞</div>
+                    <div>
+                      <p className="text-[9px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Gladex Hotline</p>
+                      <a href="tel:+639178752200" className="text-sm font-black" style={{ color: "#f97316" }}>+63 917 875 2200</a>
+                    </div>
+                  </div>
+                  {(activeBooking?.consultantName || activeBooking?.agentName) && (
+                    <div className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor, backgroundColor: cardBg }}>
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(249,115,22,0.12)" }}>👤</div>
+                      <div>
+                        <p className="text-[9px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Your Coordinator</p>
+                        <p className="text-sm font-black" style={{ color: textPrimary }}>{activeBooking.consultantName || activeBooking.agentName}</p>
+                        {activeBooking.consultantPhone && (
+                          <a href={`tel:${activeBooking.consultantPhone.replace(/\s/g,"")}`} className="text-xs font-bold" style={{ color: "#f97316" }}>{activeBooking.consultantPhone}</a>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  {(activeBooking?.hotel?.hotelName && (activeBooking?.hotel?.hotelPhone || activeBooking?.hotel?.hotelConfirmation)) && (
+                    <div className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor, backgroundColor: cardBg }}>
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(249,115,22,0.12)" }}>🏨</div>
+                      <div>
+                        <p className="text-[9px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Hotel</p>
+                        <p className="text-sm font-black" style={{ color: textPrimary }}>{activeBooking.hotel.hotelName}</p>
+                        {activeBooking.hotel.hotelPhone && (
+                          <a href={`tel:${activeBooking.hotel.hotelPhone.replace(/\s/g,"")}`} className="text-xs font-bold" style={{ color: "#f97316" }}>{activeBooking.hotel.hotelPhone}</a>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  {activeBooking?.transfer?.transferContact && (
+                    <div className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor, backgroundColor: cardBg }}>
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(249,115,22,0.12)" }}>🚌</div>
+                      <div>
+                        <p className="text-[9px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Transfer Contact</p>
+                        <p className="text-sm font-black" style={{ color: textPrimary }}>{activeBooking.transfer.supplier || "Transfer Coordinator"}</p>
+                        <a href={`tel:${activeBooking.transfer.transferContact.replace(/\s/g,"")}`} className="text-xs font-bold" style={{ color: "#f97316" }}>{activeBooking.transfer.transferContact}</a>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
 
               {/* 5a. Arrival Instructions — all airports shown vertically, no tabs */}
               <div className="rounded-2xl border overflow-hidden" style={{ ...card }}>
@@ -1730,6 +1816,56 @@ export default function TravelBriefingLanding() {
         </FadeIn>
 
         {/* ══════════════════════════════════════════════════
+            5b2. CURRENCY & MONEY TIPS
+           ══════════════════════════════════════════════════ */}
+        {dest.currency && (
+          <FadeIn>
+            <div className={sectionGap}>
+              <SectionBanner eyebrow="Money Matters" title="Currency Guide" imageUrl={dest.itinerary?.[1]?.photos?.[2] || dest.itinerary?.[0]?.photos?.[3]} tk={tk} />
+              <div className="rounded-2xl border overflow-hidden" style={{ ...card }}>
+                <div className="px-5 pt-4 pb-3 border-b" style={{ borderColor }}>
+                  <p className="font-bold text-base" style={{ color: textPrimary }}>{dest.currency.name}</p>
+                  <p className="text-xs mt-0.5" style={{ color: textMuted }}>Local currency symbol: {dest.currency.symbol}</p>
+                </div>
+                <div className="p-5 space-y-3">
+                  {dest.currency.tips.map((tip, i) => (
+                    <div key={i} className="flex items-start gap-3">
+                      <div className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-black mt-0.5" style={{ background: "rgba(249,115,22,0.12)", color: "#f97316" }}>₱</div>
+                      <p className="text-sm leading-relaxed" style={{ color: textPrimary }}>{tip}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </FadeIn>
+        )}
+
+        {/* ══════════════════════════════════════════════════
+            5b3. SAFETY TIPS
+           ══════════════════════════════════════════════════ */}
+        {dest.safetyTips?.length > 0 && (
+          <FadeIn>
+            <div className={sectionGap}>
+              <SectionBanner eyebrow="Stay Safe" title="Safety Tips" imageUrl={dest.itinerary?.[2]?.photos?.[0] || dest.itinerary?.[1]?.photos?.[1]} tk={tk} />
+              <div className="rounded-2xl border overflow-hidden" style={{ ...card }}>
+                <div className="px-5 pt-4 pb-3 border-b" style={{ borderColor }}>
+                  <p className="font-bold text-base" style={{ color: textPrimary }}>Important Safety Guidelines</p>
+                  <p className="text-xs mt-0.5" style={{ color: textMuted }}>Please read carefully before your trip</p>
+                </div>
+                <div className="p-5 space-y-3">
+                  {dest.safetyTips.map((tip, i) => (
+                    <div key={i} className="flex items-start gap-3">
+                      <div className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-sm mt-0.5" style={{ background: "rgba(234,179,8,0.12)" }}>⚠️</div>
+                      <p className="text-sm leading-relaxed" style={{ color: textPrimary }}>{tip}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </FadeIn>
+        )}
+
+        {/* ══════════════════════════════════════════════════
             7. TRAVEL READINESS CHECKLIST
            ══════════════════════════════════════════════════ */}
         <FadeIn>
@@ -1747,10 +1883,7 @@ export default function TravelBriefingLanding() {
         {dest.packingGuide && (
           <FadeIn>
             <div className={sectionGap}>
-              <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: "#f97316" }}>Packing Guide</p>
-              <h2 className="font-black text-2xl mb-6" style={{ color: textPrimary, fontFamily: "'Montserrat', sans-serif", letterSpacing: "-0.02em", borderLeft: "4px solid #f97316", paddingLeft: "0.75rem" }}>
-                What to Bring
-              </h2>
+              <SectionBanner eyebrow="Packing Guide" title="What to Bring" imageUrl={dest.packingGuide.destinationSpecific?.find(i => i.image)?.image || dest.packingGuide.essentials?.find(i => i.image)?.image} tk={tk} />
               {[
                 { key: "documents",           label: "Documents" },
                 { key: "essentials",          label: "Essentials" },
@@ -1810,7 +1943,7 @@ export default function TravelBriefingLanding() {
            ══════════════════════════════════════════════════ */}
         <FadeIn>
           <div className={sectionGap}>
-            <SectionHeader eyebrow="Know Your Destination" title="Destination Guide" tk={tk} />
+            <SectionBanner eyebrow="Know Your Destination" title="Destination Guide" imageUrl={dest.destinationGuide?.highlights?.[0]?.image} tk={tk} />
             <TBDestinationGuide dest={dest} darkMode={darkMode} tk={tk} />
           </div>
         </FadeIn>
@@ -1869,8 +2002,8 @@ export default function TravelBriefingLanding() {
                             </span>
                             <button
                               onClick={() => {
-                                setReviewStars(myReview?.rating ?? 0);
-                                setReviewComment(myReview?.review ?? "");
+                                setReviewStars(myReview?.rating ?? myReview?.stars ?? 0);
+                                setReviewComment(myReview?.review ?? myReview?.comment ?? "");
                                 setReviewSubmitted(false);
                                 setReviewEditing(true);
                                 setReviewError(null);
@@ -1889,12 +2022,12 @@ export default function TravelBriefingLanding() {
                         {/* Stars */}
                         <div className="flex gap-0.5">
                           {[1,2,3,4,5].map((s) => (
-                            <Star key={s} className={`w-3.5 h-3.5 ${s <= t.rating ? "fill-yellow-400 text-yellow-400" : "text-yellow-200"}`} />
+                            <Star key={s} className={`w-3.5 h-3.5 ${s <= (t.rating ?? t.stars ?? 0) ? "fill-yellow-400 text-yellow-400" : "text-yellow-200"}`} />
                           ))}
                         </div>
                         {/* Quote */}
                         <p className="text-xs leading-relaxed flex-1 italic" style={{ color: textPrimary }}>
-                          "{t.review}"
+                          "{t.review ?? t.comment ?? ""}"
                         </p>
                         {/* Reviewer */}
                         <div className="flex items-center gap-2.5 pt-2 border-t" style={{ borderColor: isOwn ? "rgba(249,115,22,0.2)" : borderColor }}>

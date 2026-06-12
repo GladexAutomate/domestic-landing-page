@@ -256,27 +256,30 @@ function normalizeTicket(d) {
 function normalizeHotel(d, raw) {
   if (!d) return null;
   return {
-    stayDates:      d.hotel_stay_dates || null,
-    roomType:       d.room_type || null,
-    checkIn:        d.stay_date_from || null,
-    checkOut:       d.stay_date_to || null,
-    nights:         d.number_of_nights || null,
-    requests:       stripHtml(d.hotel_requests || ""),
-    hotelNumber:    d.hotel_number || null,
+    stayDates:          d.hotel_stay_dates || null,
+    roomType:           d.room_type || null,
+    checkIn:            d.stay_date_from || null,
+    checkOut:           d.stay_date_to || null,
+    nights:             d.number_of_nights || null,
+    requests:           stripHtml(d.hotel_requests || ""),
+    hotelConfirmation:  d.hotel_confirmation_number || d.confirmation_number || d.hotel_number || null,
+    hotelPhone:         d.hotel_phone || d.hotel_contact || d.contact_number || null,
     // Hotel name — Fusioo may store it under several field names
-    hotelName:      d.hotel_name || d.property_name || d.accommodation_name || d.hotel_property || null,
+    hotelName:          d.hotel_name || d.property_name || d.accommodation_name || d.hotel_property || null,
   };
 }
 
 function normalizeTransfer(d) {
   if (!d) return null;
   return {
-    transferType: d.transfer_type || null,
-    description:  stripHtml(d.description || ""),
-    arrivalDate:  d.transfer_date_arrival || null,
-    departureDate: d.transfer_date_departure || null,
-    quantity:     d.quantity || null,
-    supplier:     d.supplier_name || null,
+    transferType:         d.transfer_type || null,
+    description:          stripHtml(d.description || ""),
+    arrivalDate:          d.transfer_date_arrival || null,
+    departureDate:        d.transfer_date_departure || null,
+    quantity:             d.quantity || null,
+    supplier:             d.supplier_name || null,
+    transferConfirmation: d.confirmation_number || d.transfer_confirmation_number || d.booking_reference || null,
+    transferContact:      d.supplier_phone || d.supplier_contact || d.contact || d.supplier_mobile || null,
   };
 }
 
