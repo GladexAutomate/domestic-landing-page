@@ -216,11 +216,11 @@ function normalizeBooking(raw, { tourData, ticketData, hotelData, transferData }
     attachments:      normalizeAttachments(raw.attachments),
     tourVoucherUrl:   extractFusiooUrl(raw.tour_voucher),
 
-    // Agent — note: raw.travel_consultant often contains a commission status like
-    // "Commission Accomplished", not the person's name; use agent_name instead.
-    agentName:        raw.agent_name || null,
+    // Agent — raw.agent_name = "Commission Accomplished" (Fusioo commission status, NOT a name)
+    // raw.name_of_agent = "Kams Valenzuela" (actual coordinator's name — verified against live data)
+    agentName:        raw.name_of_agent || null,
     salesAgent:       raw.name_of_agent || null,
-    consultantName:   raw.consultant_name || raw.agent_name || raw.name_of_agent || null,
+    consultantName:   raw.consultant_name || raw.name_of_agent || null,
     consultantPhone:  raw.consultant_phone || raw.consultant_mobile || null,
 
     // Raw data for destination detection

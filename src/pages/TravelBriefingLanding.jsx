@@ -11,6 +11,7 @@ import TBItinerary from "@/components/travelbriefing/TBItinerary";
 import TBChecklist from "@/components/travelbriefing/TBChecklist";
 import TBDestinationGuide from "@/components/travelbriefing/TBDestinationGuide";
 import TBFAQs from "@/components/travelbriefing/TBFAQs";
+import TBOptionalTours from "@/components/travelbriefing/TBOptionalTours";
 import { lookupBooking, submitReview } from "@/services/supabaseService";
 import {
   Check, X, AlertTriangle, ArrowUp, Phone,
@@ -142,6 +143,57 @@ function FadeIn({ children, delay = 0 }) {
       transition={{ duration: 0.35, delay }}
     >
       {children}
+    </motion.div>
+  );
+}
+
+// ── Inline Review Editor — self-contained state guarantees pre-fill ──
+function InlineReviewEditor({ myReview, onSave, onCancel, darkMode, textPrimary, textMuted, cardBg, borderColor }) {
+  const [stars, setStars] = useState(() => myReview?.rating ?? myReview?.stars ?? 0);
+  const [comment, setComment] = useState(() => myReview?.review ?? myReview?.comment ?? "");
+  return (
+    <motion.div
+      id="review-edit-inline"
+      initial={{ opacity: 0, y: -8 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -8 }}
+      transition={{ duration: 0.25 }}
+      className="rounded-2xl border p-5 mt-4"
+      style={{ backgroundColor: cardBg, borderColor: "#f97316", boxShadow: "0 0 0 1px #f97316, 0 4px 20px rgba(249,115,22,0.12)" }}
+    >
+      <p className="text-[10px] font-black uppercase tracking-widest mb-3" style={{ color: "#f97316" }}>Update Your Review</p>
+      <div className="flex gap-2 mb-4">
+        {[1,2,3,4,5].map((s) => (
+          <button key={s} onClick={() => setStars(s)} className="transition-transform hover:scale-110 active:scale-95">
+            <Star className={`w-7 h-7 transition-colors ${s <= stars ? "fill-yellow-400 text-yellow-400" : darkMode ? "text-white/20 hover:text-yellow-400" : "text-black/15 hover:text-yellow-400"}`} />
+          </button>
+        ))}
+      </div>
+      <textarea
+        rows={3}
+        value={comment}
+        onChange={(e) => setComment(e.target.value)}
+        placeholder="Update your review..."
+        className="w-full rounded-xl border px-4 py-3 text-sm resize-none outline-none transition-colors mb-3"
+        style={{ backgroundColor: darkMode ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)", borderColor: darkMode ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)", color: textPrimary }}
+      />
+      <div className="flex gap-2">
+        <button
+          onClick={() => stars > 0 && onSave(stars, comment)}
+          disabled={stars === 0}
+          className="flex-1 py-3 rounded-xl text-sm font-bold transition-all"
+          style={{ backgroundColor: stars > 0 ? "#f97316" : "rgba(249,115,22,0.2)", color: stars > 0 ? "#fff" : "#f97316" }}
+        >
+          Update Review
+        </button>
+        <button
+          onClick={onCancel}
+          className="px-4 py-3 rounded-xl text-sm font-bold transition-all"
+          style={{ color: textMuted, backgroundColor: darkMode ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)" }}
+        >
+          Cancel
+        </button>
+      </div>
     </motion.div>
   );
 }
@@ -667,8 +719,10 @@ export default function TravelBriefingLanding() {
     }
   }, [reviewEditing]);
 
-  const handleSubmitReview = () => {
-    if (reviewStars === 0) return;
+  const handleSubmitReview = (starsParam, commentParam) => {
+    const finalStars = starsParam ?? reviewStars;
+    const finalComment = commentParam ?? reviewComment;
+    if (finalStars === 0) return;
     const gdx = activeBooking?.gdx ?? "guest";
     const destination = slug ?? "boracay";
     const now = new Date();
@@ -677,14 +731,16 @@ export default function TravelBriefingLanding() {
       name: "You",
       location: destination.charAt(0).toUpperCase() + destination.slice(1),
       date: monthYear,
-      review: reviewComment.trim() || `${reviewStars === 5 ? "Amazing" : reviewStars >= 4 ? "Great" : "Good"} experience with Gladex Tours!`,
-      rating: reviewStars,
+      review: String(finalComment).trim() || `${finalStars === 5 ? "Amazing" : finalStars >= 4 ? "Great" : "Good"} experience with Gladex Tours!`,
+      rating: finalStars,
     };
     try { localStorage.setItem(`gladex-review-${gdx}`, JSON.stringify(review)); } catch {}
     setMyReview(review);
+    setReviewStars(finalStars);
+    setReviewComment(String(finalComment).trim());
     setReviewSubmitted(true);
     setReviewEditing(false);
-    submitReview({ gdx_reference: gdx, rating: reviewStars, comment: reviewComment.trim() }).catch(() => {});
+    submitReview({ gdx_reference: gdx, rating: finalStars, comment: String(finalComment).trim() }).catch(() => {});
   };
 
   // ── Restore booking from sessionStorage on page refresh ──────
@@ -1179,12 +1235,12 @@ export default function TravelBriefingLanding() {
                       </BookingSection>
 
                       {/* ACCOMMODATION */}
-                      {(activeBooking.hotel?.hotelName || activeBooking.hotel?.roomType) && (
+                      {(activeBooking.hotel?.hotelName || activeBooking.hotel?.roomType || activeBooking.tour?.hotelMention) && (
                         <BookingSection label="Accommodation" darkMode={darkMode}>
                           <div className="px-5 py-4 space-y-4">
                             <BookingRow
                               label1="Hotel"
-                              value1={activeBooking.hotel?.hotelName || "—"}
+                              value1={activeBooking.hotel?.hotelName || activeBooking.tour?.hotelMention || "—"}
                               label2="Room Type"
                               value2={
                                 activeBooking.hotel?.roomType
@@ -1355,17 +1411,17 @@ export default function TravelBriefingLanding() {
                     </div>
                   </div>
                 )}
-                {activeBooking?.hotel?.hotelName && (
+                {(activeBooking?.hotel?.hotelName || activeBooking?.tour?.hotelMention) && (
                   <div className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor, backgroundColor: cardBg }}>
                     <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(249,115,22,0.12)" }}>🏨</div>
                     <div>
                       <p className="text-[9px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Hotel</p>
-                      <p className="text-sm font-black" style={{ color: textPrimary }}>{activeBooking.hotel.hotelName}</p>
-                      {activeBooking.hotel.hotelPhone ? (
+                      <p className="text-sm font-black" style={{ color: textPrimary }}>{activeBooking.hotel?.hotelName || activeBooking.tour?.hotelMention}</p>
+                      {activeBooking.hotel?.hotelPhone ? (
                         <a href={`tel:${activeBooking.hotel.hotelPhone.replace(/\s/g,"")}`} className="text-xs font-bold" style={{ color: "#f97316" }}>{activeBooking.hotel.hotelPhone}</a>
-                      ) : activeBooking.hotel.hotelConfirmation ? (
-                        <p className="text-xs" style={{ color: textMuted }}>Conf. #{activeBooking.hotel.hotelConfirmation}</p>
-                      ) : null}
+                      ) : (
+                        <p className="text-xs" style={{ color: textMuted }}>Contact via Gladex Hotline</p>
+                      )}
                     </div>
                   </div>
                 )}
@@ -1963,6 +2019,23 @@ export default function TravelBriefingLanding() {
           </div>
         </FadeIn>
 
+        {/* ══════════════════════════════════════════════════
+            10. OPTIONAL TOURS
+           ══════════════════════════════════════════════════ */}
+        {dest.optionalTours?.length > 0 && (
+          <FadeIn>
+            <div className={sectionGap}>
+              <SectionBanner eyebrow="Enhance Your Trip" title="Optional Tours & Add-Ons" imageUrl={dest.itinerary?.[1]?.photos?.[0] || dest.itinerary?.[0]?.photos?.[0]} tk={tk} />
+              <TBOptionalTours
+                dest={dest}
+                darkMode={darkMode}
+                tk={tk}
+                onAddToCart={() => {}}
+                cartItems={[]}
+              />
+            </div>
+          </FadeIn>
+        )}
 
         {/* ══════════════════════════════════════════════════
             13. FREQUENTLY ASKED QUESTIONS
@@ -2111,53 +2184,20 @@ export default function TravelBriefingLanding() {
               );
             })()}
 
-            {/* ── Inline Edit Form ── */}
+            {/* ── Inline Edit Form — separate component guarantees pre-filled state ── */}
             <AnimatePresence>
               {reviewEditing && myReview && (
-                <motion.div
-                  id="review-edit-inline"
-                  initial={{ opacity: 0, y: -8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.25 }}
-                  className="rounded-2xl border p-5 mt-4"
-                  style={{ backgroundColor: cardBg, borderColor: "#f97316", boxShadow: "0 0 0 1px #f97316, 0 4px 20px rgba(249,115,22,0.12)" }}
-                >
-                  <p className="text-[10px] font-black uppercase tracking-widest mb-3" style={{ color: "#f97316" }}>Update Your Review</p>
-                  <div className="flex gap-2 mb-4">
-                    {[1,2,3,4,5].map((s) => (
-                      <button key={s} onClick={() => setReviewStars(s)} className="transition-transform hover:scale-110 active:scale-95">
-                        <Star className={`w-7 h-7 transition-colors ${s <= reviewStars ? "fill-yellow-400 text-yellow-400" : darkMode ? "text-white/20 hover:text-yellow-400" : "text-black/15 hover:text-yellow-400"}`} />
-                      </button>
-                    ))}
-                  </div>
-                  <textarea
-                    rows={3}
-                    value={reviewComment}
-                    onChange={(e) => setReviewComment(e.target.value)}
-                    placeholder="Update your review..."
-                    className="w-full rounded-xl border px-4 py-3 text-sm resize-none outline-none transition-colors mb-3"
-                    style={{ backgroundColor: darkMode ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)", borderColor: darkMode ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)", color: textPrimary }}
-                  />
-                  {reviewError && <p className="text-xs mb-2" style={{ color: "#ef4444" }}>{reviewError}</p>}
-                  <div className="flex gap-2">
-                    <button
-                      onClick={handleSubmitReview}
-                      disabled={reviewStars === 0}
-                      className="flex-1 py-3 rounded-xl text-sm font-bold transition-all"
-                      style={{ backgroundColor: reviewStars > 0 ? "#f97316" : "rgba(249,115,22,0.2)", color: reviewStars > 0 ? "#fff" : "#f97316" }}
-                    >
-                      Update Review
-                    </button>
-                    <button
-                      onClick={() => setReviewEditing(false)}
-                      className="px-4 py-3 rounded-xl text-sm font-bold transition-all"
-                      style={{ color: textMuted, backgroundColor: darkMode ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)" }}
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </motion.div>
+                <InlineReviewEditor
+                  key={`edit-${myReview.rating}-${myReview.date}`}
+                  myReview={myReview}
+                  onSave={handleSubmitReview}
+                  onCancel={() => setReviewEditing(false)}
+                  darkMode={darkMode}
+                  textPrimary={textPrimary}
+                  textMuted={textMuted}
+                  cardBg={cardBg}
+                  borderColor={borderColor}
+                />
               )}
             </AnimatePresence>
           </div>
