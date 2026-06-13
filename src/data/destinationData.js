@@ -314,7 +314,7 @@ export const DESTINATION_DATA = {
         tip: "Keep it breathable — you may be traveling 2–4 hours before reaching the island.",
         variants: {
           Female:  { photos: ["https://i.pinimg.com/736x/a5/26/b8/a526b866b82de3543f936850755ea514.jpg","https://i.pinimg.com/736x/04/83/a2/0483a235b33b9584194d3bb235dc42aa.jpg","https://i.pinimg.com/736x/9d/31/fe/9d31feafefc8220372347740e6e32842.jpg"], tip: "Light linen dress or flowy co-ord set — layers for the AC onboard." },
-          Male:    { photos: [boracayImgs.outfitAirportMale1,   boracayImgs.outfitAirportMale2,   boracayImgs.outfitAirportMale3,   boracayImgs.outfitAirportMale4],   tip: "Linen polo or breathable shirt + comfy joggers or chinos." },
+          Male:    { photos: [boracayImgs.outfitAirportMale1,   boracayImgs.outfitAirportMale2],   tip: "Linen polo or breathable shirt + comfy joggers or chinos." },
           Couple:  { photos: [boracayImgs.outfitAirportCouple1, boracayImgs.outfitAirportCouple2, null, null], tip: "Coordinate colors — light neutrals or matching prints for airport photos." },
           Family:  { photos: [boracayImgs.outfitAirportFamily1, boracayImgs.outfitAirportFamily2, null, null], tip: "Keep it comfortable and practical — easy-on shoes for the whole family." },
           Kids:    { photos: [boracayImgs.outfitAirportKids1,   boracayImgs.outfitAirportKids2,   null, null], tip: "Loose, breathable clothing that's easy to change. Avoid belts and hard shoes." },
@@ -791,7 +791,7 @@ export const DESTINATION_DATA = {
         tip: "Cebu airport is modern — Grab/taxi transfers take 20–40 min through traffic.",
         variants: {
           Female:  { photos: ["https://i.pinimg.com/736x/a5/26/b8/a526b866b82de3543f936850755ea514.jpg","https://i.pinimg.com/736x/04/83/a2/0483a235b33b9584194d3bb235dc42aa.jpg","https://i.pinimg.com/736x/9d/31/fe/9d31feafefc8220372347740e6e32842.jpg"], tip: "Cebu airport is modern — Grab/taxi transfers take 20–40 min through traffic." },
-          Male:    { photos: [boracayImgs.outfitAirportMale1,   boracayImgs.outfitAirportMale2,   boracayImgs.outfitAirportMale3,   boracayImgs.outfitAirportMale4],   tip: "Cebu airport is modern — Grab/taxi transfers take 20–40 min through traffic." },
+          Male:    { photos: [boracayImgs.outfitAirportMale1,   boracayImgs.outfitAirportMale2],   tip: "Cebu airport is modern — Grab/taxi transfers take 20–40 min through traffic." },
           Couple:  { photos: [boracayImgs.outfitAirportCouple1, boracayImgs.outfitAirportCouple2, null, null], tip: "Cebu airport is modern — Grab/taxi transfers take 20–40 min through traffic." },
           Family:  { photos: [boracayImgs.outfitAirportFamily1, boracayImgs.outfitAirportFamily2, null, null], tip: "Cebu airport is modern — Grab/taxi transfers take 20–40 min through traffic." },
           Kids:    { photos: [boracayImgs.outfitAirportKids1,   boracayImgs.outfitAirportKids2,   null, null], tip: "Cebu airport is modern — Grab/taxi transfers take 20–40 min through traffic." },
@@ -1248,7 +1248,7 @@ export const DESTINATION_DATA = {
         tip: "El Nido van transfers from Puerto Princesa take 5–6 hours — dress ultra-comfortably.",
         variants: {
           Female:  { photos: ["https://i.pinimg.com/736x/a5/26/b8/a526b866b82de3543f936850755ea514.jpg","https://i.pinimg.com/736x/04/83/a2/0483a235b33b9584194d3bb235dc42aa.jpg","https://i.pinimg.com/736x/9d/31/fe/9d31feafefc8220372347740e6e32842.jpg"], tip: "El Nido van transfers from Puerto Princesa take 5–6 hours — dress ultra-comfortably." },
-          Male:    { photos: [boracayImgs.outfitAirportMale1,   boracayImgs.outfitAirportMale2,   boracayImgs.outfitAirportMale3,   boracayImgs.outfitAirportMale4],   tip: "El Nido van transfers from Puerto Princesa take 5–6 hours — dress ultra-comfortably." },
+          Male:    { photos: [boracayImgs.outfitAirportMale1,   boracayImgs.outfitAirportMale2],   tip: "El Nido van transfers from Puerto Princesa take 5–6 hours — dress ultra-comfortably." },
           Couple:  { photos: [boracayImgs.outfitAirportCouple1, boracayImgs.outfitAirportCouple2, null, null], tip: "El Nido van transfers from Puerto Princesa take 5–6 hours — dress ultra-comfortably." },
           Family:  { photos: [boracayImgs.outfitAirportFamily1, boracayImgs.outfitAirportFamily2, null, null], tip: "El Nido van transfers from Puerto Princesa take 5–6 hours — dress ultra-comfortably." },
           Kids:    { photos: [boracayImgs.outfitAirportKids1,   boracayImgs.outfitAirportKids2,   null, null], tip: "El Nido van transfers from Puerto Princesa take 5–6 hours — dress ultra-comfortably." },
