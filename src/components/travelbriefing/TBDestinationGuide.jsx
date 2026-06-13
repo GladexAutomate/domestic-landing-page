@@ -233,6 +233,75 @@ function ImageCard({ item, darkMode, tk, priority = false }) {
   );
 }
 
+function RestaurantCard({ resto, darkMode, tk }) {
+  const [imgFailed, setImgFailed] = useState(false);
+  return (
+    <div
+      className="rounded-2xl border overflow-hidden"
+      style={{ borderColor: tk.borderColor, backgroundColor: tk.cardBg, boxShadow: tk.cardShadow }}
+    >
+      {/* Image — 16:9, easy to swap later */}
+      <div className="overflow-hidden" style={{ aspectRatio: "16/9" }}>
+        {resto.image && !imgFailed ? (
+          <img
+            src={resto.image}
+            alt={resto.name}
+            className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+            loading="lazy"
+            onError={() => setImgFailed(true)}
+          />
+        ) : (
+          <div
+            className="w-full h-full flex items-center justify-center"
+            style={{
+              background: darkMode
+                ? "linear-gradient(135deg, #1a0d00, #0c0c0c)"
+                : "linear-gradient(135deg, #fff7ed, #fed7aa)",
+            }}
+          >
+            <span style={{ fontSize: "2.75rem" }}>🍽️</span>
+          </div>
+        )}
+      </div>
+
+      {/* Content */}
+      <div className="p-4">
+        {/* Restaurant name */}
+        <p className="font-black text-sm leading-snug mb-3" style={{ color: tk.textPrimary, letterSpacing: "-0.01em" }}>
+          {resto.name}
+        </p>
+
+        {/* Famous For chips */}
+        <div className="mb-3">
+          <p className="text-[9px] font-black uppercase tracking-widest mb-1.5" style={{ color: tk.textMuted }}>
+            Famous For
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            {resto.dishes.map((dish) => (
+              <span
+                key={dish}
+                className="text-[11px] font-semibold px-2.5 py-1 rounded-full"
+                style={{
+                  background: "rgba(249,115,22,0.1)",
+                  color: "#f97316",
+                  border: "1px solid rgba(249,115,22,0.22)",
+                }}
+              >
+                {dish}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Why travelers love it */}
+        <p className="text-xs leading-relaxed" style={{ color: tk.textMuted }}>
+          {resto.description}
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function SubBanner({ title, eyebrow, src }) {
   if (!src) return (
     <div className="flex items-center gap-1.5 mb-4">
@@ -281,44 +350,13 @@ export default function TBDestinationGuide({ dest, darkMode, tk }) {
         </div>
       )}
 
-      {/* ── Local Food To Try ── */}
-      {guide.food?.length > 0 && (
+      {/* ── Best Food & Dining ── */}
+      {guide.restaurants?.length > 0 && (
         <div>
           <p className="text-xs font-black uppercase tracking-widest mb-4" style={{ color: "#f97316" }}>Best Food & Dining</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {guide.food.map((f) => (
-              <div
-                key={f.name}
-                className="relative rounded-2xl overflow-hidden border"
-                style={{ aspectRatio: "4/3", borderColor: tk.borderColor, boxShadow: tk.cardShadow }}
-              >
-                {f.image ? (
-                  <img
-                    src={f.image}
-                    alt={f.name}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 hover:scale-105"
-                    loading="lazy"
-                  />
-                ) : (
-                  <div
-                    className="absolute inset-0 flex items-center justify-center"
-                    style={{ background: darkMode ? "linear-gradient(135deg, #1c1008, #0c0c0c)" : "linear-gradient(135deg, #fff7ed, #fed7aa)" }}
-                  >
-                    <span style={{ fontSize: "3.5rem" }}>{f.emoji}</span>
-                  </div>
-                )}
-                <div
-                  className="absolute inset-0"
-                  style={{ background: "linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.1) 55%, transparent 100%)" }}
-                />
-                <div className="absolute bottom-0 left-0 right-0 p-3">
-                  <p className="font-bold text-sm text-white leading-snug">{f.name}</p>
-                  {f.restaurant && (
-                    <p className="text-[10px] font-black mt-0.5" style={{ color: "#f97316" }}>@ {f.restaurant}</p>
-                  )}
-                  {f.note && <p className="text-[10px] leading-snug mt-0.5" style={{ color: "rgba(255,255,255,0.65)" }}>{f.note}</p>}
-                </div>
-              </div>
+            {guide.restaurants.map((resto) => (
+              <RestaurantCard key={resto.name} resto={resto} darkMode={darkMode} tk={tk} />
             ))}
           </div>
         </div>

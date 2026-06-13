@@ -353,15 +353,12 @@ export const DESTINATION_DATA = {
         { name: "Snorkeling & Helmet Diving", desc: "Explore Boracay's vibrant underwater world — colorful reef fish, coral gardens, and sea turtles. No experience needed for helmet diving.", icon: "🤿", image: boracayImgs.helmetDiving },
         { name: "Paraw Sailing at Sunset", desc: "Board a traditional Filipino paraw sailboat as the sun goes down — one of the most romantic and iconic Boracay experiences available.", icon: "", image: boracayImgs.parawSailing },
       ],
-      food: [
-        { name: "Chori Burger",             restaurant: "Jonah's Fruit Shake & Restaurant", note: "Boracay's most iconic beach snack — order right on the beachfront at Station 2",             emoji: "🍔", image: boracayImgs.foodChoriBurger },
-        { name: "Fresh Seafood Grill",       restaurant: "D'Talipapa Market",                note: "Pick your catch from the market, have it grilled next door — freshest BBQ on the island",  emoji: "🦞", image: boracayImgs.foodSeafoodGrill },
-        { name: "Fresh Mango Shake",         restaurant: "Jonah's Fruit Shake & Restaurant", note: "Thick, cold, and blended fresh — the #1 must-try drink on White Beach",                    emoji: "🥭", image: boracayImgs.foodMangoShake },
-        { name: "Oyster Sisig",              restaurant: "D'Talipapa Market",                note: "Fresh talaba from the market cooked sizzling sisig-style — a must-try Boracay specialty",   emoji: "🦪", image: boracayImgs.foodTalaba },
-        { name: "Four Cheese Pizza",         restaurant: "Two Seasons Boracay",              note: "Signature wood-fired pizza with four melted cheeses — one of the island's top restaurants",  emoji: "🍕", image: null },
-        { name: "Calamari",                  restaurant: "Sunny Side Cafe",                  note: "Golden crispy calamari at one of White Beach's most beloved beachfront cafes",               emoji: "🦑", image: null },
-        { name: "Spiced Rotisserie Chicken", restaurant: "Spicebird",                        note: "Boldly spiced rotisserie chicken with signature sauces — the go-to casual beach meal spot",  emoji: "🍗", image: null },
-        { name: "Spanish Tapas & Paella",    restaurant: "Dos Mestizos",                     note: "Authentic Spanish cuisine in a stunning beachfront setting — beloved by repeat visitors",     emoji: "🥘", image: null },
+      restaurants: [
+        { name: "Jonah's Fruit Shake & Restaurant", image: boracayImgs.foodMangoShake,    dishes: ["Mango Shake", "Chori Burger"],           description: "One of Boracay's most iconic stops since 1983 — freshly blended mango shakes that are thick, cold, and unmissable on White Beach" },
+        { name: "D'Talipapa Seafood Market",         image: boracayImgs.foodSeafoodGrill, dishes: ["Seafood Paluto", "Oyster Sisig"],         description: "The classic Boracay experience — choose your fresh catch from the wet market and have it grilled or cooked sisig-style right next door" },
+        { name: "Two Seasons Boracay — barLo Resto", image: null,                         dishes: ["Four Cheese Pizza", "Oyster Sisig"],      description: "Home of Boracay's most talked-about pizza — their quattro formaggi became so famous it expanded to Metro Manila" },
+        { name: "Spicebird",                         image: null,                         dishes: ["Peri-Peri Chicken"],                      description: "Boldly spiced rotisserie chicken with signature Piri-Piri sauce — one of Boracay's most popular casual beach dining spots" },
+        { name: "Dos Mestizos",                      image: null,                         dishes: ["Paella Valenciana", "Spanish Tapas"],     description: "Boracay's longest-running Spanish restaurant — authentic squid ink paella and tapas for over 25 years" },
       ],
       photoSpots: [
         { name: "White Beach — Morning Swim", note: "Early morning, calm water, no crowds — the clearest and most iconic Boracay shot", image: boracayImgs.whiteBeach },
@@ -800,11 +797,12 @@ export const DESTINATION_DATA = {
         { name: "Marine Life & Island Hopping", desc: "Cebu's Mactan waters are home to thriving coral reefs, sea turtles, and diverse marine life. Island hopping tours visit Hilutungan, Nalusuan, and Caohagan.", icon: "🐠", image: "https://i.pinimg.com/736x/51/c8/cd/51c8cd82846528131b0fe581a1ddccd2.jpg" },
         { name: "Bohol Day Tour", desc: "A short ferry ride to Bohol reveals the famous Chocolate Hills, Philippine Tarsiers, Man-made Forest, and the scenic Loboc River cruise.", icon: "🌿", image: "https://i.pinimg.com/736x/dc/01/c8/dc01c842d0274250c69b5ac2b5153bd5.jpg" },
       ],
-      food: [
-        { name: "Lechon Cebu",          restaurant: "Zubuchon",                  note: "Anthony Bourdain's pick — crispy crackling skin, no liver sauce needed", emoji: "🍖", image: "https://i.pinimg.com/1200x/9e/82/35/9e82351392640c0b5bd8effe45e9e81e.jpg" },
-        { name: "Puso (Hanging Rice)",  restaurant: "CNT Lechon",                note: "Diamond-shaped rice in woven palm leaves — the classic lechon companion", emoji: "🍚", image: "https://i.pinimg.com/736x/c1/81/67/c1816760197d5594f3c12a83d6983e57.jpg" },
-        { name: "Sutukil Seafood",      restaurant: "Lantaw Native Restaurant",  note: "Grill, stew, or ceviche — Cebu's iconic fresh seafood trio with sea views", emoji: "🦐", image: "https://i.pinimg.com/1200x/42/69/a1/4269a1020c24620fb5fb6321d83bd562.jpg" },
-        { name: "Dried Mangoes",        restaurant: "Taboan Public Market",      note: "Best pasalubong from Cebu — sweet, chewy, and famous all over the Philippines", emoji: "🥭", image: "https://i.pinimg.com/1200x/eb/de/ff/ebdeff6c13dc36e3920a5d2019304813.jpg" },
+      restaurants: [
+        { name: "Zubuchon",                 image: "https://i.pinimg.com/1200x/9e/82/35/9e82351392640c0b5bd8effe45e9e81e.jpg", dishes: ["Cebu Lechon"],                                   description: "Anthony Bourdain called it the best pig ever on No Reservations — crispy crackling skin stuffed with lemongrass, no liver sauce needed" },
+        { name: "CNT Lechon",               image: "https://i.pinimg.com/736x/c1/81/67/c1816760197d5594f3c12a83d6983e57.jpg", dishes: ["Traditional Cebu Lechon", "Puso (Hanging Rice)"],  description: "Where Cebu locals go — traditional unspiced lechon with diamond-shaped puso rice, the true Cebuano combination" },
+        { name: "Pungko-Pungko sa Fuente",  image: null,                                                                        dishes: ["Tuslob Buwa", "Ngohiong", "Ginabot"],             description: "A true Cebu street food ritual — dip puso rice into a sizzling pan of spiced pig brain. Eat with your hands on low benches, pay almost nothing" },
+        { name: "Lantaw Native Restaurant", image: "https://i.pinimg.com/1200x/42/69/a1/4269a1020c24620fb5fb6321d83bd562.jpg", dishes: ["Sutukil Seafood"],                               description: "Michelin Bib Gourmand 2026 — dine on a floating platform over the water with grilled tuna belly, kinilaw, and crispy squid" },
+        { name: "Taboan Public Market",     image: "https://i.pinimg.com/1200x/eb/de/ff/ebdeff6c13dc36e3920a5d2019304813.jpg", dishes: ["Dried Mangoes", "Local Preserves"],              description: "Cebu's most famous souvenir market — freshest dried mangoes sold by vendors who have been here for generations" },
       ],
       photoSpots: [
         { name: "Tops Lookout", note: "Best panoramic city view of Cebu — breathtaking at sunset", image: "https://i.pinimg.com/1200x/c8/f8/14/c8f81486b979b2c4a580fc51c5fa9881.jpg" },
@@ -1255,11 +1253,10 @@ export const DESTINATION_DATA = {
         { name: "Limestone Cliffs & Sea Caves", desc: "El Nido's dramatic landscape is defined by ancient limestone formations rising from the sea — Cathedral Cave and Cudugnon Cave are highlights of Tour B.", icon: "🏔️", image: "https://www.travel-palawan.com/wp-content/uploads/2018/02/Limeston-rocks-Bacuit-bay-El-Nidou-jpg-768x512.jpg" },
         { name: "Tropical Waters & Marine Life", desc: "El Nido's UNESCO-protected marine sanctuary is home to one of the richest ecosystems in the Philippines — sea turtles, reef sharks, and thousands of fish species.", icon: "🌊", image: "https://res.cloudinary.com/jerrick/image/upload/d_642250b563292b35f27461a7.png,f_jpg,q_auto,w_720/647450ae365a8f001d7f5496.png" },
       ],
-      food: [
-        { name: "Wood-fired Pizza",     restaurant: "Altrove Ristorante",  note: "El Nido's most celebrated restaurant — authentic Italian wood-fired pizza in paradise", emoji: "🍕", image: null },
-        { name: "Fresh Grilled Seafood", restaurant: "Squidos",            note: "Waterfront spot with the freshest local catch — grilled right in front of you", emoji: "🦞", image: "https://images.pexels.com/photos/1267320/pexels-photo-1267320.jpeg?w=400&q=80" },
-        { name: "Kinilaw (Ceviche)",    restaurant: "El Nido Canto",       note: "Fresh fish marinated in vinegar and coconut milk — authentic Palawan street flavor", emoji: "🐟", image: null },
-        { name: "Buko Juice",           restaurant: "Calle Hama Stalls",   note: "Iced fresh coconut straight from the shell — the perfect post-tour drink", emoji: "🥥", image: null },
+      restaurants: [
+        { name: "Altrove Ristorante", image: null,                                                                             dishes: ["Wood-Fired Pizza", "Fresh Pasta"],                          description: "El Nido's most celebrated restaurant — authentic Neapolitan pizza from a real wood-fired oven, with lines forming every night at peak hours" },
+        { name: "Jarace Grill",       image: "https://images.pexels.com/photos/1267320/pexels-photo-1267320.jpeg?w=400&q=80", dishes: ["Fresh Seafood Platter", "Grilled Stuffed Squid", "Clams & Shrimp"], description: "Pick your own fresh catch by weight at this beloved Rizal Street grill — BBQ under the stars with stunning bay views from the upper deck" },
+        { name: "AP Kala Beach Bar",  image: null,                                                                             dishes: ["Kinilaw (Ceviche)"],                                        description: "El Nido's best beachfront bar — fresh kinilaw made with local fish, vinegar, and calamansi with stunning bay views" },
       ],
       photoSpots: [
         { name: "Big & Small Lagoon",          note: "Kayak through emerald waters surrounded by towering limestone — the most iconic El Nido shot", image: "https://i.pinimg.com/1200x/7a/bb/5c/7abb5c201eb871be96cefa19297ce4b5.jpg" },
