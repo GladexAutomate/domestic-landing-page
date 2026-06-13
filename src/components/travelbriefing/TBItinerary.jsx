@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -109,6 +109,16 @@ function Lightbox({ photos, startIndex, onClose }) {
 export default function TBItinerary({ dest, darkMode, tk }) {
   const { cardBg, borderColor, cardShadow, textPrimary, textMuted } = tk;
   const [lightbox, setLightbox] = useState(null); // { photos, index }
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" ? window.innerWidth < 640 : false
+  );
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 639px)");
+    setIsMobile(mq.matches);
+    const handler = (e) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
 
   const mealLabel = (meals) => {
     if (!meals) return null;
@@ -197,8 +207,8 @@ export default function TBItinerary({ dest, darkMode, tk }) {
                       </span>
                     </div>
 
-                    {/* Grid — 5 columns matching reference */}
-                    <div className="grid gap-0.5 p-2" style={{ gridTemplateColumns: `repeat(${Math.min(photos.length, 5)}, 1fr)` }}>
+                    {/* Grid — 3 cols on mobile, 5 on desktop */}
+                    <div className="grid gap-0.5 p-2" style={{ gridTemplateColumns: `repeat(${Math.min(photos.length, isMobile ? 3 : 5)}, 1fr)` }}>
                       {photos.map((src, i) => (
                         <button
                           key={i}

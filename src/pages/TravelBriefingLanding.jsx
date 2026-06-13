@@ -16,7 +16,7 @@ import { lookupBooking, submitReview } from "@/services/supabaseService";
 import {
   Check, X, AlertTriangle, ArrowUp, Phone,
   Download, Star, Gift,
-  BadgeCheck, Info, Loader, ChevronDown, MapPin,
+  BadgeCheck, Info, Loader, ChevronDown, ChevronUp, MapPin,
 } from "lucide-react";
 
 const TESTIMONIALS = [
@@ -380,7 +380,7 @@ function BookingSection({ label, children, darkMode }) {
 // ── BookingRow ───────────────────────────────────────────────────
 function BookingRow({ label1, value1, label2, value2, textPrimary, textMuted, preWrap1 }) {
   return (
-    <div className="grid grid-cols-2 gap-x-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
       <div>
         <p className="text-[9px] font-bold uppercase tracking-wider mb-0.5" style={{ color: textMuted }}>
           {label1}
@@ -528,20 +528,23 @@ function OutfitCard({ occasion, darkMode, textPrimary, textMuted, cardBg, border
       </div>
 
       {/* ── Gender tabs ── */}
-      <div className="px-2.5 pt-2.5 pb-1.5 flex flex-wrap gap-1">
-        {OUTFIT_TABS.map((tab) => (
-          <button
-            key={tab}
-            onClick={() => handleTabChange(tab)}
-            className="text-[10px] font-bold px-2.5 py-1 rounded-full border transition-all"
-            style={activeTab === tab
-              ? { background: "#f97316", color: "#fff", borderColor: "#f97316" }
-              : { background: "transparent", color: textMuted, borderColor }
-            }
-          >
-            {tab}
-          </button>
-        ))}
+      <div className="px-3 pt-2.5 pb-1">
+        <p className="text-[9px] font-black uppercase tracking-widest mb-1.5" style={{ color: textMuted }}>Outfit for:</p>
+        <div className="flex flex-wrap gap-1.5">
+          {OUTFIT_TABS.map((tab) => (
+            <button
+              key={tab}
+              onClick={() => handleTabChange(tab)}
+              className="text-xs font-bold px-3 py-1.5 rounded-full border transition-all"
+              style={activeTab === tab
+                ? { background: "#f97316", color: "#fff", borderColor: "#f97316" }
+                : { background: "transparent", color: textMuted, borderColor }
+              }
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Save badge */}
@@ -596,8 +599,56 @@ function OutfitGuideSection({ dest, darkMode, sectionGap, textPrimary, textMuted
       </p>
 
       {/* Cards + outer nav arrows */}
-      <div className="relative flex items-center gap-2">
-        {/* Left page arrow — gray */}
+
+      {/* Mobile: full-width card + clear labeled Prev/Next buttons below */}
+      <div className="sm:hidden">
+        <div className="grid grid-cols-1 gap-3">
+          {visible.map((o) => (
+            <OutfitCard
+              key={o.occasion}
+              occasion={o}
+              darkMode={darkMode}
+              textPrimary={textPrimary}
+              textMuted={textMuted}
+              cardBg={cardBg}
+              borderColor={borderColor}
+              cardShadow={cardShadow}
+            />
+          ))}
+        </div>
+        {totalPages > 1 && (
+          <div className="flex items-center gap-2 mt-3">
+            <button
+              onClick={prevPage}
+              disabled={safePage === 0}
+              className="flex-1 py-3 rounded-xl text-sm font-bold border transition-all"
+              style={{
+                color: safePage === 0 ? textMuted : "#f97316",
+                borderColor: safePage === 0 ? borderColor : "#f97316",
+                background: "transparent",
+                opacity: safePage === 0 ? 0.4 : 1,
+              }}
+            >← Prev Outfit</button>
+            <p className="text-[10px] font-black shrink-0" style={{ color: textMuted }}>
+              {safePage + 1} / {totalPages}
+            </p>
+            <button
+              onClick={nextPage}
+              disabled={safePage === totalPages - 1}
+              className="flex-1 py-3 rounded-xl text-sm font-bold transition-all"
+              style={{
+                background: safePage === totalPages - 1 ? "transparent" : "linear-gradient(135deg, #f97316, #b45309)",
+                color: safePage === totalPages - 1 ? textMuted : "#fff",
+                border: safePage === totalPages - 1 ? `1px solid ${borderColor}` : "none",
+                opacity: safePage === totalPages - 1 ? 0.4 : 1,
+              }}
+            >Next Outfit →</button>
+          </div>
+        )}
+      </div>
+
+      {/* Desktop: cards with side arrows */}
+      <div className="hidden sm:flex items-center gap-2">
         <button
           onClick={prevPage}
           disabled={safePage === 0}
@@ -612,8 +663,7 @@ function OutfitGuideSection({ dest, darkMode, sectionGap, textPrimary, textMuted
           aria-label="Previous outfit type"
         >‹</button>
 
-        {/* Cards — 1 col on mobile, 2 col on desktop */}
-        <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="flex-1 grid sm:grid-cols-2 gap-3">
           {visible.map((o) => (
             <OutfitCard
               key={o.occasion}
@@ -628,7 +678,6 @@ function OutfitGuideSection({ dest, darkMode, sectionGap, textPrimary, textMuted
           ))}
         </div>
 
-        {/* Right page arrow — ORANGE, prominent */}
         <button
           onClick={nextPage}
           disabled={page === totalPages - 1}
@@ -644,9 +693,9 @@ function OutfitGuideSection({ dest, darkMode, sectionGap, textPrimary, textMuted
         >›</button>
       </div>
 
-      {/* Page dots */}
+      {/* Page dots — desktop only; mobile uses labeled Prev/Next buttons */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2 mt-3">
+        <div className="hidden sm:flex items-center justify-center gap-2 mt-3">
           {Array.from({ length: totalPages }).map((_, i) => (
             <button
               key={i}
@@ -979,15 +1028,16 @@ export default function TravelBriefingLanding() {
             <TBWelcomeSection darkMode={darkMode} tk={tk} />
           )}
 
-          {/* Booking found, not yet revealed — compact orange button */}
+          {/* Booking found, not yet revealed — compact tap-to-expand card */}
           {activeBooking && !showTripDetails && (
             <motion.button
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.25 }}
-              whileTap={{ scale: 0.98 }}
+              whileHover={{ y: -2, boxShadow: "0 8px 24px rgba(249,115,22,0.18)" }}
+              whileTap={{ scale: 0.96 }}
               onClick={() => setShowTripDetails(true)}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl border transition-all"
+              className="w-full flex items-center gap-3 px-4 pt-3 pb-2.5 rounded-2xl border transition-all cursor-pointer"
               style={{
                 backgroundColor: darkMode ? "rgba(249,115,22,0.1)" : "rgba(249,115,22,0.07)",
                 borderColor: "rgba(249,115,22,0.3)",
@@ -1003,13 +1053,16 @@ export default function TravelBriefingLanding() {
 
               {/* Text */}
               <div className="text-left flex-1 min-w-0">
-                <p className="font-black text-sm leading-tight" style={{ color: "#f97316" }}>View My Trip</p>
+                <p className="font-black text-sm leading-tight" style={{ color: "#f97316" }}>View Booking Details</p>
                 <p className="text-[11px] truncate mt-0.5" style={{ color: textMuted }}>
                   GDX-{activeBooking.gdx} · {activeBooking.leadName}
                 </p>
+                <p className="text-[10px] mt-1" style={{ color: textMuted }}>
+                  Tap to view your complete booking details
+                </p>
               </div>
 
-              {/* Confirmed + animated tap hint */}
+              {/* Confirmed + downward chevron */}
               <div className="flex items-center gap-2 shrink-0">
                 <span
                   className="text-[10px] font-bold px-2.5 py-1 rounded-full"
@@ -1017,12 +1070,7 @@ export default function TravelBriefingLanding() {
                 >
                   ✓ Confirmed
                 </span>
-                <motion.div
-                  animate={{ x: [0, 3, 0] }}
-                  transition={{ repeat: Infinity, duration: 1.4, ease: "easeInOut", repeatDelay: 0.6 }}
-                >
-                  <ChevronDown className="w-4 h-4 -rotate-90" style={{ color: "#f97316" }} />
-                </motion.div>
+                <ChevronDown className="w-4 h-4" style={{ color: "#f97316" }} />
               </div>
             </motion.button>
           )}
@@ -1043,14 +1091,21 @@ export default function TravelBriefingLanding() {
                 }}
               >
                 <div className="p-5 pb-5">
-                  {/* Confirmed badge */}
-                  <div className="mb-4">
+                  {/* Confirmed badge + collapse button */}
+                  <div className="flex items-center justify-between mb-4">
                     <span
                       className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full"
                       style={{ background: "rgba(34,197,94,0.88)", color: "#fff" }}
                     >
                       <BadgeCheck className="w-3 h-3" /> Trip Confirmed
                     </span>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setShowTripDetails(false); }}
+                      className="flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 rounded-full transition-opacity hover:opacity-70 cursor-pointer"
+                      style={{ background: "rgba(0,0,0,0.2)", color: "rgba(255,255,255,0.85)" }}
+                    >
+                      <ChevronUp className="w-3 h-3" /> Collapse
+                    </button>
                   </div>
                   {/* Heading */}
                   <h1
@@ -1117,7 +1172,7 @@ export default function TravelBriefingLanding() {
                           borderBottom: `1px solid ${darkMode ? "rgba(255,255,255,0.06)" : "#f0ece7"}`,
                         }}
                       >
-                        <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center mb-3">
                           <span
                             className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full"
                             style={{
@@ -1128,17 +1183,6 @@ export default function TravelBriefingLanding() {
                           >
                             <BadgeCheck className="w-3 h-3" /> Booking Verified
                           </span>
-                          <button
-                            onClick={() => setShowTripDetails(false)}
-                            className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full border transition-all hover:opacity-70"
-                            style={{
-                              borderColor: darkMode ? "rgba(255,255,255,0.12)" : "#ddd8d0",
-                              color: textMuted,
-                              backgroundColor: surfaceBg,
-                            }}
-                          >
-                            <X className="w-3 h-3" /> Close
-                          </button>
                         </div>
                         <h2
                           className="font-black text-xl mb-0.5"
@@ -1726,7 +1770,7 @@ export default function TravelBriefingLanding() {
                         {info.vanSchedule && (
                           <div className="mt-4">
                             <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: textMuted }}>Van Transfer Schedule</p>
-                            <div className="grid grid-cols-2 gap-3">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                               <div className="rounded-xl p-3 border" style={{ borderColor, backgroundColor: surfaceBg }}>
                                 <p className="text-xs font-bold mb-2" style={{ color: "#f97316" }}>Puerto Princesa → El Nido</p>
                                 {info.vanSchedule.ppsToElNido.map((s) => (<p key={s} className="text-xs py-0.5" style={{ color: textPrimary }}>{s}</p>))}
@@ -2148,7 +2192,7 @@ export default function TravelBriefingLanding() {
                       <button
                         onClick={() => setTestimonialsPage((p) => Math.max(0, p - 1))}
                         disabled={safePage === 0}
-                        className="w-9 h-9 rounded-full flex items-center justify-center border transition-all"
+                        className="w-11 h-11 rounded-full flex items-center justify-center border transition-all"
                         style={{
                           borderColor: darkMode ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.12)",
                           backgroundColor: darkMode ? "rgba(255,255,255,0.05)" : "#fff",
@@ -2161,7 +2205,7 @@ export default function TravelBriefingLanding() {
                       <button
                         onClick={() => setTestimonialsPage((p) => Math.min(totalPages - 1, p + 1))}
                         disabled={safePage === totalPages - 1}
-                        className="w-9 h-9 rounded-full flex items-center justify-center transition-all"
+                        className="w-11 h-11 rounded-full flex items-center justify-center transition-all"
                         style={{
                           backgroundColor: safePage === totalPages - 1 ? "rgba(249,115,22,0.3)" : "#f97316",
                           opacity: safePage === totalPages - 1 ? 0.5 : 1,

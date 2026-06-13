@@ -2,14 +2,31 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { Search, ArrowRight, BadgeCheck, Loader, AlertCircle } from "lucide-react";
+import { Search, User, ArrowRight, BadgeCheck, Loader, AlertCircle } from "lucide-react";
 import { lookupBooking, detectDestinationSlug } from "@/services/supabaseService";
+
+// Normalize accents + lowercase so "Castañeda" matches "Castaneda"
+function normStr(s) {
+  return String(s).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
+}
+
+// Returns true if `entered` exactly matches any space/hyphen-separated word in `fullName`
+function lastNameMatches(fullName, entered) {
+  if (!fullName || !entered) return false;
+  const needle = normStr(entered);
+  if (!needle) return false;
+  const words = normStr(fullName).split(/[\s,.\-/]+/).filter(Boolean);
+  return words.some((w) => w === needle);
+}
+
+const SECURITY_ERROR = "Booking not found. Please verify your GDX Number and Lead Guest Last Name.";
 
 export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
   const navigate = useNavigate();
-  const [code, setCode] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [code, setCode]         = useState("");
+  const [lastName, setLastName] = useState("");
+  const [loading, setLoading]   = useState(false);
+  const [error, setError]       = useState(null);
 
   const bg          = tk?.bg          ?? (darkMode ? "#0c0c0c" : "#f4f3f1");
   const cardBg      = tk?.cardBg      ?? (darkMode ? "#141414" : "#ffffff");
@@ -22,9 +39,15 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
     : "0 1px 3px rgba(0,0,0,0.05), 0 4px 16px rgba(0,0,0,0.05)");
 
   const handleViewTrip = async () => {
-    const trimmed = code.trim();
-    if (!trimmed) {
+    const trimmedCode     = code.trim();
+    const trimmedLastName = lastName.trim();
+
+    if (!trimmedCode) {
       setError("Please enter your GDX Confirmation Number.");
+      return;
+    }
+    if (!trimmedLastName) {
+      setError("Please enter the Lead Guest Last Name.");
       return;
     }
 
@@ -32,21 +55,23 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
     setError(null);
 
     try {
-      // Real Supabase lookup from bookings_6fbdd6b2
-      const booking = await lookupBooking(trimmed);
+      const booking = await lookupBooking(trimmedCode);
 
-      // Detect destination slug — always returns a value (defaults to "boracay")
+      // Security check — last name must match a word in the lead name
+      if (!lastNameMatches(booking.leadName, trimmedLastName)) {
+        throw new Error(SECURITY_ERROR);
+      }
+
       const slug = detectDestinationSlug(booking);
 
-      // Persist GDX + slug only (no PII) for session restore on page refresh
       try {
         sessionStorage.setItem("gladex-session", JSON.stringify({ gdx: booking.gdx, slug }));
       } catch {}
 
-      // Navigate to destination page with full booking pre-loaded
       navigate(`/destination/${slug}`, { state: { booking } });
     } catch (err) {
-      setError(err.message || "Booking not found. Please check your GDX number.");
+      // Always surface the same message regardless of GDX-not-found vs last-name-mismatch
+      setError(SECURITY_ERROR);
     } finally {
       setLoading(false);
     }
@@ -55,6 +80,8 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
   const handleKeyDown = (e) => {
     if (e.key === "Enter") handleViewTrip();
   };
+
+  const clearAll = () => { setCode(""); setLastName(""); setError(null); };
 
   return (
     <section
@@ -95,7 +122,7 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
         className="text-center text-sm leading-relaxed mb-4 sm:mb-10"
         style={{ color: textMuted, maxWidth: "460px" }}
       >
-        Enter your GDX Confirmation Number or Tour Voucher Number to access your personalized travel briefing, vouchers, reminders, optional tours, and add ons.
+        Enter your GDX Confirmation Number and Lead Guest Last Name to access your personalized travel briefing.
       </motion.p>
 
       {/* Search card */}
@@ -106,28 +133,62 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
         className="w-full rounded-2xl border overflow-hidden"
         style={{ maxWidth: "500px", backgroundColor: cardBg, borderColor, boxShadow: cardShadow }}
       >
-        <div className="p-4 sm:p-5">
-          {/* Input row */}
-          <div
-            className="flex items-center gap-2 rounded-xl border px-3 py-2.5 mb-3"
-            style={{ borderColor, backgroundColor: surfaceBg }}
-          >
-            <Search className="w-4 h-4 shrink-0" style={{ color: textMuted }} />
-            <input
-              type="text"
-              value={code}
-              onChange={(e) => { setCode(e.target.value); setError(null); }}
-              onKeyDown={handleKeyDown}
-              placeholder="Enter GDX Confirmation Number / Tour Voucher Number"
-              className="flex-1 bg-transparent text-sm outline-none"
-              style={{ color: textPrimary }}
-              autoComplete="off"
-              spellCheck="false"
-              disabled={loading}
-            />
-            {code && !loading && (
-              <button onClick={() => { setCode(""); setError(null); }} className="text-xs opacity-40 hover:opacity-70 transition-opacity" style={{ color: textMuted }}>✕</button>
-            )}
+        <div className="p-4 sm:p-5 space-y-2.5">
+
+          {/* GDX Number */}
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-widest mb-1.5" style={{ color: textMuted }}>
+              GDX Confirmation Number
+            </p>
+            <div
+              className="flex items-center gap-2 rounded-xl border px-3 py-2.5"
+              style={{ borderColor, backgroundColor: surfaceBg }}
+            >
+              <Search className="w-4 h-4 shrink-0" style={{ color: textMuted }} />
+              <input
+                type="text"
+                value={code}
+                onChange={(e) => { setCode(e.target.value); setError(null); }}
+                onKeyDown={handleKeyDown}
+                placeholder="GDX Confirmation Number"
+                className="flex-1 bg-transparent text-sm outline-none"
+                style={{ color: textPrimary }}
+                autoComplete="off"
+                spellCheck="false"
+                disabled={loading}
+              />
+              {code && !loading && (
+                <button onClick={() => { setCode(""); setError(null); }} className="text-xs opacity-40 hover:opacity-70 transition-opacity" style={{ color: textMuted }}>✕</button>
+              )}
+            </div>
+          </div>
+
+          {/* Lead Guest Last Name */}
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-widest mb-1.5" style={{ color: textMuted }}>
+              Lead Guest Last Name
+            </p>
+            <div
+              className="flex items-center gap-2 rounded-xl border px-3 py-2.5"
+              style={{ borderColor, backgroundColor: surfaceBg }}
+            >
+              <User className="w-4 h-4 shrink-0" style={{ color: textMuted }} />
+              <input
+                type="text"
+                value={lastName}
+                onChange={(e) => { setLastName(e.target.value); setError(null); }}
+                onKeyDown={handleKeyDown}
+                placeholder="Lead Guest Last Name"
+                className="flex-1 bg-transparent text-sm outline-none"
+                style={{ color: textPrimary }}
+                autoComplete="off"
+                spellCheck="false"
+                disabled={loading}
+              />
+              {lastName && !loading && (
+                <button onClick={() => { setLastName(""); setError(null); }} className="text-xs opacity-40 hover:opacity-70 transition-opacity" style={{ color: textMuted }}>✕</button>
+              )}
+            </div>
           </div>
 
           {/* Error message */}
@@ -137,7 +198,7 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
-                className="flex items-start gap-2 text-xs mb-3 px-1"
+                className="flex items-start gap-2 text-xs px-1"
                 style={{ color: "#ef4444" }}
               >
                 <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
@@ -160,7 +221,7 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
             }}
           >
             {loading ? (
-              <><Loader className="w-4 h-4 animate-spin" /> Searching bookings…</>
+              <><Loader className="w-4 h-4 animate-spin" /> Verifying booking…</>
             ) : (
               <>View My Trip <ArrowRight className="w-4 h-4" /></>
             )}
@@ -173,7 +234,7 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
           style={{ borderColor, backgroundColor: surfaceBg }}
         >
           <span className="text-[10px]" style={{ color: textMuted }}>
-            Secured — your data is retrieved from Gladex booking records.
+            Secured — GDX Number and Last Name are required to access booking details.
           </span>
         </div>
       </motion.div>

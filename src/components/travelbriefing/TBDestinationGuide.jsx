@@ -119,7 +119,8 @@ function PhotoSpotCarousel({ spots, darkMode, tk }) {
 
   return (
     <div className="rounded-2xl overflow-hidden border relative" style={{ borderColor: tk.borderColor, boxShadow: tk.cardShadow }}>
-      <div className="relative" style={{ aspectRatio: "16/9", overflow: "hidden" }}>
+      {/* Photo — 4:3 on mobile (taller), 16:9 on sm+ */}
+      <div className="relative aspect-[4/3] sm:aspect-video overflow-hidden">
         {spot.image && !imgFailed ? (
           <img
             src={spot.image}
@@ -130,51 +131,60 @@ function PhotoSpotCarousel({ spots, darkMode, tk }) {
           />
         ) : (
           <div
-            className="w-full h-full flex items-center justify-center text-4xl"
+            className="w-full h-full flex items-center justify-center text-5xl"
             style={{ background: darkMode ? "#1a1a1a" : "#e8e8e8" }}
           >
             📸
           </div>
         )}
-        <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 55%)" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.78) 0%, transparent 52%)" }} />
+
         {/* Counter badge */}
         <div className="absolute top-3 right-3 text-[10px] font-bold px-2.5 py-1 rounded-full" style={{ background: "rgba(0,0,0,0.55)", color: "#fff" }}>
           {current + 1} / {spots.length}
         </div>
-        {/* Left arrow */}
+
+        {/* Left arrow — 44px tap target */}
         <button
           onClick={prev}
-          className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center transition-all"
-          style={{ background: "rgba(0,0,0,0.45)", color: "#fff", fontSize: "1rem" }}
+          className="absolute left-2 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full flex items-center justify-center transition-all active:scale-95"
+          style={{ background: "rgba(0,0,0,0.5)", color: "#fff", fontSize: "1.25rem" }}
           aria-label="Previous"
         >‹</button>
-        {/* Right arrow */}
+
+        {/* Right arrow — 44px tap target */}
         <button
           onClick={next}
-          className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center transition-all"
-          style={{ background: "rgba(0,0,0,0.45)", color: "#fff", fontSize: "1rem" }}
+          className="absolute right-2 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full flex items-center justify-center transition-all active:scale-95"
+          style={{ background: "rgba(0,0,0,0.5)", color: "#fff", fontSize: "1.25rem" }}
           aria-label="Next"
         >›</button>
+
         {/* Name + note overlay */}
-        <div className="absolute bottom-0 left-0 right-0 p-3">
-          <p className="font-bold text-sm text-white leading-snug">{spot.name}</p>
-          {spot.note && <p className="text-[10px] leading-snug mt-0.5" style={{ color: "rgba(255,255,255,0.65)" }}>{spot.note}</p>}
+        <div className="absolute bottom-0 left-0 right-0 px-4 pb-4 pt-8">
+          <p className="font-black text-base text-white leading-snug">{spot.name}</p>
+          {spot.note && <p className="text-xs leading-snug mt-1" style={{ color: "rgba(255,255,255,0.72)" }}>{spot.note}</p>}
         </div>
       </div>
-      {/* Dot indicators */}
-      <div className="flex items-center justify-center gap-1.5 py-3" style={{ backgroundColor: tk.cardBg }}>
+
+      {/* Dot indicators — padded for tap area */}
+      <div className="flex items-center justify-center gap-2 py-3" style={{ backgroundColor: tk.cardBg }}>
         {spots.map((_, i) => (
           <button
             key={i}
             onClick={() => { setImgFailed(false); setCurrent(i); }}
-            className="rounded-full transition-all"
-            style={{
-              width: i === current ? "20px" : "6px",
-              height: "6px",
-              background: i === current ? "#f97316" : tk.borderColor,
-            }}
+            className="rounded-full transition-all py-2 px-0.5"
             aria-label={`Go to photo ${i + 1}`}
-          />
+          >
+            <span
+              className="block rounded-full transition-all"
+              style={{
+                width: i === current ? "22px" : "7px",
+                height: "7px",
+                background: i === current ? "#f97316" : tk.borderColor,
+              }}
+            />
+          </button>
         ))}
       </div>
     </div>
@@ -262,7 +272,7 @@ export default function TBDestinationGuide({ dest, darkMode, tk }) {
             <ImageCard item={guide.highlights[0]} darkMode={darkMode} tk={tk} priority />
           </div>
           {guide.highlights.length > 1 && (
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {guide.highlights.slice(1).map((h) => (
                 <ImageCard key={h.name} item={h} darkMode={darkMode} tk={tk} />
               ))}
