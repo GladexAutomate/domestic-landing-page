@@ -354,6 +354,14 @@ function DevSwitcher({ currentSlug, navigate, darkMode, tk }) {
   );
 }
 
+// ── Date formatter — "December 10, 2027" ─────────────────────────
+function formatDate(val) {
+  if (!val || val === "—") return val || "—";
+  const d = new Date(val);
+  if (isNaN(d.getTime())) return val;
+  return d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+}
+
 // ── BookingSection ───────────────────────────────────────────────
 function BookingSection({ label, children, darkMode }) {
   return (
@@ -1239,8 +1247,8 @@ export default function TravelBriefingLanding() {
                             textPrimary={textPrimary} textMuted={textMuted}
                           />
                           <BookingRow
-                            label1="Booking Date"  value1={activeBooking.bookingDate || "Not Available"}
-                            label2="Last Modified" value2={activeBooking.lastModified || "Not Available"}
+                            label1="Booking Date"  value1={formatDate(activeBooking.bookingDate) || "Not Available"}
+                            label2=""              value2=""
                             textPrimary={textPrimary} textMuted={textMuted}
                           />
                         </div>
@@ -1273,12 +1281,12 @@ export default function TravelBriefingLanding() {
                         <div className="px-5 py-4 space-y-4">
                           <BookingRow
                             label1="Destination"   value1={dest.name}
-                            label2="Travel Date"   value2={activeBooking.travelDate || "—"}
+                            label2="Travel Date"   value2={formatDate(activeBooking.travelDate) || "—"}
                             textPrimary={textPrimary} textMuted={textMuted}
                           />
                           <BookingRow
-                            label1="Arrival Date"    value1={activeBooking.arrivalDate || activeBooking.travelDate || "—"}
-                            label2="Departure Date"  value2={activeBooking.departureDate || "—"}
+                            label1="Arrival Date"    value1={formatDate(activeBooking.arrivalDate || activeBooking.travelDate) || "—"}
+                            label2="Departure Date"  value2={formatDate(activeBooking.departureDate) || "—"}
                             textPrimary={textPrimary} textMuted={textMuted}
                           />
                           <BookingRow
@@ -1321,7 +1329,7 @@ export default function TravelBriefingLanding() {
                           <div className="px-5 py-4 space-y-4">
                             <BookingRow
                               label1="Tour"       value1={activeBooking.tour.tourName}
-                              label2="Tour Date"  value2={activeBooking.tour?.tourDate || "—"}
+                              label2="Tour Date"  value2={formatDate(activeBooking.tour?.tourDate) || "—"}
                               textPrimary={textPrimary} textMuted={textMuted}
                             />
                           </div>
@@ -1330,7 +1338,7 @@ export default function TravelBriefingLanding() {
 
                       {/* TRANSFER INFORMATION */}
                       {(activeBooking.ticket || activeBooking.transfer || activeBooking.transferDetails) && (
-                        <BookingSection label="Transfer Information" darkMode={darkMode}>
+                        <BookingSection label="Ticket / Flight Information" darkMode={darkMode}>
                           <div className="px-5 py-4 space-y-4">
                             {activeBooking.ticket?.airline && (
                               <BookingRow
