@@ -159,6 +159,42 @@ export const detectDestinationSlug = (booking) => {
   return "boracay";
 };
 
+// ── Domestic-only slug detection — returns null if destination is not one of
+// our 3 supported domestic packages. Used to reject international GDX entries.
+export const detectDomesticSlug = (booking) => {
+  const dest = (booking.destination || "").toLowerCase();
+
+  if (dest.includes("boracay"))         return "boracay";
+  if (dest.includes("cebu"))            return "cebu";
+  if (dest.includes("nido") || dest.includes("palawan")) return "elnido";
+  if (dest.includes("bohol"))           return "cebu";
+
+  if (FUSIOO_DEST_MAP[booking.destination]) return FUSIOO_DEST_MAP[booking.destination];
+
+  const transferDesc = stripHtml(booking.transfer?.description || "").toLowerCase();
+  if (transferDesc.includes("caticlan") || transferDesc.includes("boracay")) return "boracay";
+  if (transferDesc.includes("cebu") || transferDesc.includes("mactan"))      return "cebu";
+  if (transferDesc.includes("pps") || transferDesc.includes("el nido") || transferDesc.includes("puerto princesa")) return "elnido";
+
+  const tourName = (booking.tour?.tourName || "").toLowerCase();
+  if (tourName.includes("island hop"))  return "boracay";
+  if (tourName.includes("kawasan") || tourName.includes("oslob") || tourName.includes("cebu")) return "cebu";
+  if (tourName.includes("el nido") || tourName.includes("lagoon")) return "elnido";
+
+  const tourDesc = stripHtml(booking.tour?.description || "").toLowerCase();
+  if (tourDesc.includes("henann") || tourDesc.includes("boracay")) return "boracay";
+  if (tourDesc.includes("cebu"))        return "cebu";
+  if (tourDesc.includes("el nido"))     return "elnido";
+
+  const rawStr = JSON.stringify(booking.rawData || {}).toLowerCase();
+  if (rawStr.includes("boracay"))       return "boracay";
+  if (rawStr.includes("\"cebu\""))      return "cebu";
+  if (rawStr.includes("el nido"))       return "elnido";
+
+  // Unknown destination — likely international
+  return null;
+};
+
 // ═══════════════════════════════════════════════════════════════
 // NORMALIZE — raw rows → clean booking object
 // ═══════════════════════════════════════════════════════════════

@@ -2,8 +2,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { Search, User, ArrowRight, BadgeCheck, Loader, AlertCircle } from "lucide-react";
-import { lookupBooking, detectDestinationSlug } from "@/services/supabaseService";
+import { Search, User, ArrowRight, BadgeCheck, Loader, AlertCircle, ExternalLink } from "lucide-react";
+import { lookupBooking, detectDestinationSlug, detectDomesticSlug } from "@/services/supabaseService";
 
 // Normalize accents + lowercase so "Castañeda" matches "Castaneda"
 function normStr(s) {
@@ -25,8 +25,9 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
   const navigate = useNavigate();
   const [code, setCode]         = useState("");
   const [lastName, setLastName] = useState("");
-  const [loading, setLoading]   = useState(false);
-  const [error, setError]       = useState(null);
+  const [loading, setLoading]     = useState(false);
+  const [error, setError]         = useState(null);
+  const [redirecting, setRedirecting] = useState(false);
 
   const bg          = tk?.bg          ?? (darkMode ? "#0c0c0c" : "#f4f3f1");
   const cardBg      = tk?.cardBg      ?? (darkMode ? "#141414" : "#ffffff");
@@ -62,7 +63,17 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
         throw new Error(SECURITY_ERROR);
       }
 
-      const slug = detectDestinationSlug(booking);
+      const domesticSlug = detectDomesticSlug(booking);
+
+      if (!domesticSlug) {
+        setRedirecting(true);
+        setTimeout(() => {
+          window.location.href = "https://international-landing-page.vercel.app/";
+        }, 2500);
+        return;
+      }
+
+      const slug = domesticSlug;
 
       try {
         sessionStorage.setItem("gladex-session", JSON.stringify({ gdx: booking.gdx, slug }));
@@ -190,6 +201,30 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
               )}
             </div>
           </div>
+
+          {/* International redirect notice */}
+          <AnimatePresence>
+            {redirecting && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="rounded-xl border px-3.5 py-3 flex items-start gap-2.5"
+                style={{ borderColor: "rgba(251,191,36,0.35)", backgroundColor: "rgba(251,191,36,0.08)" }}
+              >
+                <ExternalLink className="w-4 h-4 shrink-0 mt-0.5" style={{ color: "#f59e0b" }} />
+                <div>
+                  <p className="text-xs font-bold leading-snug" style={{ color: "#f59e0b" }}>
+                    International Booking Detected
+                  </p>
+                  <p className="text-[11px] leading-relaxed mt-0.5" style={{ color: darkMode ? "rgba(255,255,255,0.5)" : "#6b7280" }}>
+                    This page is for domestic packages only. Redirecting you to the international travel briefing…
+                  </p>
+                </div>
+                <Loader className="w-3.5 h-3.5 shrink-0 mt-0.5 animate-spin ml-auto" style={{ color: "#f59e0b" }} />
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Error message */}
           <AnimatePresence>
