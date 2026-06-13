@@ -734,6 +734,7 @@ export default function TravelBriefingLanding() {
   // Booking from GDX search (passed via React Router state)
   const routeBooking = location.state?.booking || null;
   const [restoredBooking, setRestoredBooking] = useState(null);
+  const [sessionChecked, setSessionChecked] = useState(!!routeBooking);
   const activeBooking = routeBooking || restoredBooking;
 
   const [showBackToTop, setShowBackToTop] = useState(false);
@@ -803,27 +804,36 @@ export default function TravelBriefingLanding() {
   // ── Restore booking from sessionStorage on page refresh ──────
   useEffect(() => {
     setRestoredBooking(null);
-    if (routeBooking) return;
+    if (routeBooking) { setSessionChecked(true); return; }
 
     let saved;
     try {
       const raw = sessionStorage.getItem(SESSION_KEY);
-      if (!raw) return;
+      if (!raw) { setSessionChecked(true); return; }
       saved = JSON.parse(raw);
     } catch {
       sessionStorage.removeItem(SESSION_KEY);
+      setSessionChecked(true);
       return;
     }
 
     if (!saved?.gdx || !saved?.slug || saved.slug !== slug) {
       sessionStorage.removeItem(SESSION_KEY);
+      setSessionChecked(true);
       return;
     }
 
     lookupBooking(saved.gdx)
-      .then((booking) => setRestoredBooking(booking))
-      .catch(() => sessionStorage.removeItem(SESSION_KEY));
+      .then((booking) => { setRestoredBooking(booking); setSessionChecked(true); })
+      .catch(() => { sessionStorage.removeItem(SESSION_KEY); setSessionChecked(true); });
   }, [slug]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── Redirect unauthenticated users to home ────────────────────
+  useEffect(() => {
+    if (sessionChecked && !activeBooking) {
+      navigate("/");
+    }
+  }, [sessionChecked, activeBooking]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Itinerary PDF download ────────────────────────────────────
   const downloadItinerary = async () => {
@@ -967,6 +977,15 @@ export default function TravelBriefingLanding() {
     localTips:   dest?.bannerImages?.localTips   || dest?.heroImages?.[1] || dest?.heroImage,
     faq:         dest?.bannerImages?.faq         || dest?.heroImages?.[3] || dest?.heroImage,
   };
+
+  // ── Loading — wait for session check before revealing destination ──
+  if (!sessionChecked) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: bg }}>
+        <Loader className="w-7 h-7 animate-spin" style={{ color: "#f97316" }} />
+      </div>
+    );
+  }
 
   // ── 404 ─────────────────────────────────────────────────────
   if (!dest) {
