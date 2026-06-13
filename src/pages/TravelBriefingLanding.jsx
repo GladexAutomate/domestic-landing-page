@@ -309,6 +309,24 @@ function ArrivalTab({ dest, activeTab, setActiveTab, tk, darkMode }) {
               {current.note}
             </div>
           )}
+          {current.travelTime && (
+            <div className="mt-4 rounded-xl border overflow-hidden" style={{ borderColor: tk.borderColor }}>
+              <div className="px-3 py-2" style={{ backgroundColor: darkMode ? "rgba(249,115,22,0.1)" : "rgba(249,115,22,0.07)" }}>
+                <p className="text-[10px] font-black uppercase tracking-widest" style={{ color: "#f97316" }}>Estimated Travel Time</p>
+              </div>
+              <div className="px-3 py-2.5 space-y-1.5">
+                {current.travelTime.breakdown.map((b) => (
+                  <div key={b.leg} className="flex items-center justify-between gap-3">
+                    <p className="text-xs" style={{ color: tk.textMuted }}>{b.leg}</p>
+                    <p className="text-xs font-bold shrink-0" style={{ color: tk.textPrimary }}>{b.duration}</p>
+                  </div>
+                ))}
+                <div className="pt-1.5 mt-1 border-t" style={{ borderColor: tk.borderColor }}>
+                  <p className="text-[10px] font-semibold" style={{ color: tk.textMuted }}>{current.travelTime.summary}</p>
+                </div>
+              </div>
+            </div>
+          )}
           {current.vanSchedule && (
             <div className="mt-4">
               <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: tk.textMuted }}>Van Transfer Schedule</p>
@@ -1483,24 +1501,59 @@ export default function TravelBriefingLanding() {
                   </div>
                 </div>
 
-                {/* Destination-defined emergency contacts (Ms. Che, Mr. Mark, etc.) */}
+                {/* Destination-defined emergency contacts — one card per group */}
                 {dest.emergencyContacts
-                  ?.flatMap((grp) => grp.contacts.map((c) => ({ ...c, group: grp.group, icon: grp.icon })))
-                  .filter((c) => c.number !== "+63 917 875 2200")
-                  .map((c) => (
-                    <div key={c.label} className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor, backgroundColor: cardBg }}>
-                      <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(249,115,22,0.12)" }}>{c.icon}</div>
-                      <div>
-                        <p className="text-[9px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>{c.group}</p>
-                        <p className="text-sm font-black" style={{ color: textPrimary }}>{c.label}</p>
-                        {c.number.startsWith("+") ? (
-                          <a href={`tel:${c.number.replace(/\s/g, "")}`} className="text-xs font-bold" style={{ color: "#f97316" }}>{c.number}</a>
-                        ) : (
-                          <p className="text-xs font-semibold" style={{ color: textMuted }}>{c.number}</p>
-                        )}
+                  ?.filter((grp) => {
+                    if (grp.contacts.every((c) => c.number === "+63 917 875 2200")) return false;
+                    const tourName = (activeBooking?.tour?.tourName || "").toLowerCase();
+                    if (grp.hideForKeywords?.some((kw) => tourName.includes(kw.toLowerCase()))) return false;
+                    if (grp.tourKeywords) {
+                      return grp.tourKeywords.some((kw) => tourName.includes(kw.toLowerCase()));
+                    }
+                    return true;
+                  })
+                  .map((grp) => {
+                    const contacts = grp.contacts.filter((c) => c.number !== "+63 917 875 2200");
+                    const multi = contacts.length > 1;
+                    const allSameLabel = contacts.every(x => x.label === contacts[0].label);
+                    return (
+                      <div key={grp.group} className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor, backgroundColor: cardBg }}>
+                        <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(249,115,22,0.12)" }}>{grp.icon}</div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[9px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>{grp.group}</p>
+                          {multi ? (
+                            <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 mt-1">
+                              {contacts.map((c, i) => (
+                                <span key={c.number} className="flex items-center gap-x-1.5">
+                                  {!allSameLabel && (
+                                    <span className="text-xs font-semibold" style={{ color: textPrimary }}>{c.label}:</span>
+                                  )}
+                                  {/^[0+]/.test(c.number) ? (
+                                    <a href={`tel:${c.number.replace(/[\s\-]/g, "")}`} className="text-xs font-bold" style={{ color: "#f97316" }}>{c.number}</a>
+                                  ) : (
+                                    <span className="text-xs font-semibold" style={{ color: textMuted }}>{c.number}</span>
+                                  )}
+                                  {i < contacts.length - 1 && <span className="text-xs font-bold" style={{ color: textMuted }}>/</span>}
+                                </span>
+                              ))}
+                            </div>
+                          ) : (
+                            <>
+                              <p className="text-sm font-black" style={{ color: textPrimary }}>{contacts[0].label}</p>
+                              {/^[0+]/.test(contacts[0].number) ? (
+                                <a href={`tel:${contacts[0].number.replace(/[\s\-]/g, "")}`} className="text-xs font-bold" style={{ color: "#f97316" }}>{contacts[0].number}</a>
+                              ) : (
+                                <p className="text-xs font-semibold" style={{ color: textMuted }}>{contacts[0].number}</p>
+                              )}
+                            </>
+                          )}
+                          {grp.email && (
+                            <a href={`mailto:${grp.email}`} className="text-[10px] font-semibold mt-1 block" style={{ color: textMuted }}>{grp.email}</a>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))
+                    );
+                  })
                 }
 
                 {/* Booking-specific contacts */}
@@ -1792,6 +1845,24 @@ export default function TravelBriefingLanding() {
                           <div className="mt-4 p-3 rounded-xl border text-xs flex items-start gap-2" style={{ borderColor: "rgba(249,115,22,0.25)", backgroundColor: "rgba(249,115,22,0.07)", color: textMuted }}>
                             <Info className="w-3.5 h-3.5 shrink-0 mt-0.5 text-orange-400" />
                             {info.note}
+                          </div>
+                        )}
+                        {info.travelTime && (
+                          <div className="mt-4 rounded-xl border overflow-hidden" style={{ borderColor }}>
+                            <div className="px-3 py-2" style={{ backgroundColor: darkMode ? "rgba(249,115,22,0.1)" : "rgba(249,115,22,0.07)" }}>
+                              <p className="text-[10px] font-black uppercase tracking-widest" style={{ color: "#f97316" }}>Estimated Travel Time</p>
+                            </div>
+                            <div className="px-3 py-2.5 space-y-1.5">
+                              {info.travelTime.breakdown.map((b) => (
+                                <div key={b.leg} className="flex items-center justify-between gap-3">
+                                  <p className="text-xs" style={{ color: textMuted }}>{b.leg}</p>
+                                  <p className="text-xs font-bold shrink-0" style={{ color: textPrimary }}>{b.duration}</p>
+                                </div>
+                              ))}
+                              <div className="pt-1.5 mt-1 border-t" style={{ borderColor }}>
+                                <p className="text-[10px] font-semibold" style={{ color: textMuted }}>{info.travelTime.summary}</p>
+                              </div>
+                            </div>
                           </div>
                         )}
                         {info.vanSchedule && (

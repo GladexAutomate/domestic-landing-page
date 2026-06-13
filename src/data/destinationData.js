@@ -97,10 +97,10 @@ export const DESTINATION_DATA = {
         ],
         activities: [
           "After breakfast, get ready for one of the highlights of the trip",
-          "Meet-up time: 8:00 AM – 9:00 AM at your hotel",
+          "Meet-up Time: 8:00 AM – 9:00 AM at Astoria Current. Alternatively, please wait for a message from our local Operations Team regarding the final pick-up time and further instructions.",
           "Complimentary island hopping tour around Boracay (tour ends approximately 3:00 PM)",
           "Visit Puka Beach and enjoy swimming, sightseeing, and relaxing by the beach",
-          "After the tour, transfer back to the hotel for free time",
+          "After the tour, guests will be dropped off at either Station 1 or Station 2. From there, please proceed with your own transfer back to the hotel and enjoy your free time.",
           "Overnight stay at the hotel",
         ],
       },
@@ -140,6 +140,16 @@ export const DESTINATION_DATA = {
           "Proceed with the arranged land and boat transfers to Boracay Island",
         ],
         note: "Do not leave the airport without coordinating with your representative. Contact the emergency number provided if you cannot locate your transfer.",
+        travelTime: {
+          summary: "Estimated total travel time: 30–60 minutes from airport arrival to hotel check-in.",
+          breakdown: [
+            { leg: "Airport → Caticlan Jetty Port", duration: "5–10 minutes" },
+            { leg: "Boat transfer to Boracay Island", duration: "10–15 minutes" },
+            { leg: "Boracay Port → Station 1", duration: "15–20 minutes" },
+            { leg: "Boracay Port → Station 2", duration: "10–15 minutes" },
+            { leg: "Boracay Port → Station 3", duration: "15–20 minutes" },
+          ],
+        },
       },
       kalibo: {
         steps: [
@@ -149,7 +159,15 @@ export const DESTINATION_DATA = {
           "Board the scheduled shuttle transfer going to Caticlan Jetty Port",
           "Continue with the boat transfer to Boracay Island",
         ],
-        note: "Travel time from Kalibo to hotels is approximately 1.5 hours. As a joiner transfer, total travel time may take 2–3 hours depending on traffic and driver coordination.",
+        note: "Travel time from Kalibo to hotels is approximately 1.5–2 hours. As a joiner transfer, total travel time may take 2–3 hours depending on traffic and driver coordination.",
+        travelTime: {
+          summary: "Estimated total travel time: 1.5–2 hours from airport arrival to hotel check-in.",
+          breakdown: [
+            { leg: "Kalibo Airport → Caticlan Jetty Port", duration: "1.5–2 hours (land transfer)" },
+            { leg: "Boat transfer to Boracay Island", duration: "10–15 minutes" },
+            { leg: "Boracay Port → Hotel", duration: "10–20 minutes" },
+          ],
+        },
       },
     },
     transferInstructions: {
@@ -223,6 +241,14 @@ export const DESTINATION_DATA = {
         contacts: [
           { label: "Ms. Che", number: "+63 985 045 3635" },
           { label: "Mr. Mark", number: "+63 995 416 7143" },
+        ],
+      },
+      {
+        group: "Local Transfer Operations Team",
+        icon: "🚌",
+        contacts: [
+          { label: "Hotline", number: "0967 017 0128" },
+          { label: "Hotline", number: "0907 847 5911" },
         ],
       },
     ],
@@ -667,10 +693,43 @@ export const DESTINATION_DATA = {
         ],
       },
       {
-        group: "Local Tour Operations Team",
-        icon: "📍",
+        group: "CEBU TRIP — Transfer Operations",
+        icon: "🚌",
+        email: "sales@cebutrip.com",
+        showAlways: true,
+        hideForKeywords: ["roundsouth", "uphill", "safari"],
         contacts: [
-          { label: "Tour Operations", number: "Refer to your travel voucher" },
+          { label: "Hotline", number: "0917 627 5830" },
+          { label: "Hotline", number: "0917 627 7890" },
+        ],
+      },
+      {
+        group: "CEBU AFF — Tour Operations",
+        icon: "📍",
+        email: "jugilalivio14@gmail.com",
+        tourKeywords: ["cebu city", "oslob", "moalboal", "simala tour"],
+        contacts: [
+          { label: "Hotline", number: "0928 714 1636" },
+          { label: "Hotline", number: "0921 815 3099" },
+        ],
+      },
+      {
+        group: "CEBU TRAVEL PH — Tour Operations",
+        icon: "📍",
+        email: "info@cebutravels.ph",
+        tourKeywords: ["roundsouth", "uphill", "safari"],
+        contacts: [
+          { label: "Hotline", number: "0917 182 2050" },
+        ],
+      },
+      {
+        group: "UNLI BOHOL — Tour Operations",
+        icon: "📍",
+        email: "unlibohol56@gmail.com",
+        tourKeywords: ["bohol"],
+        contacts: [
+          { label: "Hotline", number: "0999 107 3694" },
+          { label: "Hotline", number: "0945 377 4469" },
         ],
       },
     ],
@@ -1123,10 +1182,11 @@ export const DESTINATION_DATA = {
         ],
       },
       {
-        group: "Local Tour Operations Team",
+        group: "Local Transfer and Tour Operations Team",
         icon: "📍",
         contacts: [
-          { label: "Tour Operations", number: "Refer to your travel voucher" },
+          { label: "Hotline", number: "0953 114 2928" },
+          { label: "Hotline", number: "0921 975 3734" },
         ],
       },
     ],

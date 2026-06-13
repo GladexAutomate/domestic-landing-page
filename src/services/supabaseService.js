@@ -270,7 +270,7 @@ function normalizeTour(d) {
   if (!d) return null;
   const hotelInDesc = extractHotelFromDescription(d.description);
   return {
-    tourName:    d.tour_name || null,
+    tourName:    stripHtml(d.tour_name || "") || null,
     tourDate:    d.tour_date || null,
     description: stripHtml(d.description || ""),
     hotelMention: hotelInDesc,
@@ -306,8 +306,8 @@ function normalizeHotel(d, raw) {
     requests:           stripHtml(d.hotel_requests || ""),
     hotelConfirmation:  d.hotel_confirmation_number || d.confirmation_number || (!isOrdinalRef ? rawHotelNum : null) || null,
     hotelPhone:         d.hotel_phone || d.hotel_contact || d.contact_number || null,
-    // Hotel name — Fusioo may store it under several field names
-    hotelName:          d.hotel_name || d.hotel_property_name || d.property_name || d.accommodation_name || d.hotel_property || null,
+    // Hotel name — Fusioo may store it under several field names; stripHtml cleans &nbsp; and other entities
+    hotelName:          stripHtml(d.hotel_name || d.hotel_property_name || d.property_name || d.accommodation_name || d.hotel_property || "") || null,
   };
 }
 
@@ -400,7 +400,7 @@ function stripHtml(html) {
 
 function extractHotelFromDescription(html) {
   if (!html) return null;
-  const text = html.replace(/&amp;/g, "&").replace(/<[^>]*>/g, "");
+  const text = stripHtml(html);
   const match = text.match(/hotel[:\s]+([^\n<]+)/i);
   if (match) return match[1].trim();
   return null;
