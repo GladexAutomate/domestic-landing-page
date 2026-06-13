@@ -394,7 +394,7 @@ function BookingSection({ label, children, darkMode }) {
         >
           <div className="w-1 h-1 rounded-full" style={{ background: "#f97316" }} />
         </div>
-        <span className="text-[9px] font-black uppercase tracking-[0.14em]" style={{ color: "#f97316" }}>
+        <span className="text-[10px] font-black uppercase tracking-[0.14em]" style={{ color: "#f97316" }}>
           {label}
         </span>
       </div>
@@ -408,7 +408,7 @@ function BookingRow({ label1, value1, label2, value2, textPrimary, textMuted, pr
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
       <div>
-        <p className="text-[9px] font-bold uppercase tracking-wider mb-0.5" style={{ color: textMuted }}>
+        <p className="text-[10px] font-bold uppercase tracking-wider mb-0.5" style={{ color: textMuted }}>
           {label1}
         </p>
         <p className={`text-sm font-semibold leading-snug${preWrap1 ? " whitespace-pre-line" : ""}`} style={{ color: textPrimary }}>
@@ -417,7 +417,7 @@ function BookingRow({ label1, value1, label2, value2, textPrimary, textMuted, pr
       </div>
       {label2 ? (
         <div>
-          <p className="text-[9px] font-bold uppercase tracking-wider mb-0.5" style={{ color: textMuted }}>
+          <p className="text-[10px] font-bold uppercase tracking-wider mb-0.5" style={{ color: textMuted }}>
             {label2}
           </p>
           <p className="text-sm font-semibold leading-snug" style={{ color: textPrimary }}>
@@ -555,7 +555,7 @@ function OutfitCard({ occasion, darkMode, textPrimary, textMuted, cardBg, border
 
       {/* ── Gender tabs ── */}
       <div className="px-3 pt-2.5 pb-1">
-        <p className="text-[9px] font-black uppercase tracking-widest mb-1.5" style={{ color: textMuted }}>Outfit for:</p>
+        <p className="text-[10px] font-black uppercase tracking-widest mb-1.5" style={{ color: textMuted }}>Outfit for:</p>
         <div className="flex flex-wrap gap-1.5">
           {OUTFIT_TABS.map((tab) => (
             <button
@@ -575,7 +575,7 @@ function OutfitCard({ occasion, darkMode, textPrimary, textMuted, cardBg, border
 
       {/* Save badge */}
       <div className="px-3 pb-1">
-        <span className="text-[9px] font-black uppercase tracking-widest" style={{ color: "#f97316" }}>✦ Save This For Later!</span>
+        <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: "#f97316" }}>✦ Save This For Later!</span>
       </div>
 
       {/* Tip */}
@@ -1187,7 +1187,7 @@ export default function TravelBriefingLanding() {
                         style={{ background: "rgba(0,0,0,0.18)" }}
                       >
                         <p
-                          className="text-[9px] font-bold uppercase tracking-wider mb-0.5"
+                          className="text-[10px] font-bold uppercase tracking-wider mb-0.5"
                           style={{ color: "rgba(255,255,255,0.62)" }}
                         >
                           {label}
@@ -1407,7 +1407,7 @@ export default function TravelBriefingLanding() {
                             )}
                             {activeBooking.transferDetails && (
                               <div>
-                                <p className="text-[9px] font-bold uppercase tracking-wider mb-0.5" style={{ color: textMuted }}>
+                                <p className="text-[10px] font-bold uppercase tracking-wider mb-0.5" style={{ color: textMuted }}>
                                   Transfer Details
                                 </p>
                                 <p className="text-sm font-medium leading-relaxed" style={{ color: textPrimary }}>
@@ -1495,7 +1495,7 @@ export default function TravelBriefingLanding() {
                 <div className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor, backgroundColor: cardBg }}>
                   <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(249,115,22,0.12)" }}>📞</div>
                   <div>
-                    <p className="text-[9px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Gladex Hotline</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Gladex Hotline</p>
                     <a href="tel:+639178752200" className="text-sm font-black" style={{ color: "#f97316" }}>+63 917 875 2200</a>
                     <p className="text-[10px] mt-0.5" style={{ color: textMuted }}>Available 8AM–8PM</p>
                   </div>
@@ -1520,7 +1520,7 @@ export default function TravelBriefingLanding() {
                       <div key={grp.group} className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor, backgroundColor: cardBg }}>
                         <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(249,115,22,0.12)" }}>{grp.icon}</div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-[9px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>{grp.group}</p>
+                          <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>{grp.group}</p>
                           {multi ? (
                             <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 mt-1">
                               {contacts.map((c, i) => (
@@ -1561,7 +1561,7 @@ export default function TravelBriefingLanding() {
                   <div className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor, backgroundColor: cardBg }}>
                     <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(249,115,22,0.12)" }}>👤</div>
                     <div>
-                      <p className="text-[9px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Your Coordinator</p>
+                      <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Your Coordinator</p>
                       <p className="text-sm font-black" style={{ color: textPrimary }}>{activeBooking.consultantName || activeBooking.agentName}</p>
                       {activeBooking.consultantPhone ? (
                         <a href={`tel:${activeBooking.consultantPhone.replace(/\s/g,"")}`} className="text-xs font-bold" style={{ color: "#f97316" }}>{activeBooking.consultantPhone}</a>
@@ -1575,7 +1575,7 @@ export default function TravelBriefingLanding() {
                   <div className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor, backgroundColor: cardBg }}>
                     <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(249,115,22,0.12)" }}>🏨</div>
                     <div>
-                      <p className="text-[9px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Hotel</p>
+                      <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Hotel</p>
                       <p className="text-sm font-black" style={{ color: textPrimary }}>{activeBooking.hotel?.hotelName || activeBooking.tour?.hotelMention}</p>
                       {activeBooking.hotel?.hotelPhone ? (
                         <a href={`tel:${activeBooking.hotel.hotelPhone.replace(/\s/g,"")}`} className="text-xs font-bold" style={{ color: "#f97316" }}>{activeBooking.hotel.hotelPhone}</a>
@@ -1589,7 +1589,7 @@ export default function TravelBriefingLanding() {
                   <div className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor, backgroundColor: cardBg }}>
                     <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(249,115,22,0.12)" }}>🚌</div>
                     <div>
-                      <p className="text-[9px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Transfer Contact</p>
+                      <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Transfer Contact</p>
                       <p className="text-sm font-black" style={{ color: textPrimary }}>{activeBooking.transfer.supplier || "Transfer Coordinator"}</p>
                       <a href={`tel:${activeBooking.transfer.transferContact.replace(/\s/g,"")}`} className="text-xs font-bold" style={{ color: "#f97316" }}>{activeBooking.transfer.transferContact}</a>
                     </div>
@@ -2220,7 +2220,7 @@ export default function TravelBriefingLanding() {
                         {/* YOUR REVIEW badge + edit button */}
                         {isOwn && (
                           <div className="flex items-center justify-between">
-                            <span className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full" style={{ backgroundColor: "rgba(249,115,22,0.15)", color: "#f97316" }}>
+                            <span className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full" style={{ backgroundColor: "rgba(249,115,22,0.15)", color: "#f97316" }}>
                               Your Review
                             </span>
                             <button

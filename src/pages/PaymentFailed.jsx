@@ -27,7 +27,7 @@ export default function PaymentFailed() {
         style={{ backgroundColor: cardBg, borderColor }}>
 
         <XCircle className="w-14 h-14 mx-auto mb-4" style={{ color: "#ef4444" }} />
-        <p className="font-black text-2xl mb-2" style={{ color: textPrimary }}>Payment Failed</p>
+        <p className="font-heading font-black text-2xl mb-2" style={{ color: textPrimary }}>Payment Failed</p>
         <p className="text-sm mb-8" style={{ color: textMuted }}>
           Your payment was not completed. No charges were made. Please try again or contact our support team.
         </p>

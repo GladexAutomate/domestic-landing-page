@@ -1032,7 +1032,7 @@ export default function DestinationPreview() {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }}
           className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5"
         >
-          <span className="text-[9px] font-semibold tracking-[0.28em] uppercase text-white/35">Scroll</span>
+          <span className="text-[10px] font-semibold tracking-[0.28em] uppercase text-white/35">Scroll</span>
           <motion.div animate={{ y: [0, 7, 0] }} transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
             className="w-px h-7 bg-gradient-to-b from-white/30 to-transparent"
           />
@@ -1189,7 +1189,7 @@ export default function DestinationPreview() {
                 {/* ── Badge pinned to BOTTOM-CENTRE — above all overlays ── */}
                 <div className="absolute bottom-4 left-0 right-0 flex justify-center pointer-events-none z-30">
                   <div
-                    className="px-3 py-1 rounded-full text-[9px] font-bold tracking-widest uppercase border"
+                    className="px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase border"
                     style={{
                       background: "rgba(0,0,0,0.6)",
                       backdropFilter: "blur(8px)",
@@ -1674,11 +1674,11 @@ export default function DestinationPreview() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="rounded-2xl border px-5 py-4" style={{ borderColor, backgroundColor: darkMode ? "#0D1A0D" : "#F0FFF4" }}>
                   <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#22C55E" }}>Check-In</p>
-                  <p className="font-black text-xl" style={{ color: textPrimary }}>{HOTEL_INFO.checkIn}</p>
+                  <p className="font-heading font-black text-xl" style={{ color: textPrimary }}>{HOTEL_INFO.checkIn}</p>
                 </div>
                 <div className="rounded-2xl border px-5 py-4" style={{ borderColor, backgroundColor: darkMode ? "#1C0808" : "#FFF5F5" }}>
                   <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#EF4444" }}>Check-Out</p>
-                  <p className="font-black text-xl" style={{ color: textPrimary }}>{HOTEL_INFO.checkOut}</p>
+                  <p className="font-heading font-black text-xl" style={{ color: textPrimary }}>{HOTEL_INFO.checkOut}</p>
                 </div>
               </div>
               {HOTEL_INFO.hotels?.length > 0 && (
@@ -2143,7 +2143,7 @@ export default function DestinationPreview() {
             <SectionHeader eyebrow="Money Matters" title="Currency Guide" />
             <div className="space-y-4">
               <div className="rounded-2xl border px-5 py-4 space-y-2" style={{ borderColor: "#f97316", backgroundColor: darkMode ? "#1A0A00" : "#FFF8F0" }}>
-                <span className="font-black text-2xl" style={{ color: "#f97316" }}>{CURRENCY.symbol} {CURRENCY.currency}</span>
+                <span className="font-heading font-black text-2xl" style={{ color: "#f97316" }}>{CURRENCY.symbol} {CURRENCY.currency}</span>
                 <p className="text-sm" style={muted}>{CURRENCY.exchangeRate}</p>
                 {CURRENCY.usdNote && <p className="text-xs leading-relaxed" style={muted}>{CURRENCY.usdNote}</p>}
                 {CURRENCY.recommendedCash && <p className="text-xs font-semibold" style={{ color: "#f97316" }}>💡 {CURRENCY.recommendedCash}</p>}
@@ -2237,7 +2237,7 @@ export default function DestinationPreview() {
                 ))}
               </motion.div>
             </div>
-            <p className="text-[9px] font-semibold uppercase tracking-widest mt-2 opacity-40 sm:hidden" style={{ color: textMuted }}>
+            <p className="text-[10px] font-semibold uppercase tracking-widest mt-2 opacity-40 sm:hidden" style={{ color: textMuted }}>
               ← swipe to explore →
             </p>
           </div>
@@ -2456,7 +2456,7 @@ export default function DestinationPreview() {
             All Destinations
           </motion.button>
         </div>
-        <p className="text-center text-[9px] uppercase tracking-[0.2em] font-semibold mt-6" style={{ color: textMuted }}>
+        <p className="text-center text-[10px] uppercase tracking-[0.2em] font-semibold mt-6" style={{ color: textMuted }}>
           Gladex Travel and Tours Corp. · Boracay 3D2N Package · Phase 1
         </p>
       </div>

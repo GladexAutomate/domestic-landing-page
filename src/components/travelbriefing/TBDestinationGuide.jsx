@@ -273,7 +273,7 @@ function RestaurantCard({ resto, darkMode, tk }) {
 
         {/* Famous For chips */}
         <div className="mb-3">
-          <p className="text-[9px] font-black uppercase tracking-widest mb-1.5" style={{ color: tk.textMuted }}>
+          <p className="text-[10px] font-black uppercase tracking-widest mb-1.5" style={{ color: tk.textMuted }}>
             Famous For
           </p>
           <div className="flex flex-wrap gap-1.5">
@@ -313,7 +313,7 @@ function SubBanner({ title, eyebrow, src }) {
       <img src={src} alt="" className="w-full h-full object-cover" loading="lazy" />
       <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(249,115,22,0.65) 0%, rgba(0,0,0,0.72) 100%)" }} />
       <div className="absolute inset-0 flex flex-col justify-end p-4">
-        {eyebrow && <p className="text-[9px] font-black uppercase tracking-widest mb-1" style={{ color: "rgba(255,255,255,0.68)" }}>{eyebrow}</p>}
+        {eyebrow && <p className="text-[10px] font-black uppercase tracking-widest mb-1" style={{ color: "rgba(255,255,255,0.68)" }}>{eyebrow}</p>}
         <p className="font-black text-lg text-white" style={{ letterSpacing: "-0.02em" }}>{title}</p>
       </div>
     </div>

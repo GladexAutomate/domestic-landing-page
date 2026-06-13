@@ -160,7 +160,7 @@ export default function PaymentSuccess() {
           className="rounded-2xl border p-8 text-center max-w-md w-full"
           style={{ backgroundColor: cardBg, borderColor }}>
           <Loader className="w-10 h-10 mx-auto mb-4 animate-spin" style={{ color: "#f97316" }} />
-          <p className="font-black text-xl mb-2" style={{ color: textPrimary }}>
+          <p className="font-heading font-black text-xl mb-2" style={{ color: textPrimary }}>
             {step === "verifying" ? "Verifying your payment…" : "Processing your booking…"}
           </p>
           <p className="text-sm mb-6" style={{ color: textMuted }}>
@@ -189,7 +189,7 @@ export default function PaymentSuccess() {
             <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#22c55e" }}>
               Payment Successful
             </p>
-            <p className="font-black text-2xl" style={{ color: textPrimary }}>
+            <p className="font-heading font-black text-2xl" style={{ color: textPrimary }}>
               Booking Confirmed!
             </p>
             <p className="text-sm mt-1" style={{ color: textMuted }}>
@@ -243,7 +243,7 @@ export default function PaymentSuccess() {
           className="rounded-2xl border p-8 text-center max-w-md w-full"
           style={{ backgroundColor: cardBg, borderColor }}>
           <XCircle className="w-12 h-12 mx-auto mb-4" style={{ color: "#ef4444" }} />
-          <p className="font-black text-xl mb-2" style={{ color: textPrimary }}>Payment Issue</p>
+          <p className="font-heading font-black text-xl mb-2" style={{ color: textPrimary }}>Payment Issue</p>
           <p className="text-sm mb-6" style={{ color: textMuted }}>{error}</p>
           <a href="tel:+639178752200"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold"

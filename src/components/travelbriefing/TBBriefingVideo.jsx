@@ -48,7 +48,7 @@ export default function TBBriefingVideo({ dest, darkMode, tk }) {
             </div>
             <div className="absolute bottom-4 left-0 right-0 flex justify-center pointer-events-none z-30">
               <div
-                className="px-3 py-1 rounded-full text-[9px] font-bold tracking-widest uppercase border"
+                className="px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase border"
                 style={{
                   background: "rgba(0,0,0,0.6)",
                   backdropFilter: "blur(8px)",
@@ -143,7 +143,7 @@ export default function TBBriefingVideo({ dest, darkMode, tk }) {
           {/* Badge */}
           <div className="absolute bottom-4 left-0 right-0 flex justify-center pointer-events-none z-30">
             <div
-              className="px-3 py-1 rounded-full text-[9px] font-bold tracking-widest uppercase border"
+              className="px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase border"
               style={{
                 background: "rgba(0,0,0,0.6)",
                 backdropFilter: "blur(8px)",

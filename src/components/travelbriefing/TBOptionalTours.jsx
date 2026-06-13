@@ -118,7 +118,7 @@ export default function TBOptionalTours({ dest, darkMode, tk, onAddToCart, cartI
               {/* Badge */}
               {tour.badge && (
                 <div className="absolute top-2.5 left-2.5">
-                  <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-full backdrop-blur-sm"
+                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full backdrop-blur-sm"
                     style={{ background: "rgba(249,115,22,0.88)", color: "#fff" }}>
                     {tour.badge}
                   </span>
@@ -129,12 +129,12 @@ export default function TBOptionalTours({ dest, darkMode, tk, onAddToCart, cartI
               {tour.liveData !== undefined && (
                 <div className="absolute top-2.5 right-2.5">
                   {priceIsLive ? (
-                    <span className="text-[9px] font-bold px-2 py-1 rounded-full backdrop-blur-sm"
+                    <span className="text-[10px] font-bold px-2 py-1 rounded-full backdrop-blur-sm"
                       style={{ background: "rgba(34,197,94,0.88)", color: "#fff" }}>
                       Live API
                     </span>
                   ) : (
-                    <span className="text-[9px] font-bold px-2 py-1 rounded-full backdrop-blur-sm"
+                    <span className="text-[10px] font-bold px-2 py-1 rounded-full backdrop-blur-sm"
                       style={{ background: "rgba(249,115,22,0.82)", color: "#fff" }}>
                       Est. Price
                     </span>
@@ -156,7 +156,7 @@ export default function TBOptionalTours({ dest, darkMode, tk, onAddToCart, cartI
               </p>
 
               {/* Price — headline figure */}
-              <p className="font-black text-2xl mb-1" style={{ color: "#f97316", letterSpacing: "-0.02em" }}>
+              <p className="font-heading font-black text-2xl mb-1" style={{ color: "#f97316", letterSpacing: "-0.02em" }}>
                 {resolvedPrice !== null
                   ? <>
                       ₱{resolvedPrice.toLocaleString("en-PH")}
