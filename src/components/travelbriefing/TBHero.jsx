@@ -8,6 +8,7 @@ const DEST_GRADIENTS = {
   boracay: "linear-gradient(135deg, #0c4a6e 0%, #075985 40%, #0369a1 100%)",
   cebu:    "linear-gradient(135deg, #164e63 0%, #065f46 50%, #047857 100%)",
   elnido:  "linear-gradient(135deg, #134e4a 0%, #0f766e 50%, #14b8a6 100%)",
+  bohol:   "linear-gradient(135deg, #78350f 0%, #92400e 40%, #d97706 100%)",
   default: "linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%)",
 };
 

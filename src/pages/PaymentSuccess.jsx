@@ -221,7 +221,7 @@ export default function PaymentSuccess() {
             </div>
 
             <button
-              onClick={() => navigate(`/destination/boracay`)}
+              onClick={() => navigate(`/destination/bohol`)}
               className="w-full py-3 rounded-xl text-sm font-bold"
               style={{ background: "linear-gradient(135deg, #f97316, #b45309)", color: "#fff" }}
             >
