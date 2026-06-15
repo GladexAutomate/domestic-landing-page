@@ -1486,7 +1486,6 @@ export const DESTINATION_DATA = {
         image: "https://i.pinimg.com/736x/11/a5/21/11a52103fc00631ed6ddd21712da11cb.jpg",
         photos: [
           "https://i.pinimg.com/736x/11/a5/21/11a52103fc00631ed6ddd21712da11cb.jpg",
-          "https://static1.squarespace.com/static/67402c32971ec25a55d58dfc/6746d967e39e66038bb3b9e7/674839da53da7b3f6c9db2b1/1739868390745/Panglao+International+Airport.jpg?format=1500w",
         ],
         activities: [
           "Arrive at Bohol-Panglao International Airport",
@@ -1534,7 +1533,6 @@ export const DESTINATION_DATA = {
         image: "https://static1.squarespace.com/static/67402c32971ec25a55d58dfc/6746d967e39e66038bb3b9e7/674839da53da7b3f6c9db2b1/1739868390745/Panglao+International+Airport.jpg?format=1500w",
         photos: [
           "https://static1.squarespace.com/static/67402c32971ec25a55d58dfc/6746d967e39e66038bb3b9e7/674839da53da7b3f6c9db2b1/1739868390745/Panglao+International+Airport.jpg?format=1500w",
-          "https://i.pinimg.com/736x/11/a5/21/11a52103fc00631ed6ddd21712da11cb.jpg",
         ],
         activities: [
           "After breakfast, enjoy free time at your own leisure until hotel check-out at 12:00 NN",
