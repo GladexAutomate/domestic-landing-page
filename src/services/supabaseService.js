@@ -119,85 +119,95 @@ async function fetchDetail(table, recordId) {
 // ═══════════════════════════════════════════════════════════════
 // DESTINATION SLUG DETECTION
 // ═══════════════════════════════════════════════════════════════
+
+// Gather all text fields from a booking into one object for detection
+function _bookingTexts(booking) {
+  return {
+    dest:         (booking.destination || "").toLowerCase(),
+    tourName:     (booking.tour?.tourName || "").toLowerCase(),
+    tourDesc:     stripHtml(booking.tour?.description || "").toLowerCase(),
+    transferDesc: stripHtml(booking.transfer?.description || "").toLowerCase(),
+    rawStr:       JSON.stringify(booking.rawData || {}).toLowerCase(),
+  };
+}
+
 export const detectDestinationSlug = (booking) => {
-  const dest = (booking.destination || "").toLowerCase();
+  const { dest, tourName, tourDesc, transferDesc, rawStr } = _bookingTexts(booking);
 
-  // 1. Readable text in destination field
-  if (dest.includes("boracay"))         return "boracay";
-  if (dest.includes("cebu"))            return "cebu";
+  // 1. Destination field text — most reliable when it's human-readable
+  if (dest.includes("boracay"))                          return "boracay";
+  if (dest.includes("cebu"))                             return "cebu";
   if (dest.includes("nido") || dest.includes("palawan")) return "elnido";
-  if (dest.includes("bohol"))           return "bohol";
+  if (dest.includes("bohol"))                            return "bohol";
 
-  // 2. Fusioo ID map
+  // 2. Check ALL text fields for bohol BEFORE FUSIOO_DEST_MAP
+  //    (i63798db52a7f44f187ef6f9828c3a57a is shared between Boracay & Bohol rows —
+  //     text signals must take priority over the ambiguous map entry)
+  if (tourName.includes("bohol") || tourName.includes("chocolate") || tourName.includes("panglao") || tourName.includes("tarsier")) return "bohol";
+  if (tourDesc.includes("bohol") || tourDesc.includes("panglao"))   return "bohol";
+  if (transferDesc.includes("bohol") || transferDesc.includes("tagbilaran") || transferDesc.includes("panglao")) return "bohol";
+  if (rawStr.includes("bohol"))                                      return "bohol";
+
+  // 3. Fusioo ID map (after bohol text checks — ambiguous IDs handled above)
   if (FUSIOO_DEST_MAP[booking.destination]) return FUSIOO_DEST_MAP[booking.destination];
 
-  // 3. Infer from transfer description
-  const transferDesc = stripHtml(booking.transfer?.description || "").toLowerCase();
+  // 4. Transfer description for other destinations
   if (transferDesc.includes("caticlan") || transferDesc.includes("boracay")) return "boracay";
   if (transferDesc.includes("cebu") || transferDesc.includes("mactan"))      return "cebu";
   if (transferDesc.includes("pps") || transferDesc.includes("el nido") || transferDesc.includes("puerto princesa")) return "elnido";
 
-  // 4. Infer from tour name
-  const tourName = (booking.tour?.tourName || "").toLowerCase();
-  if (tourName.includes("island hop"))  return "boracay";
+  // 5. Tour name for other destinations
+  if (tourName.includes("island hop"))                                        return "boracay";
   if (tourName.includes("kawasan") || tourName.includes("oslob") || tourName.includes("cebu")) return "cebu";
-  if (tourName.includes("el nido") || tourName.includes("lagoon")) return "elnido";
-  if (tourName.includes("bohol") || tourName.includes("chocolate") || tourName.includes("panglao") || tourName.includes("tarsier")) return "bohol";
+  if (tourName.includes("el nido") || tourName.includes("lagoon"))           return "elnido";
 
-  // 5. Infer from hotel name in tour description
-  const tourDesc = stripHtml(booking.tour?.description || "").toLowerCase();
+  // 6. Tour description for other destinations
   if (tourDesc.includes("henann") || tourDesc.includes("boracay")) return "boracay";
-  if (tourDesc.includes("cebu"))        return "cebu";
-  if (tourDesc.includes("el nido"))     return "elnido";
-  if (tourDesc.includes("bohol") || tourDesc.includes("panglao")) return "bohol";
+  if (tourDesc.includes("cebu"))                                    return "cebu";
+  if (tourDesc.includes("el nido"))                                 return "elnido";
 
-  // 6. Raw data JSON fallback
-  const rawStr = JSON.stringify(booking.rawData || {}).toLowerCase();
-  if (rawStr.includes("boracay"))       return "boracay";
-  if (rawStr.includes("\"cebu\""))      return "cebu";
-  if (rawStr.includes("el nido"))       return "elnido";
-  if (rawStr.includes("bohol"))         return "bohol";
+  // 7. Raw data fallback for other destinations
+  if (rawStr.includes("boracay"))    return "boracay";
+  if (rawStr.includes("\"cebu\""))   return "cebu";
+  if (rawStr.includes("el nido"))    return "elnido";
 
-  // Default: boracay (most common destination — 52/200 sample bookings)
   return "boracay";
 };
 
 // ── Domestic-only slug detection — returns null if destination is not one of
-// our 3 supported domestic packages. Used to reject international GDX entries.
+// our supported domestic packages. Used to reject international GDX entries.
 export const detectDomesticSlug = (booking) => {
-  const dest = (booking.destination || "").toLowerCase();
+  const { dest, tourName, tourDesc, transferDesc, rawStr } = _bookingTexts(booking);
 
-  if (dest.includes("boracay"))         return "boracay";
-  if (dest.includes("cebu"))            return "cebu";
+  if (dest.includes("boracay"))                          return "boracay";
+  if (dest.includes("cebu"))                             return "cebu";
   if (dest.includes("nido") || dest.includes("palawan")) return "elnido";
-  if (dest.includes("bohol"))           return "bohol";
+  if (dest.includes("bohol"))                            return "bohol";
+
+  if (tourName.includes("bohol") || tourName.includes("chocolate") || tourName.includes("panglao") || tourName.includes("tarsier")) return "bohol";
+  if (tourDesc.includes("bohol") || tourDesc.includes("panglao"))   return "bohol";
+  if (transferDesc.includes("bohol") || transferDesc.includes("tagbilaran") || transferDesc.includes("panglao")) return "bohol";
+  if (rawStr.includes("bohol"))                                      return "bohol";
 
   if (FUSIOO_DEST_MAP[booking.destination]) return FUSIOO_DEST_MAP[booking.destination];
 
-  const transferDesc = stripHtml(booking.transfer?.description || "").toLowerCase();
   if (transferDesc.includes("caticlan") || transferDesc.includes("boracay")) return "boracay";
   if (transferDesc.includes("cebu") || transferDesc.includes("mactan"))      return "cebu";
   if (transferDesc.includes("pps") || transferDesc.includes("el nido") || transferDesc.includes("puerto princesa")) return "elnido";
 
-  const tourName = (booking.tour?.tourName || "").toLowerCase();
-  if (tourName.includes("island hop"))  return "boracay";
+  if (tourName.includes("island hop"))                                        return "boracay";
   if (tourName.includes("kawasan") || tourName.includes("oslob") || tourName.includes("cebu")) return "cebu";
-  if (tourName.includes("el nido") || tourName.includes("lagoon")) return "elnido";
-  if (tourName.includes("bohol") || tourName.includes("chocolate") || tourName.includes("panglao") || tourName.includes("tarsier")) return "bohol";
+  if (tourName.includes("el nido") || tourName.includes("lagoon"))           return "elnido";
 
-  const tourDesc = stripHtml(booking.tour?.description || "").toLowerCase();
   if (tourDesc.includes("henann") || tourDesc.includes("boracay")) return "boracay";
-  if (tourDesc.includes("cebu"))        return "cebu";
-  if (tourDesc.includes("el nido"))     return "elnido";
-  if (tourDesc.includes("bohol") || tourDesc.includes("panglao")) return "bohol";
+  if (tourDesc.includes("cebu"))                                    return "cebu";
+  if (tourDesc.includes("el nido"))                                 return "elnido";
 
-  const rawStr = JSON.stringify(booking.rawData || {}).toLowerCase();
-  if (rawStr.includes("boracay"))       return "boracay";
-  if (rawStr.includes("\"cebu\""))      return "cebu";
-  if (rawStr.includes("el nido"))       return "elnido";
-  if (rawStr.includes("bohol"))         return "bohol";
+  if (rawStr.includes("boracay"))    return "boracay";
+  if (rawStr.includes("\"cebu\""))   return "cebu";
+  if (rawStr.includes("el nido"))    return "elnido";
+  if (rawStr.includes("bohol"))      return "bohol";
 
-  // Unknown destination — likely international
   return null;
 };
 
