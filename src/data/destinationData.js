@@ -1451,9 +1451,9 @@ export const DESTINATION_DATA = {
     description: "Discover Bohol's iconic Chocolate Hills, rare Philippine Tarsiers, the scenic Loboc River, and the pristine white-sand beaches of Panglao Island.",
     airport: "Bohol-Panglao International Airport (BPH)",
     region: "Tagbilaran, Bohol",
-    heroImage: "https://i.pinimg.com/736x/d0/c9/1a/d0c91af0bc467be04ced0aabe291b8c7.jpg",
+    heroImage: "https://i.pinimg.com/736x/3f/8f/fa/3f8ffaded6ac0f091eebbe77b07c4903.jpg",
     heroImages: [
-      "https://i.pinimg.com/736x/d0/c9/1a/d0c91af0bc467be04ced0aabe291b8c7.jpg",
+      "https://i.pinimg.com/736x/3f/8f/fa/3f8ffaded6ac0f091eebbe77b07c4903.jpg",
       "https://i.pinimg.com/736x/cf/03/c3/cf03c3896c3e4e32271345e86d764448.jpg",
       "https://islanddiariesph.com/wp-content/uploads/2024/09/balicasag-island-bohol-18.jpg",
       "https://gttp.images.tshiftcdn.com/292564/x/0/a-popular-photo-taking-spot-in-bilar-manmade-forest.jpg",
