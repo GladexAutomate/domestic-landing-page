@@ -19,6 +19,16 @@ function Lightbox({ photos, startIndex, onClose }) {
   const prev = () => setCurrent((c) => (c - 1 + photos.length) % photos.length);
   const next = () => setCurrent((c) => (c + 1) % photos.length);
 
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "ArrowLeft")  prev();
+      if (e.key === "ArrowRight") next();
+      if (e.key === "Escape")     onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [photos.length]);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
