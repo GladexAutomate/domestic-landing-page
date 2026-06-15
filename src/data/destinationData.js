@@ -1736,7 +1736,7 @@ export const DESTINATION_DATA = {
       ],
       photoSpots: [
         { name: "Chocolate Hills Viewdeck", note: "Head up before 8AM for cool temperatures and no crowds — golden sunrise over the hills is breathtaking", image: "https://i.pinimg.com/736x/51/bc/c8/51bcc8f60b91dfffd91d63a622560d46.jpg" },
-        { name: "Man-Made Forest Road", note: "Drive or walk through the mahogany canopy — perfect symmetrical photos especially in late afternoon light", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQK7qAs9CeqawLQghnX2W18qi3s8bDvpritfg&s" },
+        { name: "Man-Made Forest Road", note: "Drive or walk through the mahogany canopy — perfect symmetrical photos especially in late afternoon light", image: "https://bohollocal.ph/cdn/shop/products/Man-madeforest_1.jpg?v=1588166515" },
         { name: "Balicasag Island Underwater", note: "Sea turtles, reef fish, and crystal-clear visibility — bring a waterproof phone case or underwater camera", image: "https://www.pelago.com/img/products/PH-Philippines/exclusive-tour-bohol-balicasag-hopping-tour-virgin-island-bbq-lunch-dolphin-watching/5e5db74a-47e1-44eb-8557-7f2f723d8926_exclusive-tour-bohol-balicasag-hopping-tour-virgin-island-bbq-lunch-dolphin-watching.jpg" },
         { name: "Alona Beach, Panglao", note: "White sand and turquoise water — best for sunrise photos before the beach gets busy", image: "https://www.zubludiving.com/images/Philippines/Visayas/Alona/Alona-Beach-Panglao-Bohol-Philippines-Banner.jpg" },
       ],
