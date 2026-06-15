@@ -126,7 +126,7 @@ export const detectDestinationSlug = (booking) => {
   if (dest.includes("boracay"))         return "boracay";
   if (dest.includes("cebu"))            return "cebu";
   if (dest.includes("nido") || dest.includes("palawan")) return "elnido";
-  if (dest.includes("bohol"))           return "cebu";
+  if (dest.includes("bohol"))           return "bohol";
 
   // 2. Fusioo ID map
   if (FUSIOO_DEST_MAP[booking.destination]) return FUSIOO_DEST_MAP[booking.destination];
@@ -142,18 +142,21 @@ export const detectDestinationSlug = (booking) => {
   if (tourName.includes("island hop"))  return "boracay";
   if (tourName.includes("kawasan") || tourName.includes("oslob") || tourName.includes("cebu")) return "cebu";
   if (tourName.includes("el nido") || tourName.includes("lagoon")) return "elnido";
+  if (tourName.includes("bohol") || tourName.includes("chocolate") || tourName.includes("panglao") || tourName.includes("tarsier")) return "bohol";
 
   // 5. Infer from hotel name in tour description
   const tourDesc = stripHtml(booking.tour?.description || "").toLowerCase();
   if (tourDesc.includes("henann") || tourDesc.includes("boracay")) return "boracay";
   if (tourDesc.includes("cebu"))        return "cebu";
   if (tourDesc.includes("el nido"))     return "elnido";
+  if (tourDesc.includes("bohol") || tourDesc.includes("panglao")) return "bohol";
 
   // 6. Raw data JSON fallback
   const rawStr = JSON.stringify(booking.rawData || {}).toLowerCase();
   if (rawStr.includes("boracay"))       return "boracay";
   if (rawStr.includes("\"cebu\""))      return "cebu";
   if (rawStr.includes("el nido"))       return "elnido";
+  if (rawStr.includes("bohol"))         return "bohol";
 
   // Default: boracay (most common destination — 52/200 sample bookings)
   return "boracay";
@@ -167,7 +170,7 @@ export const detectDomesticSlug = (booking) => {
   if (dest.includes("boracay"))         return "boracay";
   if (dest.includes("cebu"))            return "cebu";
   if (dest.includes("nido") || dest.includes("palawan")) return "elnido";
-  if (dest.includes("bohol"))           return "cebu";
+  if (dest.includes("bohol"))           return "bohol";
 
   if (FUSIOO_DEST_MAP[booking.destination]) return FUSIOO_DEST_MAP[booking.destination];
 
@@ -180,16 +183,19 @@ export const detectDomesticSlug = (booking) => {
   if (tourName.includes("island hop"))  return "boracay";
   if (tourName.includes("kawasan") || tourName.includes("oslob") || tourName.includes("cebu")) return "cebu";
   if (tourName.includes("el nido") || tourName.includes("lagoon")) return "elnido";
+  if (tourName.includes("bohol") || tourName.includes("chocolate") || tourName.includes("panglao") || tourName.includes("tarsier")) return "bohol";
 
   const tourDesc = stripHtml(booking.tour?.description || "").toLowerCase();
   if (tourDesc.includes("henann") || tourDesc.includes("boracay")) return "boracay";
   if (tourDesc.includes("cebu"))        return "cebu";
   if (tourDesc.includes("el nido"))     return "elnido";
+  if (tourDesc.includes("bohol") || tourDesc.includes("panglao")) return "bohol";
 
   const rawStr = JSON.stringify(booking.rawData || {}).toLowerCase();
   if (rawStr.includes("boracay"))       return "boracay";
   if (rawStr.includes("\"cebu\""))      return "cebu";
   if (rawStr.includes("el nido"))       return "elnido";
+  if (rawStr.includes("bohol"))         return "bohol";
 
   // Unknown destination — likely international
   return null;
