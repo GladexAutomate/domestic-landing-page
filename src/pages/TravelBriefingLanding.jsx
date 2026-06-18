@@ -211,10 +211,11 @@ function HeroPlane() {
   return (
     <div
       className="absolute pointer-events-none select-none"
-      style={{ top: "22%", left: 0, animation: "tb-plane-fly 22s linear 1.5s infinite" }}
+      style={{ top: "13%", left: 0, animation: "tb-plane-fly 24s linear 0s infinite" }}
     >
-      <svg width="30" height="30" viewBox="0 0 24 24" fill="rgba(255,255,255,0.72)">
-        <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+      {/* Send / paper-plane icon — naturally faces right */}
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="rgba(255,255,255,0.78)">
+        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
       </svg>
     </div>
   );
