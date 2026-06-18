@@ -184,13 +184,61 @@ function getItemIcon(item) {
 function FadeIn({ children, delay = 0 }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 6 }}
+      initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.35, delay }}
+      viewport={{ once: true, margin: "-30px" }}
+      transition={{ duration: 0.52, delay, ease: [0.22, 1, 0.36, 1] }}
     >
       {children}
     </motion.div>
+  );
+}
+
+// ── Travel-themed hero decorations ───────────────────────────────
+function CloudDecor({ width = 140, opacity = 0.13, style = {} }) {
+  return (
+    <div className="absolute pointer-events-none select-none" style={style}>
+      <svg width={width} viewBox="0 0 140 52" fill="none">
+        <ellipse cx="70"  cy="35" rx="52" ry="16" fill="white" fillOpacity={opacity} />
+        <ellipse cx="43"  cy="33" rx="30" ry="18" fill="white" fillOpacity={opacity} />
+        <ellipse cx="100" cy="31" rx="26" ry="15" fill="white" fillOpacity={opacity} />
+      </svg>
+    </div>
+  );
+}
+
+function HeroPlane() {
+  return (
+    <div
+      className="absolute pointer-events-none select-none"
+      style={{ top: "22%", left: 0, animation: "tb-plane-fly 22s linear 1.5s infinite" }}
+    >
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="rgba(255,255,255,0.72)">
+        <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+      </svg>
+    </div>
+  );
+}
+
+function HeroWave({ fill }) {
+  return (
+    <div className="absolute bottom-0 left-0 right-0 pointer-events-none" style={{ lineHeight: 0 }}>
+      <svg viewBox="0 0 1440 54" preserveAspectRatio="none" style={{ display: "block", width: "100%", height: "54px" }}>
+        <path d="M0,27 C240,54 480,0 720,27 C960,54 1200,6 1440,27 L1440,54 L0,54 Z" fill={fill} />
+      </svg>
+    </div>
+  );
+}
+
+function SectionWave({ fillTop, fillBottom, flip = false }) {
+  const fill = flip ? fillTop : fillBottom;
+  return (
+    <div className="pointer-events-none" style={{ lineHeight: 0, overflow: "hidden", height: "38px" }}>
+      <svg viewBox="0 0 1440 38" preserveAspectRatio="none"
+        style={{ display: "block", width: "100%", height: "38px", transform: flip ? "scaleY(-1)" : "none" }}>
+        <path d="M0,19 C360,38 1080,0 1440,19 L1440,38 L0,38 Z" fill={fill} />
+      </svg>
+    </div>
   );
 }
 
@@ -330,13 +378,30 @@ function StripeHeader({ eyebrow, title, description, tk, colored = false }) {
 // Usage: <SectionStripe alt={1}><StripeHeader .../><SectionCard darkMode={darkMode}>content</SectionCard></SectionStripe>
 function SectionStripe({ children, alt = 0, darkMode, py = "py-10" }) {
   const bgs = darkMode
-    ? ["transparent", "rgba(255,153,19,0.14)", "rgba(255,153,19,0.07)"]
-    : ["transparent", "linear-gradient(160deg, #ff9913 0%, #e07800 100%)", "linear-gradient(160deg, #ffb347 0%, #ff9913 100%)"];
+    ? [
+        "transparent",
+        "linear-gradient(155deg, rgba(255,153,19,0.22) 0%, rgba(200,90,0,0.14) 100%)",
+        "linear-gradient(155deg, rgba(255,153,19,0.12) 0%, rgba(200,90,0,0.07) 100%)",
+      ]
+    : [
+        "transparent",
+        "linear-gradient(155deg, #ff9913 0%, #d96800 100%)",
+        "linear-gradient(155deg, #ffa726 0%, #e07000 100%)",
+      ];
   const bg = bgs[alt % 3];
   const isColored = bg && bg !== "transparent";
+
   if (!isColored) {
-    return <div className={`${py} mb-2`}>{children}</div>;
+    const dotPattern = darkMode
+      ? "radial-gradient(circle, rgba(255,153,19,0.09) 1.5px, transparent 1.5px)"
+      : "radial-gradient(circle, rgba(0,0,0,0.045) 1.5px, transparent 1.5px)";
+    return (
+      <div className={`${py} mb-2`} style={{ backgroundImage: dotPattern, backgroundSize: "26px 26px" }}>
+        {children}
+      </div>
+    );
   }
+
   return (
     <div className={`relative ${py} mb-2`}>
       <div
@@ -345,10 +410,22 @@ function SectionStripe({ children, alt = 0, darkMode, py = "py-10" }) {
           position: "absolute", top: 0, bottom: 0,
           left: "50%", width: "100vw",
           transform: "translateX(-50%)",
-          background: bg, zIndex: 0,
+          background: bg,
+          zIndex: 0,
         }}
       />
-      <div style={{ position: "relative", zIndex: 1 }}>{children}</div>
+      {/* Subtle diagonal texture overlay */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: "absolute", top: 0, bottom: 0,
+          left: "50%", width: "100vw",
+          transform: "translateX(-50%)",
+          backgroundImage: "repeating-linear-gradient(-55deg, transparent, transparent 18px, rgba(255,255,255,0.04) 18px, rgba(255,255,255,0.04) 19px)",
+          zIndex: 1,
+        }}
+      />
+      <div style={{ position: "relative", zIndex: 2 }}>{children}</div>
     </div>
   );
 }
@@ -361,8 +438,8 @@ function SectionCard({ children, darkMode }) {
       style={{
         backgroundColor: darkMode ? "#1a1a1a" : "#ffffff",
         boxShadow: darkMode
-          ? "0 2px 16px rgba(0,0,0,0.5)"
-          : "0 2px 8px rgba(0,0,0,0.06), 0 8px 32px rgba(0,0,0,0.04)",
+          ? "0 4px 24px rgba(0,0,0,0.55), 0 1px 0 rgba(255,255,255,0.04), inset 0 1px 0 rgba(255,255,255,0.03)"
+          : "0 2px 6px rgba(0,0,0,0.04), 0 10px 36px rgba(0,0,0,0.07), 0 0 0 1px rgba(0,0,0,0.03)",
         overflow: "hidden",
         padding: "1.5rem",
       }}
@@ -1288,19 +1365,32 @@ export default function TravelBriefingLanding() {
       )}
 
       {/* ── DESTINATION HERO IMAGE ── */}
-      <div className="relative w-full overflow-hidden" style={{ minHeight: "380px", maxHeight: "480px" }}>
+      <div className="relative w-full overflow-hidden" style={{ minHeight: "400px", maxHeight: "500px" }}>
         <img
           src={dest.heroImage}
           alt={dest.name}
           className="w-full h-full object-cover"
           style={{ position: "absolute", inset: 0, height: "100%" }}
         />
+        {/* Gradient overlay — richer depth */}
         <div
           className="absolute inset-0"
-          style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.68) 100%)" }}
+          style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.35) 40%, rgba(0,0,0,0.72) 100%)" }}
         />
+
+        {/* Decorative clouds */}
+        <CloudDecor width={170} opacity={0.13} style={{ top: "10%", left: "6%",  animation: "tb-cloud-1 30s ease-in-out infinite" }} />
+        <CloudDecor width={120} opacity={0.09} style={{ top: "20%", right: "8%", animation: "tb-cloud-2 38s ease-in-out infinite" }} />
+        <CloudDecor width={90}  opacity={0.06} style={{ top: "6%",  left: "45%", animation: "tb-cloud-3 45s ease-in-out infinite" }} />
+
+        {/* Animated airplane */}
+        <HeroPlane />
+
+        {/* Wave transition to content */}
+        <HeroWave fill={bg} />
+
         <div
-          className="absolute inset-0 flex flex-col items-center justify-end text-center pb-10 px-6"
+          className="absolute inset-0 flex flex-col items-center justify-end text-center pb-16 px-6"
         >
           <h1
             className="font-black text-white mb-2"

@@ -189,3 +189,28 @@
 .ghost-btn:hover span {
   color: #ffffff;
 }
+
+/* ── Domestic Travel Briefing — hero decoration animations ───── */
+@keyframes tb-cloud-1 {
+  0%, 100% { transform: translateX(0px) translateY(0px); }
+  50%       { transform: translateX(22px) translateY(-8px); }
+}
+@keyframes tb-cloud-2 {
+  0%, 100% { transform: translateX(0px) translateY(0px); }
+  50%       { transform: translateX(-18px) translateY(6px); }
+}
+@keyframes tb-cloud-3 {
+  0%, 100% { transform: translateX(0px) translateY(0px); }
+  35%       { transform: translateX(14px) translateY(-5px); }
+  70%       { transform: translateX(-9px) translateY(4px); }
+}
+@keyframes tb-plane-fly {
+  0%   { transform: translateX(-120px) translateY(0px)   rotate(-10deg); opacity: 0; }
+  5%   { opacity: 0.72; }
+  90%  { opacity: 0.60; }
+  100% { transform: translateX(calc(100vw + 140px)) translateY(-28px) rotate(-10deg); opacity: 0; }
+}
+@keyframes tb-route-dot {
+  0%, 100% { opacity: 0.25; transform: scale(1); }
+  50%       { opacity: 0.6;  transform: scale(1.35); }
+}
