@@ -1355,15 +1355,15 @@ export default function TravelBriefingLanding() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: bg, paddingBottom: (isTestMode && addOnsCart.length > 0) ? "80px" : 0, transition: "padding-bottom 0.3s ease" }}>
-      <DestinationNavbar hideLogo={!activeBooking} />
-
-      {/* ── TEST MODE BANNER ── */}
+      {/* ── TEST MODE BANNER — pinned above navbar ── */}
       {isTestMode && (
-        <div className="fixed top-16 left-0 right-0 z-[49] flex items-center justify-center gap-2 px-4 py-2 text-xs font-black tracking-widest uppercase" style={{ backgroundColor: "#7c3aed", color: "#fff" }}>
+        <div className="fixed top-0 left-0 right-0 z-[51] flex items-center justify-center gap-2 px-4 py-2 text-xs font-black tracking-widest uppercase" style={{ backgroundColor: "#7c3aed", color: "#fff" }}>
           <span>🧪</span>
           <span>TEST MODE — {dest?.name} · Demo Data · Not a Real Booking</span>
         </div>
       )}
+
+      <DestinationNavbar hideLogo={!activeBooking} topOffset={isTestMode ? 36 : 0} />
 
       {/* ── DESTINATION HERO IMAGE ── */}
       <div className="relative w-full overflow-hidden" style={{ minHeight: "400px", maxHeight: "500px" }}>

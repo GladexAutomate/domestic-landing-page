@@ -4,7 +4,7 @@ import { useTheme } from "@/lib/ThemeContext";
 
 const GLADEX_LOGO = "https://media.base44.com/images/public/6a0d6ad01d34ead888ecdd6f/5ecc9b2cd_Untitled-design-75.png";
 
-export default function DestinationNavbar({ hideLogo = false }) {
+export default function DestinationNavbar({ hideLogo = false, topOffset = 0 }) {
   const [scrolled, setScrolled] = useState(false);
   const { darkMode, toggleTheme } = useTheme();
 
@@ -31,8 +31,9 @@ export default function DestinationNavbar({ hideLogo = false }) {
 
   return (
     <nav
-      className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
+      className="fixed left-0 right-0 z-50 transition-all duration-500"
       style={{
+        top: topOffset,
         background: navBg,
         backdropFilter: scrolled ? "blur(16px)" : "none",
         WebkitBackdropFilter: scrolled ? "blur(16px)" : "none",
