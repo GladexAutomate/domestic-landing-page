@@ -211,7 +211,7 @@ function HeroPlane() {
   return (
     <div
       className="absolute pointer-events-none select-none"
-      style={{ top: "13%", left: 0, animation: "tb-plane-fly 24s linear 0s infinite" }}
+      style={{ top: "32%", left: 0, animation: "tb-plane-fly 24s linear 0s infinite" }}
     >
       {/* Send / paper-plane icon — naturally faces right */}
       <svg width="34" height="34" viewBox="0 0 24 24" fill="rgba(255,255,255,0.78)">
