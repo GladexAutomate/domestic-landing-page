@@ -342,15 +342,10 @@ export default function TBDestinationGuide({ dest, darkMode, tk }) {
       {guide.restaurants?.length > 0 && (
         <div>
           <SubBanner title="Best Food & Dining" eyebrow="Where to Eat" tk={tk} />
-          <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "16px" }}>
-            {guide.restaurants.map((resto, i) => {
-              const isLastOdd = guide.restaurants.length % 2 !== 0 && i === guide.restaurants.length - 1;
-              return (
-                <div key={resto.name} style={{ flex: "1 1 380px", maxWidth: isLastOdd ? "calc(50% - 8px)" : "520px", minWidth: 0 }}>
-                  <RestaurantCard resto={resto} darkMode={darkMode} tk={tk} />
-                </div>
-              );
-            })}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {guide.restaurants.map((resto) => (
+              <RestaurantCard key={resto.name} resto={resto} darkMode={darkMode} tk={tk} />
+            ))}
           </div>
         </div>
       )}

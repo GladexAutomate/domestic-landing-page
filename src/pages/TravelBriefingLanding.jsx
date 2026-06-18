@@ -223,9 +223,121 @@ function HeroPlane() {
 
 function HeroWave({ fill }) {
   return (
-    <div className="absolute bottom-0 left-0 right-0 pointer-events-none" style={{ lineHeight: 0 }}>
-      <svg viewBox="0 0 1440 54" preserveAspectRatio="none" style={{ display: "block", width: "100%", height: "54px" }}>
-        <path d="M0,27 C240,54 480,0 720,27 C960,54 1200,6 1440,27 L1440,54 L0,54 Z" fill={fill} />
+    <div className="absolute bottom-0 left-0 right-0 pointer-events-none" style={{ lineHeight: 0, filter: "drop-shadow(0 -4px 12px rgba(0,0,0,0.10))" }}>
+      <svg viewBox="0 0 1440 90" preserveAspectRatio="none" style={{ display: "block", width: "100%", height: "90px" }}>
+        <path d="M0,45 C180,90 420,0 720,42 C1020,84 1260,8 1440,45 L1440,90 L0,90 Z" fill={fill} />
+      </svg>
+    </div>
+  );
+}
+
+function SeagullDecor({ style = {} }) {
+  return (
+    <div className="absolute pointer-events-none select-none" style={style}>
+      <svg width="52" height="22" viewBox="0 0 52 22" fill="none">
+        <path d="M2,11 Q9,4 16,11 Q23,4 30,11" stroke="white" strokeWidth="1.9" strokeLinecap="round" fill="none" strokeOpacity="0.85"/>
+        <path d="M20,7 Q26,1 32,7 Q38,1 44,7" stroke="white" strokeWidth="1.5" strokeLinecap="round" fill="none" strokeOpacity="0.62"/>
+        <path d="M34,14 Q39,9 44,14 Q49,9 52,14" stroke="white" strokeWidth="1.2" strokeLinecap="round" fill="none" strokeOpacity="0.45"/>
+      </svg>
+    </div>
+  );
+}
+
+function LocationPinDecor({ style = {} }) {
+  return (
+    <div className="absolute pointer-events-none select-none" style={{ animation: "tb-pin-float 3.2s ease-in-out infinite", ...style }}>
+      <svg width="26" height="34" viewBox="0 0 26 34" fill="none">
+        <path d="M13,2 C6.9,2 2,6.9 2,13 C2,20.7 13,32 13,32 C13,32 24,20.7 24,13 C24,6.9 19.1,2 13,2 Z" fill="#ff9913" fillOpacity="0.92"/>
+        <circle cx="13" cy="13" r="4.5" fill="white" fillOpacity="0.92"/>
+      </svg>
+    </div>
+  );
+}
+
+function CompassDecor({ style = {} }) {
+  return (
+    <div className="absolute pointer-events-none select-none" style={style}>
+      <svg width="46" height="46" viewBox="0 0 46 46" fill="none">
+        <circle cx="23" cy="23" r="19" stroke="white" strokeWidth="1.3" strokeDasharray="4 3" strokeOpacity="0.5" fill="none"/>
+        <circle cx="23" cy="23" r="2" fill="white" fillOpacity="0.65"/>
+        <path d="M23,7 L25,19 L23,17.5 L21,19 Z" fill="#ff9913" fillOpacity="0.88"/>
+        <path d="M23,39 L21,27 L23,28.5 L25,27 Z" fill="white" fillOpacity="0.48"/>
+        <line x1="7" y1="23" x2="13" y2="23" stroke="white" strokeWidth="1" strokeOpacity="0.35"/>
+        <line x1="33" y1="23" x2="39" y2="23" stroke="white" strokeWidth="1" strokeOpacity="0.35"/>
+      </svg>
+    </div>
+  );
+}
+
+function HeroPlaneFly({ style = {} }) {
+  return (
+    <div className="absolute pointer-events-none select-none" style={style}>
+      <svg width="50" height="22" viewBox="0 0 50 22" fill="none">
+        <path d="M2,11 L40,7 L48,11 L40,15 L2,11 Z" fill="white" fillOpacity="0.88"/>
+        <path d="M12,10 L28,2 L32,4 L18,12 Z" fill="white" fillOpacity="0.78"/>
+        <path d="M12,12 L28,20 L32,18 L18,10 Z" fill="white" fillOpacity="0.78"/>
+        <path d="M3,11 L7,7 L9,8 L6,11 Z" fill="white" fillOpacity="0.70"/>
+        <path d="M30,9 L36,6 L37,8 L31,10 Z" fill="white" fillOpacity="0.62"/>
+      </svg>
+    </div>
+  );
+}
+
+// ── Tropical destination artwork — used in Official Briefing card ──────────
+function DestArtwork({ slug }) {
+  const palette = {
+    boracay:       { sky1: "#1568C8", sky2: "#6BB8E0", ocean: "#005B8E", palm: "#267B26", sand: "#F0D888" },
+    cebu:          { sky1: "#1260B8", sky2: "#60B0DA", ocean: "#004A80", palm: "#2D7A2D", sand: "#EAD080" },
+    elnido:        { sky1: "#1A6AB0", sky2: "#60B8D0", ocean: "#00789A", palm: "#2D7A2D", sand: "#E8CC78" },
+    bohol:         { sky1: "#1A70BC", sky2: "#68B8E0", ocean: "#006898", palm: "#267B26", sand: "#DEB860" },
+    siargao:       { sky1: "#0E5098", sky2: "#50A0D0", ocean: "#00468A", palm: "#2D7A2D", sand: "#E8D080" },
+    puertoprincesa:{ sky1: "#1258A0", sky2: "#5898C8", ocean: "#1A6080", palm: "#1A5520", sand: "#D8C878" },
+  };
+  const c = palette[slug] || palette.boracay;
+  const id = `dg-${slug}`;
+  return (
+    <div className="absolute inset-0 overflow-hidden">
+      <svg viewBox="0 0 400 260" style={{ width: "100%", height: "100%", display: "block" }} xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id={`${id}-sky`} x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={c.sky1}/><stop offset="100%" stopColor={c.sky2}/></linearGradient>
+          <linearGradient id={`${id}-oc`}  x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={c.ocean}/><stop offset="100%" stopColor="#002A50"/></linearGradient>
+          <linearGradient id={`${id}-sd`}  x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={c.sand}/><stop offset="100%" stopColor="#D4A850"/></linearGradient>
+          <linearGradient id={`${id}-wm`}  x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="rgba(255,148,20,0.28)"/><stop offset="50%" stopColor="rgba(255,120,10,0.12)"/><stop offset="100%" stopColor="rgba(0,60,120,0.04)"/></linearGradient>
+        </defs>
+        <rect width="400" height="260" fill={`url(#${id}-sky)`}/>
+        <circle cx="345" cy="46" r="48" fill="#FFE060" fillOpacity="0.12"/>
+        <circle cx="345" cy="46" r="32" fill="#FFB800" fillOpacity="0.36"/>
+        <circle cx="345" cy="46" r="20" fill="#FF9200"/>
+        <ellipse cx="68" cy="46" rx="46" ry="16" fill="white" fillOpacity="0.90"/>
+        <ellipse cx="50" cy="44" rx="30" ry="19" fill="white" fillOpacity="0.94"/>
+        <ellipse cx="96" cy="43" rx="26" ry="17" fill="white" fillOpacity="0.88"/>
+        <ellipse cx="242" cy="32" rx="38" ry="13" fill="white" fillOpacity="0.82"/>
+        <ellipse cx="264" cy="29" rx="27" ry="16" fill="white" fillOpacity="0.86"/>
+        <path d="M110,56 Q118,48 126,56 Q134,48 142,56" stroke="white" strokeWidth="1.7" strokeLinecap="round" fill="none" strokeOpacity="0.80"/>
+        <path d="M148,46 Q155,40 162,46 Q169,40 176,46" stroke="white" strokeWidth="1.4" strokeLinecap="round" fill="none" strokeOpacity="0.60"/>
+        <rect x="0" y="144" width="400" height="116" fill={`url(#${id}-oc)`}/>
+        <path d="M0,162 C60,156 120,166 196,162 C272,158 330,166 400,162 L400,182 C330,186 268,178 200,182 C132,186 66,179 0,183 Z" fill="#48CAE4" fillOpacity="0.42"/>
+        <path d="M0,168 C38,165 78,170 118,167 C158,164 198,169 238,166 C278,163 318,168 358,165 C376,164 392,167 400,166" stroke="white" strokeWidth="2.4" fill="none" strokeOpacity="0.55" strokeLinecap="round"/>
+        <circle cx="88" cy="168" r="1.4" fill="white" fillOpacity="0.70"/>
+        <circle cx="172" cy="172" r="1.2" fill="white" fillOpacity="0.62"/>
+        <circle cx="256" cy="165" r="1.4" fill="white" fillOpacity="0.66"/>
+        <circle cx="336" cy="170" r="1.2" fill="white" fillOpacity="0.60"/>
+        <line x1="258" y1="162" x2="258" y2="136" stroke="#3A1E08" strokeWidth="1.8" strokeLinecap="round"/>
+        <path d="M258,162 L258,137 L284,162 Z" fill="white" fillOpacity="0.85"/>
+        <path d="M258,162 L258,139 L235,158 Z" fill="white" fillOpacity="0.52"/>
+        <path d="M246,162 C251,165 268,165 272,162 Z" fill="#6B3C1A" fillOpacity="0.58"/>
+        <path d="M0,174 C52,168 118,176 200,173 C282,170 344,176 400,173 L400,260 L0,260 Z" fill={`url(#${id}-sd)`}/>
+        <path d="M44,260 C45,228 46,208 48,196" stroke="#3A1E08" strokeWidth="7.5" strokeLinecap="round" fill="none"/>
+        <path d="M48,196 C26,182 9,173 2,168" stroke={c.palm} strokeWidth="5.5" strokeLinecap="round" fill="none"/>
+        <path d="M48,196 C34,178 28,167 30,158" stroke={c.palm} strokeWidth="5" strokeLinecap="round" fill="none"/>
+        <path d="M48,196 C56,177 66,169 72,165" stroke={c.palm} strokeWidth="5.5" strokeLinecap="round" fill="none"/>
+        <path d="M48,196 C62,186 73,181 79,179" stroke={c.palm} strokeWidth="4.5" strokeLinecap="round" fill="none"/>
+        <path d="M374,260 C372,220 368,198 364,181" stroke="#3A1E08" strokeWidth="9" strokeLinecap="round" fill="none"/>
+        <path d="M364,181 C390,162 404,152 410,146" stroke={c.palm} strokeWidth="5.5" strokeLinecap="round" fill="none"/>
+        <path d="M364,181 C376,158 378,142 374,132" stroke={c.palm} strokeWidth="5.5" strokeLinecap="round" fill="none"/>
+        <path d="M364,181 C342,162 330,150 326,143" stroke={c.palm} strokeWidth="5.5" strokeLinecap="round" fill="none"/>
+        {/* Golden-hour warm overlay — ties to orange brand */}
+        <rect width="400" height="260" fill={`url(#${id}-wm)`}/>
       </svg>
     </div>
   );
@@ -352,8 +464,20 @@ function SectionHeader({ eyebrow, title, tk }) {
 }
 
 function StripeHeader({ eyebrow, title, description, tk, colored = false }) {
+  const accentStroke = colored ? "rgba(255,255,255,0.82)" : "#ff9913";
+  const orbitStroke  = colored ? "rgba(255,255,255,0.42)" : "rgba(255,153,19,0.50)";
   return (
     <div className="text-center mb-6">
+      {/* Tropical boat icon + dotted orbit — section accent */}
+      <div className="flex justify-center mb-2.5">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="13" stroke={orbitStroke} strokeWidth="1.3" strokeDasharray="3 2.5" fill="none"/>
+          <path d="M7.5,18.5 C9.5,16 12,15.5 16,16 C20,16.5 22.5,17 24.5,18.5 L22.5,21 C20,22 12,22 9.5,21 Z" fill={accentStroke} fillOpacity="0.88"/>
+          <line x1="16" y1="10.5" x2="16" y2="16.5" stroke={accentStroke} strokeWidth="1.3" strokeLinecap="round" strokeOpacity="0.78"/>
+          <path d="M16,12.5 L20.5,16.5" stroke={accentStroke} strokeWidth="0.9" strokeLinecap="round" strokeOpacity="0.58"/>
+          <path d="M7.5,20.5 C10,19 13,19.5 16,19 C19,18.5 22,19.5 24.5,20.5" stroke={accentStroke} strokeWidth="1" fill="none" strokeOpacity="0.42" strokeLinecap="round"/>
+        </svg>
+      </div>
       {eyebrow && (
         <p className="text-[11px] font-black uppercase tracking-widest mb-2"
           style={{ color: colored ? "rgba(255,255,255,0.72)" : "#ff9913" }}>
@@ -397,7 +521,7 @@ function SectionStripe({ children, alt = 0, darkMode, py = "py-10" }) {
       ? "radial-gradient(circle, rgba(255,153,19,0.09) 1.5px, transparent 1.5px)"
       : "radial-gradient(circle, rgba(0,0,0,0.045) 1.5px, transparent 1.5px)";
     return (
-      <div className={`${py} mb-2`} style={{ backgroundImage: dotPattern, backgroundSize: "26px 26px" }}>
+      <div className={`${py} mb-2`} style={{ backgroundImage: dotPattern, backgroundSize: "26px 26px", backgroundPosition: "13px 13px" }}>
         {children}
       </div>
     );
@@ -1355,51 +1479,97 @@ export default function TravelBriefingLanding() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: bg, paddingBottom: (isTestMode && addOnsCart.length > 0) ? "80px" : 0, transition: "padding-bottom 0.3s ease" }}>
-      {/* ── TEST MODE BANNER — pinned above navbar ── */}
-      {isTestMode && (
-        <div className="fixed top-0 left-0 right-0 z-[51] flex items-center justify-center gap-2 px-4 py-2 text-xs font-black tracking-widest uppercase" style={{ backgroundColor: "#7c3aed", color: "#fff" }}>
-          <span>🧪</span>
-          <span>TEST MODE — {dest?.name} · Demo Data · Not a Real Booking</span>
+      {/* ── TEST MODE: banner + navbar share one fixed container so they stack with no gap ── */}
+      {isTestMode ? (
+        <div className="fixed top-0 left-0 right-0 z-50 flex flex-col">
+          <div className="flex items-center justify-center gap-2 px-4 py-2 text-xs font-black tracking-widest uppercase" style={{ backgroundColor: "#7c3aed", color: "#fff" }}>
+            <span>🧪</span>
+            <span>TEST MODE — {dest?.name} · Demo Data · Not a Real Booking</span>
+          </div>
+          <DestinationNavbar hideLogo={!activeBooking} asFixed={false} />
         </div>
+      ) : (
+        <DestinationNavbar hideLogo={!activeBooking} />
       )}
 
-      <DestinationNavbar hideLogo={!activeBooking} topOffset={isTestMode ? 36 : 0} />
-
       {/* ── DESTINATION HERO IMAGE ── */}
-      <div className="relative w-full overflow-hidden" style={{ minHeight: "400px", maxHeight: "500px" }}>
+      <div className="relative w-full" style={{ minHeight: "420px", maxHeight: "min(520px, 62vh)", overflow: "hidden" }}>
         <img
           src={dest.heroImage}
           alt={dest.name}
           className="w-full h-full object-cover"
           style={{ position: "absolute", inset: 0, height: "100%" }}
         />
-        {/* Gradient overlay — richer depth */}
         <div
           className="absolute inset-0"
-          style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.35) 40%, rgba(0,0,0,0.72) 100%)" }}
+          style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.10) 0%, rgba(0,0,0,0.35) 40%, rgba(0,0,0,0.60) 75%, rgba(0,0,0,0.55) 100%)" }}
         />
 
-        {/* Decorative clouds */}
-        <CloudDecor width={170} opacity={0.13} style={{ top: "10%", left: "6%",  animation: "tb-cloud-1 30s ease-in-out infinite" }} />
-        <CloudDecor width={120} opacity={0.09} style={{ top: "20%", right: "8%", animation: "tb-cloud-2 38s ease-in-out infinite" }} />
-        <CloudDecor width={90}  opacity={0.06} style={{ top: "6%",  left: "45%", animation: "tb-cloud-3 45s ease-in-out infinite" }} />
+        {/* ── Hero tropical floating decorations ── */}
 
-        {/* Animated airplane */}
-        <HeroPlane />
+        {/* Sun — top-right, desktop + mobile */}
+        <div className="absolute pointer-events-none select-none"
+          style={{ top: "9%", right: "7%", opacity: 0.68, animation: "tb-pin-float 3.4s ease-in-out infinite" }}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="3.5" fill="white"/>
+            <path d="M12,2 L12,5 M12,19 L12,22 M2,12 L5,12 M19,12 L22,12 M5.64,5.64 L7.76,7.76 M16.24,16.24 L18.36,18.36 M18.36,5.64 L16.24,7.76 M7.76,16.24 L5.64,18.36"
+              stroke="white" strokeWidth="1.6" strokeLinecap="round"/>
+          </svg>
+        </div>
 
-        {/* Wave transition to content */}
-        <HeroWave fill={bg} />
+        {/* Wave — upper-left, desktop + mobile */}
+        <div className="absolute pointer-events-none select-none"
+          style={{ top: "18%", left: "6%", opacity: 0.52, animation: "tb-pin-float 2.8s ease-in-out 0.8s infinite" }}>
+          <svg width="30" height="14" viewBox="0 0 30 14" fill="none">
+            <path d="M1,7 C4,2 8,2 12,7 C16,12 20,12 24,7 C27,3.5 29,3 30,5"
+              stroke="white" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
 
-        <div
-          className="absolute inset-0 flex flex-col items-center justify-end text-center pb-16 px-6"
-        >
+        {/* Palm tree — desktop only, top-left */}
+        <div className="hidden sm:block absolute pointer-events-none select-none"
+          style={{ top: "11%", left: "8%", opacity: 0.50, animation: "tb-pin-float 4.0s ease-in-out 0.4s infinite" }}>
+          <svg width="22" height="30" viewBox="0 0 20 28" fill="none">
+            <path d="M10,27 Q9,20 11,13" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round"/>
+            <path d="M11,13 Q6,5 1,7 Q5,10 9,14 Z" fill="white" fillOpacity="0.85"/>
+            <path d="M11,13 Q14,5 19,7 Q15,10 13,14 Z" fill="white" fillOpacity="0.85"/>
+            <path d="M11,13 Q13,5 12,1 Q15,7 13,13 Z" fill="white" fillOpacity="0.75"/>
+          </svg>
+        </div>
+
+        {/* Small sparkle — desktop only, mid-right accent */}
+        <div className="hidden sm:block absolute pointer-events-none select-none"
+          style={{ top: "32%", right: "26%", opacity: 0.36, animation: "tb-pin-float 3.2s ease-in-out 1.6s infinite" }}>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+            <path d="M12,0 C12,6.5 12,6.5 24,12 C12,17.5 12,17.5 12,24 C12,17.5 12,17.5 0,12 C12,6.5 12,6.5 12,0 Z" fill="white"/>
+          </svg>
+        </div>
+
+        {/* Tiny sparkle — desktop only, lower-left depth */}
+        <div className="hidden sm:block absolute pointer-events-none select-none"
+          style={{ top: "52%", left: "20%", opacity: 0.26, animation: "tb-pin-float 3.8s ease-in-out 2.2s infinite" }}>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
+            <path d="M12,0 C12,6.5 12,6.5 24,12 C12,17.5 12,17.5 12,24 C12,17.5 12,17.5 0,12 C12,6.5 12,6.5 12,0 Z" fill="white"/>
+          </svg>
+        </div>
+
+        {/* Mobile only: small sparkle beside the sun */}
+        <div className="sm:hidden absolute pointer-events-none select-none"
+          style={{ top: "28%", right: "10%", opacity: 0.40, animation: "tb-pin-float 3.0s ease-in-out 1.4s infinite" }}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+            <path d="M12,0 C12,6.5 12,6.5 24,12 C12,17.5 12,17.5 12,24 C12,17.5 12,17.5 0,12 C12,6.5 12,6.5 12,0 Z" fill="white"/>
+          </svg>
+        </div>
+
+
+        <div className="absolute inset-0 flex flex-col items-center justify-end text-center pb-24 px-6">
           <h1
             className="font-black text-white mb-2"
             style={{
               fontSize: "clamp(2.6rem, 11vw, 5rem)",
               letterSpacing: "-0.03em",
               fontFamily: "'Montserrat', sans-serif",
-              lineHeight: 1.05,
+              lineHeight: 1.2,
               textShadow: "0 2px 24px rgba(0,0,0,0.5)",
             }}
           >
@@ -1422,7 +1592,7 @@ export default function TravelBriefingLanding() {
         {/* ══════════════════════════════════════════════════
             1. HERO / BOOKING ENTRY
            ══════════════════════════════════════════════════ */}
-        <SectionStripe alt={0} darkMode={darkMode} py="py-10">
+        <SectionStripe alt={0} darkMode={darkMode} py="pt-8 pb-10">
 
           {/* No booking — show search hero */}
           {!activeBooking && (
@@ -1964,46 +2134,56 @@ export default function TravelBriefingLanding() {
            ══════════════════════════════════════════════════ */}
         <SectionStripe alt={1} darkMode={darkMode}>
           <FadeIn>
-            <StripeHeader eyebrow="Official Briefing" title={`Official ${dest.name} Briefing`} description={`Everything you need to know before arriving in ${dest.name}.`} tk={tk} colored />
-
-            {/* Card */}
             <div
-              className="rounded-2xl border p-5"
+              className="rounded-3xl overflow-hidden"
               style={{
                 backgroundColor: cardBg,
-                borderColor,
-                boxShadow: cardShadow,
+                boxShadow: "0 4px 32px rgba(0,0,0,0.10)",
+                border: `1px solid ${borderColor}`,
               }}
             >
-              {/* Badges row */}
-              <div className="flex flex-wrap items-center gap-2 mb-4">
-                <span
-                  className="text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-full"
-                  style={{ background: "#ff9913", color: "#fff" }}
-                >
-                  {dest.tagline}
-                </span>
-                {dest.itinerary?.length && (
-                  <span
-                    className="text-[11px] font-semibold px-3 py-1.5 rounded-full border"
-                    style={{ borderColor, color: textMuted, backgroundColor: surfaceBg }}
+              <div>
+                <div className="p-6 sm:p-8">
+                  <p className="text-[10px] font-black uppercase tracking-widest mb-1" style={{ color: "#ff9913" }}>Official Briefing</p>
+                  <h2
+                    className="font-black mb-4"
+                    style={{
+                      fontSize: "clamp(1.35rem, 4vw, 1.9rem)",
+                      letterSpacing: "-0.025em",
+                      fontFamily: "'Montserrat', sans-serif",
+                      color: textPrimary,
+                      lineHeight: 1.15,
+                    }}
                   >
-                    {dest.itinerary.length} {dest.itinerary.length === 1 ? "Day" : "Days"} / {dest.itinerary.length - 1} {dest.itinerary.length - 1 === 1 ? "Night" : "Nights"}
-                  </span>
-                )}
+                    Official {dest.name} Briefing
+                  </h2>
+
+                  {/* Badges */}
+                  <div className="flex flex-wrap items-center gap-2 mb-5">
+                    <span className="text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-full" style={{ background: "#ff9913", color: "#fff" }}>
+                      {dest.tagline}
+                    </span>
+                    {dest.itinerary?.length && (
+                      <span className="text-[11px] font-semibold px-3 py-1.5 rounded-full border" style={{ borderColor, color: textMuted, backgroundColor: surfaceBg }}>
+                        {dest.itinerary.length} {dest.itinerary.length === 1 ? "Day" : "Days"} / {dest.itinerary.length - 1} {dest.itinerary.length - 1 === 1 ? "Night" : "Nights"}
+                      </span>
+                    )}
+                  </div>
+
+                  <div style={{ borderTop: `1px solid ${borderColor}`, marginBottom: "1.1rem" }} />
+
+                  <p className="text-sm mb-3 font-semibold leading-snug" style={{ color: textPrimary }}>
+                    Welcome and congratulations on your upcoming trip to {dest.name} with Gladex Tours!
+                  </p>
+                  <p className="text-sm mb-3 leading-relaxed" style={{ color: textMuted }}>
+                    This page contains your complete travel briefing — including arrival instructions, transfer details, hotel check-in policies, tour reminders, requirements, FAQs, and emergency contacts.
+                  </p>
+                  <p className="text-sm leading-relaxed" style={{ color: textMuted }}>
+                    Please read every section carefully before departure and keep this page bookmarked for easy reference throughout your trip. Questions? Reach us via Messenger, WhatsApp, or our hotline.
+                  </p>
+                </div>
+
               </div>
-
-              <div style={{ borderTop: `1px solid ${borderColor}`, marginBottom: "1rem" }} />
-
-              <p className="text-sm mb-3 font-semibold" style={{ color: textPrimary }}>
-                Welcome and congratulations on your upcoming trip to {dest.name} with Gladex Tours!
-              </p>
-              <p className="text-sm mb-3 leading-relaxed" style={{ color: textMuted }}>
-                This page contains your complete travel briefing — including all important travel information, arrival instructions, transfer details, hotel check-in policies, tour reminders, requirements, FAQs, and emergency contacts.
-              </p>
-              <p className="text-sm leading-relaxed" style={{ color: textMuted }}>
-                Please read every section carefully before your departure and keep this page bookmarked for easy reference throughout your trip. If you have questions after reviewing the briefing, reach out to our team via Messenger, WhatsApp, or our hotline.
-              </p>
             </div>
           </FadeIn>
         </SectionStripe>
@@ -2015,55 +2195,67 @@ export default function TravelBriefingLanding() {
           <SectionStripe alt={0} darkMode={darkMode}>
             <FadeIn>
               <StripeHeader eyebrow="What's Included" title="Package Inclusions" tk={tk} />
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Unified cream card — color as text/icon accents only */}
+              <div
+                className="rounded-3xl overflow-hidden border"
+                style={{ backgroundColor: cardBg, borderColor, boxShadow: cardShadow }}
+              >
+                <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x" style={{ "--tw-divide-opacity": 1, borderColor }}>
 
-                {/* ── INCLUSIONS ── */}
-                {dest.inclusions?.length > 0 && (
-                  <div className="rounded-2xl overflow-hidden border" style={{ borderColor: "rgba(34,197,94,0.25)", boxShadow: cardShadow }}>
-                    <div className="px-5 py-3.5" style={{ background: "linear-gradient(160deg, #16a34a 0%, #15803d 100%)" }}>
-                      <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: "rgba(255,255,255,0.72)" }}>What's Covered</p>
-                      <p className="font-black text-base text-white" style={{ letterSpacing: "-0.01em" }}>Package Inclusions</p>
-                    </div>
-                    <div className="p-4 space-y-3" style={{ backgroundColor: cardBg }}>
-                      {dest.inclusions.map((item, i) => (
-                        <div key={i} className="flex items-start gap-3">
-                          <div className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center mt-0.5" style={{ background: "#16a34a" }}>
-                            <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />
+                  {/* Inclusions column */}
+                  {dest.inclusions?.length > 0 && (
+                    <div className="p-6">
+                      <div className="flex items-center gap-2 mb-4">
+                        <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0" style={{ background: "rgba(22,163,74,0.12)" }}>
+                          <Check className="w-3.5 h-3.5" style={{ color: "#16a34a" }} strokeWidth={3} />
+                        </div>
+                        <div>
+                          <p className="text-[9px] font-black uppercase tracking-widest" style={{ color: textMuted }}>What's Covered</p>
+                          <p className="font-black text-sm leading-tight" style={{ color: "#16a34a", letterSpacing: "-0.01em" }}>Package Inclusions</p>
+                        </div>
+                      </div>
+                      <div className="space-y-3">
+                        {dest.inclusions.map((item, i) => (
+                          <div key={i} className="flex items-start gap-2.5">
+                            <Check className="w-4 h-4 shrink-0 mt-0.5" style={{ color: "#16a34a" }} strokeWidth={2.5} />
+                            <span className="text-sm leading-relaxed" style={{ color: textPrimary }}>{item}</span>
                           </div>
-                          <span className="text-sm leading-relaxed pt-1" style={{ color: textPrimary }}>{item}</span>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {/* ── EXCLUSIONS ── */}
-                {dest.exclusions?.length > 0 && (
-                  <div className="rounded-2xl overflow-hidden border" style={{ borderColor: "rgba(239,68,68,0.25)", boxShadow: cardShadow }}>
-                    <div className="px-5 py-3.5" style={{ background: "linear-gradient(160deg, #dc2626 0%, #b91c1c 100%)" }}>
-                      <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: "rgba(255,255,255,0.72)" }}>Not Covered</p>
-                      <p className="font-black text-base text-white" style={{ letterSpacing: "-0.01em" }}>Package Exclusions</p>
-                    </div>
-                    <div className="p-4 space-y-3" style={{ backgroundColor: cardBg }}>
-                      {dest.exclusions.map((item, i) => (
-                        <div key={i} className="flex items-start gap-3">
-                          <div className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center mt-0.5" style={{ background: "#dc2626" }}>
-                            <X className="w-3.5 h-3.5 text-white" strokeWidth={3} />
+                  {/* Exclusions column */}
+                  {dest.exclusions?.length > 0 && (
+                    <div className="p-6">
+                      <div className="flex items-center gap-2 mb-4">
+                        <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0" style={{ background: "rgba(220,38,38,0.10)" }}>
+                          <X className="w-3.5 h-3.5" style={{ color: "#dc2626" }} strokeWidth={3} />
+                        </div>
+                        <div>
+                          <p className="text-[9px] font-black uppercase tracking-widest" style={{ color: textMuted }}>Not Covered</p>
+                          <p className="font-black text-sm leading-tight" style={{ color: "#dc2626", letterSpacing: "-0.01em" }}>Package Exclusions</p>
+                        </div>
+                      </div>
+                      <div className="space-y-3">
+                        {dest.exclusions.map((item, i) => (
+                          <div key={i} className="flex items-start gap-2.5">
+                            <X className="w-4 h-4 shrink-0 mt-0.5" style={{ color: "#dc2626" }} strokeWidth={2.5} />
+                            <span className="text-sm leading-relaxed" style={{ color: textPrimary }}>{item}</span>
                           </div>
-                          <span className="text-sm leading-relaxed pt-1" style={{ color: textPrimary }}>{item}</span>
-                        </div>
-                      ))}
-                      {dest.exclusionNotes?.length > 0 && (
-                        <div className="pt-3 space-y-1.5" style={{ borderTop: `1px solid ${borderColor}` }}>
-                          {dest.exclusionNotes.map((note, i) => (
-                            <p key={i} className="text-xs leading-snug" style={{ color: textMuted }}>{note}</p>
-                          ))}
-                        </div>
-                      )}
+                        ))}
+                        {dest.exclusionNotes?.length > 0 && (
+                          <div className="pt-3 space-y-1.5" style={{ borderTop: `1px solid ${borderColor}` }}>
+                            {dest.exclusionNotes.map((note, i) => (
+                              <p key={i} className="text-xs leading-snug" style={{ color: textMuted }}>{note}</p>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
+                </div>
               </div>
             </FadeIn>
           </SectionStripe>
@@ -2280,29 +2472,42 @@ export default function TravelBriefingLanding() {
                 </div>
               </div>
 
-              {/* 5f. Do's & Don'ts */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="rounded-2xl overflow-hidden border" style={{ borderColor: "rgba(34,197,94,0.3)", boxShadow: cardShadow }}>
-                  <div className="px-5 py-3.5" style={{ background: "linear-gradient(160deg, #16a34a 0%, #15803d 100%)" }}>
-                    <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: "rgba(255,255,255,0.72)" }}>Behavior Guide</p>
-                    <p className="font-black text-base text-white" style={{ letterSpacing: "-0.01em" }}>✓ Do's</p>
+              {/* 5f. Do's & Don'ts — unified cream card */}
+              <div
+                className="rounded-3xl overflow-hidden border"
+                style={{ backgroundColor: cardBg, borderColor, boxShadow: cardShadow }}
+              >
+                <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x" style={{ borderColor }}>
+                  {/* Do's */}
+                  <div className="p-6">
+                    <div className="flex items-center gap-2 mb-4">
+                      <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0" style={{ background: "rgba(22,163,74,0.12)" }}>
+                        <Check className="w-3.5 h-3.5" style={{ color: "#16a34a" }} strokeWidth={3} />
+                      </div>
+                      <div>
+                        <p className="text-[9px] font-black uppercase tracking-widest" style={{ color: textMuted }}>Behavior Guide</p>
+                        <p className="font-black text-sm leading-tight" style={{ color: "#16a34a", letterSpacing: "-0.01em" }}>Do's</p>
+                      </div>
+                    </div>
+                    <ul className="space-y-2.5">
+                      {dest.dos.map((d) => (
+                        <li key={d} className="flex items-start gap-2 text-sm leading-snug" style={{ color: textPrimary }}>
+                          <Check className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: "#16a34a" }} strokeWidth={2.5} />{d}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                  <div className="p-5" style={{ backgroundColor: darkMode ? "rgba(34,197,94,0.07)" : "rgba(34,197,94,0.04)" }}>
-                  <ul className="space-y-2.5">
-                    {dest.dos.map((d) => (
-                      <li key={d} className="flex items-start gap-2 text-sm leading-snug" style={{ color: textPrimary }}>
-                        <Check className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: "#16a34a" }} strokeWidth={2.5} />{d}
-                      </li>
-                    ))}
-                  </ul>
-                  </div>
-                </div>
-                <div className="rounded-2xl overflow-hidden border" style={{ borderColor: "rgba(239,68,68,0.3)", boxShadow: cardShadow }}>
-                  <div className="px-5 py-3.5" style={{ background: "linear-gradient(160deg, #dc2626 0%, #b91c1c 100%)" }}>
-                    <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: "rgba(255,255,255,0.72)" }}>Avoid These</p>
-                    <p className="font-black text-base text-white" style={{ letterSpacing: "-0.01em" }}>✗ Don'ts</p>
-                  </div>
-                  <div className="p-5" style={{ backgroundColor: darkMode ? "rgba(239,68,68,0.07)" : "rgba(239,68,68,0.04)" }}>
+                  {/* Don'ts */}
+                  <div className="p-6">
+                    <div className="flex items-center gap-2 mb-4">
+                      <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0" style={{ background: "rgba(220,38,38,0.10)" }}>
+                        <X className="w-3.5 h-3.5" style={{ color: "#dc2626" }} strokeWidth={3} />
+                      </div>
+                      <div>
+                        <p className="text-[9px] font-black uppercase tracking-widest" style={{ color: textMuted }}>Avoid These</p>
+                        <p className="font-black text-sm leading-tight" style={{ color: "#dc2626", letterSpacing: "-0.01em" }}>Don'ts</p>
+                      </div>
+                    </div>
                     <ul className="space-y-2.5">
                       {dest.donts.map((d) => (
                         <li key={d} className="flex items-start gap-2 text-sm leading-snug" style={{ color: textPrimary }}>
@@ -2322,25 +2527,30 @@ export default function TravelBriefingLanding() {
             5b2. CURRENCY & MONEY TIPS
            ══════════════════════════════════════════════════ */}
         {dest.currency && (
-          <SectionStripe alt={0} darkMode={darkMode}>
+          <SectionStripe alt={1} darkMode={darkMode}>
             <FadeIn>
-              <StripeHeader eyebrow="Money Matters" title="Currency Guide" description="Tips on handling money and exchange rates during your trip." tk={tk} />
-              <div className="rounded-2xl overflow-hidden" style={{ boxShadow: cardShadow }}>
-                <div className="px-5 py-3.5" style={{ background: "linear-gradient(160deg, #ff9913 0%, #e07800 100%)" }}>
-                  <p className="font-bold text-base text-white">{dest.currency.name}</p>
-                  <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.75)" }}>Local currency symbol: {dest.currency.symbol}</p>
+              <StripeHeader eyebrow="Money Matters" title="Currency Guide" description="Tips on handling money and exchange rates during your trip." tk={tk} colored />
+              <SectionCard darkMode={darkMode}>
+                <div className="flex items-center gap-3 mb-4 pb-4" style={{ borderBottom: `1px solid ${borderColor}` }}>
+                  <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 text-base font-black" style={{ background: "rgba(255,153,19,0.12)", color: "#ff9913" }}>
+                    {dest.currency.symbol}
+                  </div>
+                  <div>
+                    <p className="font-bold text-sm" style={{ color: textPrimary }}>{dest.currency.name}</p>
+                    <p className="text-xs" style={{ color: textMuted }}>Local currency symbol: {dest.currency.symbol}</p>
+                  </div>
                 </div>
-                <div className="p-5 space-y-4" style={{ backgroundColor: cardBg, border: `1px solid ${borderColor}`, borderTop: "none" }}>
+                <div className="space-y-4">
                   {dest.currency.tips.map((tip, i) => (
                     <div key={i} className="flex items-start gap-3">
-                      <div className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center mt-0.5" style={{ background: "#ff9913" }}>
-                        <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />
+                      <div className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5" style={{ background: "rgba(255,153,19,0.12)" }}>
+                        <Check className="w-3.5 h-3.5" style={{ color: "#ff9913" }} strokeWidth={3} />
                       </div>
-                      <p className="text-sm leading-relaxed pt-1" style={{ color: textPrimary }}>{tip}</p>
+                      <p className="text-sm leading-relaxed pt-0.5" style={{ color: textPrimary }}>{tip}</p>
                     </div>
                   ))}
                 </div>
-              </div>
+              </SectionCard>
             </FadeIn>
           </SectionStripe>
         )}

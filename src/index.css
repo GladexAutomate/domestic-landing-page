@@ -209,6 +209,10 @@
   95%  { opacity: 0.65; }
   100% { transform: translateX(calc(100vw + 60px)) translateY(-22px); opacity: 0; }
 }
+@keyframes tb-pin-float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-6px); }
+}
 @keyframes tb-route-dot {
   0%, 100% { opacity: 0.25; transform: scale(1); }
   50%       { opacity: 0.6;  transform: scale(1.35); }
