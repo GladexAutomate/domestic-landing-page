@@ -205,10 +205,9 @@
   70%       { transform: translateX(-9px) translateY(4px); }
 }
 @keyframes tb-plane-fly {
-  0%   { transform: translateX(-120px) translateY(0px)   rotate(-10deg); opacity: 0; }
-  5%   { opacity: 0.72; }
-  90%  { opacity: 0.60; }
-  100% { transform: translateX(calc(100vw + 140px)) translateY(-28px) rotate(-10deg); opacity: 0; }
+  0%   { transform: translateX(-50px)               translateY(0px);   opacity: 0.78; }
+  95%  { opacity: 0.65; }
+  100% { transform: translateX(calc(100vw + 60px))  translateY(-22px); opacity: 0; }
 }
 @keyframes tb-route-dot {
   0%, 100% { opacity: 0.25; transform: scale(1); }
