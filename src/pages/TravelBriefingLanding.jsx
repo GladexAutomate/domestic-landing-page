@@ -1359,7 +1359,7 @@ export default function TravelBriefingLanding() {
 
       {/* ── TEST MODE BANNER ── */}
       {isTestMode && (
-        <div className="sticky top-0 z-50 flex items-center justify-center gap-2 px-4 py-2 text-xs font-black tracking-widest uppercase" style={{ backgroundColor: "#7c3aed", color: "#fff" }}>
+        <div className="fixed top-16 left-0 right-0 z-[49] flex items-center justify-center gap-2 px-4 py-2 text-xs font-black tracking-widest uppercase" style={{ backgroundColor: "#7c3aed", color: "#fff" }}>
           <span>🧪</span>
           <span>TEST MODE — {dest?.name} · Demo Data · Not a Real Booking</span>
         </div>
