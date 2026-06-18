@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTheme } from "@/lib/ThemeContext";
 import { motion, AnimatePresence } from "framer-motion";
 import DestinationNavbar from "@/components/destination/DestinationNavbar";
@@ -11,8 +11,9 @@ import TBItinerary from "@/components/travelbriefing/TBItinerary";
 import TBChecklist from "@/components/travelbriefing/TBChecklist";
 import TBDestinationGuide from "@/components/travelbriefing/TBDestinationGuide";
 import TBFAQs from "@/components/travelbriefing/TBFAQs";
-import TBOptionalTours from "@/components/travelbriefing/TBOptionalTours";
-import { lookupBooking, submitReview } from "@/services/supabaseService";
+import { lookupBooking, submitReview, deleteReview, uploadReviewPhoto } from "@/services/supabaseService";
+import { loadDestinationTours } from "@/services/globaltixService";
+import TBAddOnsCheckout from "@/components/travelbriefing/TBAddOnsCheckout";
 import {
   Check, X, AlertTriangle, ArrowUp, Phone,
   Download, Star, Gift,
@@ -92,6 +93,30 @@ const TESTIMONIALS = [
     review: "Island hopping in El Nido was a dream. The briefing page told us exactly what to bring, which tours to expect, and the environmental fee reminders were very helpful!",
     rating: 5,
   },
+  {
+    name: "Rhea Mendoza",
+    location: "Bohol",
+    destination: "bohol",
+    date: "May 2025",
+    review: "Ang ganda ng Bohol! The Chocolate Hills talaga are breathtaking in person. Yung briefing page ng Gladex was so complete — hotel details, tour schedule, emergency numbers lahat nandoon. Walang kaming naging problema sa buong trip!",
+    rating: 5,
+  },
+  {
+    name: "Carlo Fontanilla",
+    location: "Bohol",
+    destination: "bohol",
+    date: "April 2025",
+    review: "First time in Bohol and it was perfect. The tarsier sanctuary and Loboc River cruise were the highlights! The pre-departure briefing had all the info we needed — especially the airport pickup instructions at BPH. Highly recommend Gladex!",
+    rating: 5,
+  },
+  {
+    name: "Donna T.",
+    location: "Bohol",
+    destination: "bohol",
+    date: "March 2025",
+    review: "Panglao Beach is absolutely stunning! We checked the briefing page several times during our trip and it had everything — from the tour itinerary down to what to pack. Gladex made our first Bohol trip completely stress-free.",
+    rating: 5,
+  },
 ];
 
 // ── Status display helper ────────────────────────────────────────
@@ -102,6 +127,28 @@ function getDisplayStatus(rawStatus) {
   if (s.includes("pending")) return "Pending";
   if (s.includes("cancel")) return "Cancelled";
   return rawStatus;
+}
+
+// ── Booking status chip styles ───────────────────────────────────
+function getStatusChipStyle(status) {
+  const s = (status || "").toLowerCase();
+  if (["confirmed"].includes(s))
+    return { background: "rgba(22,163,74,0.12)", color: "#16a34a", border: "1px solid rgba(22,163,74,0.3)" };
+  if (s.includes("pending"))
+    return { background: "rgba(245,158,11,0.12)", color: "#d97706", border: "1px solid rgba(245,158,11,0.3)" };
+  if (s.includes("cancel"))
+    return { background: "rgba(239,68,68,0.12)", color: "#dc2626", border: "1px solid rgba(239,68,68,0.3)" };
+  return { background: "rgba(255,153,19,0.1)", color: "#cc7700", border: "1px solid rgba(255,153,19,0.2)" };
+}
+function getPaymentChipStyle(paymentStatus) {
+  const s = (paymentStatus || "").toLowerCase();
+  if (s.includes("paid") || s.includes("complete"))
+    return { background: "rgba(22,163,74,0.12)", color: "#16a34a", border: "1px solid rgba(22,163,74,0.3)" };
+  if (s.includes("partial"))
+    return { background: "rgba(245,158,11,0.12)", color: "#d97706", border: "1px solid rgba(245,158,11,0.3)" };
+  if (s.includes("unpaid") || s.includes("fail"))
+    return { background: "rgba(239,68,68,0.12)", color: "#dc2626", border: "1px solid rgba(239,68,68,0.3)" };
+  return { background: "rgba(255,153,19,0.1)", color: "#cc7700", border: "1px solid rgba(255,153,19,0.2)" };
 }
 
 // ── Shared animation config ──────────────────────────────────────
@@ -151,6 +198,25 @@ function FadeIn({ children, delay = 0 }) {
 function InlineReviewEditor({ myReview, onSave, onCancel, darkMode, textPrimary, textMuted, cardBg, borderColor }) {
   const [stars, setStars] = useState(() => myReview?.rating ?? myReview?.stars ?? 0);
   const [comment, setComment] = useState(() => myReview?.review ?? myReview?.comment ?? "");
+  const [photoFile, setPhotoFile] = useState(null);
+  const [photoPreview, setPhotoPreview] = useState(() => myReview?.photo ?? null);
+  const [uploading, setUploading] = useState(false);
+  const fileRef = useRef(null);
+
+  const handleFile = (file) => {
+    if (!file || !file.type.startsWith("image/")) return;
+    setPhotoFile(file);
+    const url = URL.createObjectURL(file);
+    setPhotoPreview(url);
+  };
+
+  const handleSave = async () => {
+    if (stars === 0) return;
+    setUploading(true);
+    await onSave(stars, comment, photoFile);
+    setUploading(false);
+  };
+
   return (
     <motion.div
       id="review-edit-inline"
@@ -159,9 +225,9 @@ function InlineReviewEditor({ myReview, onSave, onCancel, darkMode, textPrimary,
       exit={{ opacity: 0, y: -8 }}
       transition={{ duration: 0.25 }}
       className="rounded-2xl border p-5 mt-4"
-      style={{ backgroundColor: cardBg, borderColor: "#f97316", boxShadow: "0 0 0 1px #f97316, 0 4px 20px rgba(249,115,22,0.12)" }}
+      style={{ backgroundColor: cardBg, borderColor: "#ff9913", boxShadow: "0 0 0 1px #ff9913, 0 4px 20px rgba(255,153,19,0.12)" }}
     >
-      <p className="text-[10px] font-black uppercase tracking-widest mb-3" style={{ color: "#f97316" }}>Update Your Review</p>
+      <p className="text-[10px] font-black uppercase tracking-widest mb-3" style={{ color: "#ff9913" }}>Update Your Review</p>
       <div className="flex gap-2 mb-4">
         {[1,2,3,4,5].map((s) => (
           <button key={s} onClick={() => setStars(s)} className="transition-transform hover:scale-110 active:scale-95">
@@ -177,17 +243,39 @@ function InlineReviewEditor({ myReview, onSave, onCancel, darkMode, textPrimary,
         className="w-full rounded-xl border px-4 py-3 text-sm resize-none outline-none transition-colors mb-3"
         style={{ backgroundColor: darkMode ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)", borderColor: darkMode ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)", color: textPrimary }}
       />
+      {/* Photo upload */}
+      <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleFile(e.target.files?.[0])} />
+      {photoPreview ? (
+        <div className="relative mb-3 rounded-xl overflow-hidden" style={{ aspectRatio: "16/9" }}>
+          <img src={photoPreview} alt="Trip photo" className="w-full h-full object-cover" />
+          <button
+            onClick={() => { setPhotoFile(null); setPhotoPreview(null); }}
+            className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-black"
+            style={{ backgroundColor: "rgba(0,0,0,0.55)" }}
+          >✕</button>
+        </div>
+      ) : (
+        <button
+          onClick={() => fileRef.current?.click()}
+          className="w-full mb-3 py-3 rounded-xl border-2 border-dashed text-xs font-bold flex items-center justify-center gap-2 transition-all hover:opacity-80"
+          style={{ borderColor: darkMode ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.12)", color: textMuted }}
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Add trip photo (optional)
+        </button>
+      )}
       <div className="flex gap-2">
         <button
-          onClick={() => stars > 0 && onSave(stars, comment)}
-          disabled={stars === 0}
+          onClick={handleSave}
+          disabled={stars === 0 || uploading}
           className="flex-1 py-3 rounded-xl text-sm font-bold transition-all"
-          style={{ backgroundColor: stars > 0 ? "#f97316" : "rgba(249,115,22,0.2)", color: stars > 0 ? "#fff" : "#f97316" }}
+          style={{ backgroundColor: stars > 0 ? "#ff9913" : "rgba(255,153,19,0.2)", color: stars > 0 ? "#fff" : "#ff9913" }}
         >
-          Update Review
+          {uploading ? "Uploading…" : "Update Review"}
         </button>
         <button
           onClick={onCancel}
+          disabled={uploading}
           className="px-4 py-3 rounded-xl text-sm font-bold transition-all"
           style={{ color: textMuted, backgroundColor: darkMode ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)" }}
         >
@@ -214,22 +302,72 @@ function SectionHeader({ eyebrow, title, tk }) {
   );
 }
 
-function SectionBanner({ eyebrow, title, imageUrl, tk }) {
-  if (!imageUrl) return <SectionHeader eyebrow={eyebrow} title={title} tk={tk} />;
+function StripeHeader({ eyebrow, title, description, tk, colored = false }) {
   return (
-    <div className="relative w-full rounded-2xl overflow-hidden mb-6" style={{ height: "180px" }}>
-      <img src={imageUrl} alt="" className="w-full h-full object-cover" loading="lazy" />
-      <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(249,115,22,0.65) 0%, rgba(0,0,0,0.72) 100%)" }} />
-      <div className="absolute inset-0 flex flex-col justify-end p-5">
-        {eyebrow && (
-          <p className="text-[10px] font-black uppercase tracking-widest mb-1.5" style={{ color: "rgba(255,255,255,0.68)" }}>
-            {eyebrow}
-          </p>
-        )}
-        <h2 className="font-black text-2xl sm:text-3xl text-white" style={{ letterSpacing: "-0.02em" }}>
-          {title}
-        </h2>
-      </div>
+    <div className="text-center mb-6">
+      {eyebrow && (
+        <p className="text-[11px] font-black uppercase tracking-widest mb-2"
+          style={{ color: colored ? "rgba(255,255,255,0.72)" : "#ff9913" }}>
+          {eyebrow}
+        </p>
+      )}
+      <h2 className="font-black text-2xl sm:text-3xl"
+        style={{ color: colored ? "#ffffff" : tk.textPrimary, letterSpacing: "-0.02em" }}>
+        {title}
+      </h2>
+      {description && (
+        <p className="mt-3 text-sm leading-relaxed max-w-xl mx-auto"
+          style={{ color: colored ? "rgba(255,255,255,0.85)" : tk.textMuted }}>
+          {description}
+        </p>
+      )}
+    </div>
+  );
+}
+
+// ── SectionStripe — full-viewport-width alternating background via CSS bleed ─
+// For colored stripes (alt=1,2): header renders on color, content wraps in white card.
+// Usage: <SectionStripe alt={1}><StripeHeader .../><SectionCard darkMode={darkMode}>content</SectionCard></SectionStripe>
+function SectionStripe({ children, alt = 0, darkMode, py = "py-10" }) {
+  const bgs = darkMode
+    ? ["transparent", "rgba(255,153,19,0.14)", "rgba(255,153,19,0.07)"]
+    : ["transparent", "linear-gradient(160deg, #ff9913 0%, #e07800 100%)", "linear-gradient(160deg, #ffb347 0%, #ff9913 100%)"];
+  const bg = bgs[alt % 3];
+  const isColored = bg && bg !== "transparent";
+  if (!isColored) {
+    return <div className={`${py} mb-2`}>{children}</div>;
+  }
+  return (
+    <div className={`relative ${py} mb-2`}>
+      <div
+        aria-hidden="true"
+        style={{
+          position: "absolute", top: 0, bottom: 0,
+          left: "50%", width: "100vw",
+          transform: "translateX(-50%)",
+          background: bg, zIndex: 0,
+        }}
+      />
+      <div style={{ position: "relative", zIndex: 1 }}>{children}</div>
+    </div>
+  );
+}
+
+// White rounded card wrapper — used inside colored SectionStripes so content sits on white
+function SectionCard({ children, darkMode }) {
+  return (
+    <div
+      className="rounded-3xl"
+      style={{
+        backgroundColor: darkMode ? "#1a1a1a" : "#ffffff",
+        boxShadow: darkMode
+          ? "0 2px 16px rgba(0,0,0,0.5)"
+          : "0 2px 8px rgba(0,0,0,0.06), 0 8px 32px rgba(0,0,0,0.04)",
+        overflow: "hidden",
+        padding: "1.5rem",
+      }}
+    >
+      {children}
     </div>
   );
 }
@@ -240,7 +378,7 @@ function SectionDivider({ tk }) {
 }
 
 // ── Back to top ──────────────────────────────────────────────────
-function BackToTopButton({ visible }) {
+function BackToTopButton({ visible, lift }) {
   return (
     <AnimatePresence>
       {visible && (
@@ -251,15 +389,17 @@ function BackToTopButton({ visible }) {
           exit={{ opacity: 0, y: 12 }}
           transition={{ duration: 0.25 }}
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="fixed bottom-6 right-5 z-50 w-11 h-11 rounded-full flex items-center justify-center shadow-lg border transition-all hover:scale-110 active:scale-95"
+          className="fixed right-5 z-50 w-11 h-11 rounded-full flex items-center justify-center hover:scale-110 active:scale-95"
           style={{
-            background: "linear-gradient(135deg, #f97316, #b45309)",
-            borderColor: "rgba(249,115,22,0.4)",
-            boxShadow: "0 4px 18px rgba(249,115,22,0.35)",
+            bottom: lift ? "84px" : "24px",
+            transition: "bottom 0.3s cubic-bezier(0.34,1.56,0.64,1)",
+            background: "#ffffff",
+            border: "2px solid rgba(255,153,19,0.5)",
+            boxShadow: "0 4px 20px rgba(0,0,0,0.18), 0 1px 4px rgba(0,0,0,0.1)",
           }}
           aria-label="Back to top"
         >
-          <ArrowUp className="w-4 h-4 text-white" strokeWidth={2.5} />
+          <ArrowUp className="w-4 h-4" style={{ color: "#ff9913" }} strokeWidth={2.5} />
         </motion.button>
       )}
     </AnimatePresence>
@@ -282,9 +422,9 @@ function ArrivalTab({ dest, activeTab, setActiveTab, tk, darkMode }) {
                 onClick={() => setActiveTab(t.key)}
                 className="text-xs font-semibold px-4 py-2 rounded-full border transition-all"
                 style={{
-                  borderColor: active ? "#f97316" : tk.borderColor,
-                  backgroundColor: active ? "rgba(249,115,22,0.12)" : "transparent",
-                  color: active ? "#f97316" : tk.textMuted,
+                  borderColor: active ? "#ff9913" : tk.borderColor,
+                  backgroundColor: active ? "rgba(255,153,19,0.12)" : "transparent",
+                  color: active ? "#ff9913" : tk.textMuted,
                 }}
               >
                 {t.label}
@@ -297,22 +437,22 @@ function ArrivalTab({ dest, activeTab, setActiveTab, tk, darkMode }) {
         <div className="space-y-3">
           {current.steps.map((step, i) => (
             <motion.div key={i} initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05, duration: 0.25 }} className="flex items-start gap-3">
-              <div className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-black" style={{ background: "linear-gradient(135deg, #f97316, #b45309)", color: "#fff" }}>
+              <div className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-black" style={{ background: "linear-gradient(135deg, #ff9913, #cc7700)", color: "#fff" }}>
                 {i + 1}
               </div>
               <p className="text-sm leading-snug pt-1" style={{ color: tk.textPrimary }}>{step}</p>
             </motion.div>
           ))}
           {current.note && (
-            <div className="mt-4 p-3 rounded-xl border text-xs flex items-start gap-2" style={{ borderColor: "rgba(249,115,22,0.25)", backgroundColor: "rgba(249,115,22,0.07)", color: tk.textMuted }}>
+            <div className="mt-4 p-3 rounded-xl border text-xs flex items-start gap-2" style={{ borderColor: "rgba(255,153,19,0.25)", backgroundColor: "rgba(255,153,19,0.07)", color: tk.textMuted }}>
               <Info className="w-3.5 h-3.5 shrink-0 mt-0.5 text-orange-400" />
               {current.note}
             </div>
           )}
           {current.travelTime && (
             <div className="mt-4 rounded-xl border overflow-hidden" style={{ borderColor: tk.borderColor }}>
-              <div className="px-3 py-2" style={{ backgroundColor: darkMode ? "rgba(249,115,22,0.1)" : "rgba(249,115,22,0.07)" }}>
-                <p className="text-[10px] font-black uppercase tracking-widest" style={{ color: "#f97316" }}>Estimated Travel Time</p>
+              <div className="px-3 py-2" style={{ backgroundColor: darkMode ? "rgba(255,153,19,0.1)" : "rgba(255,153,19,0.07)" }}>
+                <p className="text-[10px] font-black uppercase tracking-widest" style={{ color: "#ff9913" }}>Estimated Travel Time</p>
               </div>
               <div className="px-3 py-2.5 space-y-1.5">
                 {current.travelTime.breakdown.map((b) => (
@@ -332,11 +472,11 @@ function ArrivalTab({ dest, activeTab, setActiveTab, tk, darkMode }) {
               <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: tk.textMuted }}>Van Transfer Schedule</p>
               <div className="grid grid-cols-2 gap-3">
                 <div className="rounded-xl p-3 border" style={{ borderColor: tk.borderColor, backgroundColor: tk.surfaceBg }}>
-                  <p className="text-xs font-bold mb-2" style={{ color: "#f97316" }}>Puerto Princesa → El Nido</p>
+                  <p className="text-xs font-bold mb-2" style={{ color: "#ff9913" }}>Puerto Princesa → El Nido</p>
                   {current.vanSchedule.ppsToElNido.map((s) => (<p key={s} className="text-xs py-0.5" style={{ color: tk.textPrimary }}>{s}</p>))}
                 </div>
                 <div className="rounded-xl p-3 border" style={{ borderColor: tk.borderColor, backgroundColor: tk.surfaceBg }}>
-                  <p className="text-xs font-bold mb-2" style={{ color: "#f97316" }}>El Nido → Puerto Princesa</p>
+                  <p className="text-xs font-bold mb-2" style={{ color: "#ff9913" }}>El Nido → Puerto Princesa</p>
                   {current.vanSchedule.elNidoToPps.map((s) => (<p key={s} className="text-xs py-0.5" style={{ color: tk.textPrimary }}>{s}</p>))}
                 </div>
               </div>
@@ -361,7 +501,7 @@ function DevSwitcher({ currentSlug, navigate, darkMode, tk }) {
         {open && (
           <motion.div initial={{ opacity: 0, y: 8, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 8, scale: 0.95 }} transition={{ duration: 0.18 }} className="absolute bottom-10 left-0 rounded-xl border overflow-hidden shadow-xl" style={{ backgroundColor: darkMode ? "#141414" : "#fff", borderColor: tk.borderColor, minWidth: 140 }}>
             {SUPPORTED_DESTINATIONS.map((slug) => (
-              <button key={slug} onClick={() => { navigate(`/destination/${slug}`); setOpen(false); }} className="w-full text-left text-xs px-3 py-2 hover:opacity-60 transition-opacity border-b last:border-0" style={{ borderColor: tk.borderColor, color: slug === currentSlug ? "#f97316" : tk.textPrimary, fontWeight: slug === currentSlug ? "700" : "400" }}>
+              <button key={slug} onClick={() => { navigate(`/destination/${slug}`); setOpen(false); }} className="w-full text-left text-xs px-3 py-2 hover:opacity-60 transition-opacity border-b last:border-0" style={{ borderColor: tk.borderColor, color: slug === currentSlug ? "#ff9913" : tk.textPrimary, fontWeight: slug === currentSlug ? "700" : "400" }}>
                 {slug === "elnido" ? "El Nido" : slug.charAt(0).toUpperCase() + slug.slice(1)}
               </button>
             ))}
@@ -380,21 +520,34 @@ function formatDate(val) {
   return d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
 }
 
+// ── Room/board type normalizer ───────────────────────────────────
+function formatRoomType(rt) {
+  if (!rt) return null;
+  switch (rt.trim().toUpperCase()) {
+    case "BREAKFAST": case "BB": case "B&B": case "BED AND BREAKFAST": return "Breakfast Included";
+    case "HB": case "HALF BOARD": return "Half Board";
+    case "FB": case "FULL BOARD": return "Full Board";
+    case "RO": case "ROOM ONLY": return "Room Only";
+    case "AI": case "ALL INCLUSIVE": return "All Inclusive";
+    default: return rt;
+  }
+}
+
 // ── BookingSection ───────────────────────────────────────────────
 function BookingSection({ label, children, darkMode }) {
   return (
     <div style={{ borderTop: `1px solid ${darkMode ? "rgba(255,255,255,0.06)" : "#f0ece7"}` }}>
       <div
         className="px-5 py-3 flex items-center gap-2"
-        style={{ backgroundColor: darkMode ? "rgba(249,115,22,0.04)" : "rgba(249,115,22,0.025)" }}
+        style={{ backgroundColor: darkMode ? "rgba(255,153,19,0.04)" : "rgba(255,153,19,0.025)" }}
       >
         <div
           className="w-3.5 h-3.5 rounded-full flex items-center justify-center shrink-0"
-          style={{ background: "rgba(249,115,22,0.12)", border: "1.5px solid rgba(249,115,22,0.35)" }}
+          style={{ background: "rgba(255,153,19,0.12)", border: "1.5px solid rgba(255,153,19,0.35)" }}
         >
-          <div className="w-1 h-1 rounded-full" style={{ background: "#f97316" }} />
+          <div className="w-1 h-1 rounded-full" style={{ background: "#ff9913" }} />
         </div>
-        <span className="text-[10px] font-black uppercase tracking-[0.14em]" style={{ color: "#f97316" }}>
+        <span className="text-[10px] font-black uppercase tracking-[0.14em]" style={{ color: "#ff9913" }}>
           {label}
         </span>
       </div>
@@ -514,7 +667,7 @@ function OutfitCard({ occasion, darkMode, textPrimary, textMuted, cardBg, border
         </div>
 
         {/* Gender badge */}
-        <div className="absolute top-3 right-3 text-[10px] font-black px-2.5 py-1 rounded-full" style={{ background: "#f97316", color: "#fff" }}>
+        <div className="absolute top-3 right-3 text-[10px] font-black px-2.5 py-1 rounded-full" style={{ background: "#ff9913", color: "#fff" }}>
           {activeTab}
         </div>
 
@@ -563,7 +716,7 @@ function OutfitCard({ occasion, darkMode, textPrimary, textMuted, cardBg, border
               onClick={() => handleTabChange(tab)}
               className="text-xs font-bold px-3 py-1.5 rounded-full border transition-all"
               style={activeTab === tab
-                ? { background: "#f97316", color: "#fff", borderColor: "#f97316" }
+                ? { background: "#ff9913", color: "#fff", borderColor: "#ff9913" }
                 : { background: "transparent", color: textMuted, borderColor }
               }
             >
@@ -575,7 +728,7 @@ function OutfitCard({ occasion, darkMode, textPrimary, textMuted, cardBg, border
 
       {/* Save badge */}
       <div className="px-3 pb-1">
-        <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: "#f97316" }}>✦ Save This For Later!</span>
+        <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: "#ff9913" }}>✦ Save This For Later!</span>
       </div>
 
       {/* Tip */}
@@ -613,10 +766,10 @@ function OutfitGuideSection({ dest, darkMode, sectionGap, textPrimary, textMuted
 
   return (
     <div className={sectionGap}>
-      <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: "#f97316" }}>Style Guide</p>
+      <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: "#ff9913" }}>Style Guide</p>
       <h2
         className="font-black text-2xl mb-2"
-        style={{ color: textPrimary, fontFamily: "'Montserrat', sans-serif", letterSpacing: "-0.02em", borderLeft: "4px solid #f97316", paddingLeft: "0.75rem" }}
+        style={{ color: textPrimary, fontFamily: "'Montserrat', sans-serif", letterSpacing: "-0.02em", borderLeft: "4px solid #ff9913", paddingLeft: "0.75rem" }}
       >
         Outfit Inspiration
       </h2>
@@ -649,8 +802,8 @@ function OutfitGuideSection({ dest, darkMode, sectionGap, textPrimary, textMuted
               disabled={safePage === 0}
               className="flex-1 py-3 rounded-xl text-sm font-bold border transition-all"
               style={{
-                color: safePage === 0 ? textMuted : "#f97316",
-                borderColor: safePage === 0 ? borderColor : "#f97316",
+                color: safePage === 0 ? textMuted : "#ff9913",
+                borderColor: safePage === 0 ? borderColor : "#ff9913",
                 background: "transparent",
                 opacity: safePage === 0 ? 0.4 : 1,
               }}
@@ -663,7 +816,7 @@ function OutfitGuideSection({ dest, darkMode, sectionGap, textPrimary, textMuted
               disabled={safePage === totalPages - 1}
               className="flex-1 py-3 rounded-xl text-sm font-bold transition-all"
               style={{
-                background: safePage === totalPages - 1 ? "transparent" : "linear-gradient(135deg, #f97316, #b45309)",
+                background: safePage === totalPages - 1 ? "transparent" : "linear-gradient(135deg, #ff9913, #cc7700)",
                 color: safePage === totalPages - 1 ? textMuted : "#fff",
                 border: safePage === totalPages - 1 ? `1px solid ${borderColor}` : "none",
                 opacity: safePage === totalPages - 1 ? 0.4 : 1,
@@ -709,11 +862,11 @@ function OutfitGuideSection({ dest, darkMode, sectionGap, textPrimary, textMuted
           disabled={page === totalPages - 1}
           className="shrink-0 w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-105 active:scale-95"
           style={{
-            background: safePage === totalPages - 1 ? borderColor : "linear-gradient(135deg, #f97316, #b45309)",
+            background: safePage === totalPages - 1 ? borderColor : "linear-gradient(135deg, #ff9913, #cc7700)",
             color: "#fff",
             fontSize: "1.3rem",
             lineHeight: 1,
-            boxShadow: safePage === totalPages - 1 ? "none" : "0 4px 14px rgba(249,115,22,0.45)",
+            boxShadow: safePage === totalPages - 1 ? "none" : "0 4px 14px rgba(255,153,19,0.45)",
           }}
           aria-label="Next outfit type"
         >›</button>
@@ -727,7 +880,7 @@ function OutfitGuideSection({ dest, darkMode, sectionGap, textPrimary, textMuted
               key={i}
               onClick={() => setPage(i)}
               className="rounded-full transition-all"
-              style={{ width: i === safePage ? "24px" : "8px", height: "8px", background: i === safePage ? "#f97316" : borderColor }}
+              style={{ width: i === safePage ? "24px" : "8px", height: "8px", background: i === safePage ? "#ff9913" : borderColor }}
               aria-label={`Page ${i + 1}`}
             />
           ))}
@@ -747,13 +900,62 @@ export default function TravelBriefingLanding() {
   const navigate = useNavigate();
   const location = useLocation();
   const { darkMode } = useTheme();
-  const dest = getDestination(slug);
+
+  // ── Test mode: /destination/siargao-test bypasses Supabase lookup ──
+  const isTestMode = slug?.endsWith("-test");
+  const realSlug   = isTestMode ? slug.replace(/-test$/, "") : slug;
+  const dest       = getDestination(realSlug);
+
+  const MOCK_BOOKING = isTestMode ? {
+    gdx:             "DEMO",
+    leadName:        "Gladex Demo Guest",
+    status:          "confirmed",
+    paymentStatus:   "Fully Paid",
+    transactionType: "Package",
+    bookingDate:     "2026-01-01",
+    travelDate:      "2026-08-01",
+    arrivalDate:     "2026-08-01",
+    departureDate:   "2026-08-04",
+    duration:        3,
+    totalGuests:     2,
+    guestList:       ["Demo Guest 1", "Demo Guest 2"],
+    email:           "demo@gladextours.com",
+    mobile:          "+63 917 875 2200",
+    phone:           "+63 917 875 2200",
+    hotel: {
+      hotelName:    "Demo Resort & Hotel",
+      hotelAddress: `${dest?.name ?? realSlug}, Philippines`,
+      checkIn:      "2026-08-01",
+      checkOut:     "2026-08-04",
+      roomType:     "Superior Room",
+      noNights:     3,
+      note:         null,
+    },
+    tour: {
+      tourName:     dest ? `${dest.name} Package` : "Demo Package",
+      description:  "Demo tour package for testing purposes.",
+      hotelMention: null,
+    },
+    ticket: {
+      airline:        "Philippine Airlines",
+      flightNo:       "PR 123",
+      departureCity:  "Manila",
+      departureDate:  "2026-08-01",
+      departureTime:  "06:00",
+      arrivalCity:    dest?.name ?? realSlug,
+      arrivalDate:    "2026-08-01",
+      arrivalTime:    "08:00",
+    },
+    transfer:        null,
+    transferDetails: null,
+    rawData:         {},
+  } : null;
 
   // Booking from GDX search (passed via React Router state)
   const routeBooking = location.state?.booking || null;
   const [restoredBooking, setRestoredBooking] = useState(null);
-  const [sessionChecked, setSessionChecked] = useState(!!routeBooking);
-  const activeBooking = routeBooking || restoredBooking;
+  const [sessionChecked, setSessionChecked] = useState(!!routeBooking || isTestMode);
+  const activeBooking = isTestMode ? MOCK_BOOKING : (routeBooking || restoredBooking);
 
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [bookingExpanded, setBookingExpanded] = useState(false);
@@ -770,6 +972,11 @@ export default function TravelBriefingLanding() {
   const [reviewComment, setReviewComment] = useState("");
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
   const [reviewEditing, setReviewEditing] = useState(false);
+  const [reviewDeleteConfirm, setReviewDeleteConfirm] = useState(false);
+  const [reviewPhotoFile, setReviewPhotoFile] = useState(null);
+  const [reviewPhotoPreview, setReviewPhotoPreview] = useState(null);
+  const [reviewUploading, setReviewUploading] = useState(false);
+  const reviewPhotoRef = useRef(null);
   const [myReview, setMyReview] = useState(() => {
     try {
       const gdx = JSON.parse(sessionStorage.getItem("gladex-session") || "{}").gdx;
@@ -795,20 +1002,53 @@ export default function TravelBriefingLanding() {
     }
   }, [reviewEditing]);
 
-  const handleSubmitReview = (starsParam, commentParam) => {
+  // ── Optional tours / add-ons ──────────────────────────────────
+  const [liveTours, setLiveTours] = useState([]);
+  const [liveToursLoading, setLiveToursLoading] = useState(false);
+  const [addOnsCart, setAddOnsCart] = useState([]);
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLiveToursLoading(true);
+    setLiveTours([]);
+    loadDestinationTours(realSlug)
+      .then((tours) => { if (!cancelled) { setLiveTours(tours); setLiveToursLoading(false); } })
+      .catch(() => { if (!cancelled) setLiveToursLoading(false); });
+    return () => { cancelled = true; };
+  }, [slug]);
+
+  const handleAddToCart = ({ id, name, price, icon, day, dayTitle }) => {
+    setAddOnsCart((prev) => {
+      const key = `${id}__${day ?? "any"}`;
+      const exists = prev.some((c) => `${c.id}__${c.day ?? "any"}` === key);
+      return exists
+        ? prev.filter((c) => `${c.id}__${c.day ?? "any"}` !== key)
+        : [...prev, { id, name, price, icon, day, dayTitle }];
+    });
+  };
+
+  const handleSubmitReview = async (starsParam, commentParam, photoFile) => {
     const finalStars = starsParam ?? reviewStars;
     const finalComment = commentParam ?? reviewComment;
     if (finalStars === 0) return;
     const gdx = activeBooking?.gdx ?? "guest";
-    const destination = slug ?? "boracay";
+    const destination = realSlug ?? "boracay";
     const now = new Date();
     const monthYear = now.toLocaleString("en-US", { month: "long", year: "numeric" });
+
+    let photoUrl = myReview?.photo ?? null;
+    if (photoFile) {
+      try { photoUrl = await uploadReviewPhoto({ gdx_reference: gdx, file: photoFile }); } catch {}
+    }
+
     const review = {
       name: "You",
       location: destination.charAt(0).toUpperCase() + destination.slice(1),
       date: monthYear,
       review: String(finalComment).trim() || `${finalStars === 5 ? "Amazing" : finalStars >= 4 ? "Great" : "Good"} experience with Gladex Tours!`,
       rating: finalStars,
+      ...(photoUrl ? { photo: photoUrl } : {}),
     };
     try { localStorage.setItem(`gladex-review-${gdx}`, JSON.stringify(review)); } catch {}
     setMyReview(review);
@@ -816,11 +1056,26 @@ export default function TravelBriefingLanding() {
     setReviewComment(String(finalComment).trim());
     setReviewSubmitted(true);
     setReviewEditing(false);
-    submitReview({ gdx_reference: gdx, rating: finalStars, comment: String(finalComment).trim() }).catch(() => {});
+    setReviewPhotoFile(null);
+    setReviewPhotoPreview(null);
+    setReviewUploading(false);
+    submitReview({ gdx_reference: gdx, rating: finalStars, comment: String(finalComment).trim(), photo_url: photoUrl }).catch(() => {});
+  };
+
+  const handleDeleteReview = () => {
+    const gdx = activeBooking?.gdx ?? "guest";
+    try { localStorage.removeItem(`gladex-review-${gdx}`); } catch {}
+    setMyReview(null);
+    setReviewSubmitted(false);
+    setReviewEditing(false);
+    setReviewStars(0);
+    setReviewComment("");
+    deleteReview({ gdx_reference: gdx }).catch(() => {});
   };
 
   // ── Restore booking from sessionStorage on page refresh ──────
   useEffect(() => {
+    if (isTestMode) return; // test mode uses mock booking, skip restore
     setRestoredBooking(null);
     if (routeBooking) { setSessionChecked(true); return; }
 
@@ -835,7 +1090,7 @@ export default function TravelBriefingLanding() {
       return;
     }
 
-    if (!saved?.gdx || !saved?.slug || saved.slug !== slug) {
+    if (!saved?.gdx || !saved?.slug || saved.slug !== realSlug) {
       sessionStorage.removeItem(SESSION_KEY);
       setSessionChecked(true);
       return;
@@ -848,6 +1103,7 @@ export default function TravelBriefingLanding() {
 
   // ── Redirect unauthenticated users to home ────────────────────
   useEffect(() => {
+    if (isTestMode) return; // test mode always has a booking
     if (sessionChecked && !activeBooking) {
       navigate("/");
     }
@@ -910,7 +1166,7 @@ export default function TravelBriefingLanding() {
     if (bk?.hotel) {
       spacer(3); divider();
       line("HOTEL DETAILS", 9, GY, true); spacer(2);
-      if (bk.hotel.roomType)   line(`Room:    ${bk.hotel.roomType}`, 10, BK);
+      if (bk.hotel.roomType)   line(`Inclusions: ${formatRoomType(bk.hotel.roomType)}`, 10, BK);
       if (bk.hotel.stayDates)  line(`Dates:   ${bk.hotel.stayDates}`, 10, BK);
       if (bk.hotel.nights)     line(`Nights:  ${bk.hotel.nights}`, 10, BK);
       if (bk.hotel.requests)   line(`Request: ${bk.hotel.requests}`, 10, BK);
@@ -970,7 +1226,7 @@ export default function TravelBriefingLanding() {
   }, []);
 
   // ── Design tokens ────────────────────────────────────────────
-  const bg          = darkMode ? "#0c0c0c"                 : "#f4f3f1";
+  const bg          = darkMode ? "#0c0c0c"                 : "#fff8f3";
   const cardBg      = darkMode ? "#141414"                 : "#ffffff";
   const surfaceBg   = darkMode ? "rgba(255,255,255,0.035)" : "rgba(0,0,0,0.028)";
   const textPrimary = darkMode ? "#f0f0f0"                 : "#1a1a1a";
@@ -982,25 +1238,26 @@ export default function TravelBriefingLanding() {
   const card  = { backgroundColor: cardBg, borderColor, boxShadow: cardShadow };
   const muted = { color: textMuted };
   const tk    = { bg, cardBg, surfaceBg, textPrimary, textMuted, borderColor, cardShadow, card, muted };
-  const sectionGap = "mb-16";
-  const pad = "px-4 sm:px-6 max-w-4xl mx-auto";
 
-  // Section banner images — sourced from dest.bannerImages (local assets or Pexels CDN)
-  const BANNER = {
-    travelInfo:  dest?.bannerImages?.travelInfo  || dest?.itinerary?.[0]?.image,
-    currency:    dest?.bannerImages?.currency    || dest?.heroImages?.[1] || dest?.heroImage,
-    safety:      dest?.bannerImages?.safety      || dest?.heroImages?.[0] || dest?.heroImage,
-    packing:     dest?.bannerImages?.packing     || dest?.heroImages?.[2] || dest?.heroImage,
-    destination: dest?.bannerImages?.destination || dest?.heroImage,
-    localTips:   dest?.bannerImages?.localTips   || dest?.heroImages?.[1] || dest?.heroImage,
-    faq:         dest?.bannerImages?.faq         || dest?.heroImages?.[3] || dest?.heroImage,
+  // ── Orange section tokens — white overlay so inner cards stay pure orange (no brown) ──
+  const orangeCardBg  = "rgba(255,255,255,0.15)";
+  const orangeBorder  = "rgba(255,255,255,0.25)";
+  const orangeCard    = { backgroundColor: orangeCardBg, borderColor: orangeBorder, boxShadow: "none" };
+  const orangeTk      = {
+    bg: "transparent", cardBg: orangeCardBg, surfaceBg: "rgba(255,255,255,0.1)",
+    textPrimary: "#ffffff", textMuted: "rgba(255,255,255,0.72)",
+    borderColor: orangeBorder, cardShadow: "none",
+    card: orangeCard, muted: { color: "rgba(255,255,255,0.72)" },
   };
+
+  const sectionGap = "mb-16";
+  const pad = "px-4 sm:px-6 max-w-6xl mx-auto";
 
   // ── Loading — wait for session check before revealing destination ──
   if (!sessionChecked) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: bg }}>
-        <Loader className="w-7 h-7 animate-spin" style={{ color: "#f97316" }} />
+        <Loader className="w-7 h-7 animate-spin" style={{ color: "#ff9913" }} />
       </div>
     );
   }
@@ -1019,8 +1276,16 @@ export default function TravelBriefingLanding() {
   }
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: bg }}>
+    <div className="min-h-screen" style={{ backgroundColor: bg, paddingBottom: (isTestMode && addOnsCart.length > 0) ? "80px" : 0, transition: "padding-bottom 0.3s ease" }}>
       <DestinationNavbar hideLogo={!activeBooking} />
+
+      {/* ── TEST MODE BANNER ── */}
+      {isTestMode && (
+        <div className="sticky top-0 z-50 flex items-center justify-center gap-2 px-4 py-2 text-xs font-black tracking-widest uppercase" style={{ backgroundColor: "#7c3aed", color: "#fff" }}>
+          <span>🧪</span>
+          <span>TEST MODE — {dest?.name} · Demo Data · Not a Real Booking</span>
+        </div>
+      )}
 
       {/* ── DESTINATION HERO IMAGE ── */}
       <div className="relative w-full overflow-hidden" style={{ minHeight: "380px", maxHeight: "480px" }}>
@@ -1061,12 +1326,12 @@ export default function TravelBriefingLanding() {
         </div>
       </div>
 
-      <div className={pad} style={{ paddingTop: "2rem", paddingBottom: "8rem" }}>
+      <div className={pad}>
 
         {/* ══════════════════════════════════════════════════
             1. HERO / BOOKING ENTRY
            ══════════════════════════════════════════════════ */}
-        <div className={sectionGap}>
+        <SectionStripe alt={0} darkMode={darkMode} py="py-10">
 
           {/* No booking — show search hero */}
           {!activeBooking && (
@@ -1079,26 +1344,26 @@ export default function TravelBriefingLanding() {
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.25 }}
-              whileHover={{ y: -2, boxShadow: "0 8px 24px rgba(249,115,22,0.18)" }}
+              whileHover={{ y: -2, boxShadow: "0 8px 24px rgba(255,153,19,0.18)" }}
               whileTap={{ scale: 0.96 }}
               onClick={() => setShowTripDetails(true)}
               className="w-full flex items-center gap-3 px-4 pt-3 pb-2.5 rounded-2xl border transition-all cursor-pointer"
               style={{
-                backgroundColor: darkMode ? "rgba(249,115,22,0.1)" : "rgba(249,115,22,0.07)",
-                borderColor: "rgba(249,115,22,0.3)",
+                backgroundColor: darkMode ? "rgba(255,153,19,0.1)" : "rgba(255,153,19,0.07)",
+                borderColor: "rgba(255,153,19,0.3)",
               }}
             >
               {/* Icon */}
               <div
                 className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
-                style={{ background: "rgba(249,115,22,0.15)" }}
+                style={{ background: "rgba(255,153,19,0.15)" }}
               >
-                <BadgeCheck className="w-4 h-4" style={{ color: "#f97316" }} />
+                <BadgeCheck className="w-4 h-4" style={{ color: "#ff9913" }} />
               </div>
 
               {/* Text */}
               <div className="text-left flex-1 min-w-0">
-                <p className="font-black text-sm leading-tight" style={{ color: "#f97316" }}>View Booking Details</p>
+                <p className="font-black text-sm leading-tight" style={{ color: "#ff9913" }}>View Booking Details</p>
                 <p className="text-[11px] truncate mt-0.5" style={{ color: textMuted }}>
                   GDX-{activeBooking.gdx} · {activeBooking.leadName}
                 </p>
@@ -1111,11 +1376,11 @@ export default function TravelBriefingLanding() {
               <div className="flex items-center gap-2 shrink-0">
                 <span
                   className="text-[10px] font-bold px-2.5 py-1 rounded-full"
-                  style={{ background: "rgba(34,197,94,0.12)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.25)" }}
+                  style={{ background: "rgba(22,163,74,0.12)", color: "#16a34a", border: "1px solid rgba(22,163,74,0.3)" }}
                 >
                   ✓ Confirmed
                 </span>
-                <ChevronDown className="w-4 h-4" style={{ color: "#f97316" }} />
+                <ChevronDown className="w-4 h-4" style={{ color: "#ff9913" }} />
               </div>
             </motion.button>
           )}
@@ -1131,8 +1396,8 @@ export default function TravelBriefingLanding() {
               <div
                 className="rounded-2xl overflow-hidden mb-4"
                 style={{
-                  background: "linear-gradient(135deg, #f97316 0%, #ea580c 55%, #f97316 100%)",
-                  boxShadow: "0 8px 32px rgba(249,115,22,0.4), 0 2px 8px rgba(0,0,0,0.12)",
+                  background: "linear-gradient(135deg, #ff9913 0%, #ea580c 55%, #ff9913 100%)",
+                  boxShadow: "0 8px 32px rgba(255,153,19,0.4), 0 2px 8px rgba(0,0,0,0.12)",
                 }}
               >
                 <div className="p-5 pb-5">
@@ -1140,7 +1405,7 @@ export default function TravelBriefingLanding() {
                   <div className="flex items-center justify-between mb-4">
                     <span
                       className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full"
-                      style={{ background: "rgba(34,197,94,0.88)", color: "#fff" }}
+                      style={{ background: "#ff9913", color: "#fff" }}
                     >
                       <BadgeCheck className="w-3 h-3" /> Trip Confirmed
                     </span>
@@ -1175,7 +1440,7 @@ export default function TravelBriefingLanding() {
                       {
                         label: "Hotel",
                         value: activeBooking.hotel?.hotelName
-                          || activeBooking.hotel?.roomType
+                          || (activeBooking.hotel?.roomType ? formatRoomType(activeBooking.hotel.roomType) : null)
                           || activeBooking.tour?.hotelMention
                           || "—",
                       },
@@ -1221,9 +1486,9 @@ export default function TravelBriefingLanding() {
                           <span
                             className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full"
                             style={{
-                              background: "rgba(34,197,94,0.1)",
+                              background: "rgba(22,163,74,0.12)",
                               color: "#16a34a",
-                              border: "1px solid rgba(34,197,94,0.2)",
+                              border: "1px solid rgba(22,163,74,0.3)",
                             }}
                           >
                             <BadgeCheck className="w-3 h-3" /> Booking Verified
@@ -1245,22 +1510,14 @@ export default function TravelBriefingLanding() {
                         <div className="flex flex-wrap gap-2">
                           <span
                             className="flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full"
-                            style={{
-                              background: "rgba(34,197,94,0.1)",
-                              color: "#16a34a",
-                              border: "1px solid rgba(34,197,94,0.2)",
-                            }}
+                            style={getStatusChipStyle(getDisplayStatus(activeBooking.status))}
                           >
                             <Check className="w-3 h-3" /> {getDisplayStatus(activeBooking.status)}
                           </span>
                           {activeBooking.paymentStatus && (
                             <span
                               className="text-[11px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full"
-                              style={{
-                                background: "rgba(217,119,6,0.1)",
-                                color: "#b45309",
-                                border: "1px solid rgba(217,119,6,0.2)",
-                              }}
+                              style={getPaymentChipStyle(activeBooking.paymentStatus)}
                             >
                               {activeBooking.paymentStatus}
                             </span>
@@ -1296,7 +1553,7 @@ export default function TravelBriefingLanding() {
                         <div className="px-5 py-4 space-y-4">
                           <BookingRow
                             label1="Lead Guest"    value1={activeBooking.leadName}
-                            label2="Total Guests"  value2={String(activeBooking.totalGuests || "—")}
+                            label2={activeBooking.totalGuests === 1 ? "Total Guest" : "Total Guests"}  value2={String(activeBooking.totalGuests || "—")}
                             textPrimary={textPrimary} textMuted={textMuted}
                           />
                           <BookingRow
@@ -1341,10 +1598,10 @@ export default function TravelBriefingLanding() {
                             <BookingRow
                               label1="Hotel"
                               value1={activeBooking.hotel?.hotelName || activeBooking.tour?.hotelMention || "—"}
-                              label2="Room Type"
+                              label2="Inclusions"
                               value2={
                                 activeBooking.hotel?.roomType
-                                  ? `${activeBooking.hotel.roomType}${activeBooking.hotel.nights ? ` · ${activeBooking.hotel.nights} night(s)` : ""}`
+                                  ? `${formatRoomType(activeBooking.hotel.roomType)}${activeBooking.hotel.nights ? ` · ${activeBooking.hotel.nights} ${Number(activeBooking.hotel.nights) === 1 ? "night" : "nights"}` : ""}`
                                   : "—"
                               }
                               textPrimary={textPrimary} textMuted={textMuted}
@@ -1377,9 +1634,9 @@ export default function TravelBriefingLanding() {
                       {(activeBooking.ticket || activeBooking.transfer || activeBooking.transferDetails) && (
                         <BookingSection label="Ticket / Flight Information" darkMode={darkMode}>
                           <div className="px-5 py-4 space-y-4">
-                            {activeBooking.ticket?.airline && (
+                            {(activeBooking.ticket?.airline || activeBooking.ticket?.pnr) && (
                               <BookingRow
-                                label1="Airline"  value1={activeBooking.ticket.airline}
+                                label1="Airline"  value1={activeBooking.ticket.airline || "—"}
                                 label2="PNR"      value2={activeBooking.ticket.pnr || "—"}
                                 textPrimary={textPrimary} textMuted={textMuted}
                               />
@@ -1456,7 +1713,7 @@ export default function TravelBriefingLanding() {
                                   backgroundColor: surfaceBg,
                                 }}
                               >
-                                <Download className="w-4 h-4" style={{ color: "#f97316" }} />
+                                <Download className="w-4 h-4" style={{ color: "#ff9913" }} />
                                 View Your Voucher
                               </a>
                             ) : null;
@@ -1471,7 +1728,7 @@ export default function TravelBriefingLanding() {
                               backgroundColor: surfaceBg,
                             }}
                           >
-                            <Download className="w-4 h-4" style={{ color: "#f97316" }} />
+                            <Download className="w-4 h-4" style={{ color: "#ff9913" }} />
                             View Itinerary
                           </motion.button>
                         </div>
@@ -1480,23 +1737,24 @@ export default function TravelBriefingLanding() {
                     </div>
                 </motion.div>
               )}
-            </div>
+            </SectionStripe>
 
         {/* ── EMERGENCY CONTACTS — consolidated, always visible near top ── */}
-        <FadeIn>
-          <div className={sectionGap}>
-            <div className="rounded-2xl border overflow-hidden" style={{ borderColor: "rgba(249,115,22,0.4)", backgroundColor: "rgba(249,115,22,0.04)" }}>
-              <div className="px-5 pt-4 pb-3 border-b" style={{ borderColor: "rgba(249,115,22,0.2)" }}>
-                <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: "#f97316" }}>Save These Numbers</p>
+        <SectionStripe alt={1} darkMode={darkMode}>
+          <FadeIn>
+            <StripeHeader eyebrow="Important" title="Emergency Contacts" description="Save these numbers before your trip. Available for any emergency during your stay." tk={tk} colored />
+            <SectionCard darkMode={darkMode}>
+              <div className="mb-4">
+                <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Save These Numbers</p>
                 <p className="font-black text-base" style={{ color: textPrimary }}>Emergency Contacts</p>
               </div>
-              <div className="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {/* Gladex Hotline — always shown */}
-                <div className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor, backgroundColor: cardBg }}>
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(249,115,22,0.12)" }}>📞</div>
+                <div className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor: "rgba(255,153,19,0.3)", backgroundColor: "rgba(255,153,19,0.06)" }}>
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(255,153,19,0.12)" }}>📞</div>
                   <div>
                     <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Gladex Hotline</p>
-                    <a href="tel:+639178752200" className="text-sm font-black" style={{ color: "#f97316" }}>+63 917 875 2200</a>
+                    <a href="tel:+639178752200" className="text-sm font-black" style={{ color: "#ff9913" }}>+63 917 875 2200</a>
                     <p className="text-[10px] mt-0.5" style={{ color: textMuted }}>Available 8AM–8PM</p>
                   </div>
                 </div>
@@ -1517,8 +1775,8 @@ export default function TravelBriefingLanding() {
                     const multi = contacts.length > 1;
                     const allSameLabel = contacts.every(x => x.label === contacts[0].label);
                     return (
-                      <div key={grp.group} className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor, backgroundColor: cardBg }}>
-                        <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(249,115,22,0.12)" }}>{grp.icon}</div>
+                      <div key={grp.group} className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor: "rgba(255,153,19,0.3)", backgroundColor: "rgba(255,153,19,0.06)" }}>
+                        <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(255,153,19,0.12)" }}>{grp.icon}</div>
                         <div className="flex-1 min-w-0">
                           <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>{grp.group}</p>
                           {multi ? (
@@ -1529,9 +1787,9 @@ export default function TravelBriefingLanding() {
                                     <span className="text-xs font-semibold" style={{ color: textPrimary }}>{c.label}:</span>
                                   )}
                                   {/^[0+]/.test(c.number) ? (
-                                    <a href={`tel:${c.number.replace(/[\s\-]/g, "")}`} className="text-xs font-bold" style={{ color: "#f97316" }}>{c.number}</a>
+                                    <a href={`tel:${c.number.replace(/[\s\-]/g, "")}`} className="text-xs font-bold" style={{ color: "#ff9913" }}>{c.number}</a>
                                   ) : (
-                                    <span className="text-xs font-semibold" style={{ color: textMuted }}>{c.number}</span>
+                                    <span className="text-xs font-semibold" style={{ color: textPrimary }}>{c.number}</span>
                                   )}
                                   {i < contacts.length - 1 && <span className="text-xs font-bold" style={{ color: textMuted }}>/</span>}
                                 </span>
@@ -1541,9 +1799,9 @@ export default function TravelBriefingLanding() {
                             <>
                               <p className="text-sm font-black" style={{ color: textPrimary }}>{contacts[0].label}</p>
                               {/^[0+]/.test(contacts[0].number) ? (
-                                <a href={`tel:${contacts[0].number.replace(/[\s\-]/g, "")}`} className="text-xs font-bold" style={{ color: "#f97316" }}>{contacts[0].number}</a>
+                                <a href={`tel:${contacts[0].number.replace(/[\s\-]/g, "")}`} className="text-xs font-bold" style={{ color: "#ff9913" }}>{contacts[0].number}</a>
                               ) : (
-                                <p className="text-xs font-semibold" style={{ color: textMuted }}>{contacts[0].number}</p>
+                                <p className="text-xs font-semibold" style={{ color: textPrimary }}>{contacts[0].number}</p>
                               )}
                             </>
                           )}
@@ -1558,13 +1816,13 @@ export default function TravelBriefingLanding() {
 
                 {/* Booking-specific contacts */}
                 {(activeBooking?.consultantName || activeBooking?.agentName) && (
-                  <div className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor, backgroundColor: cardBg }}>
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(249,115,22,0.12)" }}>👤</div>
+                  <div className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor: "rgba(255,153,19,0.3)", backgroundColor: "rgba(255,153,19,0.06)" }}>
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(255,153,19,0.12)" }}>👤</div>
                     <div>
                       <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Your Coordinator</p>
                       <p className="text-sm font-black" style={{ color: textPrimary }}>{activeBooking.consultantName || activeBooking.agentName}</p>
                       {activeBooking.consultantPhone ? (
-                        <a href={`tel:${activeBooking.consultantPhone.replace(/\s/g,"")}`} className="text-xs font-bold" style={{ color: "#f97316" }}>{activeBooking.consultantPhone}</a>
+                        <a href={`tel:${activeBooking.consultantPhone.replace(/\s/g,"")}`} className="text-xs font-bold" style={{ color: "#ff9913" }}>{activeBooking.consultantPhone}</a>
                       ) : (
                         <p className="text-xs" style={{ color: textMuted }}>Contact via Gladex Hotline</p>
                       )}
@@ -1572,13 +1830,13 @@ export default function TravelBriefingLanding() {
                   </div>
                 )}
                 {(activeBooking?.hotel?.hotelName || activeBooking?.tour?.hotelMention) && (
-                  <div className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor, backgroundColor: cardBg }}>
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(249,115,22,0.12)" }}>🏨</div>
+                  <div className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor: "rgba(255,153,19,0.3)", backgroundColor: "rgba(255,153,19,0.06)" }}>
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(255,153,19,0.12)" }}>🏨</div>
                     <div>
                       <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Hotel</p>
                       <p className="text-sm font-black" style={{ color: textPrimary }}>{activeBooking.hotel?.hotelName || activeBooking.tour?.hotelMention}</p>
                       {activeBooking.hotel?.hotelPhone ? (
-                        <a href={`tel:${activeBooking.hotel.hotelPhone.replace(/\s/g,"")}`} className="text-xs font-bold" style={{ color: "#f97316" }}>{activeBooking.hotel.hotelPhone}</a>
+                        <a href={`tel:${activeBooking.hotel.hotelPhone.replace(/\s/g,"")}`} className="text-xs font-bold" style={{ color: "#ff9913" }}>{activeBooking.hotel.hotelPhone}</a>
                       ) : (
                         <p className="text-xs" style={{ color: textMuted }}>Contact via Gladex Hotline</p>
                       )}
@@ -1586,51 +1844,36 @@ export default function TravelBriefingLanding() {
                   </div>
                 )}
                 {activeBooking?.transfer?.transferContact && (
-                  <div className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor, backgroundColor: cardBg }}>
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(249,115,22,0.12)" }}>🚌</div>
+                  <div className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor: "rgba(255,153,19,0.3)", backgroundColor: "rgba(255,153,19,0.06)" }}>
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(255,153,19,0.12)" }}>🚌</div>
                     <div>
                       <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Transfer Contact</p>
                       <p className="text-sm font-black" style={{ color: textPrimary }}>{activeBooking.transfer.supplier || "Transfer Coordinator"}</p>
-                      <a href={`tel:${activeBooking.transfer.transferContact.replace(/\s/g,"")}`} className="text-xs font-bold" style={{ color: "#f97316" }}>{activeBooking.transfer.transferContact}</a>
+                      <a href={`tel:${activeBooking.transfer.transferContact.replace(/\s/g,"")}`} className="text-xs font-bold" style={{ color: "#ff9913" }}>{activeBooking.transfer.transferContact}</a>
                     </div>
                   </div>
                 )}
               </div>
-            </div>
-          </div>
-        </FadeIn>
+            </SectionCard>
+          </FadeIn>
+        </SectionStripe>
 
         {/* ══════════════════════════════════════════════════
             2. TRAVEL BRIEFING VIDEO
            ══════════════════════════════════════════════════ */}
-        <FadeIn>
-          <div className={sectionGap}>
-            <SectionHeader eyebrow="Watch Before You Travel" title="Your Travel Briefing" tk={tk} />
+        <SectionStripe alt={0} darkMode={darkMode}>
+          <FadeIn>
+            <StripeHeader eyebrow="Watch Before You Travel" title="Your Travel Briefing" tk={tk} />
             <TBBriefingVideo dest={dest} darkMode={darkMode} tk={tk} />
-          </div>
-        </FadeIn>
+          </FadeIn>
+        </SectionStripe>
 
         {/* ══════════════════════════════════════════════════
             3. OFFICIAL BRIEFING WELCOME
            ══════════════════════════════════════════════════ */}
-        <FadeIn>
-          <div className={sectionGap}>
-            {/* Eyebrow + title */}
-            <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: "#f97316" }}>
-              Official Briefing
-            </p>
-            <h2
-              className="font-black text-2xl mb-5"
-              style={{
-                color: textPrimary,
-                fontFamily: "'Montserrat', sans-serif",
-                letterSpacing: "-0.02em",
-                borderLeft: "4px solid #f97316",
-                paddingLeft: "0.75rem",
-              }}
-            >
-              Official {dest.name} Briefing
-            </h2>
+        <SectionStripe alt={1} darkMode={darkMode}>
+          <FadeIn>
+            <StripeHeader eyebrow="Official Briefing" title={`Official ${dest.name} Briefing`} description={`Everything you need to know before arriving in ${dest.name}.`} tk={tk} colored />
 
             {/* Card */}
             <div
@@ -1645,7 +1888,7 @@ export default function TravelBriefingLanding() {
               <div className="flex flex-wrap items-center gap-2 mb-4">
                 <span
                   className="text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-full"
-                  style={{ background: "#f97316", color: "#fff" }}
+                  style={{ background: "#ff9913", color: "#fff" }}
                 >
                   {dest.tagline}
                 </span>
@@ -1654,7 +1897,7 @@ export default function TravelBriefingLanding() {
                     className="text-[11px] font-semibold px-3 py-1.5 rounded-full border"
                     style={{ borderColor, color: textMuted, backgroundColor: surfaceBg }}
                   >
-                    {dest.itinerary.length} Days / {dest.itinerary.length - 1} Nights
+                    {dest.itinerary.length} {dest.itinerary.length === 1 ? "Day" : "Days"} / {dest.itinerary.length - 1} {dest.itinerary.length - 1 === 1 ? "Night" : "Nights"}
                   </span>
                 )}
               </div>
@@ -1671,106 +1914,58 @@ export default function TravelBriefingLanding() {
                 Please read every section carefully before your departure and keep this page bookmarked for easy reference throughout your trip. If you have questions after reviewing the briefing, reach out to our team via Messenger, WhatsApp, or our hotline.
               </p>
             </div>
-          </div>
-        </FadeIn>
+          </FadeIn>
+        </SectionStripe>
 
         {/* ══════════════════════════════════════════════════
             3b. PACKAGE INCLUSIONS & EXCLUSIONS
            ══════════════════════════════════════════════════ */}
         {(dest.inclusions?.length || dest.exclusions?.length) && (
-          <FadeIn>
-            <div className={sectionGap}>
+          <SectionStripe alt={0} darkMode={darkMode}>
+            <FadeIn>
+              <StripeHeader eyebrow="What's Included" title="Package Inclusions" tk={tk} />
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
                 {/* ── INCLUSIONS ── */}
                 {dest.inclusions?.length > 0 && (
-                  <div>
-                    <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: "#f97316" }}>
-                      What's Covered
-                    </p>
-                    <h3
-                      className="font-black text-xl mb-3"
-                      style={{
-                        color: textPrimary,
-                        fontFamily: "'Montserrat', sans-serif",
-                        letterSpacing: "-0.02em",
-                        borderLeft: "4px solid #16a34a",
-                        paddingLeft: "0.75rem",
-                      }}
-                    >
-                      Package Inclusions
-                    </h3>
-                    <div
-                      className="rounded-2xl border p-4"
-                      style={{
-                        backgroundColor: darkMode ? "rgba(34,197,94,0.06)" : "#f0fdf4",
-                        borderColor: darkMode ? "rgba(34,197,94,0.18)" : "#bbf7d0",
-                        boxShadow: cardShadow,
-                      }}
-                    >
-                      <ul className="space-y-2.5">
-                        {dest.inclusions.map((item, i) => (
-                          <li key={i} className="flex items-start gap-2.5">
-                            <Check
-                              className="w-4 h-4 shrink-0 mt-0.5"
-                              style={{ color: "#16a34a" }}
-                            />
-                            <span className="text-sm leading-snug" style={{ color: darkMode ? "rgba(255,255,255,0.82)" : "#166534" }}>
-                              {item}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
+                  <div className="rounded-2xl overflow-hidden border" style={{ borderColor: "rgba(34,197,94,0.25)", boxShadow: cardShadow }}>
+                    <div className="px-5 py-3.5" style={{ background: "linear-gradient(160deg, #16a34a 0%, #15803d 100%)" }}>
+                      <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: "rgba(255,255,255,0.72)" }}>What's Covered</p>
+                      <p className="font-black text-base text-white" style={{ letterSpacing: "-0.01em" }}>Package Inclusions</p>
+                    </div>
+                    <div className="p-4 space-y-3" style={{ backgroundColor: cardBg }}>
+                      {dest.inclusions.map((item, i) => (
+                        <div key={i} className="flex items-start gap-3">
+                          <div className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center mt-0.5" style={{ background: "#16a34a" }}>
+                            <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />
+                          </div>
+                          <span className="text-sm leading-relaxed pt-1" style={{ color: textPrimary }}>{item}</span>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 )}
 
                 {/* ── EXCLUSIONS ── */}
                 {dest.exclusions?.length > 0 && (
-                  <div>
-                    <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: "#f97316" }}>
-                      Not Covered
-                    </p>
-                    <h3
-                      className="font-black text-xl mb-3"
-                      style={{
-                        color: textPrimary,
-                        fontFamily: "'Montserrat', sans-serif",
-                        letterSpacing: "-0.02em",
-                        borderLeft: "4px solid #dc2626",
-                        paddingLeft: "0.75rem",
-                      }}
-                    >
-                      Package Exclusions
-                    </h3>
-                    <div
-                      className="rounded-2xl border p-4"
-                      style={{
-                        backgroundColor: darkMode ? "rgba(220,38,38,0.06)" : "#fff7f7",
-                        borderColor: darkMode ? "rgba(220,38,38,0.18)" : "#fecaca",
-                        boxShadow: cardShadow,
-                      }}
-                    >
-                      <ul className="space-y-2.5">
-                        {dest.exclusions.map((item, i) => (
-                          <li key={i} className="flex items-start gap-2.5">
-                            <X
-                              className="w-4 h-4 shrink-0 mt-0.5"
-                              style={{ color: "#dc2626" }}
-                            />
-                            <span className="text-sm leading-snug" style={{ color: darkMode ? "rgba(255,255,255,0.82)" : "#7f1d1d" }}>
-                              {item}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                      {/* Footnotes */}
+                  <div className="rounded-2xl overflow-hidden border" style={{ borderColor: "rgba(239,68,68,0.25)", boxShadow: cardShadow }}>
+                    <div className="px-5 py-3.5" style={{ background: "linear-gradient(160deg, #dc2626 0%, #b91c1c 100%)" }}>
+                      <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: "rgba(255,255,255,0.72)" }}>Not Covered</p>
+                      <p className="font-black text-base text-white" style={{ letterSpacing: "-0.01em" }}>Package Exclusions</p>
+                    </div>
+                    <div className="p-4 space-y-3" style={{ backgroundColor: cardBg }}>
+                      {dest.exclusions.map((item, i) => (
+                        <div key={i} className="flex items-start gap-3">
+                          <div className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center mt-0.5" style={{ background: "#dc2626" }}>
+                            <X className="w-3.5 h-3.5 text-white" strokeWidth={3} />
+                          </div>
+                          <span className="text-sm leading-relaxed pt-1" style={{ color: textPrimary }}>{item}</span>
+                        </div>
+                      ))}
                       {dest.exclusionNotes?.length > 0 && (
-                        <div className="mt-4 pt-3 space-y-1.5" style={{ borderTop: `1px solid ${darkMode ? "rgba(220,38,38,0.15)" : "#fecaca"}` }}>
+                        <div className="pt-3 space-y-1.5" style={{ borderTop: `1px solid ${borderColor}` }}>
                           {dest.exclusionNotes.map((note, i) => (
-                            <p key={i} className="text-xs leading-snug" style={{ color: textMuted }}>
-                              {note}
-                            </p>
+                            <p key={i} className="text-xs leading-snug" style={{ color: textMuted }}>{note}</p>
                           ))}
                         </div>
                       )}
@@ -1779,62 +1974,57 @@ export default function TravelBriefingLanding() {
                 )}
 
               </div>
-            </div>
-          </FadeIn>
+            </FadeIn>
+          </SectionStripe>
         )}
 
         {/* ══════════════════════════════════════════════════
             3c. DAY-BY-DAY ITINERARY TIMELINE
            ══════════════════════════════════════════════════ */}
         {dest.itinerary?.length > 0 && (
-          <FadeIn>
-            <div className={sectionGap}>
-              <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: "#f97316" }}>
-                Day by Day
-              </p>
-              <h2
-                className="font-black text-2xl mb-5"
-                style={{
-                  color: textPrimary,
-                  fontFamily: "'Montserrat', sans-serif",
-                  letterSpacing: "-0.02em",
-                  borderLeft: "4px solid #f97316",
-                  paddingLeft: "0.75rem",
-                }}
-              >
-                Itinerary Timeline
-              </h2>
-              <TBItinerary dest={dest} darkMode={darkMode} tk={tk} />
-            </div>
-          </FadeIn>
+          <SectionStripe alt={1} darkMode={darkMode}>
+            <FadeIn>
+              <StripeHeader eyebrow="Day by Day" title="Itinerary Timeline" description="Your complete day-by-day schedule from arrival to departure." tk={tk} colored />
+              <SectionCard darkMode={darkMode}>
+                <TBItinerary
+                  dest={dest}
+                  darkMode={darkMode}
+                  tk={tk}
+                  availableTours={isTestMode ? (liveTours.length > 0 ? liveTours : dest?.optionalTours || []) : []}
+                  addOnsCart={isTestMode ? addOnsCart : []}
+                  onAddToCart={isTestMode ? handleAddToCart : undefined}
+                />
+              </SectionCard>
+            </FadeIn>
+          </SectionStripe>
         )}
 
         {/* ══════════════════════════════════════════════════
             4. TRAVEL INFORMATION CENTER
            ══════════════════════════════════════════════════ */}
 
-        <FadeIn>
-          <div className={sectionGap}>
-            <SectionHeader eyebrow="Operational Information" title="Travel Information Center" tk={tk} />
+        <SectionStripe alt={0} darkMode={darkMode}>
+          <FadeIn>
+            <StripeHeader eyebrow="Operational Information" title="Travel Information Center" description="Arrival instructions, hotel check-in, transfers, and local info — everything in one place." tk={tk} />
             <div className="space-y-4">
 
-              {/* 5a. Arrival Instructions — all airports shown vertically, no tabs */}
-              <div className="rounded-2xl border overflow-hidden" style={{ ...card }}>
-                <div className="px-5 pt-4 pb-3 border-b" style={{ borderColor }}>
-                  <p className="font-bold text-base" style={{ color: textPrimary }}>Arrival Instructions</p>
-                  <p className="text-xs mt-0.5" style={{ color: textMuted }}>How to get from the airport to your hotel</p>
+              {/* 5a. Arrival Instructions */}
+              <div className="rounded-2xl overflow-hidden" style={{ boxShadow: cardShadow }}>
+                <div className="px-5 py-3.5" style={{ background: "linear-gradient(160deg, #ff9913 0%, #e07800 100%)" }}>
+                  <p className="font-bold text-base text-white">Arrival Instructions</p>
+                  <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.75)" }}>How to get from the airport to your hotel</p>
                 </div>
-                <div className="p-5 space-y-7">
+                <div className="p-5 space-y-7" style={{ backgroundColor: cardBg, border: `1px solid ${borderColor}`, borderTop: "none" }}>
                   {dest.arrivalInstructions.tabs.map(({ key, label }, tabIdx) => {
                     const info = dest.arrivalInstructions[key];
                     if (!info) return null;
                     return (
                       <div key={key} className={tabIdx > 0 ? "pt-6 border-t" : ""} style={{ borderColor }}>
-                        <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: "#f97316" }}>{label}</p>
+                        <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: "#ff9913" }}>{label}</p>
                         <div className="space-y-3">
                           {info.steps.map((step, i) => (
                             <div key={i} className="flex items-start gap-3">
-                              <div className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-black" style={{ background: "linear-gradient(135deg, #f97316, #b45309)", color: "#fff" }}>
+                              <div className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-black" style={{ background: "linear-gradient(135deg, #ff9913, #cc7700)", color: "#fff" }}>
                                 {i + 1}
                               </div>
                               <p className="text-sm leading-snug pt-1" style={{ color: textPrimary }}>{step}</p>
@@ -1842,15 +2032,15 @@ export default function TravelBriefingLanding() {
                           ))}
                         </div>
                         {info.note && (
-                          <div className="mt-4 p-3 rounded-xl border text-xs flex items-start gap-2" style={{ borderColor: "rgba(249,115,22,0.25)", backgroundColor: "rgba(249,115,22,0.07)", color: textMuted }}>
+                          <div className="mt-4 p-3 rounded-xl border text-xs flex items-start gap-2" style={{ borderColor: "rgba(255,153,19,0.25)", backgroundColor: "rgba(255,153,19,0.07)", color: textMuted }}>
                             <Info className="w-3.5 h-3.5 shrink-0 mt-0.5 text-orange-400" />
                             {info.note}
                           </div>
                         )}
                         {info.travelTime && (
                           <div className="mt-4 rounded-xl border overflow-hidden" style={{ borderColor }}>
-                            <div className="px-3 py-2" style={{ backgroundColor: darkMode ? "rgba(249,115,22,0.1)" : "rgba(249,115,22,0.07)" }}>
-                              <p className="text-[10px] font-black uppercase tracking-widest" style={{ color: "#f97316" }}>Estimated Travel Time</p>
+                            <div className="px-3 py-2" style={{ backgroundColor: darkMode ? "rgba(255,153,19,0.1)" : "rgba(255,153,19,0.07)" }}>
+                              <p className="text-[10px] font-black uppercase tracking-widest" style={{ color: "#ff9913" }}>Estimated Travel Time</p>
                             </div>
                             <div className="px-3 py-2.5 space-y-1.5">
                               {info.travelTime.breakdown.map((b) => (
@@ -1870,11 +2060,11 @@ export default function TravelBriefingLanding() {
                             <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: textMuted }}>Van Transfer Schedule</p>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                               <div className="rounded-xl p-3 border" style={{ borderColor, backgroundColor: surfaceBg }}>
-                                <p className="text-xs font-bold mb-2" style={{ color: "#f97316" }}>Puerto Princesa → El Nido</p>
+                                <p className="text-xs font-bold mb-2" style={{ color: "#ff9913" }}>Puerto Princesa → El Nido</p>
                                 {info.vanSchedule.ppsToElNido.map((s) => (<p key={s} className="text-xs py-0.5" style={{ color: textPrimary }}>{s}</p>))}
                               </div>
                               <div className="rounded-xl p-3 border" style={{ borderColor, backgroundColor: surfaceBg }}>
-                                <p className="text-xs font-bold mb-2" style={{ color: "#f97316" }}>El Nido → Puerto Princesa</p>
+                                <p className="text-xs font-bold mb-2" style={{ color: "#ff9913" }}>El Nido → Puerto Princesa</p>
                                 {info.vanSchedule.elNidoToPps.map((s) => (<p key={s} className="text-xs py-0.5" style={{ color: textPrimary }}>{s}</p>))}
                               </div>
                             </div>
@@ -1887,22 +2077,22 @@ export default function TravelBriefingLanding() {
               </div>
 
               {/* 5b. Transfer Instructions */}
-              <div className="rounded-2xl border overflow-hidden" style={{ ...card }}>
-                <div className="px-5 pt-4 pb-3 border-b" style={{ borderColor }}>
-                  <p className="font-bold text-base" style={{ color: textPrimary }}>Transfer Instructions</p>
-                  <p className="text-xs mt-0.5" style={{ color: textMuted }}>Arrival and departure transport details</p>
+              <div className="rounded-2xl overflow-hidden" style={{ boxShadow: cardShadow }}>
+                <div className="px-5 py-3.5" style={{ background: "linear-gradient(160deg, #ff9913 0%, #e07800 100%)" }}>
+                  <p className="font-bold text-base text-white">Transfer Instructions</p>
+                  <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.75)" }}>Arrival and departure transport details</p>
                 </div>
-                <div className="p-5 space-y-6">
+                <div className="p-5 space-y-6" style={{ backgroundColor: cardBg, border: `1px solid ${borderColor}`, borderTop: "none" }}>
                   {[
-                    { key: "arrival",   label: "Arrival Transfer",  color: "#f97316" },
-                    { key: "departure", label: "Departure Transfer", color: "#3b82f6" },
-                  ].map(({ key, label, color }, gi) => (
+                    { key: "arrival",   label: "Arrival Transfer" },
+                    { key: "departure", label: "Departure Transfer" },
+                  ].map(({ key, label }, gi) => (
                     <div key={key} className={gi > 0 ? "pt-5" : ""} style={{ borderTop: gi > 0 ? `1px solid ${borderColor}` : undefined }}>
-                      <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color }}>{label}</p>
+                      <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: "#ff9913" }}>{label}</p>
                       <div className="space-y-3">
                         {dest.transferInstructions[key].map((s) => (
                           <div key={s.step} className="flex items-start gap-3">
-                            <div className="shrink-0 w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black" style={{ background: "linear-gradient(135deg, #f97316, #b45309)", color: "#fff" }}>
+                            <div className="shrink-0 w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black" style={{ background: "linear-gradient(135deg, #ff9913, #cc7700)", color: "#fff" }}>
                               {s.step}
                             </div>
                             <div className="pt-1">
@@ -1918,19 +2108,19 @@ export default function TravelBriefingLanding() {
               </div>
 
               {/* 5c. Hotel Check-In */}
-              <div className="rounded-2xl border overflow-hidden" style={{ ...card }}>
-                <div className="px-5 pt-4 pb-3 border-b" style={{ borderColor }}>
-                  <p className="font-bold text-base" style={{ color: textPrimary }}>Hotel Check-In Information</p>
-                  <p className="text-xs mt-0.5" style={{ color: textMuted }}>Arriving at your accommodation</p>
+              <div className="rounded-2xl overflow-hidden" style={{ boxShadow: cardShadow }}>
+                <div className="px-5 py-3.5" style={{ background: "linear-gradient(160deg, #ff9913 0%, #e07800 100%)" }}>
+                  <p className="font-bold text-base text-white">Hotel Check-In Information</p>
+                  <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.75)" }}>Arriving at your accommodation</p>
                 </div>
-                <div className="p-5">
+                <div className="p-5" style={{ backgroundColor: cardBg, border: `1px solid ${borderColor}`, borderTop: "none" }}>
                   <div className="grid grid-cols-2 gap-3 mb-5">
-                    <div className="rounded-xl p-3 border" style={{ borderColor: "rgba(34,197,94,0.3)", backgroundColor: "rgba(34,197,94,0.07)" }}>
-                      <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: "#22c55e" }}>Check-In Time</p>
+                    <div className="rounded-xl p-3 border" style={{ borderColor: "rgba(255,153,19,0.3)", backgroundColor: "rgba(255,153,19,0.07)" }}>
+                      <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: "#ff9913" }}>Check-In Time</p>
                       <p className="text-sm" style={{ color: textPrimary }}>{dest.hotelInfo.checkin}</p>
                     </div>
-                    <div className="rounded-xl p-3 border" style={{ borderColor: "rgba(239,68,68,0.3)", backgroundColor: "rgba(239,68,68,0.07)" }}>
-                      <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: "#ef4444" }}>Check-Out Time</p>
+                    <div className="rounded-xl p-3 border" style={{ borderColor: "rgba(255,153,19,0.3)", backgroundColor: "rgba(255,153,19,0.07)" }}>
+                      <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: "#ff9913" }}>Check-Out Time</p>
                       <p className="text-sm" style={{ color: textPrimary }}>{dest.hotelInfo.checkout}</p>
                     </div>
                   </div>
@@ -1946,12 +2136,12 @@ export default function TravelBriefingLanding() {
               </div>
 
               {/* 5d. Travel Requirements */}
-              <div className="rounded-2xl border overflow-hidden" style={{ ...card }}>
-                <div className="px-5 pt-4 pb-3 border-b" style={{ borderColor }}>
-                  <p className="font-bold text-base" style={{ color: textPrimary }}>Travel Requirements</p>
-                  <p className="text-xs mt-0.5" style={{ color: textMuted }}>Documents and entry requirements</p>
+              <div className="rounded-2xl overflow-hidden" style={{ boxShadow: cardShadow }}>
+                <div className="px-5 py-3.5" style={{ background: "linear-gradient(160deg, #ff9913 0%, #e07800 100%)" }}>
+                  <p className="font-bold text-base text-white">Travel Requirements</p>
+                  <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.75)" }}>Documents and entry requirements</p>
                 </div>
-                <div className="p-5">
+                <div className="p-5" style={{ backgroundColor: cardBg, border: `1px solid ${borderColor}`, borderTop: "none" }}>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
                     {[
                       { label: "Filipino Travelers",  items: dest.requirements.filipino },
@@ -1959,11 +2149,11 @@ export default function TravelBriefingLanding() {
                       { label: "Travel Documents",    items: dest.requirements.documents },
                     ].map(({ label, items }) => (
                       <div key={label}>
-                        <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#f97316" }}>{label}</p>
+                        <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#ff9913" }}>{label}</p>
                         <ul className="space-y-2">
                           {items.map((r) => (
                             <li key={r} className="flex items-start gap-2 text-sm leading-snug" style={{ color: textPrimary }}>
-                              <BadgeCheck className="w-3.5 h-3.5 text-green-500 shrink-0 mt-0.5" /> {r}
+                              <BadgeCheck className="w-3.5 h-3.5 text-orange-400 shrink-0 mt-0.5" /> {r}
                             </li>
                           ))}
                         </ul>
@@ -1974,19 +2164,19 @@ export default function TravelBriefingLanding() {
               </div>
 
               {/* 5e. Tour Reminders */}
-              <div className="rounded-2xl border overflow-hidden" style={{ ...card }}>
-                <div className="px-5 pt-4 pb-3 border-b" style={{ borderColor }}>
-                  <p className="font-bold text-base" style={{ color: textPrimary }}>Tour Reminders</p>
-                  <p className="text-xs mt-0.5" style={{ color: textMuted }}>What to remember before, during, and after your tour</p>
+              <div className="rounded-2xl overflow-hidden" style={{ boxShadow: cardShadow }}>
+                <div className="px-5 py-3.5" style={{ background: "linear-gradient(160deg, #ff9913 0%, #e07800 100%)" }}>
+                  <p className="font-bold text-base text-white">Tour Reminders</p>
+                  <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.75)" }}>What to remember before, during, and after your tour</p>
                 </div>
-                <div className="p-5 space-y-6">
+                <div className="p-5 space-y-6" style={{ backgroundColor: cardBg, border: `1px solid ${borderColor}`, borderTop: "none" }}>
                   {[
-                    { key: "before",    label: "Before Your Trip",  color: "#f97316" },
-                    { key: "during",    label: "During Your Stay",  color: "#3b82f6" },
-                    { key: "departure", label: "On Departure Day",  color: "#22c55e" },
-                  ].map(({ key, label, color }, gi) => (
+                    { key: "before",    label: "Before Your Trip" },
+                    { key: "during",    label: "During Your Stay" },
+                    { key: "departure", label: "On Departure Day" },
+                  ].map(({ key, label }, gi) => (
                     <div key={key} className={gi > 0 ? "pt-5" : ""} style={{ borderTop: gi > 0 ? `1px solid ${borderColor}` : undefined }}>
-                      <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color }}>{label}</p>
+                      <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#ff9913" }}>{label}</p>
                       <ul className="space-y-2.5">
                         {dest.reminders[key].map((r) => (
                           <li key={r} className="flex items-start gap-2.5 text-sm leading-snug" style={{ color: textPrimary }}>
@@ -2001,93 +2191,116 @@ export default function TravelBriefingLanding() {
 
               {/* 5f. Do's & Don'ts */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="rounded-2xl border p-5" style={{ backgroundColor: darkMode ? "rgba(34,197,94,0.06)" : "#f0fdf4", borderColor: darkMode ? "rgba(34,197,94,0.18)" : "#bbf7d0" }}>
-                  <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: "#16a34a" }}>Do's</p>
+                <div className="rounded-2xl overflow-hidden border" style={{ borderColor: "rgba(34,197,94,0.3)", boxShadow: cardShadow }}>
+                  <div className="px-5 py-3.5" style={{ background: "linear-gradient(160deg, #16a34a 0%, #15803d 100%)" }}>
+                    <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: "rgba(255,255,255,0.72)" }}>Behavior Guide</p>
+                    <p className="font-black text-base text-white" style={{ letterSpacing: "-0.01em" }}>✓ Do's</p>
+                  </div>
+                  <div className="p-5" style={{ backgroundColor: darkMode ? "rgba(34,197,94,0.07)" : "rgba(34,197,94,0.04)" }}>
                   <ul className="space-y-2.5">
-                    {dest.dos.map((d) => (<li key={d} className="flex items-start gap-2 text-sm leading-snug" style={{ color: darkMode ? "rgba(255,255,255,0.82)" : "#166534" }}><Check className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: "#16a34a" }} strokeWidth={2.5} />{d}</li>))}
+                    {dest.dos.map((d) => (
+                      <li key={d} className="flex items-start gap-2 text-sm leading-snug" style={{ color: textPrimary }}>
+                        <Check className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: "#16a34a" }} strokeWidth={2.5} />{d}
+                      </li>
+                    ))}
                   </ul>
+                  </div>
                 </div>
-                <div className="rounded-2xl border p-5" style={{ backgroundColor: darkMode ? "rgba(220,38,38,0.06)" : "#fff7f7", borderColor: darkMode ? "rgba(220,38,38,0.18)" : "#fecaca" }}>
-                  <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: "#dc2626" }}>Don'ts</p>
-                  <ul className="space-y-2.5">
-                    {dest.donts.map((d) => (<li key={d} className="flex items-start gap-2 text-sm leading-snug" style={{ color: darkMode ? "rgba(255,255,255,0.82)" : "#7f1d1d" }}><X className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: "#dc2626" }} strokeWidth={2.5} />{d}</li>))}
-                  </ul>
+                <div className="rounded-2xl overflow-hidden border" style={{ borderColor: "rgba(239,68,68,0.3)", boxShadow: cardShadow }}>
+                  <div className="px-5 py-3.5" style={{ background: "linear-gradient(160deg, #dc2626 0%, #b91c1c 100%)" }}>
+                    <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: "rgba(255,255,255,0.72)" }}>Avoid These</p>
+                    <p className="font-black text-base text-white" style={{ letterSpacing: "-0.01em" }}>✗ Don'ts</p>
+                  </div>
+                  <div className="p-5" style={{ backgroundColor: darkMode ? "rgba(239,68,68,0.07)" : "rgba(239,68,68,0.04)" }}>
+                    <ul className="space-y-2.5">
+                      {dest.donts.map((d) => (
+                        <li key={d} className="flex items-start gap-2 text-sm leading-snug" style={{ color: textPrimary }}>
+                          <X className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: "#dc2626" }} strokeWidth={2.5} />{d}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               </div>
 
             </div>
-          </div>
-        </FadeIn>
+          </FadeIn>
+        </SectionStripe>
 
         {/* ══════════════════════════════════════════════════
             5b2. CURRENCY & MONEY TIPS
            ══════════════════════════════════════════════════ */}
         {dest.currency && (
-          <FadeIn>
-            <div className={sectionGap}>
-              <SectionBanner eyebrow="Money Matters" title="Currency Guide" imageUrl={BANNER.currency} tk={tk} />
-              <div className="rounded-2xl border overflow-hidden" style={{ ...card }}>
-                <div className="px-5 pt-4 pb-3 border-b" style={{ borderColor }}>
-                  <p className="font-bold text-base" style={{ color: textPrimary }}>{dest.currency.name}</p>
-                  <p className="text-xs mt-0.5" style={{ color: textMuted }}>Local currency symbol: {dest.currency.symbol}</p>
+          <SectionStripe alt={0} darkMode={darkMode}>
+            <FadeIn>
+              <StripeHeader eyebrow="Money Matters" title="Currency Guide" description="Tips on handling money and exchange rates during your trip." tk={tk} />
+              <div className="rounded-2xl overflow-hidden" style={{ boxShadow: cardShadow }}>
+                <div className="px-5 py-3.5" style={{ background: "linear-gradient(160deg, #ff9913 0%, #e07800 100%)" }}>
+                  <p className="font-bold text-base text-white">{dest.currency.name}</p>
+                  <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.75)" }}>Local currency symbol: {dest.currency.symbol}</p>
                 </div>
-                <div className="p-5 space-y-3">
+                <div className="p-5 space-y-4" style={{ backgroundColor: cardBg, border: `1px solid ${borderColor}`, borderTop: "none" }}>
                   {dest.currency.tips.map((tip, i) => (
                     <div key={i} className="flex items-start gap-3">
-                      <div className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-black mt-0.5" style={{ background: "rgba(249,115,22,0.12)", color: "#f97316" }}>₱</div>
-                      <p className="text-sm leading-relaxed" style={{ color: textPrimary }}>{tip}</p>
+                      <div className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center mt-0.5" style={{ background: "#ff9913" }}>
+                        <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />
+                      </div>
+                      <p className="text-sm leading-relaxed pt-1" style={{ color: textPrimary }}>{tip}</p>
                     </div>
                   ))}
                 </div>
               </div>
-            </div>
-          </FadeIn>
+            </FadeIn>
+          </SectionStripe>
         )}
 
         {/* ══════════════════════════════════════════════════
             5b3. SAFETY TIPS
            ══════════════════════════════════════════════════ */}
         {dest.safetyTips?.length > 0 && (
-          <FadeIn>
-            <div className={sectionGap}>
-              <SectionBanner eyebrow="Stay Safe" title="Safety Tips" imageUrl={BANNER.safety} tk={tk} />
-              <div className="rounded-2xl border overflow-hidden" style={{ ...card }}>
-                <div className="px-5 pt-4 pb-3 border-b" style={{ borderColor }}>
-                  <p className="font-bold text-base" style={{ color: textPrimary }}>Important Safety Guidelines</p>
-                  <p className="text-xs mt-0.5" style={{ color: textMuted }}>Please read carefully before your trip</p>
+          <SectionStripe alt={0} darkMode={darkMode}>
+            <FadeIn>
+              <StripeHeader eyebrow="Stay Safe" title="Safety Tips" description="Important safety reminders to keep you and your group protected." tk={tk} />
+              <div className="rounded-2xl overflow-hidden" style={{ boxShadow: cardShadow }}>
+                <div className="px-5 py-3.5" style={{ background: "linear-gradient(160deg, #ff9913 0%, #e07800 100%)" }}>
+                  <p className="font-bold text-base text-white">Important Safety Guidelines</p>
+                  <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.75)" }}>Please read carefully before your trip</p>
                 </div>
-                <div className="p-5 space-y-3">
+                <div className="p-5 space-y-4" style={{ backgroundColor: cardBg, border: `1px solid ${borderColor}`, borderTop: "none" }}>
                   {dest.safetyTips.map((tip, i) => (
                     <div key={i} className="flex items-start gap-3">
-                      <div className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-sm mt-0.5" style={{ background: "rgba(234,179,8,0.12)" }}>⚠️</div>
-                      <p className="text-sm leading-relaxed" style={{ color: textPrimary }}>{tip}</p>
+                      <div className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center mt-0.5" style={{ background: "#ff9913" }}>
+                        <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />
+                      </div>
+                      <p className="text-sm leading-relaxed pt-1" style={{ color: textPrimary }}>{tip}</p>
                     </div>
                   ))}
                 </div>
               </div>
-            </div>
-          </FadeIn>
+            </FadeIn>
+          </SectionStripe>
         )}
 
         {/* ══════════════════════════════════════════════════
             7. TRAVEL READINESS CHECKLIST
            ══════════════════════════════════════════════════ */}
-        <FadeIn>
-          <div className={sectionGap}>
-            <SectionHeader eyebrow="Packing Checklist" title="Travel Readiness Checklist" tk={tk} />
-            <div className="rounded-2xl border p-5" style={{ ...card }}>
+        <SectionStripe alt={1} darkMode={darkMode}>
+          <FadeIn>
+            <StripeHeader eyebrow="Packing Checklist" title="Travel Readiness Checklist" description="Check off everything you need before heading to the airport." tk={tk} colored />
+            <SectionCard darkMode={darkMode}>
               <TBChecklist dest={dest} darkMode={darkMode} tk={tk} />
-            </div>
-          </div>
-        </FadeIn>
+            </SectionCard>
+          </FadeIn>
+        </SectionStripe>
 
         {/* ══════════════════════════════════════════════════
             7. WHAT TO BRING — Packing Guide
            ══════════════════════════════════════════════════ */}
         {dest.packingGuide && (
-          <FadeIn>
-            <div className={sectionGap}>
-              <SectionHeader eyebrow="Packing Guide" title="What to Bring" tk={tk} />
+          <SectionStripe alt={0} darkMode={darkMode}>
+            <FadeIn>
+              <StripeHeader eyebrow="Packing Guide" title="What to Bring" description="Pack smart — everything you need for a comfortable and stress-free trip." tk={tk} />
+              <div className={`${pad} space-y-6`}>
               {[
                 { key: "documents",           label: "Documents" },
                 { key: "essentials",          label: "Essentials" },
@@ -2096,14 +2309,20 @@ export default function TravelBriefingLanding() {
                 const items = dest.packingGuide[key];
                 if (!items?.length) return null;
                 return (
-                  <div key={key} className="mb-6">
-                    <div className="flex items-center gap-2 mb-3">
-                      <p className="text-xs font-black uppercase tracking-widest" style={{ color: textMuted }}>{label}</p>
+                  <div key={key}>
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="h-px flex-1" style={{ backgroundColor: "rgba(255,153,19,0.2)" }} />
+                      <p className="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full"
+                        style={{ color: "#ff9913", border: "1px solid rgba(255,153,19,0.3)", backgroundColor: "rgba(255,153,19,0.06)" }}>
+                        {label}
+                      </p>
+                      <div className="h-px flex-1" style={{ backgroundColor: "rgba(255,153,19,0.2)" }} />
                     </div>
-                    <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))" }}>
+                    <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "12px" }}>
                       {items.map((item) => (
-                        <div key={item.name} className="rounded-2xl border overflow-hidden" style={{ backgroundColor: cardBg, borderColor }}>
-                          <div className="flex items-center justify-center" style={{ aspectRatio: "1/1", backgroundColor: darkMode ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)" }}>
+                        <div key={item.name} className="rounded-2xl overflow-hidden w-[calc(50%-6px)] sm:w-[150px] flex-shrink-0"
+                          style={{ backgroundColor: cardBg, border: "1.5px solid rgba(255,153,19,0.3)", boxShadow: "0 2px 8px rgba(255,153,19,0.08), 0 1px 3px rgba(0,0,0,0.06)" }}>
+                          <div className="flex items-center justify-center" style={{ aspectRatio: "1/1", backgroundColor: darkMode ? "rgba(255,153,19,0.06)" : "rgba(255,153,19,0.04)" }}>
                             {item.image ? (
                               <img src={item.image} alt={item.name} className="w-full h-full object-cover" loading="lazy" />
                             ) : (
@@ -2120,74 +2339,63 @@ export default function TravelBriefingLanding() {
                   </div>
                 );
               })}
-            </div>
-          </FadeIn>
+              </div>
+            </FadeIn>
+          </SectionStripe>
         )}
 
         {/* ══════════════════════════════════════════════════
             8. OUTFIT GUIDE
            ══════════════════════════════════════════════════ */}
         {dest.outfitGuide?.length >= 2 && (
-          <FadeIn>
-            <OutfitGuideSection
-              dest={dest}
-              darkMode={darkMode}
-              sectionGap={sectionGap}
-              textPrimary={textPrimary}
-              textMuted={textMuted}
-              cardBg={cardBg}
-              borderColor={borderColor}
-              cardShadow={cardShadow}
-            />
-          </FadeIn>
+          <SectionStripe alt={1} darkMode={darkMode}>
+            <FadeIn>
+              <StripeHeader eyebrow="Dress for the Trip" title="Outfit Guide" description="What to wear for each part of your trip — airport, beach, and dinner." tk={tk} colored />
+              <SectionCard darkMode={darkMode}>
+                <OutfitGuideSection
+                  dest={dest}
+                  darkMode={darkMode}
+                  sectionGap=""
+                  textPrimary={textPrimary}
+                  textMuted={textMuted}
+                  cardBg={cardBg}
+                  borderColor={borderColor}
+                  cardShadow={cardShadow}
+                />
+              </SectionCard>
+            </FadeIn>
+          </SectionStripe>
         )}
 
         {/* ══════════════════════════════════════════════════
             9. DESTINATION GUIDE
            ══════════════════════════════════════════════════ */}
-        <FadeIn>
-          <div className={sectionGap}>
-            <SectionHeader eyebrow="Know Your Destination" title="Destination Guide" tk={tk} />
-            <TBDestinationGuide dest={dest} darkMode={darkMode} tk={tk} />
-          </div>
-        </FadeIn>
-
-        {/* ══════════════════════════════════════════════════
-            10. OPTIONAL TOURS — hidden until tours/pricing/upsell flow are finalized
-           ══════════════════════════════════════════════════ */}
-        {/* Optional Tours intentionally not rendered — uncomment when ready
-        {dest.optionalTours?.length > 0 && (
+        <SectionStripe alt={0} darkMode={darkMode}>
           <FadeIn>
-            <div className={sectionGap}>
-              <SectionBanner eyebrow="Enhance Your Trip" title="Optional Tours & Add-Ons" imageUrl={BANNER.destination} tk={tk} />
-              <TBOptionalTours
-                dest={dest}
-                darkMode={darkMode}
-                tk={tk}
-                onAddToCart={() => {}}
-                cartItems={[]}
-              />
-            </div>
+            <StripeHeader eyebrow="Know Your Destination" title="Destination Guide" tk={tk} />
+            <TBDestinationGuide dest={dest} darkMode={darkMode} tk={tk} />
           </FadeIn>
-        )}
-        */}
+        </SectionStripe>
+
 
         {/* ══════════════════════════════════════════════════
             13. FREQUENTLY ASKED QUESTIONS
            ══════════════════════════════════════════════════ */}
-        <FadeIn>
-          <div className={sectionGap}>
-            <SectionHeader eyebrow="Have Questions?" title="Frequently Asked Questions" tk={tk} />
-            <TBFAQs dest={dest} darkMode={darkMode} tk={tk} />
-          </div>
-        </FadeIn>
+        <SectionStripe alt={1} darkMode={darkMode}>
+          <FadeIn>
+            <StripeHeader eyebrow="Have Questions?" title="Frequently Asked Questions" description="Common questions from Gladex travelers — answered before you even ask." tk={tk} colored />
+            <SectionCard darkMode={darkMode}>
+              <TBFAQs dest={dest} darkMode={darkMode} tk={tk} />
+            </SectionCard>
+          </FadeIn>
+        </SectionStripe>
 
         {/* ══════════════════════════════════════════════════
             14. TESTIMONIALS
            ══════════════════════════════════════════════════ */}
-        <FadeIn>
-          <div className={sectionGap}>
-            <SectionHeader eyebrow="Traveler Reviews" title="Real Gladex Travel Experiences 🧡" tk={tk} />
+        <SectionStripe alt={0} darkMode={darkMode}>
+          <FadeIn>
+            <StripeHeader eyebrow="Traveler Reviews" title="Real Gladex Travel Experiences" tk={tk} />
 
             {/* Carousel cards */}
             {(() => {
@@ -2210,36 +2418,74 @@ export default function TravelBriefingLanding() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.06, duration: 0.3 }}
-                        className="rounded-2xl border p-4 flex flex-col gap-3"
+                        className="rounded-2xl border overflow-hidden flex flex-col"
                         style={{
-                          backgroundColor: isOwn ? "rgba(249,115,22,0.05)" : cardBg,
-                          borderColor: isOwn ? "#f97316" : borderColor,
-                          boxShadow: isOwn ? "0 0 0 1px #f97316, 0 4px 20px rgba(249,115,22,0.15)" : cardShadow,
+                          backgroundColor: isOwn ? "rgba(255,153,19,0.05)" : cardBg,
+                          borderColor: isOwn ? "#ff9913" : borderColor,
+                          boxShadow: isOwn ? "0 0 0 1px #ff9913, 0 4px 20px rgba(255,153,19,0.15)" : cardShadow,
                         }}
                       >
+                        {/* Trip photo — optional */}
+                        {t.photo && (
+                          <div className="w-full overflow-hidden" style={{ aspectRatio: "4/3" }}>
+                            <img
+                              src={t.photo}
+                              alt={`${t.name}'s trip photo`}
+                              className="w-full h-full object-cover"
+                              loading="lazy"
+                            />
+                          </div>
+                        )}
+                        <div className="p-4 flex flex-col gap-3 flex-1">
                         {/* YOUR REVIEW badge + edit button */}
                         {isOwn && (
                           <div className="flex items-center justify-between">
-                            <span className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full" style={{ backgroundColor: "rgba(249,115,22,0.15)", color: "#f97316" }}>
+                            <span className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full" style={{ backgroundColor: "rgba(255,153,19,0.15)", color: "#ff9913" }}>
                               Your Review
                             </span>
-                            <button
-                              onClick={() => {
-                                setReviewStars(myReview?.rating ?? myReview?.stars ?? 0);
-                                setReviewComment(myReview?.review ?? myReview?.comment ?? "");
-                                setReviewSubmitted(false);
-                                setReviewEditing(true);
-                                setReviewError(null);
-                                setTimeout(() => {
-                                  document.getElementById("review-edit-inline")?.scrollIntoView({ behavior: "smooth", block: "center" });
-                                }, 80);
-                              }}
-                              className="flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-lg transition-all hover:opacity-80"
-                              style={{ color: "#f97316", backgroundColor: "rgba(249,115,22,0.1)" }}
-                            >
-                              <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                              Edit
-                            </button>
+                            <div className="flex items-center gap-1.5">
+                              <button
+                                onClick={() => {
+                                  setReviewStars(myReview?.rating ?? myReview?.stars ?? 0);
+                                  setReviewComment(myReview?.review ?? myReview?.comment ?? "");
+                                  setReviewSubmitted(false);
+                                  setReviewEditing(true);
+                                  setReviewError(null);
+                                  setTimeout(() => {
+                                    document.getElementById("review-edit-inline")?.scrollIntoView({ behavior: "smooth", block: "center" });
+                                  }, 80);
+                                }}
+                                className="flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-lg transition-all hover:opacity-80"
+                                style={{ color: "#ff9913", backgroundColor: "rgba(255,153,19,0.1)" }}
+                              >
+                                <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                Edit
+                              </button>
+                              {reviewDeleteConfirm ? (
+                                <div className="flex items-center gap-1">
+                                  <span className="text-[10px] font-bold" style={{ color: "#dc2626" }}>Delete?</span>
+                                  <button
+                                    onClick={() => { setReviewDeleteConfirm(false); handleDeleteReview(); }}
+                                    className="text-[10px] font-black px-2 py-1 rounded-lg"
+                                    style={{ color: "#fff", backgroundColor: "#dc2626" }}
+                                  >Yes</button>
+                                  <button
+                                    onClick={() => setReviewDeleteConfirm(false)}
+                                    className="text-[10px] font-bold px-2 py-1 rounded-lg"
+                                    style={{ color: textPrimary, backgroundColor: darkMode ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.07)" }}
+                                  >No</button>
+                                </div>
+                              ) : (
+                                <button
+                                  onClick={() => setReviewDeleteConfirm(true)}
+                                  className="flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-lg transition-all hover:opacity-80"
+                                  style={{ color: "#dc2626", backgroundColor: "rgba(239,68,68,0.1)" }}
+                                >
+                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+                                  Delete
+                                </button>
+                              )}
+                            </div>
                           </div>
                         )}
                         {/* Stars */}
@@ -2253,17 +2499,18 @@ export default function TravelBriefingLanding() {
                           "{t.review ?? t.comment ?? ""}"
                         </p>
                         {/* Reviewer */}
-                        <div className="flex items-center gap-2.5 pt-2 border-t" style={{ borderColor: isOwn ? "rgba(249,115,22,0.2)" : borderColor }}>
+                        <div className="flex items-center gap-2.5 pt-2 border-t" style={{ borderColor: isOwn ? "rgba(255,153,19,0.2)" : borderColor }}>
                           <div
                             className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black shrink-0"
-                            style={{ background: isOwn ? "#f97316" : "#1a1a1a", color: "#fff" }}
+                            style={{ background: isOwn ? "#ff9913" : "#1a1a1a", color: "#fff" }}
                           >
                             {isOwn ? "★" : t.name.charAt(0)}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="font-black text-xs" style={{ color: isOwn ? "#f97316" : textPrimary }}>{t.name}</p>
-                            <p className="text-[10px]" style={{ color: "#f97316" }}>{t.location} · {t.date}</p>
+                            <p className="font-black text-xs" style={{ color: isOwn ? "#ff9913" : textPrimary }}>{t.name}</p>
+                            <p className="text-[10px]" style={{ color: "#ff9913" }}>{t.location} · {t.date}</p>
                           </div>
+                        </div>
                         </div>
                       </motion.div>
                       );
@@ -2281,7 +2528,7 @@ export default function TravelBriefingLanding() {
                           style={{
                             width: pi === safePage ? "20px" : "8px",
                             height: "8px",
-                            backgroundColor: pi === safePage ? "#f97316" : (darkMode ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.15)"),
+                            backgroundColor: pi === safePage ? "#ff9913" : (darkMode ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.15)"),
                           }}
                         />
                       ))}
@@ -2305,10 +2552,10 @@ export default function TravelBriefingLanding() {
                         disabled={safePage === totalPages - 1}
                         className="w-11 h-11 rounded-full flex items-center justify-center transition-all"
                         style={{
-                          backgroundColor: safePage === totalPages - 1 ? "rgba(249,115,22,0.3)" : "#f97316",
+                          backgroundColor: safePage === totalPages - 1 ? "rgba(255,153,19,0.3)" : "#ff9913",
                           opacity: safePage === totalPages - 1 ? 0.5 : 1,
                           color: "#fff",
-                          boxShadow: safePage < totalPages - 1 ? "0 4px 14px rgba(249,115,22,0.4)" : "none",
+                          boxShadow: safePage < totalPages - 1 ? "0 4px 14px rgba(255,153,19,0.4)" : "none",
                         }}
                       >
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
@@ -2335,37 +2582,37 @@ export default function TravelBriefingLanding() {
                 />
               )}
             </AnimatePresence>
-          </div>
-        </FadeIn>
+          </FadeIn>
+        </SectionStripe>
 
         {/* ══════════════════════════════════════════════════
             15. RATE MY SERVICE
            ══════════════════════════════════════════════════ */}
-        <FadeIn>
-          <div id="review-form-section" className={sectionGap}>
-            <SectionHeader eyebrow="Your Experience" title="Review Our Service" tk={tk} />
-            <div className="rounded-2xl border p-5" style={{ ...card }}>
+        <SectionStripe alt={1} darkMode={darkMode}>
+          <FadeIn>
+            <StripeHeader eyebrow="Your Experience" title="Review Our Service" description="Your feedback helps us improve every trip for future travelers." tk={tk} colored />
+            <div className="rounded-2xl border p-5" style={{ ...orangeCard }}>
               {(reviewSubmitted || myReview) ? (
                 /* ── Already submitted ── */
                 <div className="flex flex-col items-center gap-3 py-4 text-center">
-                  <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: "rgba(249,115,22,0.12)" }}>
-                    <svg className="w-6 h-6" fill="none" stroke="#f97316" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: "rgba(255,255,255,0.2)" }}>
+                    <svg className="w-6 h-6" fill="none" stroke="#ffffff" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
                   </div>
-                  <p className="font-black text-sm" style={{ color: textPrimary }}>Thank you for your review!</p>
+                  <p className="font-black text-sm text-white">Thank you for your review!</p>
                   <div className="flex gap-0.5">
                     {[1,2,3,4,5].map((s) => (
                       <Star key={s} className={`w-4 h-4 ${s <= (myReview?.rating ?? reviewStars) ? "fill-yellow-400 text-yellow-400" : "text-yellow-200"}`} />
                     ))}
                   </div>
                   {(myReview?.review || reviewComment) && (
-                    <p className="text-xs italic" style={{ color: textMuted }}>"{myReview?.review || reviewComment}"</p>
+                    <p className="text-xs italic" style={{ color: "rgba(255,255,255,0.75)" }}>"{myReview?.review || reviewComment}"</p>
                   )}
-                  <p className="text-[10px]" style={{ color: textMuted }}>Your review is visible above in the traveler reviews section.</p>
+                  <p className="text-[10px]" style={{ color: "rgba(255,255,255,0.65)" }}>Your review is visible above in the traveler reviews section.</p>
                 </div>
               ) : (
                 /* ── Form ── */
                 <>
-                  <p className="text-sm mb-3" style={{ color: textPrimary }}>
+                  <p className="text-sm mb-3 text-white">
                     How would you rate your experience with Gladex Tours?
                   </p>
                   <div className="flex gap-2 mb-5">
@@ -2380,14 +2627,14 @@ export default function TravelBriefingLanding() {
                           className={`w-7 h-7 transition-colors ${
                             s <= reviewStars
                               ? "fill-yellow-400 text-yellow-400"
-                              : darkMode ? "text-white/20 hover:text-yellow-400" : "text-black/15 hover:text-yellow-400"
+                              : "text-white/30 hover:text-yellow-400"
                           }`}
                         />
                       </button>
                     ))}
                   </div>
 
-                  <p className="text-[10px] font-black uppercase tracking-widest mb-1.5" style={{ color: textMuted }}>
+                  <p className="text-[10px] font-black uppercase tracking-widest mb-1.5" style={{ color: "rgba(255,255,255,0.65)" }}>
                     Comments <span className="font-normal normal-case tracking-normal">(optional)</span>
                   </p>
                   <textarea
@@ -2395,31 +2642,67 @@ export default function TravelBriefingLanding() {
                     value={reviewComment}
                     onChange={(e) => setReviewComment(e.target.value)}
                     placeholder="Tell us about your experience..."
-                    className="w-full rounded-xl border px-4 py-3 text-sm resize-none outline-none transition-colors"
+                    className="w-full rounded-xl border px-4 py-3 text-sm resize-none outline-none transition-colors placeholder:text-white/40"
                     style={{
-                      backgroundColor: darkMode ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)",
-                      borderColor: darkMode ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)",
-                      color: textPrimary,
+                      backgroundColor: "rgba(0,0,0,0.15)",
+                      borderColor: "rgba(255,255,255,0.2)",
+                      color: "#ffffff",
                     }}
                   />
 
+                  {/* Photo upload */}
+                  <input
+                    ref={reviewPhotoRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (!file || !file.type.startsWith("image/")) return;
+                      setReviewPhotoFile(file);
+                      setReviewPhotoPreview(URL.createObjectURL(file));
+                    }}
+                  />
+                  {reviewPhotoPreview ? (
+                    <div className="relative mt-3 rounded-xl overflow-hidden" style={{ aspectRatio: "16/9" }}>
+                      <img src={reviewPhotoPreview} alt="Trip photo" className="w-full h-full object-cover" />
+                      <button
+                        onClick={() => { setReviewPhotoFile(null); setReviewPhotoPreview(null); }}
+                        className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-black"
+                        style={{ backgroundColor: "rgba(0,0,0,0.55)" }}
+                      >✕</button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => reviewPhotoRef.current?.click()}
+                      className="w-full mt-3 py-2.5 rounded-xl border-2 border-dashed text-xs font-bold flex items-center justify-center gap-2 transition-all hover:opacity-80"
+                      style={{ borderColor: "rgba(255,255,255,0.3)", color: "rgba(255,255,255,0.7)" }}
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                      Add trip photo (optional)
+                    </button>
+                  )}
+
                   <button
-                    onClick={handleSubmitReview}
-                    disabled={reviewStars === 0}
+                    onClick={async () => {
+                      setReviewUploading(true);
+                      await handleSubmitReview(reviewStars, reviewComment, reviewPhotoFile);
+                    }}
+                    disabled={reviewStars === 0 || reviewUploading}
                     className="w-full mt-4 py-3 rounded-xl text-sm font-bold transition-all"
                     style={{
-                      backgroundColor: reviewStars > 0 ? "#f97316" : (darkMode ? "rgba(249,115,22,0.25)" : "rgba(249,115,22,0.2)"),
-                      color: reviewStars > 0 ? "#fff" : "#f97316",
-                      opacity: reviewStars === 0 ? 0.6 : 1,
+                      backgroundColor: reviewStars > 0 ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.1)",
+                      color: "#ffffff",
+                      opacity: reviewStars === 0 ? 0.5 : 1,
                     }}
                   >
-                    {reviewEditing ? "Update Review" : "Submit Review"}
+                    {reviewUploading ? "Uploading…" : reviewEditing ? "Update Review" : "Submit Review"}
                   </button>
                   {reviewEditing && (
                     <button
                       onClick={() => setReviewEditing(false)}
                       className="w-full mt-2 py-2.5 rounded-xl text-sm font-bold transition-all"
-                      style={{ color: textMuted, backgroundColor: darkMode ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)" }}
+                      style={{ color: "rgba(255,255,255,0.7)", backgroundColor: "rgba(255,255,255,0.08)" }}
                     >
                       Cancel
                     </button>
@@ -2427,45 +2710,126 @@ export default function TravelBriefingLanding() {
                 </>
               )}
             </div>
-          </div>
-        </FadeIn>
+          </FadeIn>
+        </SectionStripe>
 
 
         {/* ══════════════════════════════════════════════════
             Important Notes
            ══════════════════════════════════════════════════ */}
-        <FadeIn>
-          <div className={sectionGap}>
-            <div className="rounded-2xl border p-5" style={{ borderColor: "rgba(234,179,8,0.35)", backgroundColor: "rgba(234,179,8,0.07)" }}>
-              <div className="flex items-center gap-2 mb-3">
-                <AlertTriangle className="w-4 h-4" style={{ color: "#eab308" }} />
-                <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "#eab308" }}>Important Notes & Reminders</p>
+        <SectionStripe alt={0} darkMode={darkMode}>
+          <FadeIn>
+            <StripeHeader eyebrow="Before You Go" title="Important Notes" description="Please read these reminders carefully before your trip begins." tk={tk} />
+            <div className="rounded-2xl border overflow-hidden" style={{ ...card }}>
+              <div className="px-5 pt-4 pb-3 border-b flex items-center gap-2" style={{ borderColor }}>
+                <AlertTriangle className="w-4 h-4 shrink-0" style={{ color: "#ff9913" }} />
+                <p className="font-bold text-base" style={{ color: textPrimary }}>Please Read Carefully</p>
               </div>
-              <ul className="space-y-2">
-                {dest.notes.map((n) => (
-                  <li key={n} className="flex items-start gap-2 text-xs" style={{ color: textPrimary }}>
-                    <span className="shrink-0 mt-0.5" style={{ color: "#eab308" }}>•</span> {n}
-                  </li>
+              <div className="p-5 space-y-4">
+                {dest.notes.map((n, i) => (
+                  <div key={i} className="flex items-start gap-3">
+                    <div className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center mt-0.5" style={{ background: "#ff9913" }}>
+                      <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />
+                    </div>
+                    <p className="text-sm leading-relaxed pt-1" style={{ color: textPrimary }}>{n}</p>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
-          </div>
-        </FadeIn>
+          </FadeIn>
+        </SectionStripe>
 
         {/* Footer CTA */}
         <FadeIn>
-          <div className="text-center pt-4">
-            <p className="text-sm font-semibold mb-1" style={{ color: textPrimary }}>Thank you for choosing Gladex! 🧡</p>
-            <p className="text-xs" style={muted}>We look forward to giving you a smooth, safe, and memorable {dest.name} experience.</p>
-            <p className="text-xs mt-2" style={muted}>
-              Need help? Call <span style={{ color: "#f97316", fontWeight: 700 }}>+63 917 875 2200</span> (7:00 AM – 9:00 PM)
+          <div className="text-center py-12 px-4">
+            <div className="w-10 h-0.5 rounded-full mx-auto mb-6" style={{ background: "linear-gradient(90deg, #ff9913, #e07800)" }} />
+            <p className="text-base font-black mb-2" style={{ color: textPrimary, fontFamily: "'Montserrat', sans-serif", letterSpacing: "-0.01em" }}>
+              Thank you for choosing Gladex! 🧡
+            </p>
+            <p className="text-sm mb-4" style={muted}>
+              We look forward to giving you a smooth, safe, and memorable {dest.name} experience.
+            </p>
+            <p className="text-xs" style={muted}>
+              Need help? Call <span style={{ color: "#ff9913", fontWeight: 700 }}>+63 917 875 2200</span>
+              <span className="mx-1">·</span>
+              7:00 AM – 9:00 PM
             </p>
           </div>
         </FadeIn>
       </div>
 
       {/* Floating UI */}
-      <BackToTopButton visible={showBackToTop} />
+      <BackToTopButton visible={showBackToTop} lift={isTestMode && addOnsCart.length > 0} />
+
+      {/* Floating cart bar — test mode only */}
+      <AnimatePresence>
+        {isTestMode && addOnsCart.length > 0 && (
+          <motion.div
+            key="cart-bar"
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            transition={{ type: "spring", damping: 28, stiffness: 300 }}
+            className="fixed bottom-0 left-0 right-0 z-30 px-4 pb-4 pt-2"
+            style={{ pointerEvents: "none" }}
+          >
+            <div
+              className="max-w-lg mx-auto rounded-2xl flex items-center gap-3 px-4 py-3 shadow-2xl"
+              style={{
+                background: darkMode ? "rgba(17,24,39,0.96)" : "rgba(255,255,255,0.97)",
+                border: "1px solid rgba(255,153,19,0.35)",
+                backdropFilter: "blur(16px)",
+                pointerEvents: "auto",
+              }}
+            >
+              {/* Item count badge */}
+              <div
+                className="w-9 h-9 rounded-full flex items-center justify-center font-black text-sm shrink-0"
+                style={{ background: "linear-gradient(135deg,#ff9913,#cc7700)", color: "#fff" }}
+              >
+                {addOnsCart.length}
+              </div>
+
+              {/* Labels */}
+              <div className="flex-1 min-w-0">
+                <p className="font-black text-sm leading-tight" style={{ color: tk.textPrimary }}>
+                  {addOnsCart.length} add-on{addOnsCart.length > 1 ? "s" : ""} selected
+                </p>
+                <p className="text-xs" style={{ color: tk.textMuted }}>
+                  ₱{addOnsCart.reduce((s, i) => s + (i.price || 0), 0).toLocaleString("en-PH")} total
+                </p>
+              </div>
+
+              {/* Book button */}
+              <motion.button
+                whileTap={{ scale: 0.96 }}
+                onClick={() => setCheckoutOpen(true)}
+                className="shrink-0 px-4 py-2.5 rounded-xl font-black text-sm flex items-center gap-1.5"
+                style={{
+                  background: "linear-gradient(135deg,#ff9913,#cc7700)",
+                  color: "#fff",
+                  boxShadow: "0 4px 16px rgba(255,153,19,0.4)",
+                }}
+              >
+                Book Add-Ons →
+              </motion.button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Add-ons checkout sheet — test mode only */}
+      {isTestMode && (
+        <TBAddOnsCheckout
+          isOpen={checkoutOpen}
+          onClose={() => setCheckoutOpen(false)}
+          addOnsCart={addOnsCart}
+          booking={activeBooking}
+          slug={realSlug}
+          darkMode={darkMode}
+          tk={tk}
+        />
+      )}
     </div>
   );
 }

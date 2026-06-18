@@ -226,7 +226,13 @@ export default function TBBookingVerification({ booking, dest, darkMode, tk, onC
                 <Row
                   label="Payment Status"
                   value={booking.paymentStatus || "—"}
-                  badge={isFullyPaid ? "green" : "orange"}
+                  badge={(() => {
+                    const ps = (booking.paymentStatus || "").toLowerCase();
+                    if (ps.includes("fully paid") || ps.includes("complete")) return "green";
+                    if (ps.includes("partial")) return "amber";
+                    if (ps.includes("unpaid") || ps.includes("fail")) return "red";
+                    return "orange";
+                  })()}
                   textPrimary={textPrimary} textMuted={textMuted}
                 />
               </Section>
@@ -288,18 +294,24 @@ function Section({ title, icon, children, borderColor, cardBg, cardShadow, textP
   );
 }
 
+const BADGE_STYLES = {
+  green:  { bg: "rgba(22,163,74,0.12)",   color: "#16a34a", border: "1px solid rgba(22,163,74,0.3)" },
+  teal:   { bg: "rgba(13,148,136,0.12)",  color: "#0d9488", border: "1px solid rgba(13,148,136,0.3)" },
+  blue:   { bg: "rgba(59,130,246,0.12)",  color: "#3b82f6", border: "1px solid rgba(59,130,246,0.3)" },
+  amber:  { bg: "rgba(245,158,11,0.12)",  color: "#d97706", border: "1px solid rgba(245,158,11,0.3)" },
+  orange: { bg: "rgba(249,115,22,0.12)",  color: "#f97316", border: "1px solid rgba(249,115,22,0.3)" },
+  red:    { bg: "rgba(239,68,68,0.12)",   color: "#dc2626", border: "1px solid rgba(239,68,68,0.3)" },
+};
+
 function Row({ label, value, badge, highlight, textPrimary, textMuted }) {
+  const bs = badge ? (BADGE_STYLES[badge] || BADGE_STYLES.orange) : null;
   return (
     <div className="flex items-start justify-between gap-4">
       <p className="text-xs shrink-0" style={{ color: textMuted, minWidth: "120px" }}>{label}</p>
-      {badge ? (
+      {bs ? (
         <span
           className="text-xs font-bold px-2 py-0.5 rounded-full text-right"
-          style={{
-            backgroundColor: badge === "green" ? "rgba(34,197,94,0.12)" : "rgba(249,115,22,0.12)",
-            color:           badge === "green" ? "#22c55e"              : "#f97316",
-            border: `1px solid ${badge === "green" ? "rgba(34,197,94,0.3)" : "rgba(249,115,22,0.3)"}`,
-          }}
+          style={{ backgroundColor: bs.bg, color: bs.color, border: bs.border }}
         >
           {value}
         </span>

@@ -200,14 +200,14 @@ function ImageCard({ item, darkMode, tk, priority = false }) {
       viewport={{ once: true, margin: "-30px" }}
       transition={{ duration: 0.45 }}
       className="rounded-2xl overflow-hidden border"
-      style={{ borderColor: tk.borderColor, boxShadow: tk.cardShadow }}
+      style={{ borderColor: "rgba(255,153,19,0.3)", boxShadow: tk.cardShadow }}
     >
-      <div className="overflow-hidden" style={{ aspectRatio: priority ? "16 / 7" : "4 / 3", position: "relative" }}>
+      <div className="overflow-hidden" style={{ aspectRatio: priority ? "16 / 9" : "4 / 3", position: "relative" }}>
         {item.image && !failed ? (
           <img
             src={item.image}
             alt={item.name}
-            className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+            className="w-full h-full object-cover"
             loading={priority ? "eager" : "lazy"}
             onError={() => setFailed(true)}
           />
@@ -225,6 +225,7 @@ function ImageCard({ item, darkMode, tk, priority = false }) {
           </div>
         )}
       </div>
+      <div style={{ height: "3px", background: "linear-gradient(90deg, #ff9913 0%, #e07800 100%)" }} />
       <div className="p-4" style={{ backgroundColor: tk.cardBg }}>
         <p className="font-black text-base mb-1" style={{ color: tk.textPrimary }}>{item.name}</p>
         <p className="text-sm leading-relaxed" style={{ color: tk.textMuted }}>{item.desc}</p>
@@ -238,7 +239,7 @@ function RestaurantCard({ resto, darkMode, tk }) {
   return (
     <div
       className="rounded-2xl border overflow-hidden"
-      style={{ borderColor: tk.borderColor, backgroundColor: tk.cardBg, boxShadow: tk.cardShadow }}
+      style={{ borderColor: "rgba(255,153,19,0.3)", backgroundColor: tk.cardBg, boxShadow: tk.cardShadow }}
     >
       {/* Image — 16:9, easy to swap later */}
       <div className="overflow-hidden" style={{ aspectRatio: "16/9" }}>
@@ -246,7 +247,7 @@ function RestaurantCard({ resto, darkMode, tk }) {
           <img
             src={resto.image}
             alt={resto.name}
-            className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+            className="w-full h-full object-cover"
             loading="lazy"
             onError={() => setImgFailed(true)}
           />
@@ -264,6 +265,7 @@ function RestaurantCard({ resto, darkMode, tk }) {
         )}
       </div>
 
+      <div style={{ height: "3px", background: "linear-gradient(90deg, #ff9913 0%, #e07800 100%)" }} />
       {/* Content */}
       <div className="p-4">
         {/* Restaurant name */}
@@ -302,20 +304,11 @@ function RestaurantCard({ resto, darkMode, tk }) {
   );
 }
 
-function SubBanner({ title, eyebrow, src }) {
-  if (!src) return (
-    <div className="flex items-center gap-1.5 mb-4">
-      <p className="text-xs font-black uppercase tracking-widest" style={{ color: "#f97316" }}>{title}</p>
-    </div>
-  );
+function SubBanner({ title, eyebrow, src, tk }) {
   return (
-    <div className="relative w-full rounded-2xl overflow-hidden mb-4" style={{ height: "140px" }}>
-      <img src={src} alt="" className="w-full h-full object-cover" loading="lazy" />
-      <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(249,115,22,0.65) 0%, rgba(0,0,0,0.72) 100%)" }} />
-      <div className="absolute inset-0 flex flex-col justify-end p-4">
-        {eyebrow && <p className="text-[10px] font-black uppercase tracking-widest mb-1" style={{ color: "rgba(255,255,255,0.68)" }}>{eyebrow}</p>}
-        <p className="font-black text-lg text-white" style={{ letterSpacing: "-0.02em" }}>{title}</p>
-      </div>
+    <div className="rounded-xl px-5 py-3.5 mb-4" style={{ background: "linear-gradient(160deg, #ff9913 0%, #e07800 100%)" }}>
+      {eyebrow && <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: "rgba(255,255,255,0.72)" }}>{eyebrow}</p>}
+      <p className="font-black text-base text-white" style={{ letterSpacing: "-0.01em" }}>{title}</p>
     </div>
   );
 }
@@ -336,28 +329,28 @@ export default function TBDestinationGuide({ dest, darkMode, tk }) {
       {/* ── Must-Visit Spots ── */}
       {guide.highlights?.length > 0 && (
         <div>
-          <p className="text-xs font-black uppercase tracking-widest mb-5" style={{ color: "#f97316" }}>Best Places to Visit</p>
-          <div className="mb-4">
-            <ImageCard item={guide.highlights[0]} darkMode={darkMode} tk={tk} priority />
+          <SubBanner title="Best Places to Visit" eyebrow="Must-See Spots" tk={tk} />
+          <div className="space-y-4">
+            {guide.highlights.map((h) => (
+              <ImageCard key={h.name} item={h} darkMode={darkMode} tk={tk} priority />
+            ))}
           </div>
-          {guide.highlights.length > 1 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {guide.highlights.slice(1).map((h) => (
-                <ImageCard key={h.name} item={h} darkMode={darkMode} tk={tk} />
-              ))}
-            </div>
-          )}
         </div>
       )}
 
       {/* ── Best Food & Dining ── */}
       {guide.restaurants?.length > 0 && (
         <div>
-          <p className="text-xs font-black uppercase tracking-widest mb-4" style={{ color: "#f97316" }}>Best Food & Dining</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {guide.restaurants.map((resto) => (
-              <RestaurantCard key={resto.name} resto={resto} darkMode={darkMode} tk={tk} />
-            ))}
+          <SubBanner title="Best Food & Dining" eyebrow="Where to Eat" tk={tk} />
+          <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "16px" }}>
+            {guide.restaurants.map((resto, i) => {
+              const isLastOdd = guide.restaurants.length % 2 !== 0 && i === guide.restaurants.length - 1;
+              return (
+                <div key={resto.name} style={{ flex: "1 1 380px", maxWidth: isLastOdd ? "calc(50% - 8px)" : "520px", minWidth: 0 }}>
+                  <RestaurantCard resto={resto} darkMode={darkMode} tk={tk} />
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
@@ -365,7 +358,7 @@ export default function TBDestinationGuide({ dest, darkMode, tk }) {
       {/* ── Best Photo Spots — full-width carousel ── */}
       {guide.photoSpots?.length > 0 && (
         <div>
-          <p className="text-xs font-black uppercase tracking-widest mb-4" style={{ color: "#f97316" }}>Best Photo Spots</p>
+          <SubBanner title="Best Photo Spots" eyebrow="Photography" tk={tk} />
           <PhotoSpotCarousel spots={guide.photoSpots} darkMode={darkMode} tk={tk} />
         </div>
       )}
@@ -373,7 +366,7 @@ export default function TBDestinationGuide({ dest, darkMode, tk }) {
       {/* ── Weather & Climate ── */}
       {guide.weather && (
         <div>
-          <SubBanner title="Weather & Practical Info" eyebrow="Before You Go" src={banners.weather} />
+          <SubBanner title="Weather & Practical Info" eyebrow="Before You Go" src={banners.weather} tk={tk} />
           <div className="flex flex-col gap-2">
             {[
               { label: "Best Season",  text: guide.weather.bestSeason },
@@ -401,11 +394,11 @@ export default function TBDestinationGuide({ dest, darkMode, tk }) {
       {/* ── Currency & Payments ── */}
       {guide.currency && (
         <div>
-          <SubBanner title="Currency Guide" eyebrow="Money Matters" src={banners.currency} />
+          <SubBanner title="Currency Guide" eyebrow="Money Matters" src={banners.currency} tk={tk} />
           {/* PHP identity — full-width header card */}
           <div
             className="px-4 py-3 rounded-2xl border mb-3"
-            style={{ borderColor: "rgba(34,197,94,0.25)", backgroundColor: "rgba(34,197,94,0.07)" }}
+            style={{ borderColor: tk.borderColor, backgroundColor: tk.cardBg }}
           >
             <p className="text-sm font-bold leading-tight" style={{ color: tk.textPrimary }}>
               {guide.currency.symbol} Philippine Peso
@@ -418,7 +411,7 @@ export default function TBDestinationGuide({ dest, darkMode, tk }) {
               <div
                 key={i}
                 className="px-4 py-3 rounded-2xl border"
-                style={{ borderColor: "rgba(34,197,94,0.15)", backgroundColor: "rgba(34,197,94,0.04)" }}
+                style={{ borderColor: tk.borderColor, backgroundColor: tk.cardBg }}
               >
                 <p className="text-xs leading-relaxed" style={{ color: tk.textPrimary }}>{tip}</p>
               </div>
@@ -430,13 +423,13 @@ export default function TBDestinationGuide({ dest, darkMode, tk }) {
       {/* ── Safety Tips ── */}
       {guide.safetyTips?.length > 0 && (
         <div>
-          <SubBanner title="Safety Tips" eyebrow="Stay Safe" src={banners.safety} />
+          <SubBanner title="Safety Tips" eyebrow="Stay Safe" src={banners.safety} tk={tk} />
           <div className="flex flex-col gap-2">
             {guide.safetyTips.map((tip, i) => (
               <div
                 key={i}
                 className="flex items-start gap-2.5 px-4 py-3 rounded-2xl border"
-                style={{ borderColor: "rgba(239,68,68,0.15)", backgroundColor: "rgba(239,68,68,0.04)" }}
+                style={{ borderColor: tk.borderColor, backgroundColor: tk.cardBg }}
               >
                 <p className="text-xs leading-relaxed" style={{ color: tk.textPrimary }}>{tip}</p>
               </div>
@@ -448,7 +441,7 @@ export default function TBDestinationGuide({ dest, darkMode, tk }) {
       {/* ── Local Tips ── */}
       {guide.localTips?.length > 0 && (
         <div>
-          <SubBanner title="Local Tips" eyebrow="Insider Knowledge" src={banners.localTips} />
+          <SubBanner title="Local Tips" eyebrow="Insider Knowledge" src={banners.localTips} tk={tk} />
           <div className="flex flex-col gap-2">
             {guide.localTips.map((tip, i) => (
               <div

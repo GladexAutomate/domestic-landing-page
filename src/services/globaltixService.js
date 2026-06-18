@@ -153,66 +153,100 @@ export const resendVoucherEmail = async (referenceNumber) => {
 export const GLADEX_TOUR_PRODUCTS = {
   boracay: [
     {
-      id: 41478, name: "Island Hopping with BBQ Lunch", icon: "⛵", badge: "Most Popular",
+      id: 41478, name: "Island Hopping with BBQ Lunch", badge: "Most Popular",
+      applicableDays: [2],
       fallbackPrice:      999,
       fallbackDuration:   "Full Day · 8 AM – 3 PM",
       fallbackSchedule:   "Daily · 8:00 AM – 3:00 PM",
       fallbackHighlights: ["BBQ Lunch on the beach", "Multiple island stops", "Snorkeling gear included"],
     },
     {
-      id: 41482, name: "Island Hopping + BBQ Lunch & Crab", icon: "⛵", badge: null,
+      id: 41482, name: "Island Hopping + BBQ Lunch & Crab", badge: null,
+      applicableDays: [2],
       fallbackPrice:      1200,
       fallbackDuration:   "Full Day · 8 AM – 3 PM",
       fallbackSchedule:   "Daily · 8:00 AM – 3:00 PM",
       fallbackHighlights: ["Crab & BBQ Lunch included", "Multiple island stops", "Snorkeling gear included"],
     },
     {
-      id: 41487, name: "Helmet Diving", icon: "🤿", badge: null,
+      id: 41487, name: "Helmet Diving", badge: null,
+      applicableDays: [2, 3],
       fallbackPrice:      1200,
       fallbackDuration:   "15–20 minutes",
       fallbackSchedule:   "Daily · Morning slots",
       fallbackHighlights: ["No swimming skills needed", "Walk on the ocean floor", "Feed reef fish underwater"],
     },
     {
-      id: 41486, name: "Discover Scuba Diving", icon: "🐠", badge: null,
+      id: 41486, name: "Discover Scuba Diving", badge: null,
+      applicableDays: [2, 3],
       fallbackPrice:      2500,
       fallbackDuration:   "30–45 minutes",
       fallbackSchedule:   "Daily · Morning slots",
       fallbackHighlights: ["Certified instructor included", "No prior experience needed", "Dive up to 5 meters deep"],
     },
     {
-      id: 42130, name: "ATV Adventure", icon: "🏍️", badge: null,
+      id: 42130, name: "ATV Adventure", badge: null,
+      applicableDays: [2, 3],
       fallbackPrice:      800,
       fallbackDuration:   "30–60 minutes",
       fallbackSchedule:   "Daily",
       fallbackHighlights: ["Off-road island trails", "Panoramic island views", "Suitable for beginners"],
     },
     {
-      id: 41507, name: "Banana Boat", icon: "🚤", badge: null,
+      id: 41507, name: "Banana Boat", badge: null,
+      applicableDays: [2, 3],
       fallbackPrice:      600,
       fallbackDuration:   "15–20 minutes",
       fallbackSchedule:   "Daily",
       fallbackHighlights: ["Group thrill activity", "Beachfront launch & landing", "Fun for all ages"],
     },
     {
-      id: 41505, name: "JetSki (Good for 2)", icon: "💨", badge: null,
+      id: 41505, name: "JetSki (Good for 2)", badge: null,
+      applicableDays: [2, 3],
       fallbackPrice:      1500,
       fallbackDuration:   "15–30 minutes",
       fallbackSchedule:   "Daily",
       fallbackHighlights: ["Solo or tandem ride", "Beachfront start & finish", "Thrill seeker activity"],
     },
     {
-      id: 42135, name: "Helicopter Beach Tour", icon: "🚁", badge: "Premium",
+      id: 42135, name: "Helicopter Beach Tour", badge: "Premium",
+      applicableDays: [2, 3],
       fallbackPrice:      8500,
       fallbackDuration:   "10–15 minutes",
       fallbackSchedule:   "Daily · Weather permitting",
       fallbackHighlights: ["Aerial island panorama", "Private helicopter", "Unforgettable bird's-eye views"],
     },
+    {
+      id: 42134, name: "Buggy Car Adventure", badge: null,
+      applicableDays: [2, 3],
+      fallbackPrice:      2500,
+      fallbackDuration:   "1–2 hours",
+      fallbackSchedule:   "Daily",
+      fallbackHighlights: ["Off-road dune buggy", "Island terrain trails", "Fun for groups"],
+    },
+    {
+      id: 42138, name: "Helicopter Island Tour", badge: "Premium",
+      applicableDays: [2, 3],
+      fallbackPrice:      9550,
+      fallbackDuration:   "15–20 minutes",
+      fallbackSchedule:   "Daily · Weather permitting",
+      fallbackHighlights: ["Extended island flyover", "360° aerial panorama", "Private helicopter cabin"],
+    },
+    {
+      id: 42140, name: "Helicopter VIP Tour", badge: "VIP",
+      applicableDays: [2, 3],
+      fallbackPrice:      11350,
+      fallbackDuration:   "20–30 minutes",
+      fallbackSchedule:   "Daily · Weather permitting",
+      fallbackHighlights: ["VIP exclusive experience", "Longest aerial route", "Premium helicopter service"],
+    },
   ],
-  cebu: [], // No Cebu products in account yet — contact GlobalTix to add
+  cebu: [],   // No Cebu products in account yet — contact GlobalTix to add
+  bohol: [],  // No Bohol products in account yet — contact GlobalTix to add
   elnido: [
     {
-      id: 49272, name: "3-in-1 Adventure in Sabang Puerto Princesa", icon: "🏝️", badge: null,
+      id: 49272, name: "3-in-1 Adventure in Sabang Puerto Princesa", badge: null,
+      applicableDays: [2],
       fallbackPrice:      1500,
       fallbackDuration:   "Full Day",
       fallbackSchedule:   "Daily · Pick-up 6:00 AM",
@@ -253,8 +287,9 @@ const normalizeGloabalTixProduct = (raw, def) => {
                        .map((inc) => inc.value)
                        .filter(Boolean)
                    : [],
-    sourceId:    def.id,
-    liveData:    true,
+    sourceId:       def.id,
+    liveData:       true,
+    applicableDays: def.applicableDays || null,
   };
 };
 
@@ -292,9 +327,10 @@ export const loadDestinationTours = async (destinationSlug) => {
           schedule:    def.fallbackSchedule   || null,
           price:       def.fallbackPrice      || null,
           highlights:  def.fallbackHighlights || [],
-          stops:       [],
-          liveData:    false,
-          apiError:    err?.message || "API unavailable",
+          stops:          [],
+          liveData:       false,
+          apiError:       err?.message || "API unavailable",
+          applicableDays: def.applicableDays || null,
         };
       }
     })

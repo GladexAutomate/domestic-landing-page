@@ -41,6 +41,9 @@ const FUSIOO_DEST_MAP = {
   // EL NIDO ✅ confirmed: GDX 18229 = "El Nido Tour A"
   "i900e3e3215704c05b629832e1b624a2c": "elnido",
 
+  // SIARGAO — TODO: add Fusioo destination IDs once confirmed
+  // PUERTO PRINCESA — TODO: add Fusioo destination IDs once confirmed
+
   // Removed incorrect mappings:
   // ie2040a0...  → Coron (not one of our 3 destinations)
   // ice6368b...  → Vietnam
@@ -59,13 +62,30 @@ const supabase = (_supabaseUrl && _supabaseKey)
 // ═══════════════════════════════════════════════════════════════
 // REVIEW SUBMISSION — saves to reviews table
 // ═══════════════════════════════════════════════════════════════
-export const submitReview = async ({ gdx_reference, rating, comment }) => {
+export const uploadReviewPhoto = async ({ gdx_reference, file }) => {
+  if (!supabase) throw new Error("Not configured.");
+  const ext = file.name.split(".").pop() || "jpg";
+  const path = `${gdx_reference}/${Date.now()}.${ext}`;
+  const { error } = await supabase.storage.from("review-photos").upload(path, file, { upsert: true, contentType: file.type });
+  if (error) throw new Error(error.message);
+  const { data } = supabase.storage.from("review-photos").getPublicUrl(path);
+  return data.publicUrl;
+};
+
+export const submitReview = async ({ gdx_reference, rating, comment, photo_url }) => {
   if (!supabase) throw new Error("Review submission is not configured on this deployment.");
   const { error } = await supabase.from("reviews").insert({
     gdx_reference,
     rating,
     comment: comment || null,
+    photo_url: photo_url || null,
   });
+  if (error) throw new Error(error.message);
+};
+
+export const deleteReview = async ({ gdx_reference }) => {
+  if (!supabase) throw new Error("Review deletion is not configured on this deployment.");
+  const { error } = await supabase.from("reviews").delete().eq("gdx_reference", gdx_reference);
   if (error) throw new Error(error.message);
 };
 
@@ -93,15 +113,26 @@ export const lookupBooking = async (gdxCode) => {
     throw new Error(error.message);
   }
 
-  // 2. Fetch all detail tables in parallel
-  const [tourData, ticketData, hotelData, transferData] = await Promise.all([
+  // 2. Fetch all detail tables in parallel (+ hotel name fallback when main row has a Fusioo ID)
+  const isFusiooId = (v) => v && /^i[a-f0-9]{30,}$/i.test(v);
+  const [tourData, ticketData, hotelData, transferData, hotelNameFallback] = await Promise.all([
     fetchDetail(TOUR_TABLE,     row.tour_details),
     fetchDetail(TICKET_TABLE,   row.airline_details_1),
     fetchDetail(HOTEL_TABLE,    row.hotel_booking_details),
     fetchDetail(TRANSFER_TABLE, row.transfer_details),
+    // When hotel_name on the selected row is a Fusioo ID, look for an older row that has the real name
+    isFusiooId(row.hotel_name)
+      ? supabase.from(BOOKING_TABLE).select("hotel_name").eq("gdx", clean)
+          .not("hotel_name", "is", null).not("hotel_name", "ilike", "i%")
+          .order("received_at", { ascending: false }).limit(1).maybeSingle()
+          .then(({ data }) => data?.hotel_name || null)
+      : Promise.resolve(null),
   ]);
 
-  return normalizeBooking(row, { tourData, ticketData, hotelData, transferData });
+  // Merge fallback hotel name into the main row so normalizeHotel can use it
+  const effectiveRow = hotelNameFallback ? { ...row, hotel_name: hotelNameFallback } : row;
+
+  return normalizeBooking(effectiveRow, { tourData, ticketData, hotelData, transferData });
 };
 
 // ── Fetch a single detail record by Fusioo record_id ─────────────
@@ -135,10 +166,12 @@ export const detectDestinationSlug = (booking) => {
   const { dest, tourName, tourDesc, transferDesc, rawStr } = _bookingTexts(booking);
 
   // 1. Destination field text — most reliable when it's human-readable
-  if (dest.includes("boracay"))                          return "boracay";
-  if (dest.includes("cebu"))                             return "cebu";
-  if (dest.includes("nido") || dest.includes("palawan")) return "elnido";
-  if (dest.includes("bohol"))                            return "bohol";
+  if (dest.includes("boracay"))                                              return "boracay";
+  if (dest.includes("cebu"))                                                 return "cebu";
+  if (dest.includes("nido"))                                                 return "elnido";
+  if (dest.includes("bohol"))                                                return "bohol";
+  if (dest.includes("siargao"))                                              return "siargao";
+  if (dest.includes("puerto princesa") || dest.includes("pps") || (dest.includes("palawan") && !dest.includes("nido"))) return "puertoprincesa";
 
   // 2. Check ALL text fields for bohol BEFORE FUSIOO_DEST_MAP
   //    (i63798db52a7f44f187ef6f9828c3a57a is shared between Boracay & Bohol rows —
@@ -152,24 +185,32 @@ export const detectDestinationSlug = (booking) => {
   if (FUSIOO_DEST_MAP[booking.destination]) return FUSIOO_DEST_MAP[booking.destination];
 
   // 4. Transfer description for other destinations
-  if (transferDesc.includes("caticlan") || transferDesc.includes("boracay")) return "boracay";
-  if (transferDesc.includes("cebu") || transferDesc.includes("mactan"))      return "cebu";
-  if (transferDesc.includes("pps") || transferDesc.includes("el nido") || transferDesc.includes("puerto princesa")) return "elnido";
+  if (transferDesc.includes("caticlan") || transferDesc.includes("boracay"))       return "boracay";
+  if (transferDesc.includes("cebu") || transferDesc.includes("mactan"))            return "cebu";
+  if (transferDesc.includes("pps") || transferDesc.includes("puerto princesa"))    return "puertoprincesa";
+  if (transferDesc.includes("el nido"))                                            return "elnido";
+  if (transferDesc.includes("siargao") || transferDesc.includes("general luna") || transferDesc.includes("cloud 9")) return "siargao";
 
   // 5. Tour name for other destinations
   if (tourName.includes("island hop"))                                        return "boracay";
   if (tourName.includes("kawasan") || tourName.includes("oslob") || tourName.includes("cebu")) return "cebu";
   if (tourName.includes("el nido") || tourName.includes("lagoon"))           return "elnido";
+  if (tourName.includes("siargao") || tourName.includes("cloud 9") || tourName.includes("magpupungko") || tourName.includes("sohoton") || tourName.includes("daku") || tourName.includes("naked island")) return "siargao";
+  if (tourName.includes("puerto princesa") || tourName.includes("underground river") || tourName.includes("honda bay") || tourName.includes("firefly")) return "puertoprincesa";
 
   // 6. Tour description for other destinations
   if (tourDesc.includes("henann") || tourDesc.includes("boracay")) return "boracay";
   if (tourDesc.includes("cebu"))                                    return "cebu";
   if (tourDesc.includes("el nido"))                                 return "elnido";
+  if (tourDesc.includes("siargao") || tourDesc.includes("cloud 9") || tourDesc.includes("daku island")) return "siargao";
+  if (tourDesc.includes("puerto princesa") || tourDesc.includes("underground river") || tourDesc.includes("honda bay")) return "puertoprincesa";
 
   // 7. Raw data fallback for other destinations
-  if (rawStr.includes("boracay"))    return "boracay";
-  if (rawStr.includes("\"cebu\""))   return "cebu";
-  if (rawStr.includes("el nido"))    return "elnido";
+  if (rawStr.includes("boracay"))          return "boracay";
+  if (rawStr.includes("\"cebu\""))         return "cebu";
+  if (rawStr.includes("el nido"))          return "elnido";
+  if (rawStr.includes("siargao"))          return "siargao";
+  if (rawStr.includes("puerto princesa") || rawStr.includes("\"pps\"")) return "puertoprincesa";
 
   return "boracay";
 };
@@ -179,10 +220,12 @@ export const detectDestinationSlug = (booking) => {
 export const detectDomesticSlug = (booking) => {
   const { dest, tourName, tourDesc, transferDesc, rawStr } = _bookingTexts(booking);
 
-  if (dest.includes("boracay"))                          return "boracay";
-  if (dest.includes("cebu"))                             return "cebu";
-  if (dest.includes("nido") || dest.includes("palawan")) return "elnido";
-  if (dest.includes("bohol"))                            return "bohol";
+  if (dest.includes("boracay"))                                              return "boracay";
+  if (dest.includes("cebu"))                                                 return "cebu";
+  if (dest.includes("nido"))                                                 return "elnido";
+  if (dest.includes("bohol"))                                                return "bohol";
+  if (dest.includes("siargao"))                                              return "siargao";
+  if (dest.includes("puerto princesa") || dest.includes("pps") || (dest.includes("palawan") && !dest.includes("nido"))) return "puertoprincesa";
 
   if (tourName.includes("bohol") || tourName.includes("chocolate") || tourName.includes("panglao") || tourName.includes("tarsier")) return "bohol";
   if (tourDesc.includes("bohol") || tourDesc.includes("panglao"))   return "bohol";
@@ -191,22 +234,30 @@ export const detectDomesticSlug = (booking) => {
 
   if (FUSIOO_DEST_MAP[booking.destination]) return FUSIOO_DEST_MAP[booking.destination];
 
-  if (transferDesc.includes("caticlan") || transferDesc.includes("boracay")) return "boracay";
-  if (transferDesc.includes("cebu") || transferDesc.includes("mactan"))      return "cebu";
-  if (transferDesc.includes("pps") || transferDesc.includes("el nido") || transferDesc.includes("puerto princesa")) return "elnido";
+  if (transferDesc.includes("caticlan") || transferDesc.includes("boracay"))       return "boracay";
+  if (transferDesc.includes("cebu") || transferDesc.includes("mactan"))            return "cebu";
+  if (transferDesc.includes("pps") || transferDesc.includes("puerto princesa"))    return "puertoprincesa";
+  if (transferDesc.includes("el nido"))                                            return "elnido";
+  if (transferDesc.includes("siargao") || transferDesc.includes("general luna") || transferDesc.includes("cloud 9")) return "siargao";
 
   if (tourName.includes("island hop"))                                        return "boracay";
   if (tourName.includes("kawasan") || tourName.includes("oslob") || tourName.includes("cebu")) return "cebu";
   if (tourName.includes("el nido") || tourName.includes("lagoon"))           return "elnido";
+  if (tourName.includes("siargao") || tourName.includes("cloud 9") || tourName.includes("magpupungko") || tourName.includes("sohoton") || tourName.includes("daku") || tourName.includes("naked island")) return "siargao";
+  if (tourName.includes("puerto princesa") || tourName.includes("underground river") || tourName.includes("honda bay") || tourName.includes("firefly")) return "puertoprincesa";
 
   if (tourDesc.includes("henann") || tourDesc.includes("boracay")) return "boracay";
   if (tourDesc.includes("cebu"))                                    return "cebu";
   if (tourDesc.includes("el nido"))                                 return "elnido";
+  if (tourDesc.includes("siargao") || tourDesc.includes("cloud 9") || tourDesc.includes("daku island")) return "siargao";
+  if (tourDesc.includes("puerto princesa") || tourDesc.includes("underground river") || tourDesc.includes("honda bay")) return "puertoprincesa";
 
-  if (rawStr.includes("boracay"))    return "boracay";
-  if (rawStr.includes("\"cebu\""))   return "cebu";
-  if (rawStr.includes("el nido"))    return "elnido";
-  if (rawStr.includes("bohol"))      return "bohol";
+  if (rawStr.includes("boracay"))          return "boracay";
+  if (rawStr.includes("\"cebu\""))         return "cebu";
+  if (rawStr.includes("el nido"))          return "elnido";
+  if (rawStr.includes("bohol"))            return "bohol";
+  if (rawStr.includes("siargao"))          return "siargao";
+  if (rawStr.includes("puerto princesa") || rawStr.includes("\"pps\"")) return "puertoprincesa";
 
   return null;
 };
@@ -215,10 +266,11 @@ export const detectDomesticSlug = (booking) => {
 // NORMALIZE — raw rows → clean booking object
 // ═══════════════════════════════════════════════════════════════
 function normalizeBooking(raw, { tourData, ticketData, hotelData, transferData } = {}) {
-  const tour     = normalizeTour(tourData);
-  const ticket   = normalizeTicket(ticketData);
-  const hotel    = normalizeHotel(hotelData, raw);
-  const transfer = normalizeTransfer(transferData);
+  const tour      = normalizeTour(tourData);
+  const ticket    = normalizeTicket(ticketData);
+  const hotel     = normalizeHotel(hotelData, raw);
+  const transfer  = normalizeTransfer(transferData);
+  const guestList = parseGuestHtml(raw.name_of_guests);
 
   return {
     // Identity
@@ -231,8 +283,8 @@ function normalizeBooking(raw, { tourData, ticketData, hotelData, transferData }
     facebookName:     raw.facebook_name || null,
     email:            raw.email_1 || null,
     phone:            raw.mobile_1 || null,
-    totalGuests:      raw.no_of_person || "1",
-    guestList:        parseGuestHtml(raw.name_of_guests),
+    totalGuests:      guestList.length || Number(raw.no_of_person) || 1,
+    guestList,
 
     // Booking
     status:           raw.status || "—",
@@ -322,8 +374,11 @@ function normalizeHotel(d, raw) {
     requests:           stripHtml(d.hotel_requests || ""),
     hotelConfirmation:  d.hotel_confirmation_number || d.confirmation_number || (!isOrdinalRef ? rawHotelNum : null) || null,
     hotelPhone:         d.hotel_phone || d.hotel_contact || d.contact_number || null,
-    // Hotel name — Fusioo may store it under several field names; stripHtml cleans &nbsp; and other entities
-    hotelName:          stripHtml(d.hotel_name || d.hotel_property_name || d.property_name || d.accommodation_name || d.hotel_property || "") || null,
+    // Hotel name — Fusioo may store it under several field names; stripHtml cleans &nbsp; and other entities.
+    // raw.hotel_name on the main booking row is used as fallback; skip it when it's a Fusioo record ID (starts with 'i' + 30+ hex chars).
+    hotelName:          stripHtml(d.hotel_name || d.hotel_property_name || d.property_name || d.accommodation_name || d.hotel_property
+                          || (raw?.hotel_name && !/^i[a-f0-9]{30,}$/i.test(raw.hotel_name) ? raw.hotel_name : "")
+                          || "") || null,
   };
 }
 
@@ -374,11 +429,14 @@ function normalizeAttachments(raw) {
 }
 
 // ── Duration normalizer ──────────────────────────────────────────
-// Fusioo may store duration as "3 Days & 2" (truncated) — append "Nights" if missing
+// Fusioo may store duration as "3 Days & 2" (truncated) — append "Nights" if missing.
+// Also corrects pluralization: "1 Days & 0 Nights" → "1 Day & 0 Nights", etc.
 function normalizeDuration(dur) {
   if (!dur) return null;
-  const s = String(dur).trim();
-  if (/&\s*\d+\s*$/i.test(s) && !/nights?/i.test(s)) return s + " Nights";
+  let s = String(dur).trim();
+  if (/&\s*\d+\s*$/i.test(s) && !/nights?/i.test(s)) s = s + " Nights";
+  // Fix pluralization: "1 Days" → "1 Day", "1 Nights" → "1 Night"
+  s = s.replace(/\b1\s+Days\b/i, "1 Day").replace(/\b1\s+Nights\b/i, "1 Night");
   return s;
 }
 
