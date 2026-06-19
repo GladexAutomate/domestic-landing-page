@@ -376,8 +376,8 @@ export const DESTINATION_DATA = {
         { name: "Island Hopping by Bangka Boat", desc: "Ride a traditional Filipino bangka boat to Puka Beach, Crystal Cove, Crocodile Island, and private beach stops — the #1 Boracay experience.", icon: "", image: boracayImgs.islandHopping },
         { name: "Swimming in Crystal Clear Water", desc: "Boracay's calm, shallow waters are perfect for swimming. The turquoise color comes from the pure white sand below — unlike anywhere else in the world.", icon: "🏊", image: boracayImgs.crystalCove },
         { name: "World-Famous Boracay Sunset", desc: "Every evening, the sky above White Beach turns shades of gold, orange, and pink. Widely ranked as one of the top sunsets in all of Asia.", icon: "🌅", image: boracayImgs.sunset },
-        { name: "Snorkeling & Helmet Diving", desc: "Explore Boracay's vibrant underwater world — colorful reef fish, coral gardens, and sea turtles. No experience needed for helmet diving.", icon: "🤿", image: boracayImgs.helmetDiving },
-        { name: "Paraw Sailing at Sunset", desc: "Board a traditional Filipino paraw sailboat as the sun goes down — one of the most romantic and iconic Boracay experiences available.", icon: "", image: boracayImgs.parawSailing },
+        { name: "Snorkeling & Helmet Diving", desc: "Explore Boracay's vibrant underwater world — colorful reef fish, coral gardens, and sea turtles. No experience needed for helmet diving.", icon: "🤿", image: "https://i.pinimg.com/736x/1a/1d/9e/1a1d9e49a4587a7ee66d98c697d5e764.jpg" },
+        { name: "Paraw Sailing at Sunset", desc: "Board a traditional Filipino paraw sailboat as the sun goes down — one of the most romantic and iconic Boracay experiences available.", icon: "", image: "https://i.pinimg.com/736x/e7/87/95/e78795996e8dc0f05ebc2c3dadfe4893.jpg" },
       ],
       restaurants: [
         { name: "Jonah's Fruit Shake & Snack Bar",   image: boracayImgs.foodMangoShake,    dishes: ["Mango Shake", "Banana Shake"],           description: "One of Boracay's most iconic stops since 1983 — freshly blended fruit shakes that are thick, cold, and unmissable on White Beach" },
@@ -390,7 +390,7 @@ export const DESTINATION_DATA = {
         { name: "White Beach — Morning Swim", note: "Early morning, calm water, no crowds — the clearest and most iconic Boracay shot", image: boracayImgs.whiteBeach },
         { name: "Sunset at White Beach", note: "Grab a beachside spot by 5:30 PM — the golden sky reflection on the sand is breathtaking", image: boracayImgs.sunset },
         { name: "Puka Shell Beach", note: "Quiet northern beach — rough shells, natural beauty, and almost no tourists", image: boracayImgs.pukaBeach },
-        { name: "On the Island Hopping Boat", note: "Shoot the clear green water and surrounding islands from the bangka boat deck", image: boracayImgs.islandTour },
+        { name: "On the Island Hopping Boat", note: "Shoot the clear green water and surrounding islands from the CRYSTAL KAYAK", image: "https://i.pinimg.com/originals/22/db/da/22dbda3bac691b18f37e09c6794ec391.jpg" },
       ],
       bestTime: "November to May is the peak season with favorable weather. June to October is rainy season with fewer crowds.",
       localTips: [
@@ -581,7 +581,7 @@ export const DESTINATION_DATA = {
         day: 1,
         title: "Arrival in Cebu",
         meals: "X / X / X",
-        photos: ["https://images.unsplash.com/photo-1556388158-158ea5ccacbd?w=600&q=80"],
+        photos: ["https://i.pinimg.com/736x/9b/49/95/9b4995cfea131479b3d15aa106e2eb64.jpg"],
         activities: [
           "Arrive at Mactan-Cebu International Airport",
           "Your assigned driver will be waiting at the Arrival Exit Area (near escalator or Duty Free Shop) with a name sign",
@@ -609,7 +609,7 @@ export const DESTINATION_DATA = {
         day: 3,
         title: "Last Day — Departure",
         meals: "B / X / X",
-        photos: ["https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=600&q=80"],
+        photos: ["https://i.pinimg.com/originals/9a/44/a8/9a44a827fa3eb4f74fdb3248f2df4cc8.jpg"],
         activities: [
           "After breakfast, free time at your own leisure until hotel check-out at 12:00 noon",
           "Driver will advise your exact pick-up time a day before departure",
@@ -1052,7 +1052,7 @@ export const DESTINATION_DATA = {
         day: 1,
         title: "Arrival in El Nido",
         meals: "X / X / X",
-        photos: ["https://images.unsplash.com/photo-1556388158-158ea5ccacbd?w=600&q=80"],
+        photos: ["https://cdn.flightsim.to/images/24/el-nido--lio-airport-20-rpel-45945-1678194400-ihn5O.jpg"],
         activities: [
           "Arrive at Puerto Princesa Airport (PPS) or El Nido Airport (LIO)",
           "For PPS arrivals: meet your representative outside the Arrival Gate with a Gladex placard — travel time to El Nido is 5–6 hours",
@@ -1083,7 +1083,7 @@ export const DESTINATION_DATA = {
         day: 3,
         title: "Departure Day",
         meals: "B / X / X",
-        photos: ["https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=600&q=80"],
+        photos: ["https://i.pinimg.com/736x/1a/ce/cb/1acecbe13969be6f1f2e5db83048f34c.jpg"],
         activities: [
           "After breakfast, free time at your own leisure until pick-up for departure",
           "Local operations team will send a text message confirming your exact pick-up time",
@@ -1498,9 +1498,9 @@ export const DESTINATION_DATA = {
         day: 1,
         title: "Arrival in Bohol",
         meals: "X / X / X",
-        image: "https://i.pinimg.com/736x/11/a5/21/11a52103fc00631ed6ddd21712da11cb.jpg",
+        image: "https://www.phbus.com/wp-content/uploads/2022/03/bohol-panglao-tagbilaran-airport.jpg",
         photos: [
-          "https://i.pinimg.com/736x/11/a5/21/11a52103fc00631ed6ddd21712da11cb.jpg",
+          "https://www.phbus.com/wp-content/uploads/2022/03/bohol-panglao-tagbilaran-airport.jpg",
         ],
         activities: [
           "Arrive at Bohol-Panglao International Airport",
@@ -1518,18 +1518,13 @@ export const DESTINATION_DATA = {
         meals: "B / X / X",
         image: "https://gttp.images.tshiftcdn.com/292564/x/0/a-popular-photo-taking-spot-in-bilar-manmade-forest.jpg",
         photos: [
-          "https://gttp.images.tshiftcdn.com/292564/x/0/a-popular-photo-taking-spot-in-bilar-manmade-forest.jpg",
           "https://i0.wp.com/ocarramedia.com/wp-content/uploads/2026/04/chocolate-hills-bohol-panoramic-view-carmen-viewpoint.webp?resize=1024%2C435&ssl=1",
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBk9LrZ39-938K13cdkMmZJ1O2Uw23WNTSVQ&s",
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRD1g4i5DMiqye0nuyiftiHlOxJyaRGhZI6rg&s",
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLF1mel1c_sizWnJ1r01gFs63G0pCM5Bn7Rg&s",
           "https://cdn.forevervacation.com/uploads/attraction/bohol-habitat-conservation-center-4661.jpg",
-          "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgJSIFwuGDySvynBITFzXxVdfe1aPODh3CpRAeFA8I21cbcQIoKIFHGLMKSyhxATajzwU59XzgIh-stLLrbLkVgz_D0LOEfqCT5aDhsPypT6KuW2akSMqD1aaEFBPaVlUd2_t8qwjndfns/s1600/sandugo+shrine.jpg",
+          "https://media-cdn.tripadvisor.com/media/photo-s/17/57/a6/b6/blood-compact-this-well.jpg",
           "https://bohol-philippines.com/wp-content/uploads/2025/08/bohol-baclayon-church-love-dot-027.webp",
           "https://www.travel-palawan.com/wp-content/uploads/2023/04/dolphin-watching.jpeg",
           "https://islanddiariesph.com/wp-content/uploads/2024/09/balicasag-island-bohol-18.jpg",
           "https://pix10.agoda.net/geo/poi/1506915/b47b43129dea12284dce8e0db00d19c8.jpg?ce=0&s=414x232",
-          "https://cdn-ildpgkc.nitrocdn.com/NSkCPchvfSbxgWZsGbVYvdagXEEViGNE/assets/images/optimized/rev-643cce5/www.panglaotours.com/wp-content/uploads/2024/07/balicasag-turtle-2.jpg",
         ],
         activities: [
           "Please refer to your travel voucher for your specific tour package (Bohol Country Side, Panglao Tours, or Island Hopping)",
@@ -1545,9 +1540,9 @@ export const DESTINATION_DATA = {
         day: 3,
         title: "Departure Day",
         meals: "B / X / X",
-        image: "https://static1.squarespace.com/static/67402c32971ec25a55d58dfc/6746d967e39e66038bb3b9e7/674839da53da7b3f6c9db2b1/1739868390745/Panglao+International+Airport.jpg?format=1500w",
+        image: "https://www.asiaodysseytravel.com/images/asia-tours/philippines-tours/bohol-tagbilaran-airport-700-1.jpg",
         photos: [
-          "https://static1.squarespace.com/static/67402c32971ec25a55d58dfc/6746d967e39e66038bb3b9e7/674839da53da7b3f6c9db2b1/1739868390745/Panglao+International+Airport.jpg?format=1500w",
+          "https://www.asiaodysseytravel.com/images/asia-tours/philippines-tours/bohol-tagbilaran-airport-700-1.jpg",
         ],
         activities: [
           "After breakfast, enjoy free time at your own leisure until hotel check-out at 12:00 NN",
@@ -2145,9 +2140,9 @@ export const DESTINATION_DATA = {
         { name: "Coconut Road", desc: "A stunning palm-lined road that cuts through the heart of Siargao — perfect for motorbike rides and photos surrounded by thousands of coconut trees.", icon: "", image: "https://i.pinimg.com/736x/c0/bd/26/c0bd264a0d162727ef03b0b0f4122df6.jpg" },
       ],
       restaurants: [
-        { name: "Kermit Surf Resort Restaurant", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHQ0bWlZ5KLVMMvVWUrUyQau8jMYT30g8C93aM9fWrOfo2S7TNh789gnMs&s=10", dishes: ["Wood-fired Pizza", "Pasta"], description: "One of Siargao's most beloved spots — handmade wood-fired pizza and Italian-inspired dishes in a relaxed surfer's setting near Cloud 9." },
+        { name: "Kermit Surf Resort Restaurant", image: "https://images.squarespace-cdn.com/content/v1/58f7621de4fcb542850299a4/1494245173396-7QP53LZVPANE0I8Q4Z97/20170408-DSC_0302kermitfood.jpg?format=1000w", dishes: ["Wood-fired Pizza", "Pasta"], description: "One of Siargao's most beloved spots — handmade wood-fired pizza and Italian-inspired dishes in a relaxed surfer's setting near Cloud 9." },
         { name: "Bravo Siargao", image: "https://assets.simplotel.com/simplotel/image/upload/x_0,y_741,w_3098,h_1743,r_0,c_crop,q_80,fl_progressive/w_400,f_auto,c_fit/bravo-beach-resort-siargao/1F6A1135_b101482c", dishes: ["Seafood", "Local Favorites"], description: "Popular open-air restaurant in General Luna known for fresh seafood, Filipino dishes, and live music on select nights." },
-        { name: "Harana Surf Resort", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSD1uQcKrrVfMUt9Z2xDybV1TZJWicVrplbFSpRGv4snV9ICOd6TK12S4z1&s=10", dishes: ["Fresh Catch", "Cocktails"], description: "Beachfront dining with stunning sunset views — known for their fresh catch cooked to your preference and tropical cocktails." },
+        { name: "Harana Surf Resort", image: "https://media-cdn.tripadvisor.com/media/photo-s/10/47/6b/11/the-foods.jpg", dishes: ["Fresh Catch", "Cocktails"], description: "Beachfront dining with stunning sunset views — known for their fresh catch cooked to your preference and tropical cocktails." },
       ],
       photoSpots: [
         { name: "Cloud 9 Boardwalk", note: "The iconic spot — shoot the barrel wave from the elevated boardwalk", image: "https://images.pexels.com/photos/1654489/pexels-photo-1654489.jpeg?auto=compress&cs=tinysrgb&w=800" },
@@ -2532,7 +2527,7 @@ export const DESTINATION_DATA = {
     ],
     destinationGuide: {
       highlights: [
-        { name: "Puerto Princesa Subterranean River", desc: "One of the New7Wonders of Nature — an 8.2km underground river flowing through a spectacular cave system. A UNESCO World Heritage Site and the #1 must-do experience in Palawan.", icon: "", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTD5eaPuHTaYoBqlURZyvhAI1INxIDtE0GY8SD40hVO803nYm6TRFZgKCYl&s=10" },
+        { name: "Puerto Princesa Subterranean River", desc: "One of the New7Wonders of Nature — an 8.2km underground river flowing through a spectacular cave system. A UNESCO World Heritage Site and the #1 must-do experience in Palawan.", icon: "", image: "https://i.pinimg.com/originals/75/b9/48/75b948c88beb22cb12ff148e0f5e0a1a.jpg" },
         { name: "Honda Bay Island Hopping", desc: "Hop between the pristine islands of Honda Bay — Cowrie Island's crystal waters, Luli Island's famous 'LU-mubog LI-litaw' sandbar, and Pambato Reef's snorkeling spots.", icon: "", image: "https://www.travel-palawan.com/wp-content/uploads/2024/09/Honda-Bay-Puerto-Princesa-Palawan-1024x683.jpeg" },
         { name: "Iwahig Firefly Watching", desc: "Glide through the mangrove waterways of Iwahig River at night and witness thousands of fireflies blinking in perfect synchrony — one of the most magical experiences in the Philippines.", icon: "", image: "https://mediaim.expedia.com/localexpert/469725/8f30ac79-41c5-4a64-9e57-fef80740d6f8.jpg" },
         { name: "Palawan Wildlife Rescue Center (Crocodile Farm)", desc: "One of Asia's largest crocodile farms and a wildlife conservation center — home to Philippine crocodiles, exotic birds, and other native animals.", icon: "🐊", image: "https://i.pinimg.com/1200x/6b/89/80/6b89800c8b2b1d3e30782b3f3e1d9913.jpg" },
@@ -2542,13 +2537,13 @@ export const DESTINATION_DATA = {
       restaurants: [
         { name: "Ka Lui Restaurant", image: "https://media-cdn.tripadvisor.com/media/photo-s/03/8f/26/26/kalui-restaurant.jpg", dishes: ["Fresh Seafood", "Filipino Classics"], description: "A Puerto Princesa institution — dine barefoot in a beautifully designed bamboo house. Known for outstanding fresh seafood and warm Filipino hospitality." },
         { name: "Kinabuchs Grill & Bar", image: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2a/fd/00/81/caption.jpg?w=1200&h=1200&s=1", dishes: ["Crocodile Sisig", "Tamilok", "Seafood"], description: "Famous for adventurous Filipino dishes including crocodile meat and tamilok (woodworm) — a PPS culinary landmark that's been around for decades." },
-        { name: "Badjao Seafront Restaurant", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTjUx-u7cibTReNROrsAxVz1wytXj9bnNCHoeQ4-LnZmr1dbCuN4WJt9gl&s=10", dishes: ["Kinilaw", "Grilled Seafood"], description: "Waterfront dining with stunning views of Honda Bay — the freshest seafood in the city, grilled to perfection right beside the water." },
+        { name: "Badjao Seafront Restaurant", image: "https://cheannetoday.wordpress.com/wp-content/uploads/2011/10/ft-badjao-13.jpg", dishes: ["Kinilaw", "Grilled Seafood"], description: "Waterfront dining with stunning views of Honda Bay — the freshest seafood in the city, grilled to perfection right beside the water." },
       ],
       photoSpots: [
         { name: "Underground River Cave Entrance", note: "The iconic limestone archway at the mouth of the cave — dramatic and otherworldly", image: "https://cdn.getyourguide.com/img/tour/4c260b1fdbbec65f572790ec8c4162ca7edf6e3006bcba447e7bf7f3e7e0fd47.png/68.jpg" },
         { name: "Luli Island Sandbar", note: "Walk the sandbar that appears at low tide — shoot with the teal water on both sides", image: "https://i.pinimg.com/736x/f9/0d/e0/f90de09648fe4b0211ab651617e1574b.jpg" },
         { name: "Mitra's Ranch", note: "Panoramic hillside view of Puerto Princesa city and Honda Bay at sunset", image: "https://i.pinimg.com/736x/3d/50/ab/3d50ab20196a50df00ab575263a839dd.jpg" },
-        { name: "Iwahig River at Night", note: "Long-exposure shot of fireflies — ethereal and one-of-a-kind", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSAVyAT5KvAlarm-xXhCEmqgzwjFxfcBAeHa9ROkRxR4DX4HuEDAp3Gweqc&s=10" },
+        { name: "Iwahig River at Night", note: "Long-exposure shot of fireflies — ethereal and one-of-a-kind", image: "https://images.trvl-media.com/localexpert/469725/8f30ac79-41c5-4a64-9e57-fef80740d6f8.jpg?impolicy=resizecrop&rw=1005&rh=565" },
       ],
       bestTime: "December to April — ideal weather, calm seas, perfect for island hopping and tours. March to May is the hottest with the best beach and snorkeling conditions.",
       localTips: [

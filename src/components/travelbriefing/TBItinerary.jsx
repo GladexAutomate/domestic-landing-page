@@ -410,7 +410,7 @@ export default function TBItinerary({ dest, darkMode, tk, availableTours = [], a
                       {photos.map((src, i) => (
                         <button key={i} className="relative overflow-hidden block" style={{ aspectRatio: "1/1" }}
                           onClick={() => setLightbox({ photos, index: i })}>
-                          <img src={src} alt="" className="w-full h-full object-cover transition-transform duration-200 hover:scale-105" loading="lazy" />
+                          <img src={src} alt="" className={`w-full h-full object-cover transition-transform duration-200${photos.length > 1 ? " hover:scale-105" : ""}`} loading="lazy" />
                         </button>
                       ))}
                     </div>
