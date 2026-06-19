@@ -39,10 +39,13 @@ const FUSIOO_DEST_MAP = {
   "ibb7bfb79ef3b432888a263c19fd33a15": "cebu",
 
   // EL NIDO ✅ confirmed: GDX 18229 = "El Nido Tour A"
+  // NOTE: i900e3e3215704c05b629832e1b624a2c is also used by PPS bookings — text checks must run first
   "i900e3e3215704c05b629832e1b624a2c": "elnido",
 
-  // SIARGAO — TODO: add Fusioo destination IDs once confirmed
-  // PUERTO PRINCESA — TODO: add Fusioo destination IDs once confirmed
+  // SIARGAO ✅ confirmed: GDX 14937 = "SIARGAO LAND TOUR" (Crisaldo Corpus Bocobo)
+  "i470eba5c36b64f3a93331134130bc5ae": "siargao",
+
+  // PUERTO PRINCESA — shares IDs with Boracay (ib515f...) and El Nido (i900e3...) — handled by text checks before FUSIOO_DEST_MAP
 
   // Removed incorrect mappings:
   // ie2040a0...  → Coron (not one of our 3 destinations)
@@ -173,15 +176,22 @@ export const detectDestinationSlug = (booking) => {
   if (dest.includes("siargao"))                                              return "siargao";
   if (dest.includes("puerto princesa") || dest.includes("pps") || (dest.includes("palawan") && !dest.includes("nido"))) return "puertoprincesa";
 
-  // 2. Check ALL text fields for bohol BEFORE FUSIOO_DEST_MAP
-  //    (i63798db52a7f44f187ef6f9828c3a57a is shared between Boracay & Bohol rows —
-  //     text signals must take priority over the ambiguous map entry)
+  // 2. Check ALL text fields for ambiguous destinations BEFORE FUSIOO_DEST_MAP
+  //    (some Fusioo IDs are shared across destinations — text signals must take priority)
   if (tourName.includes("bohol") || tourName.includes("chocolate") || tourName.includes("panglao") || tourName.includes("tarsier")) return "bohol";
   if (tourDesc.includes("bohol") || tourDesc.includes("panglao"))   return "bohol";
   if (transferDesc.includes("bohol") || transferDesc.includes("tagbilaran") || transferDesc.includes("panglao")) return "bohol";
   if (rawStr.includes("bohol"))                                      return "bohol";
 
-  // 3. Fusioo ID map (after bohol text checks — ambiguous IDs handled above)
+  // PPS & Siargao: their Fusioo IDs overlap with Boracay/El Nido — must detect via text first
+  if (tourName.includes("siargao") || tourName.includes("cloud 9") || tourName.includes("sohoton") || tourName.includes("magpupungko") || tourName.includes("daku") || tourName.includes("naked island")) return "siargao";
+  if (tourName.includes("puerto princesa") || tourName.includes("underground river") || tourName.includes("honda bay") || tourName.includes("firefly")) return "puertoprincesa";
+  if (tourDesc.includes("siargao") || tourDesc.includes("cloud 9") || tourDesc.includes("daku island")) return "siargao";
+  if (tourDesc.includes("puerto princesa") || tourDesc.includes("underground river") || tourDesc.includes("honda bay")) return "puertoprincesa";
+  if (transferDesc.includes("siargao") || transferDesc.includes("general luna") || transferDesc.includes("cloud 9")) return "siargao";
+  if (transferDesc.includes("pps") || transferDesc.includes("puerto princesa")) return "puertoprincesa";
+
+  // 3. Fusioo ID map (after ambiguous text checks)
   if (FUSIOO_DEST_MAP[booking.destination]) return FUSIOO_DEST_MAP[booking.destination];
 
   // 4. Transfer description for other destinations
@@ -231,6 +241,13 @@ export const detectDomesticSlug = (booking) => {
   if (tourDesc.includes("bohol") || tourDesc.includes("panglao"))   return "bohol";
   if (transferDesc.includes("bohol") || transferDesc.includes("tagbilaran") || transferDesc.includes("panglao")) return "bohol";
   if (rawStr.includes("bohol"))                                      return "bohol";
+
+  if (tourName.includes("siargao") || tourName.includes("cloud 9") || tourName.includes("sohoton") || tourName.includes("magpupungko") || tourName.includes("daku") || tourName.includes("naked island")) return "siargao";
+  if (tourName.includes("puerto princesa") || tourName.includes("underground river") || tourName.includes("honda bay") || tourName.includes("firefly")) return "puertoprincesa";
+  if (tourDesc.includes("siargao") || tourDesc.includes("cloud 9") || tourDesc.includes("daku island")) return "siargao";
+  if (tourDesc.includes("puerto princesa") || tourDesc.includes("underground river") || tourDesc.includes("honda bay")) return "puertoprincesa";
+  if (transferDesc.includes("siargao") || transferDesc.includes("general luna") || transferDesc.includes("cloud 9")) return "siargao";
+  if (transferDesc.includes("pps") || transferDesc.includes("puerto princesa")) return "puertoprincesa";
 
   if (FUSIOO_DEST_MAP[booking.destination]) return FUSIOO_DEST_MAP[booking.destination];
 
