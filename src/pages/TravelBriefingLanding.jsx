@@ -14,11 +14,16 @@ import TBFAQs from "@/components/travelbriefing/TBFAQs";
 import { lookupBooking, submitReview, deleteReview, uploadReviewPhoto } from "@/services/supabaseService";
 import { loadDestinationTours } from "@/services/globaltixService";
 import TBAddOnsCheckout from "@/components/travelbriefing/TBAddOnsCheckout";
+import TBInsurance from "@/components/travelbriefing/TBInsurance";
 import {
   Check, X, AlertTriangle, ArrowUp, Phone,
   Download, Star, Gift,
   BadgeCheck, Info, Loader, ChevronDown, ChevronUp, MapPin,
 } from "lucide-react";
+import {
+  AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter,
+  AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel,
+} from "@/components/ui/alert-dialog";
 
 const TESTIMONIALS = [
   {
@@ -610,13 +615,13 @@ function BackToTopButton({ visible, lift }) {
           exit={{ opacity: 0, y: 12 }}
           transition={{ duration: 0.25 }}
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="fixed right-5 z-50 w-11 h-11 rounded-full flex items-center justify-center hover:scale-110 active:scale-95"
+          className="fixed right-5 z-50 w-12 h-12 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
           style={{
             bottom: lift ? "84px" : "24px",
             transition: "bottom 0.3s cubic-bezier(0.34,1.56,0.64,1)",
             background: "#ffffff",
-            border: "2px solid rgba(255,153,19,0.5)",
-            boxShadow: "0 4px 20px rgba(0,0,0,0.18), 0 1px 4px rgba(0,0,0,0.1)",
+            border: "none",
+            boxShadow: "0 4px 20px rgba(0,0,0,0.18), 0 1px 6px rgba(0,0,0,0.1)",
           }}
           aria-label="Back to top"
         >
@@ -1501,7 +1506,7 @@ export default function TravelBriefingLanding() {
       {/* ── TEST MODE: banner + navbar share one fixed container so they stack with no gap ── */}
       {isTestMode ? (
         <div className="fixed top-0 left-0 right-0 z-50 flex flex-col">
-          <div className="flex items-center justify-center gap-2 px-4 py-2 text-xs font-black tracking-widest uppercase" style={{ backgroundColor: "#7c3aed", color: "#fff" }}>
+          <div className="flex items-center justify-center gap-1.5 px-4 py-1 text-[10px] font-black tracking-widest uppercase" style={{ backgroundColor: "#7c3aed", color: "#fff" }}>
             <span>🧪</span>
             <span>TEST MODE — {dest?.name} · Demo Data · Not a Real Booking</span>
           </div>
@@ -2713,11 +2718,31 @@ export default function TravelBriefingLanding() {
 
 
         {/* ══════════════════════════════════════════════════
+            10. TRAVEL INSURANCE
+           ══════════════════════════════════════════════════ */}
+        {isTestMode && activeBooking && (
+          <SectionStripe alt={1} darkMode={darkMode}>
+            <FadeIn>
+              <StripeHeader
+                eyebrow="Optional Add-On"
+                title="Protect Your Trip"
+                description="TraveLead Domestic Travel Insurance by Starr International. Prices auto-calculated for your exact travel dates and party size."
+                tk={tk}
+                colored
+              />
+              <SectionCard darkMode={darkMode}>
+                <TBInsurance booking={activeBooking} dest={dest} darkMode={darkMode} tk={tk} />
+              </SectionCard>
+            </FadeIn>
+          </SectionStripe>
+        )}
+
+        {/* ══════════════════════════════════════════════════
             13. FREQUENTLY ASKED QUESTIONS
            ══════════════════════════════════════════════════ */}
-        <SectionStripe alt={1} darkMode={darkMode}>
+        <SectionStripe alt={isTestMode ? 0 : 1} darkMode={darkMode}>
           <FadeIn>
-            <StripeHeader eyebrow="Have Questions?" title="Frequently Asked Questions" description="Common questions from Gladex travelers — answered before you even ask." tk={tk} colored />
+            <StripeHeader eyebrow="Have Questions?" title="Frequently Asked Questions" description="Common questions from Gladex travelers — answered before you even ask." tk={tk} colored={!isTestMode} />
             <SectionCard darkMode={darkMode}>
               <TBFAQs dest={dest} darkMode={darkMode} tk={tk} />
             </SectionCard>
@@ -2727,14 +2752,14 @@ export default function TravelBriefingLanding() {
         {/* ══════════════════════════════════════════════════
             14. TESTIMONIALS
            ══════════════════════════════════════════════════ */}
-        <SectionStripe alt={0} darkMode={darkMode}>
+        <SectionStripe alt={isTestMode ? 1 : 0} darkMode={darkMode}>
           <FadeIn>
-            <StripeHeader eyebrow="Traveler Reviews" title="Real Gladex Travel Experiences" tk={tk} />
+            <StripeHeader eyebrow="Traveler Reviews" title="Real Gladex Travel Experiences" tk={tk} colored={isTestMode} />
 
             {/* Carousel cards */}
             {(() => {
               const filteredTestimonials = TESTIMONIALS.filter(
-                (t) => (!t.destination || t.destination === slug) && t.rating >= 3
+                (t) => (!t.destination || t.destination === realSlug) && t.rating >= 3
               );
               const allTestimonials = myReview ? [myReview, ...filteredTestimonials] : filteredTestimonials;
               const PER = testimonialsMobile ? 1 : 3;
@@ -2743,7 +2768,10 @@ export default function TravelBriefingLanding() {
               const visible = allTestimonials.slice(safePage * PER, (safePage + 1) * PER);
               return (
                 <>
-                  <div className={`grid gap-3 mb-4 ${testimonialsMobile ? "grid-cols-1" : "grid-cols-3"}`}>
+                  <div
+                    className={`grid gap-3 mb-4 items-center ${testimonialsMobile ? "grid-cols-1" : "grid-cols-3"}`}
+                    style={testimonialsMobile ? {} : { height: "420px" }}
+                  >
                     {visible.map((t, i) => {
                       const isOwn = t === myReview;
                       return (
@@ -2752,11 +2780,12 @@ export default function TravelBriefingLanding() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.06, duration: 0.3 }}
-                        className="rounded-2xl border overflow-hidden flex flex-col"
+                        className={`rounded-2xl border overflow-hidden flex flex-col${testimonialsMobile ? "" : " h-full"}`}
                         style={{
-                          backgroundColor: isOwn ? "rgba(255,153,19,0.05)" : cardBg,
+                          backgroundColor: cardBg,
                           borderColor: isOwn ? "#ff9913" : borderColor,
-                          boxShadow: isOwn ? "0 0 0 1px #ff9913, 0 4px 20px rgba(255,153,19,0.15)" : cardShadow,
+                          borderWidth: isOwn ? "2px" : "1px",
+                          boxShadow: isOwn ? "0 4px 24px rgba(255,153,19,0.4)" : cardShadow,
                         }}
                       >
                         {/* Trip photo — optional */}
@@ -2789,36 +2818,20 @@ export default function TravelBriefingLanding() {
                                     document.getElementById("review-edit-inline")?.scrollIntoView({ behavior: "smooth", block: "center" });
                                   }, 80);
                                 }}
-                                className="flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-lg transition-all hover:opacity-80"
+                                className="flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-lg transition-all hover:opacity-80 min-h-[36px]"
                                 style={{ color: "#ff9913", backgroundColor: "rgba(255,153,19,0.1)" }}
                               >
-                                <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                                 Edit
                               </button>
-                              {reviewDeleteConfirm ? (
-                                <div className="flex items-center gap-1">
-                                  <span className="text-[10px] font-bold" style={{ color: "#dc2626" }}>Delete?</span>
-                                  <button
-                                    onClick={() => { setReviewDeleteConfirm(false); handleDeleteReview(); }}
-                                    className="text-[10px] font-black px-2 py-1 rounded-lg"
-                                    style={{ color: "#fff", backgroundColor: "#dc2626" }}
-                                  >Yes</button>
-                                  <button
-                                    onClick={() => setReviewDeleteConfirm(false)}
-                                    className="text-[10px] font-bold px-2 py-1 rounded-lg"
-                                    style={{ color: textPrimary, backgroundColor: darkMode ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.07)" }}
-                                  >No</button>
-                                </div>
-                              ) : (
-                                <button
+                              <button
                                   onClick={() => setReviewDeleteConfirm(true)}
-                                  className="flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-lg transition-all hover:opacity-80"
+                                  className="flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-lg transition-all hover:opacity-80 min-h-[36px]"
                                   style={{ color: "#dc2626", backgroundColor: "rgba(239,68,68,0.1)" }}
                                 >
-                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+                                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
                                   Delete
                                 </button>
-                              )}
                             </div>
                           </div>
                         )}
@@ -2836,7 +2849,7 @@ export default function TravelBriefingLanding() {
                         <div className="flex items-center gap-2.5 pt-2 border-t" style={{ borderColor: isOwn ? "rgba(255,153,19,0.2)" : borderColor }}>
                           <div
                             className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black shrink-0"
-                            style={{ background: isOwn ? "#ff9913" : "#1a1a1a", color: "#fff" }}
+                            style={{ background: isOwn ? "#fff" : "#1a1a1a", color: isOwn ? "#ff9913" : "#fff", border: isOwn ? "1.5px solid #ff9913" : "none" }}
                           >
                             {isOwn ? "★" : t.name.charAt(0)}
                           </div>
@@ -2916,37 +2929,58 @@ export default function TravelBriefingLanding() {
                 />
               )}
             </AnimatePresence>
+
+            {/* Delete review confirmation modal */}
+            <AlertDialog open={reviewDeleteConfirm} onOpenChange={setReviewDeleteConfirm}>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Delete your review?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This will permanently remove your review. You can always submit a new one afterward.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>No, keep it</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDeleteReview}
+                    className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
+                  >
+                    Yes, delete
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </FadeIn>
         </SectionStripe>
 
         {/* ══════════════════════════════════════════════════
             15. RATE MY SERVICE
            ══════════════════════════════════════════════════ */}
-        <SectionStripe alt={1} darkMode={darkMode}>
+        <SectionStripe alt={isTestMode ? 0 : 1} darkMode={darkMode}>
           <FadeIn>
-            <StripeHeader eyebrow="Your Experience" title="Review Our Service" description="Your feedback helps us improve every trip for future travelers." tk={tk} colored />
-            <div className="rounded-2xl border p-5" style={{ ...orangeCard }}>
+            <StripeHeader eyebrow="Your Experience" title="Review Our Service" description="Your feedback helps us improve every trip for future travelers." tk={tk} colored={!isTestMode} />
+            <div className="rounded-2xl border p-5" style={{ ...(!isTestMode ? orangeCard : card) }}>
               {(reviewSubmitted || myReview) ? (
                 /* ── Already submitted ── */
                 <div className="flex flex-col items-center gap-3 py-4 text-center">
-                  <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: "rgba(255,255,255,0.2)" }}>
-                    <svg className="w-6 h-6" fill="none" stroke="#ffffff" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: !isTestMode ? "rgba(255,255,255,0.2)" : "rgba(255,153,19,0.12)" }}>
+                    <svg className="w-6 h-6" fill="none" stroke={!isTestMode ? "#ffffff" : "#ff9913"} strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
                   </div>
-                  <p className="font-black text-sm text-white">Thank you for your review!</p>
+                  <p className="font-black text-sm" style={{ color: !isTestMode ? "#fff" : textPrimary }}>Thank you for your review!</p>
                   <div className="flex gap-0.5">
                     {[1,2,3,4,5].map((s) => (
                       <Star key={s} className={`w-4 h-4 ${s <= (myReview?.rating ?? reviewStars) ? "fill-yellow-400 text-yellow-400" : "text-yellow-200"}`} />
                     ))}
                   </div>
                   {(myReview?.review || reviewComment) && (
-                    <p className="text-xs italic" style={{ color: "rgba(255,255,255,0.75)" }}>"{myReview?.review || reviewComment}"</p>
+                    <p className="text-xs italic" style={{ color: !isTestMode ? "rgba(255,255,255,0.75)" : textMuted }}>"{myReview?.review || reviewComment}"</p>
                   )}
-                  <p className="text-[10px]" style={{ color: "rgba(255,255,255,0.65)" }}>Your review is visible above in the traveler reviews section.</p>
+                  <p className="text-[10px]" style={{ color: !isTestMode ? "rgba(255,255,255,0.65)" : textMuted }}>Your review is visible above in the traveler reviews section.</p>
                 </div>
               ) : (
                 /* ── Form ── */
                 <>
-                  <p className="text-sm mb-3 text-white">
+                  <p className="text-sm mb-3" style={{ color: !isTestMode ? "#fff" : textPrimary }}>
                     How would you rate your experience with Gladex Tours?
                   </p>
                   <div className="flex gap-2 mb-5">
@@ -2961,14 +2995,14 @@ export default function TravelBriefingLanding() {
                           className={`w-7 h-7 transition-colors ${
                             s <= reviewStars
                               ? "fill-yellow-400 text-yellow-400"
-                              : "text-white/30 hover:text-yellow-400"
+                              : !isTestMode ? "text-white/30 hover:text-yellow-400" : "text-black/15 hover:text-yellow-400"
                           }`}
                         />
                       </button>
                     ))}
                   </div>
 
-                  <p className="text-[10px] font-black uppercase tracking-widest mb-1.5" style={{ color: "rgba(255,255,255,0.65)" }}>
+                  <p className="text-[10px] font-black uppercase tracking-widest mb-1.5" style={{ color: !isTestMode ? "rgba(255,255,255,0.65)" : textMuted }}>
                     Comments <span className="font-normal normal-case tracking-normal">(optional)</span>
                   </p>
                   <textarea
@@ -2976,11 +3010,11 @@ export default function TravelBriefingLanding() {
                     value={reviewComment}
                     onChange={(e) => setReviewComment(e.target.value)}
                     placeholder="Tell us about your experience..."
-                    className="w-full rounded-xl border px-4 py-3 text-sm resize-none outline-none transition-colors placeholder:text-white/40"
+                    className={`w-full rounded-xl border px-4 py-3 text-sm resize-none outline-none transition-colors ${!isTestMode ? "placeholder:text-white/40" : "placeholder:text-black/30"}`}
                     style={{
-                      backgroundColor: "rgba(0,0,0,0.15)",
-                      borderColor: "rgba(255,255,255,0.2)",
-                      color: "#ffffff",
+                      backgroundColor: !isTestMode ? "rgba(0,0,0,0.15)" : surfaceBg,
+                      borderColor: !isTestMode ? "rgba(255,255,255,0.2)" : borderColor,
+                      color: !isTestMode ? "#ffffff" : textPrimary,
                     }}
                   />
 
@@ -3010,7 +3044,7 @@ export default function TravelBriefingLanding() {
                     <button
                       onClick={() => reviewPhotoRef.current?.click()}
                       className="w-full mt-3 py-2.5 rounded-xl border-2 border-dashed text-xs font-bold flex items-center justify-center gap-2 transition-all hover:opacity-80"
-                      style={{ borderColor: "rgba(255,255,255,0.3)", color: "rgba(255,255,255,0.7)" }}
+                      style={{ borderColor: !isTestMode ? "rgba(255,255,255,0.3)" : borderColor, color: !isTestMode ? "rgba(255,255,255,0.7)" : textMuted }}
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                       Add trip photo (optional)
@@ -3025,8 +3059,10 @@ export default function TravelBriefingLanding() {
                     disabled={reviewStars === 0 || reviewUploading}
                     className="w-full mt-4 py-3 rounded-xl text-sm font-bold transition-all"
                     style={{
-                      backgroundColor: reviewStars > 0 ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.1)",
-                      color: "#ffffff",
+                      backgroundColor: !isTestMode
+                        ? (reviewStars > 0 ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.1)")
+                        : (reviewStars > 0 ? "#ff9913" : "rgba(255,153,19,0.15)"),
+                      color: !isTestMode ? "#ffffff" : (reviewStars > 0 ? "#ffffff" : "#ff9913"),
                       opacity: reviewStars === 0 ? 0.5 : 1,
                     }}
                   >
@@ -3036,7 +3072,7 @@ export default function TravelBriefingLanding() {
                     <button
                       onClick={() => setReviewEditing(false)}
                       className="w-full mt-2 py-2.5 rounded-xl text-sm font-bold transition-all"
-                      style={{ color: "rgba(255,255,255,0.7)", backgroundColor: "rgba(255,255,255,0.08)" }}
+                      style={{ color: !isTestMode ? "rgba(255,255,255,0.7)" : textMuted, backgroundColor: !isTestMode ? "rgba(255,255,255,0.08)" : surfaceBg }}
                     >
                       Cancel
                     </button>
@@ -3051,9 +3087,9 @@ export default function TravelBriefingLanding() {
         {/* ══════════════════════════════════════════════════
             Important Notes
            ══════════════════════════════════════════════════ */}
-        <SectionStripe alt={0} darkMode={darkMode}>
+        <SectionStripe alt={isTestMode ? 1 : 0} darkMode={darkMode}>
           <FadeIn>
-            <StripeHeader eyebrow="Before You Go" title="Important Notes" description="Please read these reminders carefully before your trip begins." tk={tk} />
+            <StripeHeader eyebrow="Before You Go" title="Important Notes" description="Please read these reminders carefully before your trip begins." tk={tk} colored={isTestMode} />
             <div className="rounded-2xl border overflow-hidden" style={{ ...card }}>
               <div className="px-5 pt-4 pb-3 border-b flex items-center gap-2" style={{ borderColor }}>
                 <AlertTriangle className="w-4 h-4 shrink-0" style={{ color: "#ff9913" }} />

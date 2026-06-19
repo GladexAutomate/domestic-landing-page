@@ -4,6 +4,17 @@ import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
 export default defineConfig({
+  server: {
+    proxy: {
+      // Proxy Starr UAT API to avoid CORS on localhost
+      // Uses /starr-uat/ prefix which is stripped before forwarding
+      "/starr-uat": {
+        target: "http://16489.phbeta.51zxtx.com",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/starr-uat/, ""),
+      },
+    },
+  },
   // Changed from 'error' to 'info' so the local dev URL is clearly visible
   // when running `npm run dev`.
   logLevel: 'info',

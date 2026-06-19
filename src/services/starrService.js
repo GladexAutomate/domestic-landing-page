@@ -33,6 +33,8 @@ const ENV = import.meta.env.VITE_STARR_ENV || "uat"; // "uat" | "prod"
 const CONFIG = {
   uat: {
     baseUrl:    import.meta.env.VITE_STARR_UAT_BASE_URL  || "http://16489.phbeta.51zxtx.com",
+    // signUrl: real URL used for MD5 signature (different from baseUrl when using a dev proxy)
+    signUrl:    import.meta.env.VITE_STARR_UAT_SIGN_URL  || import.meta.env.VITE_STARR_UAT_BASE_URL || "http://16489.phbeta.51zxtx.com",
     userId:     import.meta.env.VITE_STARR_UAT_USER_ID,   // required — set in .env.local
     key:        import.meta.env.VITE_STARR_UAT_KEY,        // required — set in .env.local
     // UAT domestic product IDs
@@ -56,6 +58,7 @@ const CONFIG = {
   },
   prod: {
     baseUrl:   import.meta.env.VITE_STARR_PROD_BASE_URL  || "https://17410.starrinsurance.com.ph",
+    signUrl:   import.meta.env.VITE_STARR_PROD_BASE_URL  || "https://17410.starrinsurance.com.ph",
     userId:    import.meta.env.VITE_STARR_PROD_USER_ID,   // required — set in .env.local
     key:       import.meta.env.VITE_STARR_PROD_KEY,        // required — set in .env.local (NEVER commit)
     contracts: {
@@ -104,9 +107,11 @@ async function starrRequest(endpoint, body) {
   }
 
   // Dev/UAT path: direct API call (key in .env.local, not committed)
-  const url = `${cfg.baseUrl}/${cfg.userId}/${endpoint}`;
+  const url     = `${cfg.baseUrl}/${cfg.userId}/${endpoint}`;
+  // Signature must use the real Starr URL (not proxy path) for MD5 to match
+  const signUrl = `${cfg.signUrl || cfg.baseUrl}/${cfg.userId}/${endpoint}`;
   const bodyStr = JSON.stringify(body);
-  const sign = buildSign(url, bodyStr);
+  const sign = buildSign(signUrl, bodyStr);
 
   const res = await fetch(url, {
     method: "POST",
