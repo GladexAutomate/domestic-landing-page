@@ -315,8 +315,10 @@ export default function TBItinerary({ dest, darkMode, tk, availableTours = [], a
               style={{ backgroundColor: cardBg, borderColor, boxShadow: cardShadow }}
             >
               {/* ── Header ── */}
-              <div className="flex items-center gap-3 px-4 py-3.5"
-                style={{ backgroundColor: darkMode ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.025)" }}>
+              <div
+                className="w-full flex items-center gap-3 px-4 py-3.5"
+                style={{ backgroundColor: darkMode ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.025)" }}
+              >
                 <span className="text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full shrink-0"
                   style={{ background: "#f97316", color: "#fff" }}>
                   Day {day.day}

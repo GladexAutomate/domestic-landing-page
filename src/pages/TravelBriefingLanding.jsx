@@ -467,6 +467,7 @@ function StripeHeader({ eyebrow, title, description, tk, colored = false }) {
   const accentStroke = colored ? "rgba(255,255,255,0.82)" : "#ff9913";
   const orbitStroke  = colored ? "rgba(255,255,255,0.42)" : "rgba(255,153,19,0.50)";
   return (
+    <FadeIn>
     <div className="text-center mb-6">
       {/* Tropical boat icon + dotted orbit — section accent */}
       <div className="flex justify-center mb-2.5">
@@ -495,6 +496,7 @@ function StripeHeader({ eyebrow, title, description, tk, colored = false }) {
         </p>
       )}
     </div>
+    </FadeIn>
   );
 }
 
@@ -505,8 +507,8 @@ function SectionStripe({ children, alt = 0, darkMode, py = "py-10" }) {
   const bgs = darkMode
     ? [
         "transparent",
-        "linear-gradient(155deg, rgba(255,153,19,0.22) 0%, rgba(200,90,0,0.14) 100%)",
-        "linear-gradient(155deg, rgba(255,153,19,0.12) 0%, rgba(200,90,0,0.07) 100%)",
+        "#111111",
+        "#0f0f0f",
       ]
     : [
         "transparent",
@@ -528,7 +530,8 @@ function SectionStripe({ children, alt = 0, darkMode, py = "py-10" }) {
   }
 
   return (
-    <div className={`relative ${py} mb-2`}>
+    <div className={`relative ${py} mb-0`} style={{ marginTop: 0 }}>
+      {/* Full-bleed background */}
       <div
         aria-hidden="true"
         style={{
@@ -539,7 +542,7 @@ function SectionStripe({ children, alt = 0, darkMode, py = "py-10" }) {
           zIndex: 0,
         }}
       />
-      {/* Subtle diagonal texture overlay */}
+      {/* Diagonal texture */}
       <div
         aria-hidden="true"
         style={{
@@ -550,7 +553,23 @@ function SectionStripe({ children, alt = 0, darkMode, py = "py-10" }) {
           zIndex: 1,
         }}
       />
-      <div style={{ position: "relative", zIndex: 2 }}>{children}</div>
+{/* Side decorations — airplane left, dotted flight path */}
+      <div aria-hidden="true" className="hidden lg:block" style={{ position: "absolute", top: "50%", left: "clamp(8px, 2vw, 40px)", transform: "translateY(-50%)", zIndex: 3, opacity: 0.22, pointerEvents: "none" }}>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+          <path d="M21,16 L13,9 L14,4 C14.3,2.8 13,2 12,2.5 L5,9 L2,8 C1.2,7.8 0.8,8.8 1.3,9.4 L4,12 L3,15 C2.8,15.8 3.5,16.4 4.2,16.1 L7,15 L9,18 C9.5,18.7 10.6,18.4 10.7,17.6 L11,14 Z" fill="white"/>
+        </svg>
+        <div style={{ marginTop: 6, display: "flex", flexDirection: "column", gap: 4, alignItems: "center" }}>
+          {[0,1,2,3].map(i => <div key={i} style={{ width: 3, height: 3, borderRadius: "50%", background: "rgba(255,255,255,0.5)" }} />)}
+        </div>
+      </div>
+      {/* Side decoration right — destination pin */}
+      <div aria-hidden="true" className="hidden lg:block" style={{ position: "absolute", top: "50%", right: "clamp(8px, 2vw, 40px)", transform: "translateY(-50%)", zIndex: 3, opacity: 0.22, pointerEvents: "none" }}>
+        <svg width="20" height="26" viewBox="0 0 24 32" fill="none">
+          <path d="M12,2 C7.58,2 4,5.58 4,10 C4,16 12,30 12,30 C12,30 20,16 20,10 C20,5.58 16.42,2 12,2 Z" fill="white"/>
+          <circle cx="12" cy="10" r="3.5" fill="rgba(255,120,0,0.7)"/>
+        </svg>
+      </div>
+      <div style={{ position: "relative", zIndex: 4 }}>{children}</div>
     </div>
   );
 }
@@ -1101,7 +1120,7 @@ export default function TravelBriefingLanding() {
   const { slug } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { darkMode } = useTheme();
+  const darkMode = false;
 
   // ── Test mode: /destination/siargao-test bypasses Supabase lookup ──
   const isTestMode = slug?.endsWith("-test");
@@ -1563,7 +1582,10 @@ export default function TravelBriefingLanding() {
 
 
         <div className="absolute inset-0 flex flex-col items-center justify-end text-center pb-24 px-6">
-          <h1
+          <motion.h1
+            initial={{ opacity: 0, y: 28 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
             className="font-black text-white mb-2"
             style={{
               fontSize: "clamp(2.6rem, 11vw, 5rem)",
@@ -1574,16 +1596,27 @@ export default function TravelBriefingLanding() {
             }}
           >
             {dest.name}
-          </h1>
-          <div className="flex items-center gap-1.5 mb-2">
+          </motion.h1>
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: 0.28 }}
+            className="flex items-center gap-1.5 mb-2"
+          >
             <MapPin className="w-3.5 h-3.5" style={{ color: "rgba(255,255,255,0.7)" }} />
             <span className="text-sm font-semibold" style={{ color: "rgba(255,255,255,0.8)" }}>
               {dest.region}
             </span>
-          </div>
-          <p className="text-sm leading-relaxed max-w-xs" style={{ color: "rgba(255,255,255,0.55)" }}>
+          </motion.div>
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: 0.42 }}
+            className="text-sm leading-relaxed max-w-xs"
+            style={{ color: "rgba(255,255,255,0.55)" }}
+          >
             {dest.description.split(".")[0]}.
-          </p>
+          </motion.p>
         </div>
       </div>
 

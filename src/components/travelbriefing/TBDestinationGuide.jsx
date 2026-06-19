@@ -193,6 +193,8 @@ function PhotoSpotCarousel({ spots, darkMode, tk }) {
 
 function ImageCard({ item, darkMode, tk, priority = false }) {
   const [failed, setFailed] = useState(false);
+  const photos = item.images?.length > 1 ? item.images : null;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
@@ -203,7 +205,45 @@ function ImageCard({ item, darkMode, tk, priority = false }) {
       style={{ borderColor: "rgba(255,153,19,0.3)", boxShadow: tk.cardShadow }}
     >
       <div className="overflow-hidden" style={{ aspectRatio: priority ? "16 / 9" : "4 / 3", position: "relative" }}>
-        {item.image && !failed ? (
+        {photos ? (() => {
+          const count = Math.min(photos.length, 3);
+          const pct = 100 / count;
+          const o = 28; // half the clip-path horizontal offset
+          const t = 10; // seam visible thickness in px
+          return (
+            <div className="w-full h-full relative" style={{ overflow: "hidden" }}>
+              {photos.slice(0, count).map((src, i) => {
+                let left, width, clipPath;
+                if (i === 0) {
+                  left = "0"; width = `calc(${pct}% + ${o}px)`;
+                  clipPath = `polygon(0 0, 100% 0, calc(100% - ${o * 2}px) 100%, 0 100%)`;
+                } else if (i === count - 1) {
+                  left = `calc(${pct * i}% - ${o}px)`; width = `calc(${pct}% + ${o}px)`;
+                  clipPath = `polygon(${o * 2}px 0, 100% 0, 100% 100%, 0 100%)`;
+                } else {
+                  left = `calc(${pct * i}% - ${o}px)`; width = `calc(${pct}% + ${o * 2}px)`;
+                  clipPath = `polygon(${o * 2}px 0, 100% 0, calc(100% - ${o * 2}px) 100%, 0 100%)`;
+                }
+                return (
+                  <div key={i} style={{ position: "absolute", top: 0, bottom: 0, left, width, clipPath }}>
+                    <img src={src} alt={`${item.name} ${i + 1}`} className="w-full h-full object-cover" loading={i === 0 && priority ? "eager" : "lazy"} />
+                  </div>
+                );
+              })}
+              {/* Parallelogram seams — same slope as clip-path, no rotation math needed */}
+              {Array.from({ length: count - 1 }, (_, i) => (
+                <div key={`seam-${i}`} style={{
+                  position: "absolute", top: 0, bottom: 0,
+                  left: `calc(${pct * (i + 1)}% - ${o + t / 2}px)`,
+                  width: `${o * 2 + t}px`,
+                  background: "#fff8f3",
+                  clipPath: `polygon(${o * 2}px 0, 100% 0, ${t}px 100%, 0 100%)`,
+                  zIndex: 3, pointerEvents: "none",
+                }} />
+              ))}
+            </div>
+          );
+        })() : item.image && !failed ? (
           <img
             src={item.image}
             alt={item.name}

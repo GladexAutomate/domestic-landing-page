@@ -54,9 +54,7 @@ export default function DestinationNavbar({ hideLogo = false, topOffset = 0, asF
         ) : (
           <div />
         )}
-        <div className="flex items-center gap-3 shrink-0">
-          <ThemeToggleButton darkMode={darkMode} toggleTheme={toggleTheme} />
-        </div>
+        <div />
       </div>
     </nav>
   );
