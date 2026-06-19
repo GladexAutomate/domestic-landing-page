@@ -274,10 +274,15 @@ function ImageCard({ item, darkMode, tk, priority = false }) {
   );
 }
 
-function RestaurantCard({ resto, darkMode, tk }) {
+function RestaurantCard({ resto, darkMode, tk, index = 0 }) {
   const [imgFailed, setImgFailed] = useState(false);
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, y: 18 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-30px" }}
+      transition={{ duration: 0.4, delay: index * 0.08 }}
+      whileHover={{ y: -3, boxShadow: "0 8px 32px rgba(0,0,0,0.13)" }}
       className="rounded-2xl border overflow-hidden"
       style={{ borderColor: "rgba(255,153,19,0.3)", backgroundColor: tk.cardBg, boxShadow: tk.cardShadow }}
     >
@@ -340,7 +345,7 @@ function RestaurantCard({ resto, darkMode, tk }) {
           {resto.description}
         </p>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -383,8 +388,8 @@ export default function TBDestinationGuide({ dest, darkMode, tk }) {
         <div>
           <SubBanner title="Best Food & Dining" eyebrow="Where to Eat" tk={tk} />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {guide.restaurants.map((resto) => (
-              <RestaurantCard key={resto.name} resto={resto} darkMode={darkMode} tk={tk} />
+            {guide.restaurants.map((resto, i) => (
+              <RestaurantCard key={resto.name} resto={resto} darkMode={darkMode} tk={tk} index={i} />
             ))}
           </div>
         </div>
@@ -394,7 +399,14 @@ export default function TBDestinationGuide({ dest, darkMode, tk }) {
       {guide.photoSpots?.length > 0 && (
         <div>
           <SubBanner title="Best Photo Spots" eyebrow="Photography" tk={tk} />
-          <PhotoSpotCarousel spots={guide.photoSpots} darkMode={darkMode} tk={tk} />
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-30px" }}
+            transition={{ duration: 0.4 }}
+          >
+            <PhotoSpotCarousel spots={guide.photoSpots} darkMode={darkMode} tk={tk} />
+          </motion.div>
         </div>
       )}
 
@@ -431,7 +443,11 @@ export default function TBDestinationGuide({ dest, darkMode, tk }) {
         <div>
           <SubBanner title="Currency Guide" eyebrow="Money Matters" src={banners.currency} tk={tk} />
           {/* PHP identity — full-width header card */}
-          <div
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-20px" }}
+            transition={{ duration: 0.35 }}
             className="px-4 py-3 rounded-2xl border mb-3"
             style={{ borderColor: tk.borderColor, backgroundColor: tk.cardBg }}
           >
@@ -439,17 +455,21 @@ export default function TBDestinationGuide({ dest, darkMode, tk }) {
               {guide.currency.symbol} Philippine Peso
             </p>
             <p className="text-xs mt-1 leading-relaxed" style={{ color: tk.textMuted }}>Official currency · accepted everywhere in the Philippines</p>
-          </div>
+          </motion.div>
           {/* Tip cards — vertical list */}
           <div className="flex flex-col gap-2">
             {guide.currency.tips.map((tip, i) => (
-              <div
+              <motion.div
                 key={i}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-20px" }}
+                transition={{ duration: 0.32, delay: i * 0.06 }}
                 className="px-4 py-3 rounded-2xl border"
                 style={{ borderColor: tk.borderColor, backgroundColor: tk.cardBg }}
               >
                 <p className="text-xs leading-relaxed" style={{ color: tk.textPrimary }}>{tip}</p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -461,13 +481,17 @@ export default function TBDestinationGuide({ dest, darkMode, tk }) {
           <SubBanner title="Safety Tips" eyebrow="Stay Safe" src={banners.safety} tk={tk} />
           <div className="flex flex-col gap-2">
             {guide.safetyTips.map((tip, i) => (
-              <div
+              <motion.div
                 key={i}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-20px" }}
+                transition={{ duration: 0.32, delay: i * 0.06 }}
                 className="flex items-start gap-2.5 px-4 py-3 rounded-2xl border"
                 style={{ borderColor: tk.borderColor, backgroundColor: tk.cardBg }}
               >
                 <p className="text-xs leading-relaxed" style={{ color: tk.textPrimary }}>{tip}</p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -479,13 +503,17 @@ export default function TBDestinationGuide({ dest, darkMode, tk }) {
           <SubBanner title="Local Tips" eyebrow="Insider Knowledge" src={banners.localTips} tk={tk} />
           <div className="flex flex-col gap-2">
             {guide.localTips.map((tip, i) => (
-              <div
+              <motion.div
                 key={i}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-20px" }}
+                transition={{ duration: 0.32, delay: i * 0.06 }}
                 className="flex items-start gap-2.5 px-4 py-3 rounded-2xl border"
                 style={{ borderColor: tk.borderColor, backgroundColor: tk.cardBg, boxShadow: tk.cardShadow }}
               >
                 <p className="text-xs leading-relaxed" style={{ color: tk.textPrimary }}>{tip}</p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
