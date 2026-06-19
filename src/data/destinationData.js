@@ -1874,7 +1874,7 @@ export const DESTINATION_DATA = {
     description: "Ride the legendary Cloud 9 waves, island-hop to Naked Island and Daku Island, and experience the raw, untouched beauty of the Philippines' surfing capital.",
     airport: "Siargao Airport (IAO)",
     region: "Del Carmen, Surigao del Norte",
-    heroImage: "https://i.pinimg.com/736x/83/bb/6f/83bb6fe50496ca2443e676b8677ba1f7.jpg",
+    heroImage: "https://i.pinimg.com/736x/60/44/60/6044609517763ba716f4fbe4c1739fb6.jpg",
     heroImages: [
       "https://i.pinimg.com/736x/60/44/60/6044609517763ba716f4fbe4c1739fb6.jpg",
       "https://images.pexels.com/photos/1450360/pexels-photo-1450360.jpeg?auto=compress&cs=tinysrgb&w=1400",
