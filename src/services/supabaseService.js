@@ -235,6 +235,7 @@ export const detectDomesticSlug = (booking) => {
   if (dest.includes("nido"))                                                 return "elnido";
   if (dest.includes("bohol"))                                                return "bohol";
   if (dest.includes("siargao"))                                              return "siargao";
+  if (tourName.includes("el nido") || tourName.includes("nido") || tourDesc.includes("el nido") || transferDesc.includes("el nido") || rawStr.includes("el nido")) return "elnido";
   if (dest.includes("puerto princesa") || dest.includes("pps") || (dest.includes("palawan") && !dest.includes("nido"))) return "puertoprincesa";
 
   if (tourName.includes("bohol") || tourName.includes("chocolate") || tourName.includes("panglao") || tourName.includes("tarsier")) return "bohol";

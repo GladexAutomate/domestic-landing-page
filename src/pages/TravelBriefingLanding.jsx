@@ -1491,12 +1491,25 @@ export default function TravelBriefingLanding() {
   // ── 404 ─────────────────────────────────────────────────────
   if (!dest) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 text-center px-6" style={{ backgroundColor: bg }}>
+      <div className="min-h-screen flex flex-col items-center justify-center gap-6 text-center px-6" style={{ backgroundColor: bg }}>
         <DestinationNavbar />
-        <p className="text-5xl">🗺️</p>
-        <h1 className="text-2xl font-black" style={{ color: textPrimary }}>Destination Not Found</h1>
-        <p className="text-xs" style={muted}>Available: {SUPPORTED_DESTINATIONS.join(", ")}</p>
-        <button onClick={() => navigate("/")} className="mt-4 text-sm font-semibold px-4 py-2 rounded-full border" style={{ borderColor, color: textPrimary }}>Go Home</button>
+        <div className="flex flex-col items-center gap-4 max-w-sm">
+          <p className="text-5xl">✈️</p>
+          <h1 className="text-2xl font-black leading-snug" style={{ color: textPrimary }}>Your briefing is on its way!</h1>
+          <p className="text-sm leading-relaxed" style={muted}>
+            We're still preparing your travel briefing page. In the meantime, feel free to reach out to our team — we're happy to assist you directly.
+          </p>
+          <a
+            href="tel:+639178752200"
+            className="flex items-center gap-2 px-5 py-3 rounded-2xl font-bold text-sm"
+            style={{ background: "#f97316", color: "#fff" }}
+          >
+            <Phone className="w-4 h-4" />
+            +63 917 875 2200
+          </a>
+          <p className="text-xs" style={muted}>Gladex Customer Care · Available daily</p>
+        </div>
+        <button onClick={() => navigate("/")} className="text-xs font-semibold px-4 py-2 rounded-full border" style={{ borderColor, color: textPrimary }}>Go Home</button>
       </div>
     );
   }
