@@ -243,6 +243,9 @@ export const detectDomesticSlug = (booking) => {
   if (transferDesc.includes("bohol") || transferDesc.includes("tagbilaran") || transferDesc.includes("panglao")) return "bohol";
   if (rawStr.includes("bohol"))                                      return "bohol";
 
+  if (tourName.includes("davao") || tourDesc.includes("davao") || transferDesc.includes("davao") || rawStr.includes("davao")) return "davao";
+  if (tourName.includes("coron") || tourDesc.includes("coron") || transferDesc.includes("coron") || rawStr.includes("coron")) return "coron";
+
   if (tourName.includes("siargao") || tourName.includes("cloud 9") || tourName.includes("sohoton") || tourName.includes("magpupungko") || tourName.includes("daku") || tourName.includes("naked island")) return "siargao";
   if (tourName.includes("puerto princesa") || tourName.includes("underground river") || tourName.includes("honda bay") || tourName.includes("firefly")) return "puertoprincesa";
   if (tourDesc.includes("siargao") || tourDesc.includes("cloud 9") || tourDesc.includes("daku island")) return "siargao";
