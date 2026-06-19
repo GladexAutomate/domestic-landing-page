@@ -18,7 +18,7 @@ import TBInsurance from "@/components/travelbriefing/TBInsurance";
 import {
   Check, X, AlertTriangle, ArrowUp, Phone,
   Download, Star, Gift,
-  BadgeCheck, Info, Loader, ChevronDown, ChevronUp, MapPin,
+  BadgeCheck, Info, Loader, ChevronDown, ChevronUp, MapPin, Plane,
 } from "lucide-react";
 import {
   AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter,
@@ -1496,14 +1496,14 @@ export default function TravelBriefingLanding() {
         <div className="flex flex-col items-center gap-4 max-w-sm">
           <div className="relative w-72 h-20 mx-auto">
             <div className="absolute top-1/2 left-0 right-0" style={{ height: 2, marginTop: -1, background: "repeating-linear-gradient(to right, rgba(249,115,22,0.3) 0, rgba(249,115,22,0.3) 8px, transparent 8px, transparent 16px)" }} />
-            <motion.span
-              className="absolute text-4xl select-none"
-              style={{ top: "50%", transform: "translateY(-55%)" }}
+            <motion.div
+              className="absolute"
+              style={{ top: "50%", transform: "translateY(-50%)" }}
               animate={{ x: [-52, 320] }}
               transition={{ duration: 2.8, repeat: Infinity, repeatDelay: 0.4, ease: "easeInOut" }}
-            >✈️</motion.span>
-            <span className="absolute left-1 top-1 text-xl select-none" style={{ opacity: 0.3 }}>☁️</span>
-            <span className="absolute right-3 bottom-0 text-base select-none" style={{ opacity: 0.2 }}>☁️</span>
+            >
+              <Plane className="w-9 h-9" style={{ color: "#f97316" }} strokeWidth={1.5} />
+            </motion.div>
           </div>
           <h1 className="text-2xl font-black leading-snug" style={{ color: textPrimary }}>Your briefing is on its way!</h1>
           <p className="text-sm leading-relaxed" style={muted}>
