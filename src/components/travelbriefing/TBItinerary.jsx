@@ -25,6 +25,13 @@ function AddedDot() {
   );
 }
 
+function fullRes(src) {
+  if (!src) return src;
+  if (src.includes("pexels.com"))    return src.replace(/[?&]w=\d+/, (m) => m.replace(/\d+/, "1600")).replace(/[?&]h=\d+/, "");
+  if (src.includes("i.pinimg.com"))  return src.replace("/736x/", "/originals/").replace("/474x/", "/originals/").replace("/236x/", "/originals/");
+  return src;
+}
+
 function Lightbox({ photos, startIndex, onClose }) {
   const [current, setCurrent] = useState(startIndex);
   const prev = () => setCurrent((c) => (c - 1 + photos.length) % photos.length);
@@ -63,7 +70,7 @@ function Lightbox({ photos, startIndex, onClose }) {
         </button>
       )}
       <AnimatePresence mode="wait">
-        <motion.img key={current} src={photos[current]} alt=""
+        <motion.img key={current} src={fullRes(photos[current])} alt=""
           initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.96 }} transition={{ duration: 0.2 }}
           className="max-h-[85vh] max-w-[90vw] object-contain rounded-xl"
