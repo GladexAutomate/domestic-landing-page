@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 // Source of truth for all destination content.
 // To add a new destination: add a new key to DESTINATION_DATA following the same schema.
 //

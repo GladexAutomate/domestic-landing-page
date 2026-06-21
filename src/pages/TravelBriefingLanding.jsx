@@ -2,7 +2,7 @@
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { useTheme } from "@/lib/ThemeContext";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import DestinationNavbar from "@/components/destination/DestinationNavbar";
 import { getDestination, SUPPORTED_DESTINATIONS } from "@/data/destinationData";
 import TBWelcomeSection from "@/components/travelbriefing/TBWelcomeSection";
@@ -1185,7 +1185,7 @@ export default function TravelBriefingLanding() {
 
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [bookingExpanded, setBookingExpanded] = useState(false);
-  const [showTripDetails, setShowTripDetails] = useState(false);
+  const [showTripDetails, setShowTripDetails] = useState(true);
 
   // ── Testimonials carousel ─────────────────────────────────────
   const [testimonialsPage, setTestimonialsPage] = useState(0);
@@ -1335,6 +1335,78 @@ export default function TravelBriefingLanding() {
     }
   }, [sessionChecked, activeBooking]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // ── Builds day-by-day itinerary from booking data; falls back to dest.itinerary if no dates ──
+  const buildItineraryDays = (bk, destData) => {
+    if (!bk?.arrivalDate) return destData?.itinerary || [];
+
+    const fmt = (d) => {
+      try { return new Date(d).toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" }); }
+      catch { return String(d); }
+    };
+
+    const arrival   = new Date(bk.arrivalDate);
+    const departure = bk.departureDate ? new Date(bk.departureDate) : null;
+    const dayDiff   = departure ? Math.max(0, Math.round((departure - arrival) / 86400000)) : 0;
+    const totalDays = dayDiff + 1;
+    const isAllIn   = (bk.transactionType || "").toUpperCase().includes("ALL IN");
+
+    // Pin the tour to the day its tourDate falls on; default to day 2 (or day 1 for day-trips)
+    let tourDayNum = Math.min(2, totalDays);
+    if (bk.tour?.tourDate) {
+      const diff = Math.round((new Date(bk.tour.tourDate) - arrival) / 86400000);
+      if (diff >= 0 && diff < totalDays) tourDayNum = diff + 1;
+    }
+
+    const days = [];
+    for (let i = 1; i <= totalDays; i++) {
+      const dayDate = new Date(arrival);
+      dayDate.setDate(arrival.getDate() + (i - 1));
+      const dateStr = fmt(dayDate);
+      const acts = [];
+      let title = "";
+
+      if (i === 1) {
+        title = `Arrival · ${dateStr}`;
+        if (isAllIn && bk.ticket?.departingFlight)
+          acts.push(`Outbound flight: ${bk.ticket.departingFlight}`);
+        else if (isAllIn && bk.ticket?.airline)
+          acts.push(`Flight: ${bk.ticket.airline}${bk.ticket.pnr ? " · PNR " + bk.ticket.pnr : ""}`);
+        if (bk.transfer)
+          acts.push(bk.transfer.description?.split("\n")[0] || "Airport transfer to accommodation");
+        if (bk.hotel?.hotelName) acts.push(`Check-in at ${bk.hotel.hotelName}`);
+        else if (bk.hotel)       acts.push("Hotel check-in");
+        acts.push("Settle in and rest");
+        // If it's also the only day and there's a tour, add it here
+        if (totalDays === 1 && bk.tour?.tourName) acts.push(bk.tour.tourName);
+
+      } else if (i === totalDays) {
+        title = `Departure · ${dateStr}`;
+        if (bk.hotel?.hotelName) acts.push(`Check-out from ${bk.hotel.hotelName}`);
+        else if (bk.hotel)       acts.push("Hotel check-out");
+        if (bk.transfer)
+          acts.push(bk.transfer.description?.split("\n")[0] || "Transfer to airport");
+        if (isAllIn && bk.ticket?.returningFlight)
+          acts.push(`Return flight: ${bk.ticket.returningFlight}`);
+        else if (isAllIn && bk.ticket?.airline)
+          acts.push(`Return flight: ${bk.ticket.airline}`);
+        acts.push("Safe travels!");
+
+      } else {
+        title = dateStr;
+        if (i === tourDayNum && bk.tour?.tourName) {
+          acts.push(bk.tour.tourName);
+          if (bk.tour.description)
+            bk.tour.description.split("\n").filter(Boolean).slice(0, 4).forEach(l => acts.push(l));
+        } else {
+          acts.push("Leisure / free time");
+        }
+      }
+
+      days.push({ day: i, title, activities: acts });
+    }
+    return days;
+  };
+
   // ── Itinerary PDF download ────────────────────────────────────
   const downloadItinerary = async () => {
     const bk = activeBooking;
@@ -1392,19 +1464,23 @@ export default function TravelBriefingLanding() {
     if (bk?.hotel) {
       spacer(3); divider();
       line("HOTEL DETAILS", 9, GY, true); spacer(2);
-      if (bk.hotel.roomType)   line(`Inclusions: ${formatRoomType(bk.hotel.roomType)}`, 10, BK);
+      if (bk.hotel.hotelName)  line(`Hotel:   ${bk.hotel.hotelName}`, 10, BK, true);
+      if (bk.hotel.roomType)   line(`Room:    ${formatRoomType(bk.hotel.roomType)}`, 10, BK);
       if (bk.hotel.stayDates)  line(`Dates:   ${bk.hotel.stayDates}`, 10, BK);
       if (bk.hotel.nights)     line(`Nights:  ${bk.hotel.nights}`, 10, BK);
-      if (bk.hotel.requests)   line(`Request: ${bk.hotel.requests}`, 10, BK);
-      if (bk.tour?.hotelMention) line(`Hotel:   ${bk.tour.hotelMention}`, 10, BK);
+      if (bk.hotel.checkIn)    line(`Check-in: ${bk.hotel.checkIn}`, 10, BK);
+      if (bk.hotel.checkOut)   line(`Check-out: ${bk.hotel.checkOut}`, 10, BK);
+      if (bk.hotel.requests)   line(`Requests: ${bk.hotel.requests}`, 9, GY);
     }
 
     if (bk?.ticket) {
       spacer(3); divider();
       line("FLIGHT DETAILS", 9, GY, true); spacer(2);
-      if (bk.ticket.airline)      line(`Airline: ${bk.ticket.airline}`, 10, BK);
-      if (bk.ticket.pnr)          line(`PNR:     ${bk.ticket.pnr}`, 10, BK);
-      if (bk.ticket.ticketType)   line(`Type:    ${bk.ticket.ticketType}`, 10, BK);
+      if (bk.ticket.airline)          line(`Airline:  ${bk.ticket.airline}`, 10, BK, true);
+      if (bk.ticket.pnr)              line(`PNR:      ${bk.ticket.pnr}`, 10, BK);
+      if (bk.ticket.ticketType)       line(`Type:     ${bk.ticket.ticketType}`, 10, BK);
+      if (bk.ticket.departingFlight)  line(`Outbound: ${bk.ticket.departingFlight}`, 9, GY);
+      if (bk.ticket.returningFlight)  line(`Return:   ${bk.ticket.returningFlight}`, 9, GY);
     }
 
     if (bk?.tour) {
@@ -1426,11 +1502,12 @@ export default function TravelBriefingLanding() {
       }
     }
 
-    // Day-by-day from destinationData
-    if (dest?.itinerary?.length) {
+    // Day-by-day — dynamic from booking data; falls back to dest.itinerary if no arrival date
+    const itinDays = buildItineraryDays(bk, dest);
+    if (itinDays.length) {
       spacer(3); divider();
       line("DAY-BY-DAY ITINERARY", 9, GY, true); spacer(2);
-      dest.itinerary.forEach(day => {
+      itinDays.forEach(day => {
         line(`Day ${day.day} — ${day.title}`, 10, OG, true); spacer(1);
         day.activities.forEach(a => { line(`• ${a}`, 9, BK); });
         spacer(3);
@@ -1478,6 +1555,11 @@ export default function TravelBriefingLanding() {
 
   const sectionGap = "mb-16";
   const pad = "px-4 sm:px-6 max-w-6xl mx-auto";
+
+  // ── Parallax hero ────────────────────────────────────────────────
+  const heroRef = useRef(null);
+  const { scrollYProgress: heroScroll } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const heroImgY = useTransform(heroScroll, [0, 1], ["0%", "30%"]);
 
   // ── Loading — wait for session check before revealing destination ──
   if (!sessionChecked) {
@@ -1540,12 +1622,12 @@ export default function TravelBriefingLanding() {
       )}
 
       {/* ── DESTINATION HERO IMAGE ── */}
-      <div className="relative w-full" style={{ minHeight: "420px", maxHeight: "min(520px, 62vh)", overflow: "hidden" }}>
-        <img
+      <div ref={heroRef} className="relative w-full" style={{ minHeight: "380px", maxHeight: "min(500px, 58vh)", overflow: "hidden" }}>
+        <motion.img
           src={dest.heroImage}
           alt={dest.name}
-          className="w-full h-full object-cover"
-          style={{ position: "absolute", inset: 0, height: "100%" }}
+          className="w-full object-cover"
+          style={{ position: "absolute", inset: 0, width: "100%", height: "115%", y: heroImgY }}
         />
         <div
           className="absolute inset-0"
@@ -1710,9 +1792,9 @@ export default function TravelBriefingLanding() {
           {/* Booking found + revealed — Orange Card + Booking Details */}
           {activeBooking && showTripDetails && (
             <motion.div
-              initial={{ opacity: 0, y: 8 }}
+              initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
             >
               {/* ── ORANGE CONFIRMATION CARD ── */}
               <div
@@ -1731,13 +1813,6 @@ export default function TravelBriefingLanding() {
                     >
                       <BadgeCheck className="w-3 h-3" /> Trip Confirmed
                     </span>
-                    <button
-                      onClick={(e) => { e.stopPropagation(); setShowTripDetails(false); }}
-                      className="flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 rounded-full transition-opacity hover:opacity-70 cursor-pointer"
-                      style={{ background: "rgba(0,0,0,0.2)", color: "rgba(255,255,255,0.85)" }}
-                    >
-                      <ChevronUp className="w-3 h-3" /> Collapse
-                    </button>
                   </div>
                   {/* Heading */}
                   <h1
@@ -1762,8 +1837,8 @@ export default function TravelBriefingLanding() {
                       {
                         label: "Hotel",
                         value: activeBooking.hotel?.hotelName
-                          || (activeBooking.hotel?.roomType ? formatRoomType(activeBooking.hotel.roomType) : null)
                           || activeBooking.tour?.hotelMention
+                          || (activeBooking.hotel?.roomType ? formatRoomType(activeBooking.hotel.roomType) : null)
                           || "—",
                       },
                       { label: "Guests", value: `${activeBooking.totalGuests || 1} pax` },
@@ -1919,8 +1994,8 @@ export default function TravelBriefingLanding() {
                           <div className="px-5 py-4 space-y-4">
                             <BookingRow
                               label1="Hotel"
-                              value1={activeBooking.hotel?.hotelName || activeBooking.tour?.hotelMention || "—"}
-                              label2="Inclusions"
+                              value1={activeBooking.hotel?.hotelName || activeBooking.tour?.hotelMention || "Included in package"}
+                              label2="Room"
                               value2={
                                 activeBooking.hotel?.roomType
                                   ? `${formatRoomType(activeBooking.hotel.roomType)}${activeBooking.hotel.nights ? ` · ${activeBooking.hotel.nights} ${Number(activeBooking.hotel.nights) === 1 ? "night" : "nights"}` : ""}`
@@ -1956,9 +2031,10 @@ export default function TravelBriefingLanding() {
                       {(activeBooking.ticket || activeBooking.transfer || activeBooking.transferDetails) && (
                         <BookingSection label="Ticket / Flight Information" darkMode={darkMode}>
                           <div className="px-5 py-4 space-y-4">
-                            {(activeBooking.ticket?.airline || activeBooking.ticket?.pnr) && (
+                            {(activeBooking.ticket?.airline || activeBooking.ticket?.ferry || activeBooking.ticket?.pnr) && (
                               <BookingRow
-                                label1="Airline"  value1={activeBooking.ticket.airline || "—"}
+                                label1={activeBooking.ticket?.ferry ? "Ferry" : "Airline"}
+                                value1={activeBooking.ticket.ferry || activeBooking.ticket.airline || "—"}
                                 label2="PNR"      value2={activeBooking.ticket.pnr || "—"}
                                 textPrimary={textPrimary} textMuted={textMuted}
                               />
@@ -2040,6 +2116,7 @@ export default function TravelBriefingLanding() {
                               </a>
                             ) : null;
                           })()}
+                          {isTestMode && (
                           <motion.button
                             whileTap={{ scale: 0.97 }}
                             onClick={downloadItinerary}
@@ -2051,8 +2128,9 @@ export default function TravelBriefingLanding() {
                             }}
                           >
                             <Download className="w-4 h-4" style={{ color: "#ff9913" }} />
-                            View Itinerary
+                            Download Itinerary
                           </motion.button>
+                          )}
                         </div>
                       </BookingSection>
 
@@ -2224,11 +2302,6 @@ export default function TravelBriefingLanding() {
                     <span className="text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-full" style={{ background: "#ff9913", color: "#fff" }}>
                       {dest.tagline}
                     </span>
-                    {dest.itinerary?.length && (
-                      <span className="text-[11px] font-semibold px-3 py-1.5 rounded-full border" style={{ borderColor, color: textMuted, backgroundColor: surfaceBg }}>
-                        {dest.itinerary.length} {dest.itinerary.length === 1 ? "Day" : "Days"} / {dest.itinerary.length - 1} {dest.itinerary.length - 1 === 1 ? "Night" : "Nights"}
-                      </span>
-                    )}
                   </div>
 
                   <div style={{ borderTop: `1px solid ${borderColor}`, marginBottom: "1.1rem" }} />
@@ -2322,26 +2395,6 @@ export default function TravelBriefingLanding() {
           </SectionStripe>
         )}
 
-        {/* ══════════════════════════════════════════════════
-            3c. DAY-BY-DAY ITINERARY TIMELINE
-           ══════════════════════════════════════════════════ */}
-        {dest.itinerary?.length > 0 && (
-          <SectionStripe alt={1} darkMode={darkMode}>
-            <FadeIn>
-              <StripeHeader eyebrow="Day by Day" title="Itinerary Timeline" description="Your complete day-by-day schedule from arrival to departure." tk={tk} colored />
-              <SectionCard darkMode={darkMode}>
-                <TBItinerary
-                  dest={dest}
-                  darkMode={darkMode}
-                  tk={tk}
-                  availableTours={isTestMode ? (liveTours.length > 0 ? liveTours : dest?.optionalTours || []) : []}
-                  addOnsCart={isTestMode ? addOnsCart : []}
-                  onAddToCart={isTestMode ? handleAddToCart : undefined}
-                />
-              </SectionCard>
-            </FadeIn>
-          </SectionStripe>
-        )}
 
         {/* ══════════════════════════════════════════════════
             4. TRAVEL INFORMATION CENTER

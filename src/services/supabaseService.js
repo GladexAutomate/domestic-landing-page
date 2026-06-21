@@ -45,13 +45,25 @@ const FUSIOO_DEST_MAP = {
   // SIARGAO ✅ confirmed: GDX 14937 = "SIARGAO LAND TOUR" (Crisaldo Corpus Bocobo)
   "i470eba5c36b64f3a93331134130bc5ae": "siargao",
 
+  // EL NIDO (additional) ✅ confirmed by agent: tour desc "frendz hostel el nido"
+  "i873d5ac486154db7a22dfb57775f7878": "elnido",
+
+  // PUERTO PRINCESA (additional) ✅ confirmed by agent: transfer "PPS AIRPORT", tour "Honda Bay Island Hopping"
+  "i5e2b9bbc0c7f48008ab3e94ccd9754c1": "puertoprincesa",
+  "i67f5adf04bfc41d78c3102ed8226d317": "puertoprincesa",
+
+  // DAVAO ✅ confirmed by agent: transfer "FRANCISCO BANGOY INTL AIRPORT - GRAND REGAL HOTEL"
+  "ib5ba0a50ceef472da434d0f73277a03d": "davao",
+
   // PUERTO PRINCESA — shares IDs with Boracay (ib515f...) and El Nido (i900e3...) — handled by text checks before FUSIOO_DEST_MAP
 
   // Removed incorrect mappings:
   // ie2040a0...  → Coron (not one of our 3 destinations)
   // ice6368b...  → Vietnam
   // i563dc5a...  → Unknown (Disney tour / HK)
-  // i1b7250c...  → Unknown
+  // i1b7250c...  → Unknown (Taiwan/Japan cruise)
+  // i2275fb2...  → China (Shanghai Disneyland)
+  // i3667a42...  → Japan (Fukuoka)
 };
 
 // ── Supabase client ───────────────────────────────────────────────
@@ -116,9 +128,9 @@ export const lookupBooking = async (gdxCode) => {
     throw new Error(error.message);
   }
 
-  // 2. Fetch all detail tables in parallel (+ hotel name fallback when main row has a Fusioo ID)
+  // 2. Fetch all detail tables in parallel (+ all hotel records for this booking to find the primary)
   const isFusiooId = (v) => v && /^i[a-f0-9]{30,}$/i.test(v);
-  const [tourData, ticketData, hotelData, transferData, hotelNameFallback] = await Promise.all([
+  const [tourData, ticketData, linkedHotelData, transferData, hotelNameFallback, allHotelRows] = await Promise.all([
     fetchDetail(TOUR_TABLE,     row.tour_details),
     fetchDetail(TICKET_TABLE,   row.airline_details_1),
     fetchDetail(HOTEL_TABLE,    row.hotel_booking_details),
@@ -130,7 +142,21 @@ export const lookupBooking = async (gdxCode) => {
           .order("received_at", { ascending: false }).limit(1).maybeSingle()
           .then(({ data }) => data?.hotel_name || null)
       : Promise.resolve(null),
+    // Fetch ALL hotel_details for this booking — hotel_booking_details may point to an add-on row,
+    // not the primary room. Searching by booking_transactions finds all hotel line items.
+    isFusiooId(row.record_id)
+      ? supabase.from(HOTEL_TABLE).select("*").eq("booking_transactions", row.record_id)
+          .order("entry_no", { ascending: true })
+          .then(({ data }) => data || [])
+      : Promise.resolve([]),
   ]);
+
+  // Pick the best hotel record: prefer records that have a named hotel (other_hotel set),
+  // choosing the one with the most nights among named ones, then fall back to linked record.
+  const namedHotels = allHotelRows.filter(h => h.other_hotel);
+  const hotelData = namedHotels.length
+    ? namedHotels.reduce((best, h) => ((h.number_of_nights || 0) > (best.number_of_nights || 0) ? h : best))
+    : linkedHotelData;
 
   // Merge fallback hotel name into the main row so normalizeHotel can use it
   const effectiveRow = hotelNameFallback ? { ...row, hotel_name: hotelNameFallback } : row;
@@ -181,7 +207,6 @@ export const detectDestinationSlug = (booking) => {
   if (tourName.includes("bohol") || tourName.includes("chocolate") || tourName.includes("panglao") || tourName.includes("tarsier")) return "bohol";
   if (tourDesc.includes("bohol") || tourDesc.includes("panglao"))   return "bohol";
   if (transferDesc.includes("bohol") || transferDesc.includes("tagbilaran") || transferDesc.includes("panglao")) return "bohol";
-  if (rawStr.includes("bohol"))                                      return "bohol";
 
   // PPS & Siargao: their Fusioo IDs overlap with Boracay/El Nido — must detect via text first
   if (tourName.includes("siargao") || tourName.includes("cloud 9") || tourName.includes("sohoton") || tourName.includes("magpupungko") || tourName.includes("daku") || tourName.includes("naked island")) return "siargao";
@@ -215,13 +240,6 @@ export const detectDestinationSlug = (booking) => {
   if (tourDesc.includes("siargao") || tourDesc.includes("cloud 9") || tourDesc.includes("daku island")) return "siargao";
   if (tourDesc.includes("puerto princesa") || tourDesc.includes("underground river") || tourDesc.includes("honda bay")) return "puertoprincesa";
 
-  // 7. Raw data fallback for other destinations
-  if (rawStr.includes("boracay"))          return "boracay";
-  if (rawStr.includes("\"cebu\""))         return "cebu";
-  if (rawStr.includes("el nido"))          return "elnido";
-  if (rawStr.includes("siargao"))          return "siargao";
-  if (rawStr.includes("puerto princesa") || rawStr.includes("\"pps\"")) return "puertoprincesa";
-
   return "boracay";
 };
 
@@ -235,16 +253,15 @@ export const detectDomesticSlug = (booking) => {
   if (dest.includes("nido"))                                                 return "elnido";
   if (dest.includes("bohol"))                                                return "bohol";
   if (dest.includes("siargao"))                                              return "siargao";
-  if (tourName.includes("el nido") || tourName.includes("nido") || tourDesc.includes("el nido") || transferDesc.includes("el nido") || rawStr.includes("el nido")) return "elnido";
+  if (tourName.includes("el nido") || tourName.includes("nido") || tourDesc.includes("el nido") || transferDesc.includes("el nido")) return "elnido";
   if (dest.includes("puerto princesa") || dest.includes("pps") || (dest.includes("palawan") && !dest.includes("nido"))) return "puertoprincesa";
 
   if (tourName.includes("bohol") || tourName.includes("chocolate") || tourName.includes("panglao") || tourName.includes("tarsier")) return "bohol";
   if (tourDesc.includes("bohol") || tourDesc.includes("panglao"))   return "bohol";
   if (transferDesc.includes("bohol") || transferDesc.includes("tagbilaran") || transferDesc.includes("panglao")) return "bohol";
-  if (rawStr.includes("bohol"))                                      return "bohol";
 
-  if (tourName.includes("davao") || tourDesc.includes("davao") || transferDesc.includes("davao") || rawStr.includes("davao")) return "davao";
-  if (tourName.includes("coron") || tourDesc.includes("coron") || transferDesc.includes("coron") || rawStr.includes("coron")) return "coron";
+  if (tourName.includes("davao") || tourDesc.includes("davao") || transferDesc.includes("davao")) return "davao";
+  if (tourName.includes("coron") || tourDesc.includes("coron") || transferDesc.includes("coron")) return "coron";
 
   if (tourName.includes("siargao") || tourName.includes("cloud 9") || tourName.includes("sohoton") || tourName.includes("magpupungko") || tourName.includes("daku") || tourName.includes("naked island")) return "siargao";
   if (tourName.includes("puerto princesa") || tourName.includes("underground river") || tourName.includes("honda bay") || tourName.includes("firefly")) return "puertoprincesa";
@@ -272,13 +289,6 @@ export const detectDomesticSlug = (booking) => {
   if (tourDesc.includes("el nido"))                                 return "elnido";
   if (tourDesc.includes("siargao") || tourDesc.includes("cloud 9") || tourDesc.includes("daku island")) return "siargao";
   if (tourDesc.includes("puerto princesa") || tourDesc.includes("underground river") || tourDesc.includes("honda bay")) return "puertoprincesa";
-
-  if (rawStr.includes("boracay"))          return "boracay";
-  if (rawStr.includes("\"cebu\""))         return "cebu";
-  if (rawStr.includes("el nido"))          return "elnido";
-  if (rawStr.includes("bohol"))            return "bohol";
-  if (rawStr.includes("siargao"))          return "siargao";
-  if (rawStr.includes("puerto princesa") || rawStr.includes("\"pps\"")) return "puertoprincesa";
 
   return null;
 };
@@ -342,6 +352,7 @@ function normalizeBooking(raw, { tourData, ticketData, hotelData, transferData }
     automatedVoucherUrl: extractFusiooUrl(raw.automated_voucher),
     attachments:      normalizeAttachments(raw.attachments),
     tourVoucherUrl:   extractFusiooUrl(raw.tour_voucher),
+    domesticVoucherId: (raw.domestic_voucher && /^i[a-f0-9]{30,}$/i.test(raw.domestic_voucher)) ? raw.domestic_voucher : null,
 
     // Agent — raw.agent_name = "Commission Accomplished" (Fusioo commission status, NOT a name)
     // raw.name_of_agent = "Kams Valenzuela" (actual coordinator's name — verified against live data)
@@ -367,22 +378,60 @@ function normalizeTour(d) {
   };
 }
 
+const IATA_AIRLINES = {
+  "5J": "Cebu Pacific", "PR": "Philippine Airlines", "Z2": "AirAsia Philippines",
+  "DG": "Cebgo", "2P": "PAL Express", "TR": "Scoot", "UO": "HK Express",
+  "OZ": "Asiana Airlines", "KE": "Korean Air", "SQ": "Singapore Airlines",
+  "CX": "Cathay Pacific", "JL": "Japan Airlines", "NH": "All Nippon Airways",
+  "EK": "Emirates", "QR": "Qatar Airways", "TK": "Turkish Airlines",
+  "MH": "Malaysia Airlines", "TG": "Thai Airways", "VJ": "VietJet Air",
+};
+
+const PLAIN_TEXT_AIRLINES = {
+  "vietjet": "VietJet Air", "cebu pacific": "Cebu Pacific",
+  "pal": "Philippine Airlines", "airasia": "AirAsia Philippines",
+};
+
+function detectAirlineFromFlight(flightStr) {
+  if (!flightStr) return null;
+  const s = flightStr.trim().toLowerCase();
+  for (const [key, name] of Object.entries(PLAIN_TEXT_AIRLINES)) {
+    if (s.includes(key)) return name;
+  }
+  // Match IATA code anywhere in the string: handles "NO. 5J 897", "FLIGHT NO. 5J 272", "5J-817", "5j 132"
+  const match = flightStr.match(/\b([A-Z0-9]{2})\s*[-]?\s*\d+/i);
+  if (!match) return null;
+  return IATA_AIRLINES[match[1].toUpperCase()] || null;
+}
+
 function normalizeTicket(d) {
   if (!d) return null;
+  const departingFlight = d.departing_flight_details || null;
+  const returningFlight = d.returning_flight_details || null;
+  const detectedAirline = detectAirlineFromFlight(departingFlight) || detectAirlineFromFlight(returningFlight);
+  const isFerry = (d.type_of_ticket || "").toLowerCase() === "ferry";
   return {
-    airline:       d.airline || null,
+    airline:       isFerry ? null : (d.airline || detectedAirline || null),
+    ferry:         isFerry ? (d.ferry || null) : null,
     pnr:           d.booking_reference_number_pnr || null,
     ticketType:    d.type_of_ticket || null,
     arrivalDate:   d.arrival_date || null,
     departureDate: d.departure_date || null,
-    departingFlight:  d.departing_flight_details || null,
-    returningFlight:  d.returning_flight_details || null,
+    departingFlight,
+    returningFlight,
     totalCost:     d.total_of_airline_insurance || null,
   };
 }
 
 function normalizeHotel(d, raw) {
-  if (!d) return null;
+  const rawNameFromMain = (raw?.hotel_name && !/^i[a-f0-9]{30,}$/i.test(raw.hotel_name))
+    ? stripHtml(raw.hotel_name) : null;
+
+  if (!d) {
+    // No hotel_details record — return a minimal object if we at least have a name from the main row
+    return rawNameFromMain ? { hotelName: rawNameFromMain, stayDates: null, roomType: null, checkIn: null, checkOut: null, nights: null, requests: null, hotelConfirmation: null, hotelPhone: null } : null;
+  }
+
   // hotel_number in Fusioo is an ordinal reference ("1st Hotel", "2nd Hotel") — not a confirmation number
   const rawHotelNum = d.hotel_number || "";
   const isOrdinalRef = /^\d+(st|nd|rd|th)\s+hotel/i.test(rawHotelNum);
@@ -395,11 +444,9 @@ function normalizeHotel(d, raw) {
     requests:           stripHtml(d.hotel_requests || ""),
     hotelConfirmation:  d.hotel_confirmation_number || d.confirmation_number || (!isOrdinalRef ? rawHotelNum : null) || null,
     hotelPhone:         d.hotel_phone || d.hotel_contact || d.contact_number || null,
-    // Hotel name — Fusioo may store it under several field names; stripHtml cleans &nbsp; and other entities.
-    // raw.hotel_name on the main booking row is used as fallback; skip it when it's a Fusioo record ID (starts with 'i' + 30+ hex chars).
-    hotelName:          stripHtml(d.hotel_name || d.hotel_property_name || d.property_name || d.accommodation_name || d.hotel_property
-                          || (raw?.hotel_name && !/^i[a-f0-9]{30,}$/i.test(raw.hotel_name) ? raw.hotel_name : "")
-                          || "") || null,
+    // other_hotel is the plain-text hotel name field used by recent bookings; fall back to legacy field names then main row
+    hotelName:          stripHtml(d.other_hotel || d.hotel_name || d.hotel_property_name || d.property_name || d.accommodation_name || d.hotel_property || "")
+                          || rawNameFromMain || null,
   };
 }
 
@@ -470,9 +517,7 @@ function parseAmountString(str) {
 
 function parseGuestHtml(html) {
   if (!html) return [];
-  return html
-    .replace(/<br\s*\/?>/gi, "\n")
-    .replace(/<[^>]*>/g, "")
+  return stripHtml(html)
     .split("\n")
     .map((s) => s.trim())
     .filter(Boolean);
@@ -480,13 +525,21 @@ function parseGuestHtml(html) {
 
 function stripHtml(html) {
   if (!html) return "";
-  return html
+  const stripped = html
     .replace(/<br\s*\/?>/gi, "\n")
-    .replace(/&amp;/g, "&")
-    .replace(/&nbsp;/g, " ")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/<[^>]*>/g, "")
+    .replace(/<[^>]*>/g, "");
+  // Use browser's native HTML entity decoder — handles &Ntilde; → Ñ, &amp; → &, etc.
+  let decoded = stripped;
+  try {
+    const el = document.createElement("textarea");
+    el.innerHTML = stripped;
+    decoded = el.value;
+  } catch {
+    decoded = stripped
+      .replace(/&amp;/g, "&").replace(/&nbsp;/g, " ")
+      .replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+  }
+  return decoded
     .split("\n")
     .map((l) => l.trim())
     .filter(Boolean)
