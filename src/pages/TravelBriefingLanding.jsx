@@ -16,7 +16,7 @@ import { loadDestinationTours } from "@/services/globaltixService";
 import TBAddOnsCheckout from "@/components/travelbriefing/TBAddOnsCheckout";
 import TBInsurance from "@/components/travelbriefing/TBInsurance";
 import {
-  Check, X, AlertTriangle, ArrowUp, Phone,
+  Check, X, AlertTriangle, ArrowUp, ArrowUpToLine, Phone,
   Download, Star, Gift,
   BadgeCheck, Info, Loader, ChevronDown, ChevronUp, MapPin, Plane,
   CalendarDays, Map, CheckSquare, HelpCircle,
@@ -627,7 +627,7 @@ function BackToTopButton({ visible, lift, hasNav }) {
           }}
           aria-label="Back to top"
         >
-          <ArrowUp className="w-4 h-4" style={{ color: "#ff9913" }} strokeWidth={2.5} />
+          <ArrowUpToLine className="w-4 h-4" style={{ color: "#ff9913" }} strokeWidth={2.5} />
         </motion.button>
       )}
     </AnimatePresence>
