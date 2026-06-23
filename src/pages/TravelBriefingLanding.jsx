@@ -785,7 +785,7 @@ function BookingSection({ label, children, darkMode }) {
 // ── BookingRow ───────────────────────────────────────────────────
 function BookingRow({ label1, value1, label2, value2, textPrimary, textMuted, preWrap1 }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
       <div>
         <p className="text-xs font-bold uppercase tracking-wider mb-0.5" style={{ color: textMuted }}>
           {label1}
