@@ -3215,7 +3215,8 @@ export default function TravelBriefingLanding() {
             }}
             className="fixed right-5 z-50 w-12 h-12 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
             style={{
-              bottom: "80px",
+              bottom: showBackToTop ? "80px" : "24px",
+              transition: "bottom 0.3s cubic-bezier(0.34,1.56,0.64,1)",
               background: "#ffffff",
               border: "none",
               boxShadow: "0 4px 20px rgba(0,0,0,0.18), 0 1px 6px rgba(0,0,0,0.1)",
