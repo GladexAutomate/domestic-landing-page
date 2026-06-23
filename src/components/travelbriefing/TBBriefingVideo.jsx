@@ -12,6 +12,7 @@ export default function TBBriefingVideo({ dest, darkMode, tk }) {
   const [isVisible, setIsVisible]       = useState(true);
   const [hasBeenSeen, setHasBeenSeen]   = useState(false);
   const [dismissed, setDismissed]       = useState(false);
+  const [scrolledPastDown, setScrolledPastDown] = useState(false);
   const [isPlaying, setIsPlaying]       = useState(true);
   const [rect, setRect]                 = useState(null);
   const [dragPos, setDragPos]           = useState(null);
@@ -114,7 +115,15 @@ export default function TBBriefingVideo({ dest, darkMode, tk }) {
     const observer = new IntersectionObserver(
       ([entry]) => {
         setIsVisible(entry.isIntersecting);
-        if (entry.isIntersecting) { setHasBeenSeen(true); setDismissed(false); setIsPlaying(true); }
+        if (entry.isIntersecting) {
+          setHasBeenSeen(true);
+          setDismissed(false);
+          setIsPlaying(true);
+          setScrolledPastDown(false);
+        } else {
+          // only activate float if user scrolled DOWN past the video (top < 0 = video is above viewport)
+          setScrolledPastDown(entry.boundingClientRect.top < 0);
+        }
       },
       { threshold: 0.2 }
     );
@@ -123,7 +132,7 @@ export default function TBBriefingVideo({ dest, darkMode, tk }) {
   }, [isComingSoon]);
 
   const showInline   = !isComingSoon && isVisible;
-  const floatActive  = !isComingSoon && !videoFailed && !isVisible && hasBeenSeen;
+  const floatActive  = !isComingSoon && !videoFailed && !isVisible && hasBeenSeen && scrolledPastDown;
   const showFloat    = floatActive && !dismissed;
 
   // ── Coming Soon ──────────────────────────────────────────────────
@@ -320,6 +329,36 @@ export default function TBBriefingVideo({ dest, darkMode, tk }) {
               <X style={{ width: "13px", height: "13px" }} />
             </button>
           </>
+        )}
+        {/* Restore pill — shown when float was dismissed */}
+        {floatActive && dismissed && (
+          <button
+            onClick={() => setDismissed(false)}
+            style={{
+              position: "fixed",
+              bottom: "1.25rem",
+              left: "1.25rem",
+              zIndex: 9999,
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+              padding: "8px 14px 8px 10px",
+              borderRadius: "999px",
+              background: "rgba(10,10,10,0.88)",
+              backdropFilter: "blur(10px)",
+              border: "1px solid rgba(255,255,255,0.15)",
+              color: "#fff",
+              fontSize: "12px",
+              fontWeight: 600,
+              cursor: "pointer",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.45)",
+              animation: "slideUpFloat 0.25s ease",
+              letterSpacing: "0.03em",
+            }}
+          >
+            <Video style={{ width: "13px", height: "13px", flexShrink: 0 }} />
+            <span>Briefing</span>
+          </button>
         )}
         </>,
         document.body
