@@ -606,7 +606,7 @@ function SectionDivider({ tk }) {
 
 // ── Back to top ──────────────────────────────────────────────────
 function BackToTopButton({ visible, lift, hasNav }) {
-  const baseBottom = hasNav ? 76 : 24; // above nav bar (64px) + 12px gap
+  const baseBottom = hasNav ? 128 : 24; // above contact circle (68px) + circle (48px) + 12px gap
   return (
     <AnimatePresence>
       {visible && (
@@ -3198,11 +3198,33 @@ export default function TravelBriefingLanding() {
       {/* Floating UI */}
       <BackToTopButton visible={showBackToTop} lift={isTestMode && addOnsCart.length > 0} hasNav={!!activeBooking} />
 
-      {/* ── Sticky Bottom Nav — section jump + font toggle + contact ── */}
+      {/* ── Floating contact circle — below back-to-top, above nav ── */}
+      {activeBooking && (
+        <button
+          onClick={() => {
+            const el = document.getElementById("nav-emergency");
+            if (!el) return;
+            const top = el.getBoundingClientRect().top + window.scrollY - 80;
+            window.scrollTo({ top, behavior: "smooth" });
+          }}
+          className="fixed right-5 z-50 w-12 h-12 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
+          style={{
+            bottom: "68px",
+            background: "#ffffff",
+            border: "none",
+            boxShadow: "0 4px 20px rgba(0,0,0,0.18), 0 1px 6px rgba(0,0,0,0.1)",
+            cursor: "pointer",
+            fontSize: "16px",
+          }}
+          aria-label="Go to emergency contacts"
+        >
+          <Phone className="w-4 h-4" style={{ color: "#ff9913" }} strokeWidth={2.5} />
+        </button>
+      )}
+
+      {/* ── Sticky Bottom Nav — section jump + font toggle ── */}
       {activeBooking && (() => {
         const NAV_ITEMS = [
-          { key: "itinerary", anchor: "nav-itinerary", Icon: CalendarDays, label: "Itinerary" },
-          { key: "guide",     anchor: "nav-guide",     Icon: Map,          label: "Guide"     },
           { key: "checklist", anchor: "nav-checklist", Icon: CheckSquare,  label: "Checklist" },
           { key: "faqs",      anchor: "nav-faqs",      Icon: HelpCircle,   label: "FAQs"      },
         ];
@@ -3270,21 +3292,6 @@ export default function TravelBriefingLanding() {
               <span style={{ fontSize: "10px", fontWeight: largeText ? 700 : 500, lineHeight: 1 }}>{largeText ? "Large" : "Text"}</span>
             </button>
 
-            {/* Contact — scroll to emergency contacts */}
-            <button
-              onClick={() => scrollTo("nav-emergency")}
-              style={{
-                width: "52px", display: "flex", flexDirection: "column",
-                alignItems: "center", justifyContent: "center",
-                gap: "3px", padding: "10px 4px 9px",
-                background: "none", border: "none", cursor: "pointer",
-                color: "#ff9913",
-                borderTop: "2px solid transparent",
-              }}
-            >
-              <Phone style={{ width: "19px", height: "19px", flexShrink: 0 }} />
-              <span style={{ fontSize: "10px", fontWeight: 600, lineHeight: 1 }}>Contact</span>
-            </button>
           </div>
         );
       })()}
