@@ -42,8 +42,11 @@ export default function TBBriefingVideo({ dest, darkMode, tk }) {
       if (!drag.current.active) return;
       const clientX = e.touches ? e.touches[0].clientX : e.clientX;
       const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-      const newX = Math.max(0, Math.min(window.innerWidth  - FLOAT_W,      drag.current.startLeft + (clientX - drag.current.startX)));
-      const newY = Math.max(0, Math.min(window.innerHeight - FLOAT_H - 32, drag.current.startTop  + (clientY - drag.current.startY)));
+      const dx = clientX - drag.current.startX;
+      const dy = clientY - drag.current.startY;
+      if (Math.abs(dx) > 4 || Math.abs(dy) > 4) drag.current.moved = true;
+      const newX = Math.max(0, Math.min(window.innerWidth  - FLOAT_W,      drag.current.startLeft + dx));
+      const newY = Math.max(0, Math.min(window.innerHeight - FLOAT_H - 32, drag.current.startTop  + dy));
       setDragPos({ x: newX, y: newY });
     };
     const onUp = () => { drag.current.active = false; };
@@ -65,7 +68,7 @@ export default function TBBriefingVideo({ dest, darkMode, tk }) {
     const currentTop  = dragPos ? dragPos.y : (window.innerHeight - FLOAT_H - 32);
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-    drag.current = { active: true, startX: clientX, startY: clientY, startLeft: currentLeft, startTop: currentTop };
+    drag.current = { active: true, moved: false, startX: clientX, startY: clientY, startLeft: currentLeft, startTop: currentTop };
   };
 
   // Failure timeout
@@ -244,14 +247,18 @@ export default function TBBriefingVideo({ dest, darkMode, tk }) {
             </>
           )}
 
-          {/* Float title bar — drag handle (mouse + touch) */}
+          {/* Full-float drag overlay — hold anywhere to drag */}
           {showFloat && (
             <div
               onMouseDown={onDragStart}
               onTouchStart={onDragStart}
-              title="Hold and drag to move"
-              style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "5px 8px 6px", background: "rgba(0,0,0,0.88)", zIndex: 10, touchAction: "none", cursor: "grab", userSelect: "none" }}
-            >
+              style={{ position: "absolute", inset: 0, zIndex: 5, cursor: "grab", touchAction: "none", userSelect: "none" }}
+            />
+          )}
+
+          {/* Title bar — visual hint only, no drag handlers */}
+          {showFloat && (
+            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "5px 8px 6px", background: "rgba(0,0,0,0.88)", zIndex: 6, pointerEvents: "none" }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "4px" }}>
                 <GripHorizontal style={{ width: "12px", height: "12px", color: "rgba(255,255,255,0.45)", flexShrink: 0 }} />
                 <span style={{ color: "rgba(255,255,255,0.55)", fontSize: "12px", letterSpacing: "0.06em", textTransform: "uppercase" }}>hold & drag</span>
