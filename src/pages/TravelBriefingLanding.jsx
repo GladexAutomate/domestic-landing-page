@@ -19,6 +19,7 @@ import {
   Check, X, AlertTriangle, ArrowUp, Phone,
   Download, Star, Gift,
   BadgeCheck, Info, Loader, ChevronDown, ChevronUp, MapPin, Plane,
+  CalendarDays, Map, CheckSquare, HelpCircle,
 } from "lucide-react";
 import {
   AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter,
@@ -604,7 +605,8 @@ function SectionDivider({ tk }) {
 }
 
 // ── Back to top ──────────────────────────────────────────────────
-function BackToTopButton({ visible, lift }) {
+function BackToTopButton({ visible, lift, hasNav }) {
+  const baseBottom = hasNav ? 76 : 24; // above nav bar (64px) + 12px gap
   return (
     <AnimatePresence>
       {visible && (
@@ -617,7 +619,7 @@ function BackToTopButton({ visible, lift }) {
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           className="fixed right-5 z-50 w-12 h-12 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
           style={{
-            bottom: lift ? "84px" : "24px",
+            bottom: lift ? `${baseBottom + 60}px` : `${baseBottom}px`,
             transition: "bottom 0.3s cubic-bezier(0.34,1.56,0.64,1)",
             background: "#ffffff",
             border: "none",
@@ -1523,7 +1525,21 @@ export default function TravelBriefingLanding() {
   };
 
   useEffect(() => {
-    const onScroll = () => setShowBackToTop(window.scrollY > 600);
+    const NAV_SECTIONS = [
+      { id: "nav-itinerary", key: "itinerary" },
+      { id: "nav-checklist", key: "checklist" },
+      { id: "nav-guide",     key: "guide"     },
+      { id: "nav-faqs",      key: "faqs"      },
+    ];
+    const onScroll = () => {
+      setShowBackToTop(window.scrollY > 600);
+      let active = null;
+      for (const { id, key } of NAV_SECTIONS) {
+        const el = document.getElementById(id);
+        if (el && el.getBoundingClientRect().top <= window.innerHeight * 0.55) active = key;
+      }
+      setActiveNavSection(active);
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -1555,6 +1571,15 @@ export default function TravelBriefingLanding() {
 
   const sectionGap = "mb-16";
   const pad = "px-4 sm:px-6 max-w-6xl mx-auto";
+
+  const [largeText, setLargeText]         = useState(() => { try { return localStorage.getItem("gdx-largetext") === "1"; } catch { return false; } });
+  const [activeNavSection, setActiveNavSection] = useState(null);
+
+  // ── Font size scaling ─────────────────────────────────────────────
+  useEffect(() => {
+    document.documentElement.style.fontSize = largeText ? "18px" : "";
+    try { localStorage.setItem("gdx-largetext", largeText ? "1" : "0"); } catch {}
+  }, [largeText]);
 
   // ── Parallax hero ────────────────────────────────────────────────
   const heroRef = useRef(null);
@@ -1607,7 +1632,7 @@ export default function TravelBriefingLanding() {
   }
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: bg, paddingBottom: (isTestMode && addOnsCart.length > 0) ? "80px" : 0, transition: "padding-bottom 0.3s ease" }}>
+    <div className="min-h-screen" style={{ backgroundColor: bg, paddingBottom: activeBooking ? ((isTestMode && addOnsCart.length > 0) ? "148px" : "72px") : 0, transition: "padding-bottom 0.3s ease" }}>
       {/* ── TEST MODE: banner + navbar share one fixed container so they stack with no gap ── */}
       {isTestMode ? (
         <div className="fixed top-0 left-0 right-0 z-50 flex flex-col">
@@ -2096,6 +2121,7 @@ export default function TravelBriefingLanding() {
             </SectionStripe>
 
         {/* ── EMERGENCY CONTACTS — consolidated, always visible near top ── */}
+        <div id="nav-emergency" style={{ height: 0 }} />
         <SectionStripe alt={1} darkMode={darkMode}>
           <FadeIn>
             <StripeHeader eyebrow="Important" title="Emergency Contacts" description="Save these numbers before your trip. Available for any emergency during your stay." tk={tk} colored />
@@ -2353,6 +2379,7 @@ export default function TravelBriefingLanding() {
            ══════════════════════════════════════════════════ */}
 
         {/* 5a. Arrival Instructions — ORANGE full-bleed (Travel Info Center header merged here) */}
+        <div id="nav-itinerary" style={{ height: 0 }} />
         <SectionStripe alt={1} darkMode={darkMode} py="py-7">
           <FadeIn>
             <StripeHeader eyebrow="Operational Information" title="Travel Information Center" description="Arrival instructions, hotel check-in, transfers, and local info — everything in one place." tk={tk} colored />
@@ -2660,6 +2687,7 @@ export default function TravelBriefingLanding() {
         {/* ══════════════════════════════════════════════════
             7. TRAVEL READINESS CHECKLIST
            ══════════════════════════════════════════════════ */}
+        <div id="nav-checklist" style={{ height: 0 }} />
         <SectionStripe alt={1} darkMode={darkMode}>
           <FadeIn>
             <StripeHeader eyebrow="Packing Checklist" title="Travel Readiness Checklist" description="Check off everything you need before heading to the airport." tk={tk} colored />
@@ -2746,6 +2774,7 @@ export default function TravelBriefingLanding() {
         {/* ══════════════════════════════════════════════════
             9. DESTINATION GUIDE
            ══════════════════════════════════════════════════ */}
+        <div id="nav-guide" style={{ height: 0 }} />
         <SectionStripe alt={0} darkMode={darkMode}>
           <FadeIn>
             <StripeHeader eyebrow="Know Your Destination" title="Destination Guide" tk={tk} />
@@ -2777,6 +2806,7 @@ export default function TravelBriefingLanding() {
         {/* ══════════════════════════════════════════════════
             13. FREQUENTLY ASKED QUESTIONS
            ══════════════════════════════════════════════════ */}
+        <div id="nav-faqs" style={{ height: 0 }} />
         <SectionStripe alt={isTestMode ? 0 : 1} darkMode={darkMode}>
           <FadeIn>
             <StripeHeader eyebrow="Have Questions?" title="Frequently Asked Questions" description="Common questions from Gladex travelers — answered before you even ask." tk={tk} colored={!isTestMode} />
@@ -3166,7 +3196,98 @@ export default function TravelBriefingLanding() {
       </div>
 
       {/* Floating UI */}
-      <BackToTopButton visible={showBackToTop} lift={isTestMode && addOnsCart.length > 0} />
+      <BackToTopButton visible={showBackToTop} lift={isTestMode && addOnsCart.length > 0} hasNav={!!activeBooking} />
+
+      {/* ── Sticky Bottom Nav — section jump + font toggle + contact ── */}
+      {activeBooking && (() => {
+        const NAV_ITEMS = [
+          { key: "itinerary", anchor: "nav-itinerary", Icon: CalendarDays, label: "Itinerary" },
+          { key: "guide",     anchor: "nav-guide",     Icon: Map,          label: "Guide"     },
+          { key: "checklist", anchor: "nav-checklist", Icon: CheckSquare,  label: "Checklist" },
+          { key: "faqs",      anchor: "nav-faqs",      Icon: HelpCircle,   label: "FAQs"      },
+        ];
+        const scrollTo = (id) => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          const top = el.getBoundingClientRect().top + window.scrollY - 80;
+          window.scrollTo({ top, behavior: "smooth" });
+        };
+        const navBg     = darkMode ? "rgba(14,14,14,0.97)" : "rgba(255,255,255,0.97)";
+        const navBorder = darkMode ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.08)";
+        const inactiveColor = darkMode ? "rgba(255,255,255,0.38)" : "#9ca3af";
+        return (
+          <div
+            style={{
+              position: "fixed", bottom: 0, left: 0, right: 0,
+              zIndex: 45, fontSize: "16px",
+              background: navBg, backdropFilter: "blur(18px)",
+              borderTop: navBorder,
+              boxShadow: "0 -4px 24px rgba(0,0,0,0.1)",
+              display: "flex", alignItems: "stretch",
+              paddingBottom: "env(safe-area-inset-bottom)",
+            }}
+          >
+            {NAV_ITEMS.map(({ key, anchor, Icon, label }) => {
+              const isActive = activeNavSection === key;
+              return (
+                <button
+                  key={key}
+                  onClick={() => scrollTo(anchor)}
+                  style={{
+                    flex: 1, display: "flex", flexDirection: "column",
+                    alignItems: "center", justifyContent: "center",
+                    gap: "3px", padding: "10px 2px 9px",
+                    background: "none", border: "none", cursor: "pointer",
+                    color: isActive ? "#ff9913" : inactiveColor,
+                    transition: "color 0.18s ease",
+                    borderTop: isActive ? "2px solid #ff9913" : "2px solid transparent",
+                  }}
+                >
+                  <Icon style={{ width: "19px", height: "19px", flexShrink: 0 }} />
+                  <span style={{ fontSize: "10px", fontWeight: isActive ? 700 : 500, letterSpacing: "0.01em", lineHeight: 1 }}>{label}</span>
+                </button>
+              );
+            })}
+
+            {/* Divider */}
+            <div style={{ width: "1px", background: darkMode ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)", margin: "8px 0", flexShrink: 0 }} />
+
+            {/* Font size toggle */}
+            <button
+              onClick={() => setLargeText(t => !t)}
+              title={largeText ? "Switch to normal text" : "Switch to larger text"}
+              style={{
+                width: "52px", display: "flex", flexDirection: "column",
+                alignItems: "center", justifyContent: "center",
+                gap: "3px", padding: "10px 4px 9px",
+                background: "none", border: "none", cursor: "pointer",
+                color: largeText ? "#ff9913" : inactiveColor,
+                borderTop: largeText ? "2px solid #ff9913" : "2px solid transparent",
+                transition: "color 0.18s ease",
+              }}
+            >
+              <span style={{ fontSize: "17px", fontWeight: 800, lineHeight: 1 }}>A</span>
+              <span style={{ fontSize: "10px", fontWeight: largeText ? 700 : 500, lineHeight: 1 }}>{largeText ? "Large" : "Text"}</span>
+            </button>
+
+            {/* Contact — scroll to emergency contacts */}
+            <button
+              onClick={() => scrollTo("nav-emergency")}
+              style={{
+                width: "52px", display: "flex", flexDirection: "column",
+                alignItems: "center", justifyContent: "center",
+                gap: "3px", padding: "10px 4px 9px",
+                background: "none", border: "none", cursor: "pointer",
+                color: "#ff9913",
+                borderTop: "2px solid transparent",
+              }}
+            >
+              <Phone style={{ width: "19px", height: "19px", flexShrink: 0 }} />
+              <span style={{ fontSize: "10px", fontWeight: 600, lineHeight: 1 }}>Contact</span>
+            </button>
+          </div>
+        );
+      })()}
 
       {/* Floating cart bar — test mode only */}
       <AnimatePresence>
