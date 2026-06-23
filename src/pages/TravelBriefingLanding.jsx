@@ -3198,29 +3198,36 @@ export default function TravelBriefingLanding() {
       {/* Floating UI */}
       <BackToTopButton visible={showBackToTop} lift={isTestMode && addOnsCart.length > 0} hasNav={false} />
 
-      {/* ── Floating contact circle — above back-to-top ── */}
-      {activeBooking && (
-        <button
-          onClick={() => {
-            const el = document.getElementById("nav-emergency");
-            if (!el) return;
-            const top = el.getBoundingClientRect().top + window.scrollY - 80;
-            window.scrollTo({ top, behavior: "smooth" });
-          }}
-          className="fixed right-5 z-50 w-12 h-12 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
-          style={{
-            bottom: "80px",
-            background: "#ffffff",
-            border: "none",
-            boxShadow: "0 4px 20px rgba(0,0,0,0.18), 0 1px 6px rgba(0,0,0,0.1)",
-            cursor: "pointer",
-            fontSize: "16px",
-          }}
-          aria-label="Go to emergency contacts"
-        >
-          <Phone className="w-4 h-4" style={{ color: "#ff9913" }} strokeWidth={2.5} />
-        </button>
-      )}
+      {/* ── Floating contact circle — appears with back-to-top ── */}
+      <AnimatePresence>
+        {activeBooking && showBackToTop && (
+          <motion.button
+            key="contact-btn"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 12 }}
+            transition={{ duration: 0.25 }}
+            onClick={() => {
+              const el = document.getElementById("nav-emergency");
+              if (!el) return;
+              const top = el.getBoundingClientRect().top + window.scrollY - 80;
+              window.scrollTo({ top, behavior: "smooth" });
+            }}
+            className="fixed right-5 z-50 w-12 h-12 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
+            style={{
+              bottom: "80px",
+              background: "#ffffff",
+              border: "none",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.18), 0 1px 6px rgba(0,0,0,0.1)",
+              cursor: "pointer",
+              fontSize: "16px",
+            }}
+            aria-label="Go to emergency contacts"
+          >
+            <Phone className="w-4 h-4" style={{ color: "#ff9913" }} strokeWidth={2.5} />
+          </motion.button>
+        )}
+      </AnimatePresence>
 
       {/* Floating cart bar — test mode only */}
       <AnimatePresence>
