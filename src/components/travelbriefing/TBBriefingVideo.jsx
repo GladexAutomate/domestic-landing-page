@@ -12,6 +12,7 @@ export default function TBBriefingVideo({ dest, darkMode, tk }) {
   const [isVisible, setIsVisible]       = useState(true);
   const [hasBeenSeen, setHasBeenSeen]   = useState(false);
   const [dismissed, setDismissed]       = useState(false);
+  const [isPlaying, setIsPlaying]       = useState(true);
   const [rect, setRect]                 = useState(null);
   const [dragPos, setDragPos]           = useState(null);
   const placeholderRef = useRef(null);
@@ -113,7 +114,7 @@ export default function TBBriefingVideo({ dest, darkMode, tk }) {
     const observer = new IntersectionObserver(
       ([entry]) => {
         setIsVisible(entry.isIntersecting);
-        if (entry.isIntersecting) { setHasBeenSeen(true); setDismissed(false); }
+        if (entry.isIntersecting) { setHasBeenSeen(true); setDismissed(false); setIsPlaying(true); }
       },
       { threshold: 0.2 }
     );
@@ -247,11 +248,19 @@ export default function TBBriefingVideo({ dest, darkMode, tk }) {
             </>
           )}
 
-          {/* Full-float drag overlay — hold anywhere to drag */}
+          {/* Full-float overlay — hold/drag anywhere; tap = pause/play */}
           {showFloat && (
             <div
               onMouseDown={onDragStart}
               onTouchStart={onDragStart}
+              onClick={() => {
+                if (drag.current.moved) return;
+                const cmd = isPlaying ? "pauseVideo" : "playVideo";
+                iframeRef.current?.contentWindow?.postMessage(
+                  JSON.stringify({ event: "command", func: cmd, args: [] }), "*"
+                );
+                setIsPlaying(p => !p);
+              }}
               style={{ position: "absolute", inset: 0, zIndex: 5, cursor: "grab", touchAction: "none", userSelect: "none" }}
             />
           )}
