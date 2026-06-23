@@ -606,7 +606,7 @@ function SectionDivider({ tk }) {
 
 // ── Back to top ──────────────────────────────────────────────────
 function BackToTopButton({ visible, lift, hasNav }) {
-  const baseBottom = hasNav ? 128 : 24; // above contact circle (68px) + circle (48px) + 12px gap
+  const baseBottom = 24;
   return (
     <AnimatePresence>
       {visible && (
@@ -1632,7 +1632,7 @@ export default function TravelBriefingLanding() {
   }
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: bg, paddingBottom: activeBooking ? ((isTestMode && addOnsCart.length > 0) ? "148px" : "72px") : 0, transition: "padding-bottom 0.3s ease" }}>
+    <div className="min-h-screen" style={{ backgroundColor: bg, paddingBottom: (isTestMode && addOnsCart.length > 0) ? "80px" : 0, transition: "padding-bottom 0.3s ease" }}>
       {/* ── TEST MODE: banner + navbar share one fixed container so they stack with no gap ── */}
       {isTestMode ? (
         <div className="fixed top-0 left-0 right-0 z-50 flex flex-col">
@@ -3196,9 +3196,9 @@ export default function TravelBriefingLanding() {
       </div>
 
       {/* Floating UI */}
-      <BackToTopButton visible={showBackToTop} lift={isTestMode && addOnsCart.length > 0} hasNav={!!activeBooking} />
+      <BackToTopButton visible={showBackToTop} lift={isTestMode && addOnsCart.length > 0} hasNav={false} />
 
-      {/* ── Floating contact circle — below back-to-top, above nav ── */}
+      {/* ── Floating contact circle — above back-to-top ── */}
       {activeBooking && (
         <button
           onClick={() => {
@@ -3209,7 +3209,7 @@ export default function TravelBriefingLanding() {
           }}
           className="fixed right-5 z-50 w-12 h-12 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
           style={{
-            bottom: "68px",
+            bottom: "80px",
             background: "#ffffff",
             border: "none",
             boxShadow: "0 4px 20px rgba(0,0,0,0.18), 0 1px 6px rgba(0,0,0,0.1)",
@@ -3221,80 +3221,6 @@ export default function TravelBriefingLanding() {
           <Phone className="w-4 h-4" style={{ color: "#ff9913" }} strokeWidth={2.5} />
         </button>
       )}
-
-      {/* ── Sticky Bottom Nav — section jump + font toggle ── */}
-      {activeBooking && (() => {
-        const NAV_ITEMS = [
-          { key: "checklist", anchor: "nav-checklist", Icon: CheckSquare,  label: "Checklist" },
-          { key: "faqs",      anchor: "nav-faqs",      Icon: HelpCircle,   label: "FAQs"      },
-        ];
-        const scrollTo = (id) => {
-          const el = document.getElementById(id);
-          if (!el) return;
-          const top = el.getBoundingClientRect().top + window.scrollY - 80;
-          window.scrollTo({ top, behavior: "smooth" });
-        };
-        const navBg     = darkMode ? "rgba(14,14,14,0.97)" : "rgba(255,255,255,0.97)";
-        const navBorder = darkMode ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.08)";
-        const inactiveColor = darkMode ? "rgba(255,255,255,0.38)" : "#9ca3af";
-        return (
-          <div
-            style={{
-              position: "fixed", bottom: 0, left: 0, right: 0,
-              zIndex: 45, fontSize: "16px",
-              background: navBg, backdropFilter: "blur(18px)",
-              borderTop: navBorder,
-              boxShadow: "0 -4px 24px rgba(0,0,0,0.1)",
-              display: "flex", alignItems: "stretch",
-              paddingBottom: "env(safe-area-inset-bottom)",
-            }}
-          >
-            {NAV_ITEMS.map(({ key, anchor, Icon, label }) => {
-              const isActive = activeNavSection === key;
-              return (
-                <button
-                  key={key}
-                  onClick={() => scrollTo(anchor)}
-                  style={{
-                    flex: 1, display: "flex", flexDirection: "column",
-                    alignItems: "center", justifyContent: "center",
-                    gap: "3px", padding: "10px 2px 9px",
-                    background: "none", border: "none", cursor: "pointer",
-                    color: isActive ? "#ff9913" : inactiveColor,
-                    transition: "color 0.18s ease",
-                    borderTop: isActive ? "2px solid #ff9913" : "2px solid transparent",
-                  }}
-                >
-                  <Icon style={{ width: "19px", height: "19px", flexShrink: 0 }} />
-                  <span style={{ fontSize: "10px", fontWeight: isActive ? 700 : 500, letterSpacing: "0.01em", lineHeight: 1 }}>{label}</span>
-                </button>
-              );
-            })}
-
-            {/* Divider */}
-            <div style={{ width: "1px", background: darkMode ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)", margin: "8px 0", flexShrink: 0 }} />
-
-            {/* Font size toggle */}
-            <button
-              onClick={() => setLargeText(t => !t)}
-              title={largeText ? "Switch to normal text" : "Switch to larger text"}
-              style={{
-                width: "52px", display: "flex", flexDirection: "column",
-                alignItems: "center", justifyContent: "center",
-                gap: "3px", padding: "10px 4px 9px",
-                background: "none", border: "none", cursor: "pointer",
-                color: largeText ? "#ff9913" : inactiveColor,
-                borderTop: largeText ? "2px solid #ff9913" : "2px solid transparent",
-                transition: "color 0.18s ease",
-              }}
-            >
-              <span style={{ fontSize: "17px", fontWeight: 800, lineHeight: 1 }}>A</span>
-              <span style={{ fontSize: "10px", fontWeight: largeText ? 700 : 500, lineHeight: 1 }}>{largeText ? "Large" : "Text"}</span>
-            </button>
-
-          </div>
-        );
-      })()}
 
       {/* Floating cart bar — test mode only */}
       <AnimatePresence>
