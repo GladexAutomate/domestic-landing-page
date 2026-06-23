@@ -2407,58 +2407,58 @@ export default function TravelBriefingLanding() {
                   <p className="font-bold text-base text-white">Arrival Instructions</p>
                   <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.75)" }}>How to get from the airport to your hotel</p>
                 </div>
-                <div className="mx-3 mb-3 p-5 space-y-7 rounded-xl" style={{ backgroundColor: cardBg }}>
+                <div className="px-5 pb-5 space-y-7">
                   {dest.arrivalInstructions.tabs.map(({ key, label }, tabIdx) => {
                     const info = dest.arrivalInstructions[key];
                     if (!info) return null;
                     return (
-                      <div key={key} className={tabIdx > 0 ? "pt-6 border-t" : ""} style={{ borderColor }}>
-                        <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: "#ff9913" }}>{label}</p>
+                      <div key={key} className={tabIdx > 0 ? "pt-6 border-t" : ""} style={{ borderColor: "rgba(255,255,255,0.25)" }}>
+                        <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: "rgba(255,255,255,0.8)" }}>{label}</p>
                         <div className="space-y-3">
                           {info.steps.map((step, i) => (
                             <div key={i} className="flex items-start gap-3">
-                              <div className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-black" style={{ background: "linear-gradient(135deg, #ff9913, #cc7700)", color: "#fff" }}>
+                              <div className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-black" style={{ background: "rgba(255,255,255,0.25)", color: "#fff" }}>
                                 {i + 1}
                               </div>
-                              <p className="text-sm leading-snug pt-1" style={{ color: textPrimary }}>{step}</p>
+                              <p className="text-sm leading-snug pt-1" style={{ color: "#fff" }}>{step}</p>
                             </div>
                           ))}
                         </div>
                         {info.note && (
-                          <div className="mt-4 p-3 rounded-xl border text-xs flex items-start gap-2" style={{ borderColor: "rgba(255,153,19,0.25)", backgroundColor: "rgba(255,153,19,0.07)", color: textMuted }}>
-                            <Info className="w-3.5 h-3.5 shrink-0 mt-0.5 text-orange-400" />
+                          <div className="mt-4 p-3 rounded-xl border text-xs flex items-start gap-2" style={{ borderColor: "rgba(255,255,255,0.2)", backgroundColor: "rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.85)" }}>
+                            <Info className="w-3.5 h-3.5 shrink-0 mt-0.5 text-white opacity-80" />
                             {info.note}
                           </div>
                         )}
                         {info.travelTime && (
-                          <div className="mt-4 rounded-xl border overflow-hidden" style={{ borderColor }}>
-                            <div className="px-3 py-2" style={{ backgroundColor: darkMode ? "rgba(255,153,19,0.1)" : "rgba(255,153,19,0.07)" }}>
-                              <p className="text-[10px] font-black uppercase tracking-widest" style={{ color: "#ff9913" }}>Estimated Travel Time</p>
+                          <div className="mt-4 rounded-xl border overflow-hidden" style={{ borderColor: "rgba(255,255,255,0.25)" }}>
+                            <div className="px-3 py-2" style={{ backgroundColor: "rgba(255,255,255,0.15)" }}>
+                              <p className="text-[10px] font-black uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.8)" }}>Estimated Travel Time</p>
                             </div>
                             <div className="px-3 py-2.5 space-y-1.5">
                               {info.travelTime.breakdown.map((b) => (
                                 <div key={b.leg} className="flex items-center justify-between gap-3">
-                                  <p className="text-xs" style={{ color: textMuted }}>{b.leg}</p>
-                                  <p className="text-xs font-bold shrink-0" style={{ color: textPrimary }}>{b.duration}</p>
+                                  <p className="text-xs" style={{ color: "rgba(255,255,255,0.75)" }}>{b.leg}</p>
+                                  <p className="text-xs font-bold shrink-0" style={{ color: "#fff" }}>{b.duration}</p>
                                 </div>
                               ))}
-                              <div className="pt-1.5 mt-1 border-t" style={{ borderColor }}>
-                                <p className="text-[10px] font-semibold" style={{ color: textMuted }}>{info.travelTime.summary}</p>
+                              <div className="pt-1.5 mt-1 border-t" style={{ borderColor: "rgba(255,255,255,0.25)" }}>
+                                <p className="text-[10px] font-semibold" style={{ color: "rgba(255,255,255,0.75)" }}>{info.travelTime.summary}</p>
                               </div>
                             </div>
                           </div>
                         )}
                         {info.vanSchedule && (
                           <div className="mt-4">
-                            <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: textMuted }}>Van Transfer Schedule</p>
+                            <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.75)" }}>Van Transfer Schedule</p>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                              <div className="rounded-xl p-3 border" style={{ borderColor, backgroundColor: surfaceBg }}>
-                                <p className="text-xs font-bold mb-2" style={{ color: "#ff9913" }}>Puerto Princesa → El Nido</p>
-                                {info.vanSchedule.ppsToElNido.map((s) => (<p key={s} className="text-xs py-0.5" style={{ color: textPrimary }}>{s}</p>))}
+                              <div className="rounded-xl p-3 border" style={{ borderColor: "rgba(255,255,255,0.2)", backgroundColor: "rgba(255,255,255,0.12)" }}>
+                                <p className="text-xs font-bold mb-2" style={{ color: "#fff" }}>Puerto Princesa → El Nido</p>
+                                {info.vanSchedule.ppsToElNido.map((s) => (<p key={s} className="text-xs py-0.5" style={{ color: "rgba(255,255,255,0.9)" }}>{s}</p>))}
                               </div>
-                              <div className="rounded-xl p-3 border" style={{ borderColor, backgroundColor: surfaceBg }}>
-                                <p className="text-xs font-bold mb-2" style={{ color: "#ff9913" }}>El Nido → Puerto Princesa</p>
-                                {info.vanSchedule.elNidoToPps.map((s) => (<p key={s} className="text-xs py-0.5" style={{ color: textPrimary }}>{s}</p>))}
+                              <div className="rounded-xl p-3 border" style={{ borderColor: "rgba(255,255,255,0.2)", backgroundColor: "rgba(255,255,255,0.12)" }}>
+                                <p className="text-xs font-bold mb-2" style={{ color: "#fff" }}>El Nido → Puerto Princesa</p>
+                                {info.vanSchedule.elNidoToPps.map((s) => (<p key={s} className="text-xs py-0.5" style={{ color: "rgba(255,255,255,0.9)" }}>{s}</p>))}
                               </div>
                             </div>
                           </div>
@@ -2506,22 +2506,22 @@ export default function TravelBriefingLanding() {
                   <p className="font-bold text-base text-white">Hotel Check-In Information</p>
                   <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.75)" }}>Arriving at your accommodation</p>
                 </div>
-                <div className="mx-3 mb-3 p-5 rounded-xl" style={{ backgroundColor: cardBg }}>
+                <div className="px-5 pb-5">
                   <div className="grid grid-cols-2 gap-3 mb-5">
-                    <div className="rounded-xl p-3 border" style={{ borderColor: "rgba(255,153,19,0.3)", backgroundColor: "rgba(255,153,19,0.07)" }}>
-                      <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: "#ff9913" }}>Check-In Time</p>
-                      <p className="text-sm" style={{ color: textPrimary }}>{dest.hotelInfo.checkin}</p>
+                    <div className="rounded-xl p-3 border" style={{ borderColor: "rgba(255,255,255,0.25)", backgroundColor: "rgba(255,255,255,0.15)" }}>
+                      <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: "rgba(255,255,255,0.8)" }}>Check-In Time</p>
+                      <p className="text-sm" style={{ color: "#fff" }}>{dest.hotelInfo.checkin}</p>
                     </div>
-                    <div className="rounded-xl p-3 border" style={{ borderColor: "rgba(255,153,19,0.3)", backgroundColor: "rgba(255,153,19,0.07)" }}>
-                      <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: "#ff9913" }}>Check-Out Time</p>
-                      <p className="text-sm" style={{ color: textPrimary }}>{dest.hotelInfo.checkout}</p>
+                    <div className="rounded-xl p-3 border" style={{ borderColor: "rgba(255,255,255,0.25)", backgroundColor: "rgba(255,255,255,0.15)" }}>
+                      <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: "rgba(255,255,255,0.8)" }}>Check-Out Time</p>
+                      <p className="text-sm" style={{ color: "#fff" }}>{dest.hotelInfo.checkout}</p>
                     </div>
                   </div>
-                  <p className="text-xs font-bold uppercase tracking-widest mb-3" style={muted}>Upon Arrival:</p>
+                  <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.8)" }}>Upon Arrival:</p>
                   <ul className="space-y-2.5">
                     {dest.hotelInfo.notes.map((note) => (
-                      <li key={note} className="flex items-start gap-2 text-sm leading-snug" style={{ color: textPrimary }}>
-                        <span className="text-orange-400 shrink-0 mt-0.5">•</span> {note}
+                      <li key={note} className="flex items-start gap-2 text-sm leading-snug" style={{ color: "#fff" }}>
+                        <span className="text-white opacity-70 shrink-0 mt-0.5">•</span> {note}
                       </li>
                     ))}
                   </ul>
@@ -2562,18 +2562,18 @@ export default function TravelBriefingLanding() {
                   <p className="font-bold text-base text-white">Tour Reminders</p>
                   <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.75)" }}>What to remember before, during, and after your tour</p>
                 </div>
-                <div className="mx-3 mb-3 p-5 space-y-6 rounded-xl" style={{ backgroundColor: cardBg }}>
+                <div className="px-5 pb-5 space-y-6">
                   {[
                     { key: "before",    label: "Before Your Trip" },
                     { key: "during",    label: "During Your Stay" },
                     { key: "departure", label: "On Departure Day" },
                   ].map(({ key, label }, gi) => (
-                    <div key={key} className={gi > 0 ? "pt-5" : ""} style={{ borderTop: gi > 0 ? `1px solid ${borderColor}` : undefined }}>
-                      <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#ff9913" }}>{label}</p>
+                    <div key={key} className={gi > 0 ? "pt-5" : ""} style={{ borderTop: gi > 0 ? "1px solid rgba(255,255,255,0.25)" : undefined }}>
+                      <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.8)" }}>{label}</p>
                       <ul className="space-y-2.5">
                         {dest.reminders[key].map((r) => (
-                          <li key={r} className="flex items-start gap-2.5 text-sm leading-snug" style={{ color: textPrimary }}>
-                            <span className="text-orange-400 shrink-0 mt-0.5">✔</span> {r}
+                          <li key={r} className="flex items-start gap-2.5 text-sm leading-snug" style={{ color: "#fff" }}>
+                            <span className="text-white opacity-70 shrink-0 mt-0.5">✔</span> {r}
                           </li>
                         ))}
                       </ul>
