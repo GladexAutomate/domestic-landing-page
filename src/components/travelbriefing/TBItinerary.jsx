@@ -138,7 +138,7 @@ function AddOnCard({ tour, day, dayTitle, addOnsCart, onAddToCart, darkMode, tk 
         )}
         {tour.badge && (
           <div className="absolute top-2 left-2">
-            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full"
+            <span className="text-xs font-bold uppercase tracking-wider px-2 py-1 rounded-full"
               style={{ background: "rgba(249,115,22,0.9)", color: "#fff", backdropFilter: "blur(4px)" }}>
               {tour.badge}
             </span>
@@ -146,7 +146,7 @@ function AddOnCard({ tour, day, dayTitle, addOnsCart, onAddToCart, darkMode, tk 
         )}
         {added && (
           <div className="absolute top-2 right-2">
-            <span className="text-[10px] font-bold px-2 py-1 rounded-full flex items-center gap-1"
+            <span className="text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1"
               style={{ background: "rgba(34,197,94,0.9)", color: "#fff", backdropFilter: "blur(4px)" }}>
               <Check className="w-3 h-3" /> Added
             </span>
@@ -162,7 +162,7 @@ function AddOnCard({ tour, day, dayTitle, addOnsCart, onAddToCart, darkMode, tk 
           <p className="font-black text-sm leading-snug mb-1" style={{ color: textPrimary }}>{tour.name}</p>
           <p className="font-black text-xl" style={{ color: "#f97316", letterSpacing: "-0.02em" }}>
             {price !== null
-              ? <>{`₱${price.toLocaleString("en-PH")}`}<span className="text-[11px] font-normal opacity-70 ml-1">/pax</span></>
+              ? <>{`₱${price.toLocaleString("en-PH")}`}<span className="text-xs font-normal opacity-70 ml-1">/pax</span></>
               : <span className="text-xs font-semibold" style={{ color: textMuted }}>Contact for price</span>}
           </p>
         </div>
@@ -181,7 +181,7 @@ function AddOnCard({ tour, day, dayTitle, addOnsCart, onAddToCart, darkMode, tk 
         {tour.highlights?.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
             {tour.highlights.slice(0, 2).map((h, i) => (
-              <span key={i} className="text-[10px] font-semibold px-2 py-0.5 rounded-full border"
+              <span key={i} className="text-xs font-semibold px-2 py-0.5 rounded-full border"
                 style={{ borderColor, backgroundColor: darkMode ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.04)", color: textPrimary }}>
                 {h}
               </span>
@@ -226,13 +226,13 @@ function AddOnCard({ tour, day, dayTitle, addOnsCart, onAddToCart, darkMode, tk 
           {(tour.badge || added) && (
             <div className="flex flex-wrap gap-1">
               {tour.badge && (
-                <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full"
+                <span className="text-xs font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full"
                   style={{ background: "rgba(249,115,22,0.9)", color: "#fff" }}>
                   {tour.badge}
                 </span>
               )}
               {added && (
-                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full flex items-center gap-0.5"
+                <span className="text-xs font-bold px-1.5 py-0.5 rounded-full flex items-center gap-0.5"
                   style={{ background: "rgba(34,197,94,0.9)", color: "#fff" }}>
                   <Check className="w-2.5 h-2.5" /> Added
                 </span>
@@ -244,19 +244,19 @@ function AddOnCard({ tour, day, dayTitle, addOnsCart, onAddToCart, darkMode, tk 
 
           <p className="font-black text-base leading-none" style={{ color: "#f97316", letterSpacing: "-0.02em" }}>
             {price !== null
-              ? <>{`₱${price.toLocaleString("en-PH")}`}<span className="text-[10px] font-normal opacity-70 ml-1">/pax</span></>
-              : <span className="text-[11px] font-semibold" style={{ color: textMuted }}>Contact for price</span>}
+              ? <>{`₱${price.toLocaleString("en-PH")}`}<span className="text-xs font-normal opacity-70 ml-1">/pax</span></>
+              : <span className="text-xs font-semibold" style={{ color: textMuted }}>Contact for price</span>}
           </p>
 
           {tour.duration && (
-            <div className="flex items-center gap-1 text-[10px]" style={{ color: textMuted }}>
+            <div className="flex items-center gap-1 text-xs" style={{ color: textMuted }}>
               <Clock className="w-2.5 h-2.5 shrink-0" /><span className="truncate">{tour.duration}</span>
             </div>
           )}
 
           <button
             onClick={() => onAddToCart({ id: cartKey, name: tour.name, price: price || 0, day, dayTitle })}
-            className="w-full py-1.5 rounded-lg text-[11px] font-bold flex items-center justify-center gap-1 transition-all"
+            className="w-full py-1.5 rounded-lg text-xs font-bold flex items-center justify-center gap-1 transition-all"
             style={{
               background: added ? "rgba(34,197,94,0.1)" : "linear-gradient(135deg, #f97316, #b45309)",
               color:      added ? "#22c55e"              : "#fff",
@@ -326,7 +326,7 @@ export default function TBItinerary({ dest, darkMode, tk, availableTours = [], a
                 className="w-full flex items-center gap-3 px-4 py-3.5"
                 style={{ backgroundColor: darkMode ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.025)" }}
               >
-                <span className="text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full shrink-0"
+                <span className="text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full shrink-0"
                   style={{ background: "#f97316", color: "#fff" }}>
                   Day {day.day}
                 </span>
@@ -334,7 +334,7 @@ export default function TBItinerary({ dest, darkMode, tk, availableTours = [], a
                   {day.title}
                 </p>
                 {addedCount > 0 && (
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0"
+                  <span className="text-xs font-bold px-2 py-0.5 rounded-full shrink-0"
                     style={{ background: "rgba(34,197,94,0.15)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.3)" }}>
                     +{addedCount} add-on{addedCount > 1 ? "s" : ""}
                   </span>
@@ -369,7 +369,7 @@ export default function TBItinerary({ dest, darkMode, tk, availableTours = [], a
                             <p className="text-sm font-bold leading-snug" style={{ color: "#f97316" }}>
                               {item.name}
                             </p>
-                            <p className="text-[11px] mt-0.5" style={{ color: textMuted }}>
+                            <p className="text-xs mt-0.5" style={{ color: textMuted }}>
                               Optional · {item.price > 0 ? `₱${Number(item.price).toLocaleString("en-PH")}/pax` : "Contact for price"}
                             </p>
                           </div>
@@ -391,7 +391,7 @@ export default function TBItinerary({ dest, darkMode, tk, availableTours = [], a
                 {meals && (
                   <div className="px-4 py-2.5 flex items-center gap-2"
                     style={{ borderTop: `1px solid ${borderColor}`, backgroundColor: darkMode ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.018)" }}>
-                    <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: "#f97316" }}>Meals</span>
+                    <span className="text-xs font-black uppercase tracking-widest" style={{ color: "#f97316" }}>Meals</span>
                     <span className="text-xs" style={{ color: textMuted }}>{meals}</span>
                   </div>
                 )}
@@ -401,7 +401,7 @@ export default function TBItinerary({ dest, darkMode, tk, availableTours = [], a
                   <div style={{ borderTop: `1px solid ${borderColor}` }}>
                     <div className="px-4 py-2 flex items-center gap-1.5"
                       style={{ backgroundColor: darkMode ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.018)" }}>
-                      <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: textMuted }}>
+                      <span className="text-xs font-black uppercase tracking-widest" style={{ color: textMuted }}>
                         {photos.length} {photos.length === 1 ? "Photo" : "Photos"}
                       </span>
                     </div>
@@ -431,12 +431,12 @@ export default function TBItinerary({ dest, darkMode, tk, availableTours = [], a
                           <Plus className="w-3.5 h-3.5 shrink-0" strokeWidth={3} />
                           Optional Add-Ons
                         </span>
-                        <span className="text-[11px] px-2 py-0.5 rounded-full font-semibold"
+                        <span className="text-xs px-2 py-0.5 rounded-full font-semibold"
                           style={{ background: darkMode ? "rgba(249,115,22,0.15)" : "rgba(249,115,22,0.12)", color: "#f97316" }}>
                           {dayTours.length} available
                         </span>
                         {addedCount > 0 && !addOnsOpen && (
-                          <span className="text-[11px] font-bold px-2 py-0.5 rounded-full"
+                          <span className="text-xs font-bold px-2 py-0.5 rounded-full"
                             style={{ background: "rgba(34,197,94,0.15)", color: "#22c55e" }}>
                             {addedCount} added
                           </span>
@@ -470,7 +470,7 @@ export default function TBItinerary({ dest, darkMode, tk, availableTours = [], a
                               />
                             ))}
                           </div>
-                          <p className="px-4 pb-3 text-[11px]" style={{ color: textMuted }}>
+                          <p className="px-4 pb-3 text-xs" style={{ color: textMuted }}>
                             Added activities will appear in your Day {day.day} schedule above.
                           </p>
                         </motion.div>

@@ -55,7 +55,7 @@ export default function TBHero({ dest, darkMode }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05, duration: 0.3 }}
           className="flex items-center gap-1.5 mb-2 px-3 py-1 rounded-full border border-white/25 backdrop-blur-sm"
-          style={{ backgroundColor: "rgba(255,255,255,0.1)", fontSize: "10px" }}
+          style={{ backgroundColor: "rgba(255,255,255,0.1)", fontSize: "12px" }}
         >
           <MapPin className="w-3 h-3 opacity-75" />
           <span className="uppercase tracking-widest font-semibold opacity-85">Philippines · Gladex Travel</span>

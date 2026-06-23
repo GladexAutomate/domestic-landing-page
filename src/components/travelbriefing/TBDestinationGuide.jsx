@@ -140,7 +140,7 @@ function PhotoSpotCarousel({ spots, darkMode, tk }) {
         <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.78) 0%, transparent 52%)" }} />
 
         {/* Counter badge */}
-        <div className="absolute top-3 right-3 text-[10px] font-bold px-2.5 py-1 rounded-full" style={{ background: "rgba(0,0,0,0.55)", color: "#fff" }}>
+        <div className="absolute top-3 right-3 text-xs font-bold px-2.5 py-1 rounded-full" style={{ background: "rgba(0,0,0,0.55)", color: "#fff" }}>
           {current + 1} / {spots.length}
         </div>
 
@@ -320,14 +320,14 @@ function RestaurantCard({ resto, darkMode, tk, index = 0 }) {
 
         {/* Famous For chips */}
         <div className="mb-3">
-          <p className="text-[10px] font-black uppercase tracking-widest mb-1.5" style={{ color: tk.textMuted }}>
+          <p className="text-xs font-black uppercase tracking-widest mb-1.5" style={{ color: tk.textMuted }}>
             Famous For
           </p>
           <div className="flex flex-wrap gap-1.5">
             {resto.dishes.map((dish) => (
               <span
                 key={dish}
-                className="text-[11px] font-semibold px-2.5 py-1 rounded-full"
+                className="text-xs font-semibold px-2.5 py-1 rounded-full"
                 style={{
                   background: "rgba(249,115,22,0.1)",
                   color: "#f97316",
@@ -352,7 +352,7 @@ function RestaurantCard({ resto, darkMode, tk, index = 0 }) {
 function SubBanner({ title, eyebrow, src, tk }) {
   return (
     <div className="rounded-xl px-5 py-3.5 mb-4" style={{ background: "linear-gradient(160deg, #ff9913 0%, #e07800 100%)" }}>
-      {eyebrow && <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: "rgba(255,255,255,0.72)" }}>{eyebrow}</p>}
+      {eyebrow && <p className="text-xs font-black uppercase tracking-widest mb-0.5" style={{ color: "rgba(255,255,255,0.72)" }}>{eyebrow}</p>}
       <p className="font-black text-base text-white" style={{ letterSpacing: "-0.01em" }}>{title}</p>
     </div>
   );

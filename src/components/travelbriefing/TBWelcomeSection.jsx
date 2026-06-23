@@ -148,7 +148,7 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
 
           {/* GDX Number */}
           <div>
-            <p className="text-[10px] font-black uppercase tracking-widest mb-1.5" style={{ color: textMuted }}>
+            <p className="text-xs font-black uppercase tracking-widest mb-1.5" style={{ color: textMuted }}>
               GDX Confirmation Number
             </p>
             <div
@@ -176,7 +176,7 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
 
           {/* Lead Guest Last Name */}
           <div>
-            <p className="text-[10px] font-black uppercase tracking-widest mb-1.5" style={{ color: textMuted }}>
+            <p className="text-xs font-black uppercase tracking-widest mb-1.5" style={{ color: textMuted }}>
               Lead Guest Last Name
             </p>
             <div
@@ -217,7 +217,7 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
                   <p className="text-xs font-bold leading-snug" style={{ color: "#f59e0b" }}>
                     International Booking Detected
                   </p>
-                  <p className="text-[11px] leading-relaxed mt-0.5" style={{ color: darkMode ? "rgba(255,255,255,0.5)" : "#6b7280" }}>
+                  <p className="text-xs leading-relaxed mt-0.5" style={{ color: darkMode ? "rgba(255,255,255,0.5)" : "#6b7280" }}>
                     This page is for domestic packages only. Redirecting you to the international travel briefing…
                   </p>
                 </div>
@@ -268,7 +268,7 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
           className="px-4 sm:px-5 py-3 flex items-center justify-center gap-1.5 border-t"
           style={{ borderColor, backgroundColor: surfaceBg }}
         >
-          <span className="text-[10px]" style={{ color: textMuted }}>
+          <span className="text-xs" style={{ color: textMuted }}>
             Secured — GDX Number and Last Name are required to access booking details.
           </span>
         </div>

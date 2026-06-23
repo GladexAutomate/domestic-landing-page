@@ -393,7 +393,7 @@ function InlineReviewEditor({ myReview, onSave, onCancel, darkMode, textPrimary,
       className="rounded-2xl border p-5 mt-4"
       style={{ backgroundColor: cardBg, borderColor: "#ff9913", boxShadow: "0 0 0 1px #ff9913, 0 4px 20px rgba(255,153,19,0.12)" }}
     >
-      <p className="text-[10px] font-black uppercase tracking-widest mb-3" style={{ color: "#ff9913" }}>Update Your Review</p>
+      <p className="text-xs font-black uppercase tracking-widest mb-3" style={{ color: "#ff9913" }}>Update Your Review</p>
       <div className="flex gap-2 mb-4">
         {[1,2,3,4,5].map((s) => (
           <button key={s} onClick={() => setStars(s)} className="transition-transform hover:scale-110 active:scale-95">
@@ -485,7 +485,7 @@ function StripeHeader({ eyebrow, title, description, tk, colored = false }) {
         </svg>
       </div>
       {eyebrow && (
-        <p className="text-[11px] font-black uppercase tracking-widest mb-2"
+        <p className="text-xs font-black uppercase tracking-widest mb-2"
           style={{ color: colored ? "rgba(255,255,255,0.72)" : "#ff9913" }}>
           {eyebrow}
         </p>
@@ -678,7 +678,7 @@ function ArrivalTab({ dest, activeTab, setActiveTab, tk, darkMode }) {
           {current.travelTime && (
             <div className="mt-4 rounded-xl border overflow-hidden" style={{ borderColor: tk.borderColor }}>
               <div className="px-3 py-2" style={{ backgroundColor: darkMode ? "rgba(255,153,19,0.1)" : "rgba(255,153,19,0.07)" }}>
-                <p className="text-[10px] font-black uppercase tracking-widest" style={{ color: "#ff9913" }}>Estimated Travel Time</p>
+                <p className="text-xs font-black uppercase tracking-widest" style={{ color: "#ff9913" }}>Estimated Travel Time</p>
               </div>
               <div className="px-3 py-2.5 space-y-1.5">
                 {current.travelTime.breakdown.map((b) => (
@@ -688,7 +688,7 @@ function ArrivalTab({ dest, activeTab, setActiveTab, tk, darkMode }) {
                   </div>
                 ))}
                 <div className="pt-1.5 mt-1 border-t" style={{ borderColor: tk.borderColor }}>
-                  <p className="text-[10px] font-semibold" style={{ color: tk.textMuted }}>{current.travelTime.summary}</p>
+                  <p className="text-xs font-semibold" style={{ color: tk.textMuted }}>{current.travelTime.summary}</p>
                 </div>
               </div>
             </div>
@@ -773,7 +773,7 @@ function BookingSection({ label, children, darkMode }) {
         >
           <div className="w-1 h-1 rounded-full" style={{ background: "#ff9913" }} />
         </div>
-        <span className="text-[10px] font-black uppercase tracking-[0.14em]" style={{ color: "#ff9913" }}>
+        <span className="text-xs font-black uppercase tracking-[0.14em]" style={{ color: "#ff9913" }}>
           {label}
         </span>
       </div>
@@ -787,7 +787,7 @@ function BookingRow({ label1, value1, label2, value2, textPrimary, textMuted, pr
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
       <div>
-        <p className="text-[10px] font-bold uppercase tracking-wider mb-0.5" style={{ color: textMuted }}>
+        <p className="text-xs font-bold uppercase tracking-wider mb-0.5" style={{ color: textMuted }}>
           {label1}
         </p>
         <p className={`text-sm font-semibold leading-snug${preWrap1 ? " whitespace-pre-line" : ""}`} style={{ color: textPrimary }}>
@@ -796,7 +796,7 @@ function BookingRow({ label1, value1, label2, value2, textPrimary, textMuted, pr
       </div>
       {label2 ? (
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-wider mb-0.5" style={{ color: textMuted }}>
+          <p className="text-xs font-bold uppercase tracking-wider mb-0.5" style={{ color: textMuted }}>
             {label2}
           </p>
           <p className="text-sm font-semibold leading-snug" style={{ color: textPrimary }}>
@@ -888,12 +888,12 @@ function OutfitCard({ occasion, darkMode, textPrimary, textMuted, cardBg, border
         <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.78) 0%, transparent 55%)" }} />
 
         {/* Counter */}
-        <div className="absolute top-3 left-3 text-[10px] font-bold px-2 py-1 rounded-full" style={{ background: "rgba(0,0,0,0.5)", color: "#fff" }}>
+        <div className="absolute top-3 left-3 text-xs font-bold px-2 py-1 rounded-full" style={{ background: "rgba(0,0,0,0.5)", color: "#fff" }}>
           {photos.length > 1 ? `${photoIdx + 1} / ${photos.length}` : `1 / ${photos.length || 1}`}
         </div>
 
         {/* Gender badge */}
-        <div className="absolute top-3 right-3 text-[10px] font-black px-2.5 py-1 rounded-full" style={{ background: "#ff9913", color: "#fff" }}>
+        <div className="absolute top-3 right-3 text-xs font-black px-2.5 py-1 rounded-full" style={{ background: "#ff9913", color: "#fff" }}>
           {activeTab}
         </div>
 
@@ -934,7 +934,7 @@ function OutfitCard({ occasion, darkMode, textPrimary, textMuted, cardBg, border
 
       {/* ── Gender tabs ── */}
       <div className="px-3 pt-2.5 pb-1">
-        <p className="text-[10px] font-black uppercase tracking-widest mb-1.5" style={{ color: textMuted }}>Outfit for:</p>
+        <p className="text-xs font-black uppercase tracking-widest mb-1.5" style={{ color: textMuted }}>Outfit for:</p>
         <div className="flex flex-wrap gap-1.5">
           {OUTFIT_TABS.map((tab) => (
             <button
@@ -954,13 +954,13 @@ function OutfitCard({ occasion, darkMode, textPrimary, textMuted, cardBg, border
 
       {/* Save badge */}
       <div className="px-3 pb-1">
-        <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: "#ff9913" }}>✦ Save This For Later!</span>
+        <span className="text-xs font-black uppercase tracking-widest" style={{ color: "#ff9913" }}>✦ Save This For Later!</span>
       </div>
 
       {/* Tip */}
       <div className="px-3 pb-3 flex items-start gap-1.5">
         <span className="text-xs shrink-0">💡</span>
-        <p className="text-[11px] leading-relaxed" style={{ color: textMuted }}>{tip}</p>
+        <p className="text-xs leading-relaxed" style={{ color: textMuted }}>{tip}</p>
       </div>
     </div>
   );
@@ -1034,7 +1034,7 @@ function OutfitGuideSection({ dest, darkMode, sectionGap, textPrimary, textMuted
                 opacity: safePage === 0 ? 0.4 : 1,
               }}
             >← Prev Outfit</button>
-            <p className="text-[10px] font-black shrink-0" style={{ color: textMuted }}>
+            <p className="text-xs font-black shrink-0" style={{ color: textMuted }}>
               {safePage + 1} / {totalPages}
             </p>
             <button
@@ -1533,7 +1533,7 @@ export default function TravelBriefingLanding() {
   const cardBg      = darkMode ? "#141414"                 : "#ffffff";
   const surfaceBg   = darkMode ? "rgba(255,255,255,0.035)" : "rgba(0,0,0,0.028)";
   const textPrimary = darkMode ? "#f0f0f0"                 : "#1a1a1a";
-  const textMuted   = darkMode ? "rgba(255,255,255,0.45)"  : "#6b7280";
+  const textMuted   = darkMode ? "rgba(255,255,255,0.62)"  : "#4b5563";
   const borderColor = darkMode ? "rgba(255,255,255,0.07)"  : "rgba(0,0,0,0.07)";
   const cardShadow  = darkMode
     ? "0 1px 3px rgba(0,0,0,0.5), 0 4px 20px rgba(0,0,0,0.35)"
@@ -1611,7 +1611,7 @@ export default function TravelBriefingLanding() {
       {/* ── TEST MODE: banner + navbar share one fixed container so they stack with no gap ── */}
       {isTestMode ? (
         <div className="fixed top-0 left-0 right-0 z-50 flex flex-col">
-          <div className="flex items-center justify-center gap-1.5 px-4 py-1 text-[10px] font-black tracking-widest uppercase" style={{ backgroundColor: "#7c3aed", color: "#fff" }}>
+          <div className="flex items-center justify-center gap-1.5 px-4 py-1 text-xs font-black tracking-widest uppercase" style={{ backgroundColor: "#7c3aed", color: "#fff" }}>
             <span>🧪</span>
             <span>TEST MODE — {dest?.name} · Demo Data · Not a Real Booking</span>
           </div>
@@ -1768,10 +1768,10 @@ export default function TravelBriefingLanding() {
               {/* Text */}
               <div className="text-left flex-1 min-w-0">
                 <p className="font-black text-sm leading-tight" style={{ color: "#ff9913" }}>View Booking Details</p>
-                <p className="text-[11px] truncate mt-0.5" style={{ color: textMuted }}>
+                <p className="text-xs truncate mt-0.5" style={{ color: textMuted }}>
                   GDX-{activeBooking.gdx} · {activeBooking.leadName}
                 </p>
-                <p className="text-[10px] mt-1" style={{ color: textMuted }}>
+                <p className="text-xs mt-1" style={{ color: textMuted }}>
                   Tap to view your complete booking details
                 </p>
               </div>
@@ -1779,7 +1779,7 @@ export default function TravelBriefingLanding() {
               {/* Confirmed + downward chevron */}
               <div className="flex items-center gap-2 shrink-0">
                 <span
-                  className="text-[10px] font-bold px-2.5 py-1 rounded-full"
+                  className="text-xs font-bold px-2.5 py-1 rounded-full"
                   style={{ background: "rgba(22,163,74,0.12)", color: "#16a34a", border: "1px solid rgba(22,163,74,0.3)" }}
                 >
                   ✓ Confirmed
@@ -1808,7 +1808,7 @@ export default function TravelBriefingLanding() {
                   {/* Confirmed badge + collapse button */}
                   <div className="flex items-center justify-between mb-4">
                     <span
-                      className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full"
+                      className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest px-3 py-1.5 rounded-full"
                       style={{ background: "#ff9913", color: "#fff" }}
                     >
                       <BadgeCheck className="w-3 h-3" /> Trip Confirmed
@@ -1849,7 +1849,7 @@ export default function TravelBriefingLanding() {
                         style={{ background: "rgba(0,0,0,0.18)" }}
                       >
                         <p
-                          className="text-[10px] font-bold uppercase tracking-wider mb-0.5"
+                          className="text-xs font-bold uppercase tracking-wider mb-0.5"
                           style={{ color: "rgba(255,255,255,0.62)" }}
                         >
                           {label}
@@ -1881,7 +1881,7 @@ export default function TravelBriefingLanding() {
                       >
                         <div className="flex items-center mb-3">
                           <span
-                            className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full"
+                            className="flex items-center gap-1.5 text-xs font-black uppercase tracking-widest px-2.5 py-1 rounded-full"
                             style={{
                               background: "rgba(22,163,74,0.12)",
                               color: "#16a34a",
@@ -1906,14 +1906,14 @@ export default function TravelBriefingLanding() {
                         </p>
                         <div className="flex flex-wrap gap-2">
                           <span
-                            className="flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full"
+                            className="flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full"
                             style={getStatusChipStyle(getDisplayStatus(activeBooking.status))}
                           >
                             <Check className="w-3 h-3" /> {getDisplayStatus(activeBooking.status)}
                           </span>
                           {activeBooking.paymentStatus && (
                             <span
-                              className="text-[11px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full"
+                              className="text-xs font-black uppercase tracking-wider px-2.5 py-1 rounded-full"
                               style={getPaymentChipStyle(activeBooking.paymentStatus)}
                             >
                               {activeBooking.paymentStatus}
@@ -2062,7 +2062,7 @@ export default function TravelBriefingLanding() {
                             )}
                             {activeBooking.transferDetails && (
                               <div>
-                                <p className="text-[10px] font-bold uppercase tracking-wider mb-0.5" style={{ color: textMuted }}>
+                                <p className="text-xs font-bold uppercase tracking-wider mb-0.5" style={{ color: textMuted }}>
                                   Transfer Details
                                 </p>
                                 <p className="text-sm font-medium leading-relaxed" style={{ color: textPrimary }}>
@@ -2089,50 +2089,6 @@ export default function TravelBriefingLanding() {
                         </BookingSection>
                       )}
 
-                      {/* TRAVEL DOCUMENTS */}
-                      <BookingSection label="Travel Documents" darkMode={darkMode}>
-                        <div className="px-5 py-5 flex flex-wrap gap-3">
-                          {(() => {
-                            const bk = activeBooking;
-                            const url =
-                              bk?.automatedVoucherUrl ||
-                              bk?.voucherUrl ||
-                              bk?.tourVoucherUrl ||
-                              (bk?.automatedVoucher?.startsWith?.("http") ? bk.automatedVoucher : null);
-                            return url ? (
-                              <a
-                                href={url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center gap-2 text-sm font-semibold px-4 py-2.5 rounded-xl border transition-all hover:opacity-80"
-                                style={{
-                                  borderColor: darkMode ? "rgba(255,255,255,0.1)" : "#ddd8d0",
-                                  color: textPrimary,
-                                  backgroundColor: surfaceBg,
-                                }}
-                              >
-                                <Download className="w-4 h-4" style={{ color: "#ff9913" }} />
-                                View Your Voucher
-                              </a>
-                            ) : null;
-                          })()}
-                          {isTestMode && (
-                          <motion.button
-                            whileTap={{ scale: 0.97 }}
-                            onClick={downloadItinerary}
-                            className="flex items-center gap-2 text-sm font-semibold px-4 py-2.5 rounded-xl border transition-all hover:opacity-80"
-                            style={{
-                              borderColor: darkMode ? "rgba(255,255,255,0.1)" : "#ddd8d0",
-                              color: textPrimary,
-                              backgroundColor: surfaceBg,
-                            }}
-                          >
-                            <Download className="w-4 h-4" style={{ color: "#ff9913" }} />
-                            Download Itinerary
-                          </motion.button>
-                          )}
-                        </div>
-                      </BookingSection>
 
                     </div>
                 </motion.div>
@@ -2145,7 +2101,7 @@ export default function TravelBriefingLanding() {
             <StripeHeader eyebrow="Important" title="Emergency Contacts" description="Save these numbers before your trip. Available for any emergency during your stay." tk={tk} colored />
             <SectionCard darkMode={darkMode}>
               <div className="mb-4">
-                <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Save These Numbers</p>
+                <p className="text-xs font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Save These Numbers</p>
                 <p className="font-black text-base" style={{ color: textPrimary }}>Emergency Contacts</p>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -2153,9 +2109,9 @@ export default function TravelBriefingLanding() {
                 <div className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor: "rgba(255,153,19,0.3)", backgroundColor: "rgba(255,153,19,0.06)" }}>
                   <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(255,153,19,0.12)" }}>📞</div>
                   <div>
-                    <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Gladex Hotline</p>
+                    <p className="text-xs font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Gladex Hotline</p>
                     <a href="tel:+639178752200" className="text-sm font-black" style={{ color: "#ff9913" }}>+63 917 875 2200</a>
-                    <p className="text-[10px] mt-0.5" style={{ color: textMuted }}>Available 8AM–8PM</p>
+                    <p className="text-xs mt-0.5" style={{ color: textMuted }}>Available 8AM–8PM</p>
                   </div>
                 </div>
 
@@ -2178,7 +2134,7 @@ export default function TravelBriefingLanding() {
                       <div key={grp.group} className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor: "rgba(255,153,19,0.3)", backgroundColor: "rgba(255,153,19,0.06)" }}>
                         <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(255,153,19,0.12)" }}>{grp.icon}</div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>{grp.group}</p>
+                          <p className="text-xs font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>{grp.group}</p>
                           {multi ? (
                             <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 mt-1">
                               {contacts.map((c, i) => (
@@ -2206,7 +2162,7 @@ export default function TravelBriefingLanding() {
                             </>
                           )}
                           {grp.email && (
-                            <a href={`mailto:${grp.email}`} className="text-[10px] font-semibold mt-1 block" style={{ color: textMuted }}>{grp.email}</a>
+                            <a href={`mailto:${grp.email}`} className="text-xs font-semibold mt-1 block" style={{ color: textMuted }}>{grp.email}</a>
                           )}
                         </div>
                       </div>
@@ -2219,7 +2175,7 @@ export default function TravelBriefingLanding() {
                   <div className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor: "rgba(255,153,19,0.3)", backgroundColor: "rgba(255,153,19,0.06)" }}>
                     <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(255,153,19,0.12)" }}>👤</div>
                     <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Your Coordinator</p>
+                      <p className="text-xs font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Your Coordinator</p>
                       <p className="text-sm font-black" style={{ color: textPrimary }}>{activeBooking.consultantName || activeBooking.agentName}</p>
                       {activeBooking.consultantPhone ? (
                         <a href={`tel:${activeBooking.consultantPhone.replace(/\s/g,"")}`} className="text-xs font-bold" style={{ color: "#ff9913" }}>{activeBooking.consultantPhone}</a>
@@ -2233,7 +2189,7 @@ export default function TravelBriefingLanding() {
                   <div className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor: "rgba(255,153,19,0.3)", backgroundColor: "rgba(255,153,19,0.06)" }}>
                     <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(255,153,19,0.12)" }}>🏨</div>
                     <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Hotel</p>
+                      <p className="text-xs font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Hotel</p>
                       <p className="text-sm font-black" style={{ color: textPrimary }}>{activeBooking.hotel?.hotelName || activeBooking.tour?.hotelMention}</p>
                       {activeBooking.hotel?.hotelPhone ? (
                         <a href={`tel:${activeBooking.hotel.hotelPhone.replace(/\s/g,"")}`} className="text-xs font-bold" style={{ color: "#ff9913" }}>{activeBooking.hotel.hotelPhone}</a>
@@ -2247,7 +2203,7 @@ export default function TravelBriefingLanding() {
                   <div className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor: "rgba(255,153,19,0.3)", backgroundColor: "rgba(255,153,19,0.06)" }}>
                     <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(255,153,19,0.12)" }}>🚌</div>
                     <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Transfer Contact</p>
+                      <p className="text-xs font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Transfer Contact</p>
                       <p className="text-sm font-black" style={{ color: textPrimary }}>{activeBooking.transfer.supplier || "Transfer Coordinator"}</p>
                       <a href={`tel:${activeBooking.transfer.transferContact.replace(/\s/g,"")}`} className="text-xs font-bold" style={{ color: "#ff9913" }}>{activeBooking.transfer.transferContact}</a>
                     </div>
@@ -2282,7 +2238,7 @@ export default function TravelBriefingLanding() {
               }}
             >
               <div className="p-6 sm:p-8">
-                <p className="text-[10px] font-black uppercase tracking-widest mb-1" style={{ color: "#ff9913" }}>Official Briefing</p>
+                <p className="text-xs font-black uppercase tracking-widest mb-1" style={{ color: "#ff9913" }}>Official Briefing</p>
                 <h2
                   className="font-black mb-4"
                   style={{
@@ -2298,7 +2254,7 @@ export default function TravelBriefingLanding() {
 
                 {/* Badge */}
                 <div className="flex flex-wrap items-center gap-2 mb-5">
-                  <span className="text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-full" style={{ background: "#ff9913", color: "#fff" }}>
+                  <span className="text-xs font-black uppercase tracking-wider px-3 py-1.5 rounded-full" style={{ background: "#ff9913", color: "#fff" }}>
                     {dest.tagline}
                   </span>
                 </div>
@@ -2340,7 +2296,7 @@ export default function TravelBriefingLanding() {
                           <Check className="w-3.5 h-3.5" style={{ color: "#16a34a" }} strokeWidth={3} />
                         </div>
                         <div>
-                          <p className="text-[9px] font-black uppercase tracking-widest" style={{ color: textMuted }}>What's Covered</p>
+                          <p className="text-xs font-black uppercase tracking-widest" style={{ color: textMuted }}>What's Covered</p>
                           <p className="font-black text-sm leading-tight" style={{ color: "#16a34a", letterSpacing: "-0.01em" }}>Package Inclusions</p>
                         </div>
                       </div>
@@ -2363,7 +2319,7 @@ export default function TravelBriefingLanding() {
                           <X className="w-3.5 h-3.5" style={{ color: "#dc2626" }} strokeWidth={3} />
                         </div>
                         <div>
-                          <p className="text-[9px] font-black uppercase tracking-widest" style={{ color: textMuted }}>Not Covered</p>
+                          <p className="text-xs font-black uppercase tracking-widest" style={{ color: textMuted }}>Not Covered</p>
                           <p className="font-black text-sm leading-tight" style={{ color: "#dc2626", letterSpacing: "-0.01em" }}>Package Exclusions</p>
                         </div>
                       </div>
@@ -2431,7 +2387,7 @@ export default function TravelBriefingLanding() {
                       {info.travelTime && (
                         <div className="mt-4 rounded-xl border overflow-hidden" style={{ borderColor }}>
                           <div className="px-3 py-2" style={{ backgroundColor: darkMode ? "rgba(255,153,19,0.1)" : "rgba(255,153,19,0.07)" }}>
-                            <p className="text-[10px] font-black uppercase tracking-widest" style={{ color: "#ff9913" }}>Estimated Travel Time</p>
+                            <p className="text-xs font-black uppercase tracking-widest" style={{ color: "#ff9913" }}>Estimated Travel Time</p>
                           </div>
                           <div className="px-3 py-2.5 space-y-1.5">
                             {info.travelTime.breakdown.map((b) => (
@@ -2441,7 +2397,7 @@ export default function TravelBriefingLanding() {
                               </div>
                             ))}
                             <div className="pt-1.5 mt-1 border-t" style={{ borderColor }}>
-                              <p className="text-[10px] font-semibold" style={{ color: textMuted }}>{info.travelTime.summary}</p>
+                              <p className="text-xs font-semibold" style={{ color: textMuted }}>{info.travelTime.summary}</p>
                             </div>
                           </div>
                         </div>
@@ -2514,11 +2470,11 @@ export default function TravelBriefingLanding() {
               </div>
               <div className="grid grid-cols-2 gap-3 mb-5">
                 <div className="rounded-xl p-3 border" style={{ borderColor: "rgba(255,153,19,0.3)", backgroundColor: "rgba(255,153,19,0.07)" }}>
-                  <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: "#ff9913" }}>Check-In Time</p>
+                  <p className="text-xs font-bold uppercase tracking-wider mb-1" style={{ color: "#ff9913" }}>Check-In Time</p>
                   <p className="text-sm" style={{ color: textPrimary }}>{dest.hotelInfo.checkin}</p>
                 </div>
                 <div className="rounded-xl p-3 border" style={{ borderColor: "rgba(255,153,19,0.3)", backgroundColor: "rgba(255,153,19,0.07)" }}>
-                  <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: "#ff9913" }}>Check-Out Time</p>
+                  <p className="text-xs font-bold uppercase tracking-wider mb-1" style={{ color: "#ff9913" }}>Check-Out Time</p>
                   <p className="text-sm" style={{ color: textPrimary }}>{dest.hotelInfo.checkout}</p>
                 </div>
               </div>
@@ -2606,7 +2562,7 @@ export default function TravelBriefingLanding() {
                       <Check className="w-3.5 h-3.5" style={{ color: "#16a34a" }} strokeWidth={3} />
                     </div>
                     <div>
-                      <p className="text-[9px] font-black uppercase tracking-widest" style={{ color: textMuted }}>Behavior Guide</p>
+                      <p className="text-xs font-black uppercase tracking-widest" style={{ color: textMuted }}>Behavior Guide</p>
                       <p className="font-black text-sm leading-tight" style={{ color: "#16a34a", letterSpacing: "-0.01em" }}>Do's</p>
                     </div>
                   </div>
@@ -2625,7 +2581,7 @@ export default function TravelBriefingLanding() {
                       <X className="w-3.5 h-3.5" style={{ color: "#dc2626" }} strokeWidth={3} />
                     </div>
                     <div>
-                      <p className="text-[9px] font-black uppercase tracking-widest" style={{ color: textMuted }}>Avoid These</p>
+                      <p className="text-xs font-black uppercase tracking-widest" style={{ color: textMuted }}>Avoid These</p>
                       <p className="font-black text-sm leading-tight" style={{ color: "#dc2626", letterSpacing: "-0.01em" }}>Don'ts</p>
                     </div>
                   </div>
@@ -2732,7 +2688,7 @@ export default function TravelBriefingLanding() {
                   <div key={key}>
                     <div className="flex items-center gap-3 mb-3">
                       <div className="h-px flex-1" style={{ backgroundColor: "rgba(255,153,19,0.2)" }} />
-                      <p className="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full"
+                      <p className="text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full"
                         style={{ color: "#ff9913", border: "1px solid rgba(255,153,19,0.3)", backgroundColor: "rgba(255,153,19,0.06)" }}>
                         {label}
                       </p>
@@ -2884,7 +2840,7 @@ export default function TravelBriefingLanding() {
                         {/* YOUR REVIEW badge + edit button */}
                         {isOwn && (
                           <div className="flex items-center justify-between">
-                            <span className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full" style={{ backgroundColor: "rgba(255,153,19,0.15)", color: "#ff9913" }}>
+                            <span className="text-xs font-black uppercase tracking-widest px-2 py-0.5 rounded-full" style={{ backgroundColor: "rgba(255,153,19,0.15)", color: "#ff9913" }}>
                               Your Review
                             </span>
                             <div className="flex items-center gap-1.5">
@@ -2936,7 +2892,7 @@ export default function TravelBriefingLanding() {
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="font-black text-xs" style={{ color: isOwn ? "#ff9913" : textPrimary }}>{t.name}</p>
-                            <p className="text-[10px]" style={{ color: "#ff9913" }}>{t.location} · {t.date}</p>
+                            <p className="text-xs" style={{ color: "#ff9913" }}>{t.location} · {t.date}</p>
                           </div>
                         </div>
                         </div>
@@ -3056,7 +3012,7 @@ export default function TravelBriefingLanding() {
                   {(myReview?.review || reviewComment) && (
                     <p className="text-xs italic" style={{ color: !isTestMode ? "rgba(255,255,255,0.75)" : textMuted }}>"{myReview?.review || reviewComment}"</p>
                   )}
-                  <p className="text-[10px]" style={{ color: !isTestMode ? "rgba(255,255,255,0.65)" : textMuted }}>Your review is visible above in the traveler reviews section.</p>
+                  <p className="text-xs" style={{ color: !isTestMode ? "rgba(255,255,255,0.65)" : textMuted }}>Your review is visible above in the traveler reviews section.</p>
                 </div>
               ) : (
                 /* ── Form ── */
@@ -3083,7 +3039,7 @@ export default function TravelBriefingLanding() {
                     ))}
                   </div>
 
-                  <p className="text-[10px] font-black uppercase tracking-widest mb-1.5" style={{ color: !isTestMode ? "rgba(255,255,255,0.65)" : textMuted }}>
+                  <p className="text-xs font-black uppercase tracking-widest mb-1.5" style={{ color: !isTestMode ? "rgba(255,255,255,0.65)" : textMuted }}>
                     Comments <span className="font-normal normal-case tracking-normal">(optional)</span>
                   </p>
                   <textarea

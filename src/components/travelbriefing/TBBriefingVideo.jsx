@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import { Video, X, Maximize2 } from "lucide-react";
+import { Video, X, Maximize2, GripHorizontal } from "lucide-react";
 
 const FLOAT_W = 155;
 const FLOAT_H = Math.round(FLOAT_W * 16 / 9);
@@ -49,9 +49,13 @@ export default function TBBriefingVideo({ dest, darkMode, tk }) {
     const onUp = () => { drag.current.active = false; };
     window.addEventListener("touchmove", onMove, { passive: false });
     window.addEventListener("touchend",  onUp);
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup",   onUp);
     return () => {
       window.removeEventListener("touchmove", onMove);
       window.removeEventListener("touchend",  onUp);
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup",   onUp);
     };
   }, []);
 
@@ -238,23 +242,23 @@ export default function TBBriefingVideo({ dest, darkMode, tk }) {
             </>
           )}
 
-          {/* Float title bar — drag handle */}
+          {/* Float title bar — drag handle (mouse + touch) */}
           {showFloat && (
             <div
+              onMouseDown={onDragStart}
               onTouchStart={onDragStart}
-              style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "6px 8px 5px", background: "rgba(0,0,0,0.82)", zIndex: 10, touchAction: "none", cursor: "grab", userSelect: "none" }}
+              title="Hold and drag to move"
+              style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "5px 8px 6px", background: "rgba(0,0,0,0.88)", zIndex: 10, touchAction: "none", cursor: "grab", userSelect: "none" }}
             >
-              <div style={{ display: "flex", justifyContent: "center", gap: "3px", marginBottom: "3px" }}>
-                {[0,1,2].map(i => <span key={i} style={{ display: "block", width: "4px", height: "4px", borderRadius: "50%", background: "rgba(255,255,255,0.4)" }} />)}
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "4px" }}>
+                <GripHorizontal style={{ width: "12px", height: "12px", color: "rgba(255,255,255,0.45)", flexShrink: 0 }} />
+                <span style={{ color: "rgba(255,255,255,0.55)", fontSize: "12px", letterSpacing: "0.06em", textTransform: "uppercase" }}>hold & drag</span>
               </div>
-              <p style={{ color: "#fff", fontSize: "9px", fontWeight: 700, margin: 0, letterSpacing: "0.02em", overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis" }}>
-                {dest.video?.title || `${dest.name} Briefing`}
-              </p>
             </div>
           )}
         </div>
 
-        {/* Buttons outside the float */}
+        {/* Buttons floating clearly above the card — 10px gap, not overlapping */}
         {showFloat && !dismissed && (
           <>
             <button
@@ -264,14 +268,14 @@ export default function TBBriefingVideo({ dest, darkMode, tk }) {
               style={{
                 position: "fixed",
                 ...(dragPos
-                  ? { top: `${dragPos.y - 14}px`, left: `${dragPos.x + FLOAT_W - 14 - 36}px` }
-                  : { bottom: `${FLOAT_H + 20 - 14}px`, left: `${20 + FLOAT_W - 14 - 36}px` }),
-                zIndex: 10000, width: "28px", height: "28px", borderRadius: "50%",
-                background: "#fff", border: "none", boxShadow: "0 2px 8px rgba(0,0,0,0.3)", color: "#333",
+                  ? { top: `${dragPos.y - 42}px`, left: `${dragPos.x + FLOAT_W / 2 - 36}px` }
+                  : { bottom: `${FLOAT_H + 20 + 10}px`, left: `${20 + FLOAT_W / 2 - 36}px` }),
+                zIndex: 10000, width: "32px", height: "32px", borderRadius: "50%",
+                background: "#fff", border: "none", boxShadow: "0 2px 10px rgba(0,0,0,0.25)", color: "#333",
                 display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: 0,
               }}
             >
-              <Maximize2 style={{ width: "12px", height: "12px" }} />
+              <Maximize2 style={{ width: "13px", height: "13px" }} />
             </button>
 
             <button
@@ -280,14 +284,14 @@ export default function TBBriefingVideo({ dest, darkMode, tk }) {
               style={{
                 position: "fixed",
                 ...(dragPos
-                  ? { top: `${dragPos.y - 14}px`, left: `${dragPos.x + FLOAT_W - 14}px` }
-                  : { bottom: `${FLOAT_H + 20 - 14}px`, left: `${20 + FLOAT_W - 14}px` }),
-                zIndex: 10000, width: "28px", height: "28px", borderRadius: "50%",
-                background: "#fff", border: "none", boxShadow: "0 2px 8px rgba(0,0,0,0.3)", color: "#333",
+                  ? { top: `${dragPos.y - 42}px`, left: `${dragPos.x + FLOAT_W / 2 + 4}px` }
+                  : { bottom: `${FLOAT_H + 20 + 10}px`, left: `${20 + FLOAT_W / 2 + 4}px` }),
+                zIndex: 10000, width: "32px", height: "32px", borderRadius: "50%",
+                background: "#fff", border: "none", boxShadow: "0 2px 10px rgba(0,0,0,0.25)", color: "#333",
                 display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: 0,
               }}
             >
-              <X style={{ width: "12px", height: "12px" }} />
+              <X style={{ width: "13px", height: "13px" }} />
             </button>
           </>
         )}
