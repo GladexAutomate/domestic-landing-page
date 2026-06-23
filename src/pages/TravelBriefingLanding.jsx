@@ -1851,7 +1851,7 @@ export default function TravelBriefingLanding() {
                   >
                     Your Trip Is Confirmed! 🧡
                   </h1>
-                  <p className="text-sm font-medium mb-5" style={{ color: "rgba(255,255,255,0.82)" }}>
+                  <p className="text-sm font-semibold mb-5" style={{ color: "rgba(255,255,255,0.95)" }}>
                     Hi {activeBooking.leadName.split(" ")[0]}! Your {dest.name} trip is all set.
                   </p>
                   {/* 4 info chips */}
@@ -1871,11 +1871,11 @@ export default function TravelBriefingLanding() {
                       <div
                         key={label}
                         className="rounded-xl px-3 py-2.5"
-                        style={{ background: "rgba(0,0,0,0.18)" }}
+                        style={{ background: "rgba(0,0,0,0.22)" }}
                       >
                         <p
                           className="text-xs font-bold uppercase tracking-wider mb-0.5"
-                          style={{ color: "rgba(255,255,255,0.62)" }}
+                          style={{ color: "rgba(255,255,255,0.82)" }}
                         >
                           {label}
                         </p>
