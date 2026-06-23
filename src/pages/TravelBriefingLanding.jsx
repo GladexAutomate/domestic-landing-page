@@ -2396,19 +2396,18 @@ export default function TravelBriefingLanding() {
             4. TRAVEL INFORMATION CENTER
            ══════════════════════════════════════════════════ */}
 
-        <SectionStripe alt={1} darkMode={darkMode}>
+        <SectionStripe alt={0} darkMode={darkMode}>
           <FadeIn>
-            <StripeHeader eyebrow="Operational Information" title="Travel Information Center" description="Arrival instructions, hotel check-in, transfers, and local info — everything in one place." tk={tk} colored />
-            <SectionCard darkMode={darkMode}>
+            <StripeHeader eyebrow="Operational Information" title="Travel Information Center" description="Arrival instructions, hotel check-in, transfers, and local info — everything in one place." tk={tk} />
             <div className="space-y-4">
 
-              {/* 5a. Arrival Instructions */}
-              <div className="rounded-2xl overflow-hidden" style={{ boxShadow: cardShadow }}>
-                <div className="px-5 py-3.5" style={{ background: "linear-gradient(160deg, #ff9913 0%, #e07800 100%)" }}>
+              {/* 5a. Arrival Instructions — ORANGE */}
+              <div className="rounded-2xl overflow-hidden" style={{ background: "linear-gradient(155deg, #ff9913 0%, #d96800 100%)" }}>
+                <div className="px-5 py-4">
                   <p className="font-bold text-base text-white">Arrival Instructions</p>
                   <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.75)" }}>How to get from the airport to your hotel</p>
                 </div>
-                <div className="p-5 space-y-7" style={{ backgroundColor: cardBg, border: `1px solid ${borderColor}`, borderTop: "none" }}>
+                <div className="mx-3 mb-3 p-5 space-y-7 rounded-xl" style={{ backgroundColor: cardBg }}>
                   {dest.arrivalInstructions.tabs.map(({ key, label }, tabIdx) => {
                     const info = dest.arrivalInstructions[key];
                     if (!info) return null;
@@ -2470,13 +2469,13 @@ export default function TravelBriefingLanding() {
                 </div>
               </div>
 
-              {/* 5b. Transfer Instructions */}
-              <div className="rounded-2xl overflow-hidden" style={{ boxShadow: cardShadow }}>
-                <div className="px-5 py-3.5" style={{ background: "linear-gradient(160deg, #ff9913 0%, #e07800 100%)" }}>
-                  <p className="font-bold text-base text-white">Transfer Instructions</p>
-                  <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.75)" }}>Arrival and departure transport details</p>
+              {/* 5b. Transfer Instructions — WHITE */}
+              <div className="rounded-2xl overflow-hidden border" style={{ backgroundColor: cardBg, borderColor, boxShadow: cardShadow }}>
+                <div className="px-5 py-4" style={{ borderBottom: `1px solid ${borderColor}` }}>
+                  <p className="font-bold text-base" style={{ color: textPrimary }}>Transfer Instructions</p>
+                  <p className="text-xs mt-0.5" style={{ color: textMuted }}>Arrival and departure transport details</p>
                 </div>
-                <div className="p-5 space-y-6" style={{ backgroundColor: cardBg, border: `1px solid ${borderColor}`, borderTop: "none" }}>
+                <div className="p-5 space-y-6">
                   {[
                     { key: "arrival",   label: "Arrival Transfer" },
                     { key: "departure", label: "Departure Transfer" },
@@ -2501,13 +2500,13 @@ export default function TravelBriefingLanding() {
                 </div>
               </div>
 
-              {/* 5c. Hotel Check-In */}
-              <div className="rounded-2xl overflow-hidden" style={{ boxShadow: cardShadow }}>
-                <div className="px-5 py-3.5" style={{ background: "linear-gradient(160deg, #ff9913 0%, #e07800 100%)" }}>
+              {/* 5c. Hotel Check-In — ORANGE */}
+              <div className="rounded-2xl overflow-hidden" style={{ background: "linear-gradient(155deg, #ff9913 0%, #d96800 100%)" }}>
+                <div className="px-5 py-4">
                   <p className="font-bold text-base text-white">Hotel Check-In Information</p>
                   <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.75)" }}>Arriving at your accommodation</p>
                 </div>
-                <div className="p-5" style={{ backgroundColor: cardBg, border: `1px solid ${borderColor}`, borderTop: "none" }}>
+                <div className="mx-3 mb-3 p-5 rounded-xl" style={{ backgroundColor: cardBg }}>
                   <div className="grid grid-cols-2 gap-3 mb-5">
                     <div className="rounded-xl p-3 border" style={{ borderColor: "rgba(255,153,19,0.3)", backgroundColor: "rgba(255,153,19,0.07)" }}>
                       <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: "#ff9913" }}>Check-In Time</p>
@@ -2529,13 +2528,13 @@ export default function TravelBriefingLanding() {
                 </div>
               </div>
 
-              {/* 5d. Travel Requirements */}
-              <div className="rounded-2xl overflow-hidden" style={{ boxShadow: cardShadow }}>
-                <div className="px-5 py-3.5" style={{ background: "linear-gradient(160deg, #ff9913 0%, #e07800 100%)" }}>
-                  <p className="font-bold text-base text-white">Travel Requirements</p>
-                  <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.75)" }}>Documents and entry requirements</p>
+              {/* 5d. Travel Requirements — WHITE */}
+              <div className="rounded-2xl overflow-hidden border" style={{ backgroundColor: cardBg, borderColor, boxShadow: cardShadow }}>
+                <div className="px-5 py-4" style={{ borderBottom: `1px solid ${borderColor}` }}>
+                  <p className="font-bold text-base" style={{ color: textPrimary }}>Travel Requirements</p>
+                  <p className="text-xs mt-0.5" style={{ color: textMuted }}>Documents and entry requirements</p>
                 </div>
-                <div className="p-5" style={{ backgroundColor: cardBg, border: `1px solid ${borderColor}`, borderTop: "none" }}>
+                <div className="p-5">
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
                     {[
                       { label: "Filipino Travelers",  items: dest.requirements.filipino },
@@ -2557,13 +2556,13 @@ export default function TravelBriefingLanding() {
                 </div>
               </div>
 
-              {/* 5e. Tour Reminders */}
-              <div className="rounded-2xl overflow-hidden" style={{ boxShadow: cardShadow }}>
-                <div className="px-5 py-3.5" style={{ background: "linear-gradient(160deg, #ff9913 0%, #e07800 100%)" }}>
+              {/* 5e. Tour Reminders — ORANGE */}
+              <div className="rounded-2xl overflow-hidden" style={{ background: "linear-gradient(155deg, #ff9913 0%, #d96800 100%)" }}>
+                <div className="px-5 py-4">
                   <p className="font-bold text-base text-white">Tour Reminders</p>
                   <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.75)" }}>What to remember before, during, and after your tour</p>
                 </div>
-                <div className="p-5 space-y-6" style={{ backgroundColor: cardBg, border: `1px solid ${borderColor}`, borderTop: "none" }}>
+                <div className="mx-3 mb-3 p-5 space-y-6 rounded-xl" style={{ backgroundColor: cardBg }}>
                   {[
                     { key: "before",    label: "Before Your Trip" },
                     { key: "during",    label: "During Your Stay" },
@@ -2631,7 +2630,6 @@ export default function TravelBriefingLanding() {
               </div>
 
             </div>
-            </SectionCard>
           </FadeIn>
         </SectionStripe>
 
@@ -2639,9 +2637,9 @@ export default function TravelBriefingLanding() {
             5b2. CURRENCY & MONEY TIPS
            ══════════════════════════════════════════════════ */}
         {dest.currency && (
-          <SectionStripe alt={0} darkMode={darkMode}>
+          <SectionStripe alt={1} darkMode={darkMode}>
             <FadeIn>
-              <StripeHeader eyebrow="Money Matters" title="Currency Guide" description="Tips on handling money and exchange rates during your trip." tk={tk} />
+              <StripeHeader eyebrow="Money Matters" title="Currency Guide" description="Tips on handling money and exchange rates during your trip." tk={tk} colored />
               <SectionCard darkMode={darkMode}>
                 <div className="flex items-center gap-3 mb-4 pb-4" style={{ borderBottom: `1px solid ${borderColor}` }}>
                   <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 text-base font-black" style={{ background: "rgba(255,153,19,0.12)", color: "#ff9913" }}>
@@ -2671,9 +2669,9 @@ export default function TravelBriefingLanding() {
             5b3. SAFETY TIPS
            ══════════════════════════════════════════════════ */}
         {dest.safetyTips?.length > 0 && (
-          <SectionStripe alt={1} darkMode={darkMode}>
+          <SectionStripe alt={0} darkMode={darkMode}>
             <FadeIn>
-              <StripeHeader eyebrow="Stay Safe" title="Safety Tips" description="Important safety reminders to keep you and your group protected." tk={tk} colored />
+              <StripeHeader eyebrow="Stay Safe" title="Safety Tips" description="Important safety reminders to keep you and your group protected." tk={tk} />
               <div className="rounded-2xl overflow-hidden" style={{ boxShadow: cardShadow }}>
                 <div className="px-5 py-3.5" style={{ background: "linear-gradient(160deg, #ff9913 0%, #e07800 100%)" }}>
                   <p className="font-bold text-base text-white">Important Safety Guidelines</p>
@@ -2697,9 +2695,9 @@ export default function TravelBriefingLanding() {
         {/* ══════════════════════════════════════════════════
             7. TRAVEL READINESS CHECKLIST
            ══════════════════════════════════════════════════ */}
-        <SectionStripe alt={0} darkMode={darkMode}>
+        <SectionStripe alt={1} darkMode={darkMode}>
           <FadeIn>
-            <StripeHeader eyebrow="Packing Checklist" title="Travel Readiness Checklist" description="Check off everything you need before heading to the airport." tk={tk} />
+            <StripeHeader eyebrow="Packing Checklist" title="Travel Readiness Checklist" description="Check off everything you need before heading to the airport." tk={tk} colored />
             <SectionCard darkMode={darkMode}>
               <TBChecklist dest={dest} darkMode={darkMode} tk={tk} />
             </SectionCard>
@@ -2710,9 +2708,9 @@ export default function TravelBriefingLanding() {
             7. WHAT TO BRING — Packing Guide
            ══════════════════════════════════════════════════ */}
         {dest.packingGuide && (
-          <SectionStripe alt={1} darkMode={darkMode}>
+          <SectionStripe alt={0} darkMode={darkMode}>
             <FadeIn>
-              <StripeHeader eyebrow="Packing Guide" title="What to Bring" description="Pack smart — everything you need for a comfortable and stress-free trip." tk={tk} colored />
+              <StripeHeader eyebrow="Packing Guide" title="What to Bring" description="Pack smart — everything you need for a comfortable and stress-free trip." tk={tk} />
               <div className={`${pad} space-y-6`}>
               {[
                 { key: "documents",           label: "Documents" },
@@ -2761,9 +2759,9 @@ export default function TravelBriefingLanding() {
             8. OUTFIT GUIDE
            ══════════════════════════════════════════════════ */}
         {dest.outfitGuide?.length >= 2 && (
-          <SectionStripe alt={0} darkMode={darkMode}>
+          <SectionStripe alt={1} darkMode={darkMode}>
             <FadeIn>
-              <StripeHeader eyebrow="Dress for the Trip" title="Outfit Guide" description="What to wear for each part of your trip — airport, beach, and dinner." tk={tk} />
+              <StripeHeader eyebrow="Dress for the Trip" title="Outfit Guide" description="What to wear for each part of your trip — airport, beach, and dinner." tk={tk} colored />
               <SectionCard darkMode={darkMode}>
                 <OutfitGuideSection
                   dest={dest}
@@ -2783,12 +2781,10 @@ export default function TravelBriefingLanding() {
         {/* ══════════════════════════════════════════════════
             9. DESTINATION GUIDE
            ══════════════════════════════════════════════════ */}
-        <SectionStripe alt={1} darkMode={darkMode}>
+        <SectionStripe alt={0} darkMode={darkMode}>
           <FadeIn>
-            <StripeHeader eyebrow="Know Your Destination" title="Destination Guide" tk={tk} colored />
-            <SectionCard darkMode={darkMode}>
+            <StripeHeader eyebrow="Know Your Destination" title="Destination Guide" tk={tk} />
             <TBDestinationGuide dest={dest} darkMode={darkMode} tk={tk} />
-            </SectionCard>
           </FadeIn>
         </SectionStripe>
 
@@ -2797,13 +2793,14 @@ export default function TravelBriefingLanding() {
             10. TRAVEL INSURANCE
            ══════════════════════════════════════════════════ */}
         {isTestMode && activeBooking && (
-          <SectionStripe alt={0} darkMode={darkMode}>
+          <SectionStripe alt={1} darkMode={darkMode}>
             <FadeIn>
               <StripeHeader
                 eyebrow="Optional Add-On"
                 title="Protect Your Trip"
                 description="TraveLead Domestic Travel Insurance by Starr International. Prices auto-calculated for your exact travel dates and party size."
                 tk={tk}
+                colored
               />
               <SectionCard darkMode={darkMode}>
                 <TBInsurance booking={activeBooking} dest={dest} darkMode={darkMode} tk={tk} />
@@ -2815,9 +2812,9 @@ export default function TravelBriefingLanding() {
         {/* ══════════════════════════════════════════════════
             13. FREQUENTLY ASKED QUESTIONS
            ══════════════════════════════════════════════════ */}
-        <SectionStripe alt={isTestMode ? 1 : 0} darkMode={darkMode}>
+        <SectionStripe alt={isTestMode ? 0 : 1} darkMode={darkMode}>
           <FadeIn>
-            <StripeHeader eyebrow="Have Questions?" title="Frequently Asked Questions" description="Common questions from Gladex travelers — answered before you even ask." tk={tk} colored={isTestMode} />
+            <StripeHeader eyebrow="Have Questions?" title="Frequently Asked Questions" description="Common questions from Gladex travelers — answered before you even ask." tk={tk} colored={!isTestMode} />
             <SectionCard darkMode={darkMode}>
               <TBFAQs dest={dest} darkMode={darkMode} tk={tk} />
             </SectionCard>
@@ -2827,9 +2824,9 @@ export default function TravelBriefingLanding() {
         {/* ══════════════════════════════════════════════════
             14. TESTIMONIALS
            ══════════════════════════════════════════════════ */}
-        <SectionStripe alt={isTestMode ? 0 : 1} darkMode={darkMode}>
+        <SectionStripe alt={isTestMode ? 1 : 0} darkMode={darkMode}>
           <FadeIn>
-            <StripeHeader eyebrow="Traveler Reviews" title="Real Gladex Travel Experiences" tk={tk} colored={!isTestMode} />
+            <StripeHeader eyebrow="Traveler Reviews" title="Real Gladex Travel Experiences" tk={tk} colored={isTestMode} />
 
             {/* Carousel cards */}
             {(() => {
@@ -3031,9 +3028,9 @@ export default function TravelBriefingLanding() {
         {/* ══════════════════════════════════════════════════
             15. RATE MY SERVICE
            ══════════════════════════════════════════════════ */}
-        <SectionStripe alt={isTestMode ? 1 : 0} darkMode={darkMode}>
+        <SectionStripe alt={isTestMode ? 0 : 1} darkMode={darkMode}>
           <FadeIn>
-            <StripeHeader eyebrow="Your Experience" title="Review Our Service" description="Your feedback helps us improve every trip for future travelers." tk={tk} colored={isTestMode} />
+            <StripeHeader eyebrow="Your Experience" title="Review Our Service" description="Your feedback helps us improve every trip for future travelers." tk={tk} colored={!isTestMode} />
             <div className="rounded-2xl border p-5" style={{ ...(!isTestMode ? orangeCard : card) }}>
               {(reviewSubmitted || myReview) ? (
                 /* ── Already submitted ── */
@@ -3162,9 +3159,9 @@ export default function TravelBriefingLanding() {
         {/* ══════════════════════════════════════════════════
             Important Notes
            ══════════════════════════════════════════════════ */}
-        <SectionStripe alt={isTestMode ? 0 : 1} darkMode={darkMode}>
+        <SectionStripe alt={isTestMode ? 1 : 0} darkMode={darkMode}>
           <FadeIn>
-            <StripeHeader eyebrow="Before You Go" title="Important Notes" description="Please read these reminders carefully before your trip begins." tk={tk} colored={!isTestMode} />
+            <StripeHeader eyebrow="Before You Go" title="Important Notes" description="Please read these reminders carefully before your trip begins." tk={tk} colored={isTestMode} />
             <div className="rounded-2xl border overflow-hidden" style={{ ...card }}>
               <div className="px-5 pt-4 pb-3 border-b flex items-center gap-2" style={{ borderColor }}>
                 <AlertTriangle className="w-4 h-4 shrink-0" style={{ color: "#ff9913" }} />
