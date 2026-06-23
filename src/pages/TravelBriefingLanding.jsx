@@ -3200,7 +3200,7 @@ export default function TravelBriefingLanding() {
 
       {/* ── Floating contact circle — appears with back-to-top ── */}
       <AnimatePresence>
-        {activeBooking && showBackToTop && (
+        {activeBooking && (
           <motion.button
             key="contact-btn"
             initial={{ opacity: 0, y: 12 }}
