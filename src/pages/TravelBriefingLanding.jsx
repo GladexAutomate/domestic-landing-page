@@ -2399,236 +2399,238 @@ export default function TravelBriefingLanding() {
         <SectionStripe alt={0} darkMode={darkMode}>
           <FadeIn>
             <StripeHeader eyebrow="Operational Information" title="Travel Information Center" description="Arrival instructions, hotel check-in, transfers, and local info — everything in one place." tk={tk} />
-            <div className="space-y-4">
+          </FadeIn>
+        </SectionStripe>
 
-              {/* 5a. Arrival Instructions — ORANGE */}
-              <div className="rounded-2xl overflow-hidden" style={{ background: "linear-gradient(155deg, #ff9913 0%, #d96800 100%)" }}>
-                <div className="px-5 py-4">
-                  <p className="font-bold text-base text-white">Arrival Instructions</p>
-                  <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.75)" }}>How to get from the airport to your hotel</p>
-                </div>
-                <div className="px-5 pb-5 space-y-7">
-                  {dest.arrivalInstructions.tabs.map(({ key, label }, tabIdx) => {
-                    const info = dest.arrivalInstructions[key];
-                    if (!info) return null;
-                    return (
-                      <div key={key} className={tabIdx > 0 ? "pt-6 border-t" : ""} style={{ borderColor: "rgba(255,255,255,0.25)" }}>
-                        <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: "rgba(255,255,255,0.8)" }}>{label}</p>
-                        <div className="space-y-3">
-                          {info.steps.map((step, i) => (
-                            <div key={i} className="flex items-start gap-3">
-                              <div className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-black" style={{ background: "rgba(255,255,255,0.25)", color: "#fff" }}>
-                                {i + 1}
-                              </div>
-                              <p className="text-sm leading-snug pt-1" style={{ color: "#fff" }}>{step}</p>
+        {/* 5a. Arrival Instructions — ORANGE full-bleed */}
+        <SectionStripe alt={1} darkMode={darkMode} py="py-7">
+          <FadeIn>
+            <div className="mb-5">
+              <p className="font-bold text-base text-white">Arrival Instructions</p>
+              <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.75)" }}>How to get from the airport to your hotel</p>
+            </div>
+            <div className="space-y-7">
+              {dest.arrivalInstructions.tabs.map(({ key, label }, tabIdx) => {
+                const info = dest.arrivalInstructions[key];
+                if (!info) return null;
+                return (
+                  <div key={key} className={tabIdx > 0 ? "pt-6 border-t" : ""} style={{ borderColor: "rgba(255,255,255,0.25)" }}>
+                    <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: "rgba(255,255,255,0.8)" }}>{label}</p>
+                    <div className="space-y-3">
+                      {info.steps.map((step, i) => (
+                        <div key={i} className="flex items-start gap-3">
+                          <div className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-black" style={{ background: "rgba(255,255,255,0.25)", color: "#fff" }}>
+                            {i + 1}
+                          </div>
+                          <p className="text-sm leading-snug pt-1" style={{ color: "#fff" }}>{step}</p>
+                        </div>
+                      ))}
+                    </div>
+                    {info.note && (
+                      <div className="mt-4 p-3 rounded-xl border text-xs flex items-start gap-2" style={{ borderColor: "rgba(255,255,255,0.2)", backgroundColor: "rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.85)" }}>
+                        <Info className="w-3.5 h-3.5 shrink-0 mt-0.5 text-white opacity-80" />
+                        {info.note}
+                      </div>
+                    )}
+                    {info.travelTime && (
+                      <div className="mt-4 rounded-xl border overflow-hidden" style={{ borderColor: "rgba(255,255,255,0.25)" }}>
+                        <div className="px-3 py-2" style={{ backgroundColor: "rgba(255,255,255,0.15)" }}>
+                          <p className="text-[10px] font-black uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.8)" }}>Estimated Travel Time</p>
+                        </div>
+                        <div className="px-3 py-2.5 space-y-1.5">
+                          {info.travelTime.breakdown.map((b) => (
+                            <div key={b.leg} className="flex items-center justify-between gap-3">
+                              <p className="text-xs" style={{ color: "rgba(255,255,255,0.75)" }}>{b.leg}</p>
+                              <p className="text-xs font-bold shrink-0" style={{ color: "#fff" }}>{b.duration}</p>
                             </div>
                           ))}
+                          <div className="pt-1.5 mt-1 border-t" style={{ borderColor: "rgba(255,255,255,0.25)" }}>
+                            <p className="text-[10px] font-semibold" style={{ color: "rgba(255,255,255,0.75)" }}>{info.travelTime.summary}</p>
+                          </div>
                         </div>
-                        {info.note && (
-                          <div className="mt-4 p-3 rounded-xl border text-xs flex items-start gap-2" style={{ borderColor: "rgba(255,255,255,0.2)", backgroundColor: "rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.85)" }}>
-                            <Info className="w-3.5 h-3.5 shrink-0 mt-0.5 text-white opacity-80" />
-                            {info.note}
-                          </div>
-                        )}
-                        {info.travelTime && (
-                          <div className="mt-4 rounded-xl border overflow-hidden" style={{ borderColor: "rgba(255,255,255,0.25)" }}>
-                            <div className="px-3 py-2" style={{ backgroundColor: "rgba(255,255,255,0.15)" }}>
-                              <p className="text-[10px] font-black uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.8)" }}>Estimated Travel Time</p>
-                            </div>
-                            <div className="px-3 py-2.5 space-y-1.5">
-                              {info.travelTime.breakdown.map((b) => (
-                                <div key={b.leg} className="flex items-center justify-between gap-3">
-                                  <p className="text-xs" style={{ color: "rgba(255,255,255,0.75)" }}>{b.leg}</p>
-                                  <p className="text-xs font-bold shrink-0" style={{ color: "#fff" }}>{b.duration}</p>
-                                </div>
-                              ))}
-                              <div className="pt-1.5 mt-1 border-t" style={{ borderColor: "rgba(255,255,255,0.25)" }}>
-                                <p className="text-[10px] font-semibold" style={{ color: "rgba(255,255,255,0.75)" }}>{info.travelTime.summary}</p>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                        {info.vanSchedule && (
-                          <div className="mt-4">
-                            <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.75)" }}>Van Transfer Schedule</p>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                              <div className="rounded-xl p-3 border" style={{ borderColor: "rgba(255,255,255,0.2)", backgroundColor: "rgba(255,255,255,0.12)" }}>
-                                <p className="text-xs font-bold mb-2" style={{ color: "#fff" }}>Puerto Princesa → El Nido</p>
-                                {info.vanSchedule.ppsToElNido.map((s) => (<p key={s} className="text-xs py-0.5" style={{ color: "rgba(255,255,255,0.9)" }}>{s}</p>))}
-                              </div>
-                              <div className="rounded-xl p-3 border" style={{ borderColor: "rgba(255,255,255,0.2)", backgroundColor: "rgba(255,255,255,0.12)" }}>
-                                <p className="text-xs font-bold mb-2" style={{ color: "#fff" }}>El Nido → Puerto Princesa</p>
-                                {info.vanSchedule.elNidoToPps.map((s) => (<p key={s} className="text-xs py-0.5" style={{ color: "rgba(255,255,255,0.9)" }}>{s}</p>))}
-                              </div>
-                            </div>
-                          </div>
-                        )}
                       </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* 5b. Transfer Instructions — WHITE */}
-              <div className="rounded-2xl overflow-hidden border" style={{ backgroundColor: cardBg, borderColor, boxShadow: cardShadow }}>
-                <div className="px-5 py-4" style={{ borderBottom: `1px solid ${borderColor}` }}>
-                  <p className="font-bold text-base" style={{ color: textPrimary }}>Transfer Instructions</p>
-                  <p className="text-xs mt-0.5" style={{ color: textMuted }}>Arrival and departure transport details</p>
-                </div>
-                <div className="p-5 space-y-6">
-                  {[
-                    { key: "arrival",   label: "Arrival Transfer" },
-                    { key: "departure", label: "Departure Transfer" },
-                  ].map(({ key, label }, gi) => (
-                    <div key={key} className={gi > 0 ? "pt-5" : ""} style={{ borderTop: gi > 0 ? `1px solid ${borderColor}` : undefined }}>
-                      <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: "#ff9913" }}>{label}</p>
-                      <div className="space-y-3">
-                        {dest.transferInstructions[key].map((s) => (
-                          <div key={s.step} className="flex items-start gap-3">
-                            <div className="shrink-0 w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black" style={{ background: "linear-gradient(135deg, #ff9913, #cc7700)", color: "#fff" }}>
-                              {s.step}
-                            </div>
-                            <div className="pt-1">
-                              <p className="text-sm font-bold mb-0.5" style={{ color: textPrimary }}>{s.title}</p>
-                              <p className="text-sm leading-relaxed" style={muted}>{s.desc}</p>
-                            </div>
+                    )}
+                    {info.vanSchedule && (
+                      <div className="mt-4">
+                        <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.75)" }}>Van Transfer Schedule</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div className="rounded-xl p-3 border" style={{ borderColor: "rgba(255,255,255,0.2)", backgroundColor: "rgba(255,255,255,0.12)" }}>
+                            <p className="text-xs font-bold mb-2" style={{ color: "#fff" }}>Puerto Princesa → El Nido</p>
+                            {info.vanSchedule.ppsToElNido.map((s) => (<p key={s} className="text-xs py-0.5" style={{ color: "rgba(255,255,255,0.9)" }}>{s}</p>))}
                           </div>
-                        ))}
+                          <div className="rounded-xl p-3 border" style={{ borderColor: "rgba(255,255,255,0.2)", backgroundColor: "rgba(255,255,255,0.12)" }}>
+                            <p className="text-xs font-bold mb-2" style={{ color: "#fff" }}>El Nido → Puerto Princesa</p>
+                            {info.vanSchedule.elNidoToPps.map((s) => (<p key={s} className="text-xs py-0.5" style={{ color: "rgba(255,255,255,0.9)" }}>{s}</p>))}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* 5c. Hotel Check-In — ORANGE */}
-              <div className="rounded-2xl overflow-hidden" style={{ background: "linear-gradient(155deg, #ff9913 0%, #d96800 100%)" }}>
-                <div className="px-5 py-4">
-                  <p className="font-bold text-base text-white">Hotel Check-In Information</p>
-                  <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.75)" }}>Arriving at your accommodation</p>
-                </div>
-                <div className="px-5 pb-5">
-                  <div className="grid grid-cols-2 gap-3 mb-5">
-                    <div className="rounded-xl p-3 border" style={{ borderColor: "rgba(255,255,255,0.25)", backgroundColor: "rgba(255,255,255,0.15)" }}>
-                      <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: "rgba(255,255,255,0.8)" }}>Check-In Time</p>
-                      <p className="text-sm" style={{ color: "#fff" }}>{dest.hotelInfo.checkin}</p>
-                    </div>
-                    <div className="rounded-xl p-3 border" style={{ borderColor: "rgba(255,255,255,0.25)", backgroundColor: "rgba(255,255,255,0.15)" }}>
-                      <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: "rgba(255,255,255,0.8)" }}>Check-Out Time</p>
-                      <p className="text-sm" style={{ color: "#fff" }}>{dest.hotelInfo.checkout}</p>
-                    </div>
+                    )}
                   </div>
-                  <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.8)" }}>Upon Arrival:</p>
-                  <ul className="space-y-2.5">
-                    {dest.hotelInfo.notes.map((note) => (
-                      <li key={note} className="flex items-start gap-2 text-sm leading-snug" style={{ color: "#fff" }}>
-                        <span className="text-white opacity-70 shrink-0 mt-0.5">•</span> {note}
+                );
+              })}
+            </div>
+          </FadeIn>
+        </SectionStripe>
+
+        {/* 5b. Transfer Instructions — WHITE full-bleed */}
+        <SectionStripe alt={0} darkMode={darkMode} py="py-7">
+          <FadeIn>
+            <div className="mb-5 pb-4" style={{ borderBottom: `1px solid ${borderColor}` }}>
+              <p className="font-bold text-base" style={{ color: textPrimary }}>Transfer Instructions</p>
+              <p className="text-xs mt-0.5" style={{ color: textMuted }}>Arrival and departure transport details</p>
+            </div>
+            <div className="space-y-6">
+              {[
+                { key: "arrival",   label: "Arrival Transfer" },
+                { key: "departure", label: "Departure Transfer" },
+              ].map(({ key, label }, gi) => (
+                <div key={key} className={gi > 0 ? "pt-5" : ""} style={{ borderTop: gi > 0 ? `1px solid ${borderColor}` : undefined }}>
+                  <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: "#ff9913" }}>{label}</p>
+                  <div className="space-y-3">
+                    {dest.transferInstructions[key].map((s) => (
+                      <div key={s.step} className="flex items-start gap-3">
+                        <div className="shrink-0 w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black" style={{ background: "linear-gradient(135deg, #ff9913, #cc7700)", color: "#fff" }}>
+                          {s.step}
+                        </div>
+                        <div className="pt-1">
+                          <p className="text-sm font-bold mb-0.5" style={{ color: textPrimary }}>{s.title}</p>
+                          <p className="text-sm leading-relaxed" style={muted}>{s.desc}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </FadeIn>
+        </SectionStripe>
+
+        {/* 5c. Hotel Check-In — ORANGE full-bleed */}
+        <SectionStripe alt={1} darkMode={darkMode} py="py-7">
+          <FadeIn>
+            <div className="mb-5">
+              <p className="font-bold text-base text-white">Hotel Check-In Information</p>
+              <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.75)" }}>Arriving at your accommodation</p>
+            </div>
+            <div className="grid grid-cols-2 gap-3 mb-5">
+              <div className="rounded-xl p-3 border" style={{ borderColor: "rgba(255,255,255,0.25)", backgroundColor: "rgba(255,255,255,0.15)" }}>
+                <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: "rgba(255,255,255,0.8)" }}>Check-In Time</p>
+                <p className="text-sm" style={{ color: "#fff" }}>{dest.hotelInfo.checkin}</p>
+              </div>
+              <div className="rounded-xl p-3 border" style={{ borderColor: "rgba(255,255,255,0.25)", backgroundColor: "rgba(255,255,255,0.15)" }}>
+                <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: "rgba(255,255,255,0.8)" }}>Check-Out Time</p>
+                <p className="text-sm" style={{ color: "#fff" }}>{dest.hotelInfo.checkout}</p>
+              </div>
+            </div>
+            <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.8)" }}>Upon Arrival:</p>
+            <ul className="space-y-2.5">
+              {dest.hotelInfo.notes.map((note) => (
+                <li key={note} className="flex items-start gap-2 text-sm leading-snug" style={{ color: "#fff" }}>
+                  <span className="text-white opacity-70 shrink-0 mt-0.5">•</span> {note}
+                </li>
+              ))}
+            </ul>
+          </FadeIn>
+        </SectionStripe>
+
+        {/* 5d. Travel Requirements — WHITE full-bleed */}
+        <SectionStripe alt={0} darkMode={darkMode} py="py-7">
+          <FadeIn>
+            <div className="mb-5 pb-4" style={{ borderBottom: `1px solid ${borderColor}` }}>
+              <p className="font-bold text-base" style={{ color: textPrimary }}>Travel Requirements</p>
+              <p className="text-xs mt-0.5" style={{ color: textMuted }}>Documents and entry requirements</p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+              {[
+                { label: "Filipino Travelers",  items: dest.requirements.filipino },
+                { label: "Foreign Travelers",   items: dest.requirements.foreign },
+                { label: "Travel Documents",    items: dest.requirements.documents },
+              ].map(({ label, items }) => (
+                <div key={label}>
+                  <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#ff9913" }}>{label}</p>
+                  <ul className="space-y-2">
+                    {items.map((r) => (
+                      <li key={r} className="flex items-start gap-2 text-sm leading-snug" style={{ color: textPrimary }}>
+                        <BadgeCheck className="w-3.5 h-3.5 text-orange-400 shrink-0 mt-0.5" /> {r}
                       </li>
                     ))}
                   </ul>
                 </div>
-              </div>
+              ))}
+            </div>
+          </FadeIn>
+        </SectionStripe>
 
-              {/* 5d. Travel Requirements — WHITE */}
-              <div className="rounded-2xl overflow-hidden border" style={{ backgroundColor: cardBg, borderColor, boxShadow: cardShadow }}>
-                <div className="px-5 py-4" style={{ borderBottom: `1px solid ${borderColor}` }}>
-                  <p className="font-bold text-base" style={{ color: textPrimary }}>Travel Requirements</p>
-                  <p className="text-xs mt-0.5" style={{ color: textMuted }}>Documents and entry requirements</p>
-                </div>
-                <div className="p-5">
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-                    {[
-                      { label: "Filipino Travelers",  items: dest.requirements.filipino },
-                      { label: "Foreign Travelers",   items: dest.requirements.foreign },
-                      { label: "Travel Documents",    items: dest.requirements.documents },
-                    ].map(({ label, items }) => (
-                      <div key={label}>
-                        <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#ff9913" }}>{label}</p>
-                        <ul className="space-y-2">
-                          {items.map((r) => (
-                            <li key={r} className="flex items-start gap-2 text-sm leading-snug" style={{ color: textPrimary }}>
-                              <BadgeCheck className="w-3.5 h-3.5 text-orange-400 shrink-0 mt-0.5" /> {r}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
+        {/* 5e. Tour Reminders — ORANGE full-bleed */}
+        <SectionStripe alt={1} darkMode={darkMode} py="py-7">
+          <FadeIn>
+            <div className="mb-5">
+              <p className="font-bold text-base text-white">Tour Reminders</p>
+              <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.75)" }}>What to remember before, during, and after your tour</p>
+            </div>
+            <div className="space-y-6">
+              {[
+                { key: "before",    label: "Before Your Trip" },
+                { key: "during",    label: "During Your Stay" },
+                { key: "departure", label: "On Departure Day" },
+              ].map(({ key, label }, gi) => (
+                <div key={key} className={gi > 0 ? "pt-5" : ""} style={{ borderTop: gi > 0 ? "1px solid rgba(255,255,255,0.25)" : undefined }}>
+                  <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.8)" }}>{label}</p>
+                  <ul className="space-y-2.5">
+                    {dest.reminders[key].map((r) => (
+                      <li key={r} className="flex items-start gap-2.5 text-sm leading-snug" style={{ color: "#fff" }}>
+                        <span className="text-white opacity-70 shrink-0 mt-0.5">✔</span> {r}
+                      </li>
                     ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </FadeIn>
+        </SectionStripe>
+
+        {/* 5f. Do's & Don'ts — WHITE full-bleed */}
+        <SectionStripe alt={0} darkMode={darkMode} py="py-7">
+          <FadeIn>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-6 sm:divide-x" style={{ borderColor }}>
+              {/* Do's */}
+              <div>
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0" style={{ background: "rgba(22,163,74,0.12)" }}>
+                    <Check className="w-3.5 h-3.5" style={{ color: "#16a34a" }} strokeWidth={3} />
+                  </div>
+                  <div>
+                    <p className="text-[9px] font-black uppercase tracking-widest" style={{ color: textMuted }}>Behavior Guide</p>
+                    <p className="font-black text-sm leading-tight" style={{ color: "#16a34a", letterSpacing: "-0.01em" }}>Do's</p>
                   </div>
                 </div>
-              </div>
-
-              {/* 5e. Tour Reminders — ORANGE */}
-              <div className="rounded-2xl overflow-hidden" style={{ background: "linear-gradient(155deg, #ff9913 0%, #d96800 100%)" }}>
-                <div className="px-5 py-4">
-                  <p className="font-bold text-base text-white">Tour Reminders</p>
-                  <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.75)" }}>What to remember before, during, and after your tour</p>
-                </div>
-                <div className="px-5 pb-5 space-y-6">
-                  {[
-                    { key: "before",    label: "Before Your Trip" },
-                    { key: "during",    label: "During Your Stay" },
-                    { key: "departure", label: "On Departure Day" },
-                  ].map(({ key, label }, gi) => (
-                    <div key={key} className={gi > 0 ? "pt-5" : ""} style={{ borderTop: gi > 0 ? "1px solid rgba(255,255,255,0.25)" : undefined }}>
-                      <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.8)" }}>{label}</p>
-                      <ul className="space-y-2.5">
-                        {dest.reminders[key].map((r) => (
-                          <li key={r} className="flex items-start gap-2.5 text-sm leading-snug" style={{ color: "#fff" }}>
-                            <span className="text-white opacity-70 shrink-0 mt-0.5">✔</span> {r}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                <ul className="space-y-2.5">
+                  {dest.dos.map((d) => (
+                    <li key={d} className="flex items-start gap-2 text-sm leading-snug" style={{ color: textPrimary }}>
+                      <Check className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: "#16a34a" }} strokeWidth={2.5} />{d}
+                    </li>
                   ))}
-                </div>
+                </ul>
               </div>
-
-              {/* 5f. Do's & Don'ts — unified cream card */}
-              <div
-                className="rounded-3xl overflow-hidden border"
-                style={{ backgroundColor: cardBg, borderColor, boxShadow: cardShadow }}
-              >
-                <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x" style={{ borderColor }}>
-                  {/* Do's */}
-                  <div className="p-6">
-                    <div className="flex items-center gap-2 mb-4">
-                      <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0" style={{ background: "rgba(22,163,74,0.12)" }}>
-                        <Check className="w-3.5 h-3.5" style={{ color: "#16a34a" }} strokeWidth={3} />
-                      </div>
-                      <div>
-                        <p className="text-[9px] font-black uppercase tracking-widest" style={{ color: textMuted }}>Behavior Guide</p>
-                        <p className="font-black text-sm leading-tight" style={{ color: "#16a34a", letterSpacing: "-0.01em" }}>Do's</p>
-                      </div>
-                    </div>
-                    <ul className="space-y-2.5">
-                      {dest.dos.map((d) => (
-                        <li key={d} className="flex items-start gap-2 text-sm leading-snug" style={{ color: textPrimary }}>
-                          <Check className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: "#16a34a" }} strokeWidth={2.5} />{d}
-                        </li>
-                      ))}
-                    </ul>
+              {/* Don'ts */}
+              <div className="sm:pl-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0" style={{ background: "rgba(220,38,38,0.10)" }}>
+                    <X className="w-3.5 h-3.5" style={{ color: "#dc2626" }} strokeWidth={3} />
                   </div>
-                  {/* Don'ts */}
-                  <div className="p-6">
-                    <div className="flex items-center gap-2 mb-4">
-                      <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0" style={{ background: "rgba(220,38,38,0.10)" }}>
-                        <X className="w-3.5 h-3.5" style={{ color: "#dc2626" }} strokeWidth={3} />
-                      </div>
-                      <div>
-                        <p className="text-[9px] font-black uppercase tracking-widest" style={{ color: textMuted }}>Avoid These</p>
-                        <p className="font-black text-sm leading-tight" style={{ color: "#dc2626", letterSpacing: "-0.01em" }}>Don'ts</p>
-                      </div>
-                    </div>
-                    <ul className="space-y-2.5">
-                      {dest.donts.map((d) => (
-                        <li key={d} className="flex items-start gap-2 text-sm leading-snug" style={{ color: textPrimary }}>
-                          <X className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: "#dc2626" }} strokeWidth={2.5} />{d}
-                        </li>
-                      ))}
-                    </ul>
+                  <div>
+                    <p className="text-[9px] font-black uppercase tracking-widest" style={{ color: textMuted }}>Avoid These</p>
+                    <p className="font-black text-sm leading-tight" style={{ color: "#dc2626", letterSpacing: "-0.01em" }}>Don'ts</p>
                   </div>
                 </div>
+                <ul className="space-y-2.5">
+                  {dest.donts.map((d) => (
+                    <li key={d} className="flex items-start gap-2 text-sm leading-snug" style={{ color: textPrimary }}>
+                      <X className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: "#dc2626" }} strokeWidth={2.5} />{d}
+                    </li>
+                  ))}
+                </ul>
               </div>
-
             </div>
           </FadeIn>
         </SectionStripe>
