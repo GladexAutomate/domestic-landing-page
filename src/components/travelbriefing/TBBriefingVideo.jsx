@@ -75,7 +75,7 @@ export default function TBBriefingVideo({ dest, darkMode, tk }) {
   // Failure timeout
   useEffect(() => {
     if (isComingSoon) return;
-    const t = setTimeout(() => setVideoFailed(cur => cur ? cur : !videoLoaded), 10000);
+    const t = setTimeout(() => setVideoFailed(cur => cur ? cur : !videoLoaded), 25000);
     return () => clearTimeout(t);
   }, [videoLoaded, isComingSoon]);
 
@@ -235,6 +235,14 @@ export default function TBBriefingVideo({ dest, darkMode, tk }) {
             </div>
           )}
 
+          {/* Loading spinner — shown while iframe hasn't loaded yet */}
+          {!videoLoaded && !videoFailed && (
+            <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "12px", background: "linear-gradient(170deg,#0d0d0d 0%,#1a0800 100%)", zIndex: 3 }}>
+              <div style={{ width: "36px", height: "36px", border: "3px solid rgba(255,255,255,0.12)", borderTop: "3px solid rgba(255,255,255,0.6)", borderRadius: "50%", animation: "spinLoader 0.8s linear infinite" }} />
+              <span style={{ color: "rgba(255,255,255,0.45)", fontSize: "12px", letterSpacing: "0.06em", textTransform: "uppercase" }}>Loading video…</span>
+            </div>
+          )}
+
           {/* Inline overlays */}
           {showInline && !videoFailed && (
             <>
@@ -321,6 +329,9 @@ export default function TBBriefingVideo({ dest, darkMode, tk }) {
         @keyframes slideUpFloat {
           from { opacity: 0; transform: translateY(16px); }
           to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes spinLoader {
+          to { transform: rotate(360deg); }
         }
       `}</style>
     </>
