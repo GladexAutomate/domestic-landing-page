@@ -2326,15 +2326,14 @@ export default function TravelBriefingLanding() {
             3b. PACKAGE INCLUSIONS & EXCLUSIONS
            ══════════════════════════════════════════════════ */}
         {(dest.inclusions?.length || dest.exclusions?.length) && (
-          <SectionStripe alt={0} darkMode={darkMode}>
+          <SectionStripe alt={1} darkMode={darkMode}>
             <FadeIn>
-              <StripeHeader eyebrow="What's Included" title="Package Inclusions" tk={tk} />
-              {/* Unified cream card — color as text/icon accents only */}
+              <StripeHeader eyebrow="What's Included" title="Package Inclusions" tk={tk} colored />
               <div
                 className="rounded-3xl overflow-hidden border"
-                style={{ backgroundColor: cardBg, borderColor, boxShadow: cardShadow }}
+                style={{ backgroundColor: "#ffffff", borderColor: "rgba(0,0,0,0.06)", boxShadow: "0 2px 12px rgba(0,0,0,0.08)" }}
               >
-                <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x" style={{ "--tw-divide-opacity": 1, borderColor }}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-gray-100">
 
                   {/* Inclusions column */}
                   {dest.inclusions?.length > 0 && (
@@ -2344,7 +2343,7 @@ export default function TravelBriefingLanding() {
                           <Check className="w-3.5 h-3.5" style={{ color: "#16a34a" }} strokeWidth={3} />
                         </div>
                         <div>
-                          <p className="text-[9px] font-black uppercase tracking-widest" style={{ color: textMuted }}>What's Covered</p>
+                          <p className="text-[9px] font-black uppercase tracking-widest" style={{ color: "#9ca3af" }}>What's Covered</p>
                           <p className="font-black text-sm leading-tight" style={{ color: "#16a34a", letterSpacing: "-0.01em" }}>Package Inclusions</p>
                         </div>
                       </div>
@@ -2352,7 +2351,7 @@ export default function TravelBriefingLanding() {
                         {dest.inclusions.map((item, i) => (
                           <div key={i} className="flex items-start gap-2.5">
                             <Check className="w-4 h-4 shrink-0 mt-0.5" style={{ color: "#16a34a" }} strokeWidth={2.5} />
-                            <span className="text-sm leading-relaxed" style={{ color: textPrimary }}>{item}</span>
+                            <span className="text-sm leading-relaxed" style={{ color: "#1f2937" }}>{item}</span>
                           </div>
                         ))}
                       </div>
@@ -2367,7 +2366,7 @@ export default function TravelBriefingLanding() {
                           <X className="w-3.5 h-3.5" style={{ color: "#dc2626" }} strokeWidth={3} />
                         </div>
                         <div>
-                          <p className="text-[9px] font-black uppercase tracking-widest" style={{ color: textMuted }}>Not Covered</p>
+                          <p className="text-[9px] font-black uppercase tracking-widest" style={{ color: "#9ca3af" }}>Not Covered</p>
                           <p className="font-black text-sm leading-tight" style={{ color: "#dc2626", letterSpacing: "-0.01em" }}>Package Exclusions</p>
                         </div>
                       </div>
@@ -2375,13 +2374,13 @@ export default function TravelBriefingLanding() {
                         {dest.exclusions.map((item, i) => (
                           <div key={i} className="flex items-start gap-2.5">
                             <X className="w-4 h-4 shrink-0 mt-0.5" style={{ color: "#dc2626" }} strokeWidth={2.5} />
-                            <span className="text-sm leading-relaxed" style={{ color: textPrimary }}>{item}</span>
+                            <span className="text-sm leading-relaxed" style={{ color: "#1f2937" }}>{item}</span>
                           </div>
                         ))}
                         {dest.exclusionNotes?.length > 0 && (
-                          <div className="pt-3 space-y-1.5" style={{ borderTop: `1px solid ${borderColor}` }}>
+                          <div className="pt-3 space-y-1.5" style={{ borderTop: "1px solid rgba(0,0,0,0.08)" }}>
                             {dest.exclusionNotes.map((note, i) => (
-                              <p key={i} className="text-xs leading-snug" style={{ color: textMuted }}>{note}</p>
+                              <p key={i} className="text-xs leading-snug" style={{ color: "#9ca3af" }}>{note}</p>
                             ))}
                           </div>
                         )}
