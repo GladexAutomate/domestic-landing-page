@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { Video, X, Maximize2 } from "lucide-react";
 
-const FLOAT_W = 200;
+const FLOAT_W = 155;
 const FLOAT_H = Math.round(FLOAT_W * 16 / 9);
 
 export default function TBBriefingVideo({ dest, darkMode, tk }) {
@@ -192,7 +192,7 @@ export default function TBBriefingVideo({ dest, darkMode, tk }) {
 
       {portalStyle && createPortal(
         <>
-        <div style={portalStyle} onTouchStart={showFloat ? onDragStart : undefined}>
+        <div style={portalStyle}>
           {!videoFailed && (
             <iframe
               ref={iframeRef}
@@ -229,9 +229,16 @@ export default function TBBriefingVideo({ dest, darkMode, tk }) {
             </>
           )}
 
-          {/* Float title overlay at bottom */}
+          {/* Float title bar — also serves as drag handle on mobile */}
           {showFloat && (
-            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "5px 8px", background: "rgba(0,0,0,0.75)", zIndex: 10, pointerEvents: "none" }}>
+            <div
+              onTouchStart={onDragStart}
+              style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "6px 8px 5px", background: "rgba(0,0,0,0.82)", zIndex: 10, touchAction: "none", cursor: "grab", userSelect: "none" }}
+            >
+              {/* drag grip dots */}
+              <div style={{ display: "flex", justifyContent: "center", gap: "3px", marginBottom: "3px" }}>
+                {[0,1,2].map(i => <span key={i} style={{ display: "block", width: "4px", height: "4px", borderRadius: "50%", background: "rgba(255,255,255,0.4)" }} />)}
+              </div>
               <p style={{ color: "#fff", fontSize: "9px", fontWeight: 700, margin: 0, letterSpacing: "0.02em", overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis" }}>
                 {dest.video?.title || `${dest.name} Briefing`}
               </p>
@@ -255,10 +262,10 @@ export default function TBBriefingVideo({ dest, darkMode, tk }) {
                 zIndex: 10000,
                 width: "28px", height: "28px",
                 borderRadius: "50%",
-                background: "#ff6b00",
+                background: "#fff",
                 border: "none",
                 boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
-                color: "#fff",
+                color: "#333",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 cursor: "pointer", padding: 0,
               }}
