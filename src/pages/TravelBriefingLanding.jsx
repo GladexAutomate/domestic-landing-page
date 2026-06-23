@@ -2261,9 +2261,9 @@ export default function TravelBriefingLanding() {
         {/* ══════════════════════════════════════════════════
             2. TRAVEL BRIEFING VIDEO
            ══════════════════════════════════════════════════ */}
-        <SectionStripe alt={3} darkMode={darkMode}>
+        <SectionStripe alt={0} darkMode={darkMode}>
           <FadeIn>
-            <StripeHeader eyebrow="Watch Before You Travel" title="Your Travel Briefing" tk={tk} colored />
+            <StripeHeader eyebrow="Watch Before You Travel" title="Your Travel Briefing" tk={tk} />
             <TBBriefingVideo dest={dest} darkMode={darkMode} tk={tk} />
           </FadeIn>
         </SectionStripe>
@@ -2396,20 +2396,15 @@ export default function TravelBriefingLanding() {
             4. TRAVEL INFORMATION CENTER
            ══════════════════════════════════════════════════ */}
 
-        <SectionStripe alt={0} darkMode={darkMode}>
-          <FadeIn>
-            <StripeHeader eyebrow="Operational Information" title="Travel Information Center" description="Arrival instructions, hotel check-in, transfers, and local info — everything in one place." tk={tk} />
-          </FadeIn>
-        </SectionStripe>
-
-        {/* 5a. Arrival Instructions — ORANGE full-bleed */}
+        {/* 5a. Arrival Instructions — ORANGE full-bleed (Travel Info Center header merged here) */}
         <SectionStripe alt={1} darkMode={darkMode} py="py-7">
           <FadeIn>
-            <div className="mb-4">
-              <p className="font-bold text-base text-white">Arrival Instructions</p>
-              <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.75)" }}>How to get from the airport to your hotel</p>
-            </div>
+            <StripeHeader eyebrow="Operational Information" title="Travel Information Center" description="Arrival instructions, hotel check-in, transfers, and local info — everything in one place." tk={tk} colored />
             <SectionCard darkMode={darkMode}>
+              <div className="mb-4 pb-4" style={{ borderBottom: `1px solid ${borderColor}` }}>
+                <p className="font-bold text-base" style={{ color: textPrimary }}>Arrival Instructions</p>
+                <p className="text-xs mt-0.5" style={{ color: textMuted }}>How to get from the airport to your hotel</p>
+              </div>
               <div className="space-y-7">
                 {dest.arrivalInstructions.tabs.map(({ key, label }, tabIdx) => {
                   const info = dest.arrivalInstructions[key];
@@ -2474,7 +2469,7 @@ export default function TravelBriefingLanding() {
           </FadeIn>
         </SectionStripe>
 
-        {/* 5b. Transfer Instructions — WHITE full-bleed */}
+        {/* 5b. Transfer Instructions — WHITE card */}
         <SectionStripe alt={0} darkMode={darkMode} py="py-7">
           <FadeIn>
             <SectionCard darkMode={darkMode}>
@@ -2504,7 +2499,7 @@ export default function TravelBriefingLanding() {
                   </div>
                 </div>
               ))}
-            </div>
+              </div>
             </SectionCard>
           </FadeIn>
         </SectionStripe>
@@ -2512,11 +2507,11 @@ export default function TravelBriefingLanding() {
         {/* 5c. Hotel Check-In — ORANGE full-bleed */}
         <SectionStripe alt={1} darkMode={darkMode} py="py-7">
           <FadeIn>
-            <div className="mb-4">
-              <p className="font-bold text-base text-white">Hotel Check-In Information</p>
-              <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.75)" }}>Arriving at your accommodation</p>
-            </div>
             <SectionCard darkMode={darkMode}>
+              <div className="mb-4 pb-4" style={{ borderBottom: `1px solid ${borderColor}` }}>
+                <p className="font-bold text-base" style={{ color: textPrimary }}>Hotel Check-In Information</p>
+                <p className="text-xs mt-0.5" style={{ color: textMuted }}>Arriving at your accommodation</p>
+              </div>
               <div className="grid grid-cols-2 gap-3 mb-5">
                 <div className="rounded-xl p-3 border" style={{ borderColor: "rgba(255,153,19,0.3)", backgroundColor: "rgba(255,153,19,0.07)" }}>
                   <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: "#ff9913" }}>Check-In Time</p>
@@ -2539,7 +2534,7 @@ export default function TravelBriefingLanding() {
           </FadeIn>
         </SectionStripe>
 
-        {/* 5d. Travel Requirements — WHITE full-bleed */}
+        {/* 5d. Travel Requirements — WHITE card */}
         <SectionStripe alt={0} darkMode={darkMode} py="py-7">
           <FadeIn>
             <SectionCard darkMode={darkMode}>
@@ -2564,7 +2559,7 @@ export default function TravelBriefingLanding() {
                   </ul>
                 </div>
               ))}
-            </div>
+              </div>
             </SectionCard>
           </FadeIn>
         </SectionStripe>
@@ -2572,11 +2567,11 @@ export default function TravelBriefingLanding() {
         {/* 5e. Tour Reminders — ORANGE full-bleed */}
         <SectionStripe alt={1} darkMode={darkMode} py="py-7">
           <FadeIn>
-            <div className="mb-4">
-              <p className="font-bold text-base text-white">Tour Reminders</p>
-              <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.75)" }}>What to remember before, during, and after your tour</p>
-            </div>
             <SectionCard darkMode={darkMode}>
+              <div className="mb-4 pb-4" style={{ borderBottom: `1px solid ${borderColor}` }}>
+                <p className="font-bold text-base" style={{ color: textPrimary }}>Tour Reminders</p>
+                <p className="text-xs mt-0.5" style={{ color: textMuted }}>What to remember before, during, and after your tour</p>
+              </div>
               <div className="space-y-6">
                 {[
                   { key: "before",    label: "Before Your Trip" },
@@ -2599,50 +2594,50 @@ export default function TravelBriefingLanding() {
           </FadeIn>
         </SectionStripe>
 
-        {/* 5f. Do's & Don'ts — WHITE full-bleed */}
+        {/* 5f. Do's & Don'ts — WHITE card */}
         <SectionStripe alt={0} darkMode={darkMode} py="py-7">
           <FadeIn>
             <SectionCard darkMode={darkMode}>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-6 sm:divide-x" style={{ borderColor }}>
-              {/* Do's */}
-              <div>
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0" style={{ background: "rgba(22,163,74,0.12)" }}>
-                    <Check className="w-3.5 h-3.5" style={{ color: "#16a34a" }} strokeWidth={3} />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-6 sm:divide-x" style={{ borderColor }}>
+                {/* Do's */}
+                <div>
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0" style={{ background: "rgba(22,163,74,0.12)" }}>
+                      <Check className="w-3.5 h-3.5" style={{ color: "#16a34a" }} strokeWidth={3} />
+                    </div>
+                    <div>
+                      <p className="text-[9px] font-black uppercase tracking-widest" style={{ color: textMuted }}>Behavior Guide</p>
+                      <p className="font-black text-sm leading-tight" style={{ color: "#16a34a", letterSpacing: "-0.01em" }}>Do's</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-[9px] font-black uppercase tracking-widest" style={{ color: textMuted }}>Behavior Guide</p>
-                    <p className="font-black text-sm leading-tight" style={{ color: "#16a34a", letterSpacing: "-0.01em" }}>Do's</p>
-                  </div>
+                  <ul className="space-y-2.5">
+                    {dest.dos.map((d) => (
+                      <li key={d} className="flex items-start gap-2 text-sm leading-snug" style={{ color: textPrimary }}>
+                        <Check className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: "#16a34a" }} strokeWidth={2.5} />{d}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <ul className="space-y-2.5">
-                  {dest.dos.map((d) => (
-                    <li key={d} className="flex items-start gap-2 text-sm leading-snug" style={{ color: textPrimary }}>
-                      <Check className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: "#16a34a" }} strokeWidth={2.5} />{d}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              {/* Don'ts */}
-              <div className="sm:pl-6">
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0" style={{ background: "rgba(220,38,38,0.10)" }}>
-                    <X className="w-3.5 h-3.5" style={{ color: "#dc2626" }} strokeWidth={3} />
+                {/* Don'ts */}
+                <div className="sm:pl-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0" style={{ background: "rgba(220,38,38,0.10)" }}>
+                      <X className="w-3.5 h-3.5" style={{ color: "#dc2626" }} strokeWidth={3} />
+                    </div>
+                    <div>
+                      <p className="text-[9px] font-black uppercase tracking-widest" style={{ color: textMuted }}>Avoid These</p>
+                      <p className="font-black text-sm leading-tight" style={{ color: "#dc2626", letterSpacing: "-0.01em" }}>Don'ts</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-[9px] font-black uppercase tracking-widest" style={{ color: textMuted }}>Avoid These</p>
-                    <p className="font-black text-sm leading-tight" style={{ color: "#dc2626", letterSpacing: "-0.01em" }}>Don'ts</p>
-                  </div>
+                  <ul className="space-y-2.5">
+                    {dest.donts.map((d) => (
+                      <li key={d} className="flex items-start gap-2 text-sm leading-snug" style={{ color: textPrimary }}>
+                        <X className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: "#dc2626" }} strokeWidth={2.5} />{d}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <ul className="space-y-2.5">
-                  {dest.donts.map((d) => (
-                    <li key={d} className="flex items-start gap-2 text-sm leading-snug" style={{ color: textPrimary }}>
-                      <X className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: "#dc2626" }} strokeWidth={2.5} />{d}
-                    </li>
-                  ))}
-                </ul>
               </div>
-            </div>
             </SectionCard>
           </FadeIn>
         </SectionStripe>
