@@ -1904,18 +1904,6 @@ export default function TravelBriefingLanding() {
                           borderBottom: `1px solid ${darkMode ? "rgba(255,255,255,0.06)" : "#f0ece7"}`,
                         }}
                       >
-                        <div className="flex items-center mb-3">
-                          <span
-                            className="flex items-center gap-1.5 text-xs font-black uppercase tracking-widest px-2.5 py-1 rounded-full"
-                            style={{
-                              background: "rgba(22,163,74,0.12)",
-                              color: "#16a34a",
-                              border: "1px solid rgba(22,163,74,0.3)",
-                            }}
-                          >
-                            <BadgeCheck className="w-3 h-3" /> Booking Verified
-                          </span>
-                        </div>
                         <h2
                           className="font-black text-xl mb-0.5"
                           style={{
