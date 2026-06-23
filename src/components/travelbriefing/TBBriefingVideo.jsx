@@ -90,8 +90,8 @@ export default function TBBriefingVideo({ dest, darkMode, tk }) {
       rafRef.current = requestAnimationFrame(() => {
         if (!placeholderRef.current || !portalDivRef.current) return;
         const r = placeholderRef.current.getBoundingClientRect();
-        portalDivRef.current.style.top  = `${r.top}px`;
-        portalDivRef.current.style.left = `${r.left}px`;
+        // transform is GPU-composited — no layout reflow, truly smooth
+        portalDivRef.current.style.transform = `translate(${r.left}px, ${r.top}px)`;
       });
     };
     initOrResize();
@@ -167,10 +167,12 @@ export default function TBBriefingVideo({ dest, darkMode, tk }) {
 
   const portalStyle = showInline && rect ? {
     position: "fixed",
-    top:    `${rect.top}px`,
-    left:   `${rect.left}px`,
+    top:    0,
+    left:   0,
+    transform: `translate(${rect.left}px, ${rect.top}px)`,
     width:  `${rect.width}px`,
     height: `${rect.height}px`,
+    willChange: "transform",
     zIndex: 40,
     borderRadius: "1.75rem",
     overflow: "hidden",
