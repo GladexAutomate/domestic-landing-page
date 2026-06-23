@@ -1,4 +1,4 @@
-﻿// @ts-nocheck
+// @ts-nocheck
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { Video, X, Maximize2 } from "lucide-react";
@@ -13,11 +13,12 @@ export default function TBBriefingVideo({ dest, darkMode, tk }) {
   const [hasBeenSeen, setHasBeenSeen]   = useState(false);
   const [dismissed, setDismissed]       = useState(false);
   const [rect, setRect]                 = useState(null);
-  const [dragPos, setDragPos]           = useState(null); // {x,y} top/left; null = default corner
+  const [dragPos, setDragPos]           = useState(null);
   const placeholderRef = useRef(null);
   const sectionRef     = useRef(null);
   const iframeRef      = useRef(null);
   const rafRef         = useRef(null);
+  const portalDivRef   = useRef(null); // direct DOM ref — no React re-render on scroll
   const drag           = useRef({ active: false, startX: 0, startY: 0, startLeft: 0, startTop: 0 });
 
   const isComingSoon = dest.video?.comingSoon || !dest.video?.url;
@@ -71,23 +72,30 @@ export default function TBBriefingVideo({ dest, darkMode, tk }) {
   }, [videoLoaded, isComingSoon]);
 
   // Track placeholder rect
+  // - init / resize: setState so React knows the initial size
+  // - scroll: update portal div style DIRECTLY — no React re-render, no jitter
   useEffect(() => {
     if (isComingSoon) return;
-    const update = () => {
+    const initOrResize = () => {
       if (!placeholderRef.current) return;
       const r = placeholderRef.current.getBoundingClientRect();
       setRect({ top: r.top, left: r.left, width: r.width, height: r.height });
     };
-    update();
     const onScroll = () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = requestAnimationFrame(update);
+      rafRef.current = requestAnimationFrame(() => {
+        if (!placeholderRef.current || !portalDivRef.current) return;
+        const r = placeholderRef.current.getBoundingClientRect();
+        portalDivRef.current.style.top  = `${r.top}px`;
+        portalDivRef.current.style.left = `${r.left}px`;
+      });
     };
+    initOrResize();
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", update);
+    window.addEventListener("resize", initOrResize);
     return () => {
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", update);
+      window.removeEventListener("resize", initOrResize);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
   }, [isComingSoon]);
@@ -192,7 +200,8 @@ export default function TBBriefingVideo({ dest, darkMode, tk }) {
 
       {portalStyle && createPortal(
         <>
-        <div style={portalStyle}>
+        {/* ref={portalDivRef} only when inline — float position is managed by React state */}
+        <div ref={showInline ? portalDivRef : null} style={portalStyle}>
           {!videoFailed && (
             <iframe
               ref={iframeRef}
@@ -229,13 +238,12 @@ export default function TBBriefingVideo({ dest, darkMode, tk }) {
             </>
           )}
 
-          {/* Float title bar — also serves as drag handle on mobile */}
+          {/* Float title bar — drag handle */}
           {showFloat && (
             <div
               onTouchStart={onDragStart}
               style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "6px 8px 5px", background: "rgba(0,0,0,0.82)", zIndex: 10, touchAction: "none", cursor: "grab", userSelect: "none" }}
             >
-              {/* drag grip dots */}
               <div style={{ display: "flex", justifyContent: "center", gap: "3px", marginBottom: "3px" }}>
                 {[0,1,2].map(i => <span key={i} style={{ display: "block", width: "4px", height: "4px", borderRadius: "50%", background: "rgba(255,255,255,0.4)" }} />)}
               </div>
@@ -246,10 +254,9 @@ export default function TBBriefingVideo({ dest, darkMode, tk }) {
           )}
         </div>
 
-        {/* Buttons outside the float — positioned above top-right corner */}
+        {/* Buttons outside the float */}
         {showFloat && !dismissed && (
           <>
-            {/* Scroll-to-briefing button (left of X) */}
             <button
               onClick={() => sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })}
               onTouchStart={e => e.stopPropagation()}
@@ -259,21 +266,14 @@ export default function TBBriefingVideo({ dest, darkMode, tk }) {
                 ...(dragPos
                   ? { top: `${dragPos.y - 14}px`, left: `${dragPos.x + FLOAT_W - 14 - 36}px` }
                   : { bottom: `${FLOAT_H + 20 - 14}px`, left: `${20 + FLOAT_W - 14 - 36}px` }),
-                zIndex: 10000,
-                width: "28px", height: "28px",
-                borderRadius: "50%",
-                background: "#fff",
-                border: "none",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
-                color: "#333",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                cursor: "pointer", padding: 0,
+                zIndex: 10000, width: "28px", height: "28px", borderRadius: "50%",
+                background: "#fff", border: "none", boxShadow: "0 2px 8px rgba(0,0,0,0.3)", color: "#333",
+                display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: 0,
               }}
             >
               <Maximize2 style={{ width: "12px", height: "12px" }} />
             </button>
 
-            {/* X / dismiss button */}
             <button
               onClick={handleDismiss}
               onTouchStart={e => e.stopPropagation()}
@@ -282,15 +282,9 @@ export default function TBBriefingVideo({ dest, darkMode, tk }) {
                 ...(dragPos
                   ? { top: `${dragPos.y - 14}px`, left: `${dragPos.x + FLOAT_W - 14}px` }
                   : { bottom: `${FLOAT_H + 20 - 14}px`, left: `${20 + FLOAT_W - 14}px` }),
-                zIndex: 10000,
-                width: "28px", height: "28px",
-                borderRadius: "50%",
-                background: "#fff",
-                border: "none",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
-                color: "#333",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                cursor: "pointer", padding: 0,
+                zIndex: 10000, width: "28px", height: "28px", borderRadius: "50%",
+                background: "#fff", border: "none", boxShadow: "0 2px 8px rgba(0,0,0,0.3)", color: "#333",
+                display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: 0,
               }}
             >
               <X style={{ width: "12px", height: "12px" }} />
