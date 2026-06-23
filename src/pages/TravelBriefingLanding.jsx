@@ -16,7 +16,7 @@ import { loadDestinationTours } from "@/services/globaltixService";
 import TBAddOnsCheckout from "@/components/travelbriefing/TBAddOnsCheckout";
 import TBInsurance from "@/components/travelbriefing/TBInsurance";
 import {
-  Check, X, AlertTriangle, ArrowUp, ArrowUpToLine, Phone,
+  Check, X, AlertTriangle, ArrowUp, ArrowUpToLine, Phone, Copy,
   Download, Star, Gift,
   BadgeCheck, Info, Loader, ChevronDown, ChevronUp, MapPin, Plane,
   CalendarDays, Map, CheckSquare, HelpCircle,
@@ -785,16 +785,28 @@ function BookingSection({ label, children, darkMode }) {
 }
 
 // ── BookingRow ───────────────────────────────────────────────────
-function BookingRow({ label1, value1, label2, value2, textPrimary, textMuted, preWrap1 }) {
+function BookingRow({ label1, value1, label2, value2, textPrimary, textMuted, preWrap1, copyable1 }) {
+  const [copied, setCopied] = useState(false);
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
       <div>
         <p className="text-xs font-bold uppercase tracking-wider mb-0.5" style={{ color: textMuted }}>
           {label1}
         </p>
-        <p className={`text-sm font-semibold leading-snug${preWrap1 ? " whitespace-pre-line" : ""}`} style={{ color: textPrimary }}>
-          {value1 || "—"}
-        </p>
+        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <p className={`text-sm font-semibold leading-snug${preWrap1 ? " whitespace-pre-line" : ""}`} style={{ color: textPrimary }}>
+            {value1 || "—"}
+          </p>
+          {copyable1 && value1 && (
+            <button
+              onClick={() => { navigator.clipboard.writeText(value1 || ""); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
+              style={{ flexShrink: 0, background: "none", border: "none", cursor: "pointer", padding: "2px", color: copied ? "#16a34a" : textMuted, transition: "color 0.2s" }}
+              title="Copy to clipboard"
+            >
+              {copied ? <Check style={{ width: "13px", height: "13px" }} /> : <Copy style={{ width: "13px", height: "13px" }} />}
+            </button>
+          )}
+        </div>
       </div>
       {label2 ? (
         <div>
@@ -994,16 +1006,6 @@ function OutfitGuideSection({ dest, darkMode, sectionGap, textPrimary, textMuted
 
   return (
     <div className={sectionGap}>
-      <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: "#ff9913" }}>Style Guide</p>
-      <h2
-        className="font-black text-2xl mb-2"
-        style={{ color: textPrimary, fontFamily: "'Montserrat', sans-serif", letterSpacing: "-0.02em", borderLeft: "4px solid #ff9913", paddingLeft: "0.75rem" }}
-      >
-        Outfit Inspiration
-      </h2>
-      <p className="text-sm mb-4 leading-relaxed" style={{ color: textMuted }}>
-        Tap a category to swap photos per gender. Gray arrows → browse photos. Orange arrow → change outfit type.
-      </p>
 
       {/* Cards + outer nav arrows */}
 
@@ -1544,6 +1546,7 @@ export default function TravelBriefingLanding() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+
   // ── Design tokens ────────────────────────────────────────────
   const bg          = darkMode ? "#0c0c0c"                 : "#fff8f3";
   const cardBg      = darkMode ? "#141414"                 : "#ffffff";
@@ -1830,8 +1833,8 @@ export default function TravelBriefingLanding() {
                 }}
               >
                 <div className="p-5 pb-5">
-                  {/* Confirmed badge + collapse button */}
-                  <div className="flex items-center justify-between mb-4">
+                  {/* Badge */}
+                  <div className="mb-3">
                     <span
                       className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest px-3 py-1.5 rounded-full"
                       style={{ background: "#ff9913", color: "#fff" }}
@@ -1841,7 +1844,7 @@ export default function TravelBriefingLanding() {
                   </div>
                   {/* Heading */}
                   <h1
-                    className="font-black text-white mb-2"
+                    className="font-black text-white mb-1"
                     style={{
                       fontSize: "clamp(1.55rem, 6vw, 2.4rem)",
                       letterSpacing: "-0.025em",
@@ -1851,7 +1854,7 @@ export default function TravelBriefingLanding() {
                   >
                     Your Trip Is Confirmed! 🧡
                   </h1>
-                  <p className="text-sm font-semibold mb-5" style={{ color: "rgba(255,255,255,0.95)" }}>
+                  <p className="text-sm font-semibold mb-4" style={{ color: "rgba(255,255,255,0.95)" }}>
                     Hi {activeBooking.leadName.split(" ")[0]}! Your {dest.name} trip is all set.
                   </p>
                   {/* 4 info chips */}
@@ -1914,10 +1917,7 @@ export default function TravelBriefingLanding() {
                         >
                           Your Booking Details
                         </h2>
-                        <p className="text-xs mb-4" style={{ color: textMuted }}>
-                          Retrieved from your GDX booking record
-                        </p>
-                        <div className="flex flex-wrap gap-2">
+                        <div className="flex flex-wrap gap-2 mt-2">
                           <span
                             className="flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full"
                             style={getStatusChipStyle(getDisplayStatus(activeBooking.status))}
@@ -1944,6 +1944,7 @@ export default function TravelBriefingLanding() {
                             label1="GDX Number"    value1={`GDX-${activeBooking.gdx}`}
                             label2="Status"        value2={getDisplayStatus(activeBooking.status)}
                             textPrimary={textPrimary} textMuted={textMuted}
+                            copyable1
                           />
                           <BookingRow
                             label1="Payment Status"    value1={activeBooking.paymentStatus || "—"}
@@ -2041,14 +2042,25 @@ export default function TravelBriefingLanding() {
                       )}
 
                       {/* TRANSFER INFORMATION */}
-                      {(activeBooking.ticket || activeBooking.transfer || activeBooking.transferDetails) && (
+                      {(
+                        activeBooking.ticket?.airline ||
+                        activeBooking.ticket?.ferry ||
+                        activeBooking.ticket?.pnr ||
+                        activeBooking.ticket?.terminal ||
+                        activeBooking.ticket?.departingFlight ||
+                        activeBooking.ticket?.returningFlight ||
+                        activeBooking.transfer?.supplier ||
+                        activeBooking.transfer?.transferConfirmation ||
+                        activeBooking.transferDetails
+                      ) && (
                         <BookingSection label="Ticket / Flight Information" darkMode={darkMode}>
                           <div className="px-5 py-4 space-y-4">
                             {(activeBooking.ticket?.airline || activeBooking.ticket?.ferry || activeBooking.ticket?.pnr) && (
                               <BookingRow
-                                label1={activeBooking.ticket?.ferry ? "Ferry" : "Airline"}
-                                value1={activeBooking.ticket.ferry || activeBooking.ticket.airline || "—"}
-                                label2="PNR"      value2={activeBooking.ticket.pnr || "—"}
+                                label1={activeBooking.ticket?.ferry ? "Ferry" : (activeBooking.ticket?.airline ? "Airline" : "PNR")}
+                                value1={activeBooking.ticket.ferry || activeBooking.ticket.airline || activeBooking.ticket.pnr || "—"}
+                                label2={activeBooking.ticket?.airline || activeBooking.ticket?.ferry ? "PNR" : undefined}
+                                value2={activeBooking.ticket?.airline || activeBooking.ticket?.ferry ? (activeBooking.ticket.pnr || "—") : undefined}
                                 textPrimary={textPrimary} textMuted={textMuted}
                               />
                             )}
@@ -2114,10 +2126,6 @@ export default function TravelBriefingLanding() {
           <FadeIn>
             <StripeHeader eyebrow="Important" title="Emergency Contacts" description="Save these numbers before your trip. Available for any emergency during your stay." tk={tk} colored />
             <SectionCard darkMode={darkMode}>
-              <div className="mb-4">
-                <p className="text-xs font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Save These Numbers</p>
-                <p className="font-black text-base" style={{ color: textPrimary }}>Emergency Contacts</p>
-              </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {/* Gladex Hotline — always shown */}
                 <div className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor: "rgba(255,153,19,0.3)", backgroundColor: "rgba(255,153,19,0.06)" }}>
@@ -3146,10 +3154,6 @@ export default function TravelBriefingLanding() {
           <FadeIn>
             <StripeHeader eyebrow="Before You Go" title="Important Notes" description="Please read these reminders carefully before your trip begins." tk={tk} colored={isTestMode} />
             <div className="rounded-2xl border overflow-hidden" style={{ ...card }}>
-              <div className="px-5 pt-4 pb-3 border-b flex items-center gap-2" style={{ borderColor }}>
-                <AlertTriangle className="w-4 h-4 shrink-0" style={{ color: "#ff9913" }} />
-                <p className="font-bold text-base" style={{ color: textPrimary }}>Please Read Carefully</p>
-              </div>
               <div className="p-5 space-y-4">
                 {dest.notes.map((n, i) => (
                   <div key={i} className="flex items-start gap-3">
