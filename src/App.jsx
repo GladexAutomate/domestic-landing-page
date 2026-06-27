@@ -17,7 +17,7 @@ const Admin = import.meta.env.DEV ? lazy(() => import('./pages/Admin')) : null;
 function DestinationRoute() {
   const { slug } = useParams();
   if (!import.meta.env.DEV && slug?.endsWith("-test")) return <SiteLock />;
-  return <TravelBriefingLanding />;
+  return <TravelBriefingLanding key={slug} />;
 }
 
 // Lazy-loaded: keeps Base44 SDK out of the public-route bundle entirely.

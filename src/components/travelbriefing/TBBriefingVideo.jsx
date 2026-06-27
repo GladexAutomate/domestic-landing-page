@@ -239,7 +239,7 @@ export default function TBBriefingVideo({ dest, darkMode, tk }) {
               <span style={{ fontSize: "3rem", marginBottom: "1.25rem" }}>🎬</span>
               <p style={{ color: "#fff", fontWeight: 700, fontSize: "1rem", marginBottom: "0.5rem" }}>Briefing Video Unavailable</p>
               <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.875rem", lineHeight: 1.6 }}>
-                Please check your connection or contact your Gladex consultant.
+                Please refresh the page to load the video.
               </p>
             </div>
           )}

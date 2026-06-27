@@ -20,7 +20,7 @@ import TBInsurance from "@/components/travelbriefing/TBInsurance";
 import {
   Check, X, AlertTriangle, ArrowUp, ArrowUpToLine, Phone, Copy,
   Download, Star, Gift,
-  BadgeCheck, Info, Loader, ChevronDown, ChevronUp, MapPin, Plane,
+  BadgeCheck, Info, Loader, ChevronDown, ChevronUp, ChevronsDown, MapPin, Plane,
   CalendarDays, Map, CheckSquare, HelpCircle,
 } from "lucide-react";
 import {
@@ -1888,17 +1888,17 @@ export default function TravelBriefingLanding() {
               style={{ position: "absolute", bottom: "14px", left: 0, right: 0, display: "flex", justifyContent: "center", alignItems: "center", pointerEvents: "none", zIndex: 10 }}
             >
               <div style={{ position: "relative", width: "44px", height: "44px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                {[0, 1, 2].map((i) => (
-                  <motion.div key={i} animate={{ scale: [1, 2.0], opacity: [0.55, 0] }} transition={{ duration: 2.0, repeat: Infinity, delay: i * 0.65, ease: "easeOut" }}
-                    style={{ position: "absolute", width: "20px", height: "20px", borderRadius: "50%", border: "1.5px solid rgba(255,255,255,0.7)" }} />
-                ))}
-                <motion.div
-                  animate={{ y: [0, 4, 0] }}
-                  transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-                >
-                  <ChevronDown size={18} color="rgba(255,255,255,0.95)" strokeWidth={2.5} />
-                </motion.div>
-              </div>
+                  {[0, 1, 2].map((i) => (
+                    <motion.div key={i} animate={{ scale: [1, 1.45], opacity: [0.22, 0] }} transition={{ duration: 2.6, repeat: Infinity, delay: i * 0.85, ease: "easeOut" }}
+                      style={{ position: "absolute", width: "20px", height: "20px", borderRadius: "50%", border: "1px solid rgba(255,255,255,0.4)" }} />
+                  ))}
+                  <motion.div
+                    animate={{ y: [0, 5, 0] }}
+                    transition={{ duration: 2.8, repeat: Infinity, ease: [0.37, 0, 0.63, 1] }}
+                  >
+                    <ChevronsDown size={22} color="rgba(255,255,255,0.95)" strokeWidth={2} />
+                  </motion.div>
+                </div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -2021,7 +2021,7 @@ export default function TravelBriefingLanding() {
                   <div className="mb-3">
                     <span
                       className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest px-3 py-1.5 rounded-full"
-                      style={{ background: "#ff9913", color: "#fff" }}
+                      style={{ background: "#fff", color: "#ff9913" }}
                     >
                       <BadgeCheck className="w-3 h-3" /> Trip Confirmed
                     </span>
