@@ -511,27 +511,57 @@ function StripeHeader({ eyebrow, title, description, tk, colored = false }) {
 // ── SectionStripe — full-viewport-width alternating background via CSS bleed ─
 // For colored stripes (alt=1,2): header renders on color, content wraps in white card.
 // Usage: <SectionStripe alt={1}><StripeHeader .../><SectionCard darkMode={darkMode}>content</SectionCard></SectionStripe>
-function SectionStripe({ children, alt = 0, darkMode, py = "py-10" }) {
+const STRIPE_ICONS = {
+  plane:    { vb: "0 0 24 24", d: "M21,16 L13,9 L14,4 C14.3,2.8 13,2 12,2.5 L5,9 L2,8 C1.2,7.8 0.8,8.8 1.3,9.4 L4,12 L3,15 C2.8,15.8 3.5,16.4 4.2,16.1 L7,15 L9,18 C9.5,18.7 10.6,18.4 10.7,17.6 L11,14 Z", w: 26, h: 26 },
+  pin:      { vb: "0 0 24 32", d: "M12,2 C7.58,2 4,5.58 4,10 C4,16 12,30 12,30 C12,30 20,16 20,10 C20,5.58 16.42,2 12,2 Z", w: 18, h: 24 },
+  bus:      { vb: "0 0 24 24", d: "M4 6h16v10H4V6z M2 8h2 M20 8h2 M6 16v3 M18 16v3 M6 10h12 M7 13h2 M15 13h2", w: 24, h: 24 },
+  hotel:    { vb: "0 0 24 24", d: "M3 21V7l9-5 9 5v14H3z M9 21v-6h6v6 M9 10h2 M13 10h2 M9 14h2 M13 14h2", w: 24, h: 24 },
+  doc:      { vb: "0 0 24 24", d: "M6 2h9l5 5v15H6V2z M14 2v6h5 M9 12h6 M9 15h6 M9 18h4", w: 22, h: 26 },
+  calendar: { vb: "0 0 24 24", d: "M3 5h18v16H3V5z M3 10h18 M8 3v4 M16 3v4 M7 14h2 M11 14h2 M15 14h2 M7 17h2 M11 17h2", w: 24, h: 24 },
+  leaf:     { vb: "0 0 24 24", d: "M17 8C8 10 5 16 5 22c3-4 7-6 12-7-2 3-3 7-3 9 5-3 8-9 7-16z M5 22l7-7", w: 22, h: 26 },
+  phone:    { vb: "0 0 24 24", d: "M12 2L4 6v5c0 5.5 3.8 10.7 8 12 4.2-1.3 8-6.5 8-12V6L12 2z M12 9v6 M9 12h6", w: 24, h: 24 },
+  coin:     { vb: "0 0 24 24", d: "M12 2a10 10 0 100 20A10 10 0 0012 2z M12 6v12 M8 9c0-1.7 1.8-3 4-3s4 1.3 4 3-1.8 3-4 3-4 1.3-4 3 1.8 3 4 3 4-1.3 4-3", w: 24, h: 24 },
+  shield:   { vb: "0 0 24 24", d: "M12 2L4 6v5c0 5.5 3.8 10.7 8 12 4.2-1.3 8-6.5 8-12V6l-8-4z M9 12l2 2 4-4", w: 24, h: 26 },
+  luggage:  { vb: "0 0 24 24", d: "M6 8h12a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V10a2 2 0 012-2z M9 8V6a3 3 0 016 0v2 M12 13v4 M10 15h4", w: 24, h: 26 },
+  pack:     { vb: "0 0 24 24", d: "M12 2a5 5 0 015 5H7a5 5 0 015-5z M4 7h16l1 14H3L4 7z M9 11h6 M9 14h6", w: 24, h: 24 },
+  hanger:   { vb: "0 0 24 24", d: "M12 3a2 2 0 012 2c0 .7-.4 1.4-1 1.8L22 17H2L11 7A2 2 0 0112 3z M12 7v3", w: 24, h: 20 },
+  compass:  { vb: "0 0 24 24", d: "M12 2a10 10 0 100 20A10 10 0 0012 2z M16.2 7.8l-4.3 2.7-2.7 4.3 4.3-2.7 2.7-4.3z", w: 24, h: 24 },
+  question: { vb: "0 0 24 24", d: "M12 2a10 10 0 100 20A10 10 0 0012 2z M9.1 9a3 3 0 015.8 1c0 2-3 3-3 3 M12 17h.01", w: 24, h: 24 },
+  star:     { vb: "0 0 24 24", d: "M12 2l3.1 6.3L22 9.3l-5 4.9 1.2 6.9L12 18l-6.2 3.1 1.2-6.9L2 9.3l6.9-1z", w: 24, h: 24 },
+};
+
+function SectionStripe({ children, alt = 0, darkMode, py = "py-10", icon, iconPos = "top-right" }) {
   const bgs = darkMode
-    ? [
-        "transparent",
-        "#111111",
-        "#0f0f0f",
-      ]
-    : [
-        "transparent",
-        "linear-gradient(155deg, #ff9913 0%, #d96800 100%)",
-        "linear-gradient(155deg, #ffa726 0%, #e07000 100%)",
-      ];
+    ? ["transparent", "#111111", "#0f0f0f"]
+    : ["transparent", "linear-gradient(155deg, #ff9913 0%, #d96800 100%)", "linear-gradient(155deg, #ffa726 0%, #e07000 100%)"];
   const bg = bgs[alt % 3];
   const isColored = bg && bg !== "transparent";
+
+  // Solid icon for colored sections only (e.g. Emergency Contacts)
+  const SideIcon = ({ name, pos = "mid-right" }) => {
+    const ic = STRIPE_ICONS[name];
+    if (!ic) return null;
+    const isLeft = pos.includes("left");
+    const isBottom = pos.includes("bottom");
+    const isMid = pos.includes("mid");
+    const hStyle = isLeft ? { left: "12px" } : { right: "12px" };
+    const vStyle = isBottom ? { bottom: "14px" } : isMid ? { top: "50%", transform: "translateY(-50%)" } : { top: "14px" };
+    return (
+      <div aria-hidden="true" style={{ position: "absolute", zIndex: 3, opacity: 0.22, pointerEvents: "none", ...hStyle, ...vStyle }}>
+        <svg width={ic.w} height={ic.h} viewBox={ic.vb} fill="white" stroke="none">
+          <path d={ic.d} />
+        </svg>
+      </div>
+    );
+  };
 
   if (!isColored) {
     const dotPattern = darkMode
       ? "radial-gradient(circle, rgba(255,153,19,0.09) 1.5px, transparent 1.5px)"
       : "radial-gradient(circle, rgba(0,0,0,0.045) 1.5px, transparent 1.5px)";
+
     return (
-      <div className={`${py} mb-2`} style={{ backgroundImage: dotPattern, backgroundSize: "26px 26px", backgroundPosition: "13px 13px" }}>
+      <div className={`${py} mb-2`} style={{ position: "relative", backgroundImage: dotPattern, backgroundSize: "26px 26px", backgroundPosition: "13px 13px" }}>
         {children}
       </div>
     );
@@ -539,44 +569,10 @@ function SectionStripe({ children, alt = 0, darkMode, py = "py-10" }) {
 
   return (
     <div className={`relative ${py} mb-0`} style={{ marginTop: 0 }}>
-      {/* Full-bleed background */}
-      <div
-        aria-hidden="true"
-        style={{
-          position: "absolute", top: 0, bottom: 0,
-          left: "50%", width: "100vw",
-          transform: "translateX(-50%)",
-          background: bg,
-          zIndex: 0,
-        }}
-      />
-      {/* Diagonal texture */}
-      <div
-        aria-hidden="true"
-        style={{
-          position: "absolute", top: 0, bottom: 0,
-          left: "50%", width: "100vw",
-          transform: "translateX(-50%)",
-          backgroundImage: "repeating-linear-gradient(-55deg, transparent, transparent 18px, rgba(255,255,255,0.04) 18px, rgba(255,255,255,0.04) 19px)",
-          zIndex: 1,
-        }}
-      />
-{/* Side decorations — airplane left, dotted flight path */}
-      <div aria-hidden="true" className="hidden lg:block" style={{ position: "absolute", top: "50%", left: "clamp(8px, 2vw, 40px)", transform: "translateY(-50%)", zIndex: 3, opacity: 0.22, pointerEvents: "none" }}>
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-          <path d="M21,16 L13,9 L14,4 C14.3,2.8 13,2 12,2.5 L5,9 L2,8 C1.2,7.8 0.8,8.8 1.3,9.4 L4,12 L3,15 C2.8,15.8 3.5,16.4 4.2,16.1 L7,15 L9,18 C9.5,18.7 10.6,18.4 10.7,17.6 L11,14 Z" fill="white"/>
-        </svg>
-        <div style={{ marginTop: 6, display: "flex", flexDirection: "column", gap: 4, alignItems: "center" }}>
-          {[0,1,2,3].map(i => <div key={i} style={{ width: 3, height: 3, borderRadius: "50%", background: "rgba(255,255,255,0.5)" }} />)}
-        </div>
-      </div>
-      {/* Side decoration right — destination pin */}
-      <div aria-hidden="true" className="hidden lg:block" style={{ position: "absolute", top: "50%", right: "clamp(8px, 2vw, 40px)", transform: "translateY(-50%)", zIndex: 3, opacity: 0.22, pointerEvents: "none" }}>
-        <svg width="20" height="26" viewBox="0 0 24 32" fill="none">
-          <path d="M12,2 C7.58,2 4,5.58 4,10 C4,16 12,30 12,30 C12,30 20,16 20,10 C20,5.58 16.42,2 12,2 Z" fill="white"/>
-          <circle cx="12" cy="10" r="3.5" fill="rgba(255,120,0,0.7)"/>
-        </svg>
-      </div>
+      <div aria-hidden="true" style={{ position: "absolute", top: 0, bottom: 0, left: "50%", width: "100vw", transform: "translateX(-50%)", background: bg, zIndex: 0 }} />
+      <div aria-hidden="true" style={{ position: "absolute", top: 0, bottom: 0, left: "50%", width: "100vw", transform: "translateX(-50%)", backgroundImage: "repeating-linear-gradient(-55deg, transparent, transparent 18px, rgba(255,255,255,0.04) 18px, rgba(255,255,255,0.04) 19px)", zIndex: 1 }} />
+      <SideIcon name="plane" pos="mid-left" />
+      {icon && <SideIcon name={icon} pos={iconPos} />}
       <div style={{ position: "relative", zIndex: 4 }}>{children}</div>
     </div>
   );
@@ -2021,7 +2017,7 @@ export default function TravelBriefingLanding() {
                   <div className="mb-3">
                     <span
                       className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest px-3 py-1.5 rounded-full"
-                      style={{ background: "#fff", color: "#ff9913" }}
+                      style={{ background: "transparent", color: "#fff", border: "1.5px solid rgba(255,255,255,0.7)" }}
                     >
                       <BadgeCheck className="w-3 h-3" /> Trip Confirmed
                     </span>
@@ -2299,14 +2295,18 @@ export default function TravelBriefingLanding() {
 
         {/* ── EMERGENCY CONTACTS — consolidated, always visible near top ── */}
         <div id="nav-emergency" style={{ height: 0 }} />
-        <SectionStripe alt={1} darkMode={darkMode}>
+        <SectionStripe alt={1} darkMode={darkMode} icon="phone" iconPos="mid-right">
           <FadeIn>
             <StripeHeader eyebrow="Important" title="Emergency Contacts" description="Save these numbers before your trip. Available for any emergency during your stay." tk={tk} colored />
             <SectionCard darkMode={darkMode}>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {/* Gladex Hotline — always shown */}
                 <div className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor: "rgba(255,153,19,0.3)", backgroundColor: "rgba(255,153,19,0.06)" }}>
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(255,153,19,0.12)" }}>📞</div>
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style={{ background: "transparent", border: "1.5px solid rgba(255,153,19,0.4)" }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                      <path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C9.6 21 3 14.4 3 6c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z" stroke="#ff9913" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
                   <div>
                     <p className="text-xs font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>Gladex Hotline</p>
                     <a href="tel:+639178752200" className="text-sm font-black" style={{ color: "#ff9913" }}>+63 917 875 2200</a>
@@ -2331,7 +2331,14 @@ export default function TravelBriefingLanding() {
                     const allSameLabel = contacts.every(x => x.label === contacts[0].label);
                     return (
                       <div key={grp.group} className="rounded-xl border p-3 flex items-start gap-3" style={{ borderColor: "rgba(255,153,19,0.3)", backgroundColor: "rgba(255,153,19,0.06)" }}>
-                        <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-base" style={{ background: "rgba(255,153,19,0.12)" }}>{grp.icon}</div>
+                        <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style={{ background: "transparent", border: "1.5px solid rgba(255,153,19,0.4)" }}>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                            {grp.group?.toLowerCase().includes("transfer") || grp.group?.toLowerCase().includes("transport")
+                              ? <path d="M4 6h16v10H4V6z M2 8h2 M20 8h2 M6 16v3 M18 16v3 M7 11h2 M15 11h2" stroke="#ff9913" strokeWidth="1.8" strokeLinecap="round"/>
+                              : <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z" fill="#ff9913"/>
+                            }
+                          </svg>
+                        </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-xs font-black uppercase tracking-widest mb-0.5" style={{ color: textMuted }}>{grp.group}</p>
                           {multi ? (
@@ -2626,7 +2633,7 @@ export default function TravelBriefingLanding() {
         </SectionStripe>
 
         {/* 5b. Transfer Instructions — WHITE card */}
-        <SectionStripe alt={0} darkMode={darkMode} py="py-7">
+        <SectionStripe alt={0} darkMode={darkMode} py="py-7" icon="bus" iconPos="top-left">
           <FadeIn>
             <SectionCard darkMode={darkMode}>
               <div className="mb-5 pb-4" style={{ borderBottom: `1px solid ${borderColor}` }}>
@@ -2691,7 +2698,7 @@ export default function TravelBriefingLanding() {
         </SectionStripe>
 
         {/* 5d. Travel Requirements — WHITE card */}
-        <SectionStripe alt={0} darkMode={darkMode} py="py-7">
+        <SectionStripe alt={0} darkMode={darkMode} py="py-7" icon="doc" iconPos="bottom-right">
           <FadeIn>
             <SectionCard darkMode={darkMode}>
               <div className="mb-5 pb-4" style={{ borderBottom: `1px solid ${borderColor}` }}>
@@ -2751,7 +2758,7 @@ export default function TravelBriefingLanding() {
         </SectionStripe>
 
         {/* 5f. Do's & Don'ts — WHITE card */}
-        <SectionStripe alt={0} darkMode={darkMode} py="py-7">
+        <SectionStripe alt={0} darkMode={darkMode} py="py-7" icon="leaf" iconPos="top-left">
           <FadeIn>
             <SectionCard darkMode={darkMode}>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-6 sm:divide-x" style={{ borderColor }}>
@@ -2834,7 +2841,7 @@ export default function TravelBriefingLanding() {
             5b3. SAFETY TIPS
            ══════════════════════════════════════════════════ */}
         {dest.safetyTips?.length > 0 && (
-          <SectionStripe alt={0} darkMode={darkMode}>
+          <SectionStripe alt={0} darkMode={darkMode} icon="shield" iconPos="bottom-left">
             <FadeIn>
               <StripeHeader eyebrow="Stay Safe" title="Safety Tips" description="Important safety reminders to keep you and your group protected." tk={tk} />
               <div className="rounded-2xl overflow-hidden" style={{ boxShadow: cardShadow }}>
@@ -2874,7 +2881,7 @@ export default function TravelBriefingLanding() {
             7. WHAT TO BRING — Packing Guide
            ══════════════════════════════════════════════════ */}
         {dest.packingGuide && (
-          <SectionStripe alt={0} darkMode={darkMode}>
+          <SectionStripe alt={0} darkMode={darkMode} icon="pack" iconPos="top-right">
             <FadeIn>
               <StripeHeader eyebrow="Packing Guide" title="What to Bring" description="Pack smart — everything you need for a comfortable and stress-free trip." tk={tk} />
               <div className={`${pad} space-y-6`}>
@@ -2948,7 +2955,7 @@ export default function TravelBriefingLanding() {
             9. DESTINATION GUIDE
            ══════════════════════════════════════════════════ */}
         <div id="nav-guide" style={{ height: 0 }} />
-        <SectionStripe alt={0} darkMode={darkMode}>
+        <SectionStripe alt={0} darkMode={darkMode} icon="compass" iconPos="top-left">
           <FadeIn>
             <StripeHeader eyebrow="Know Your Destination" title="Destination Guide" tk={tk} />
             <TBDestinationGuide dest={dest} darkMode={darkMode} tk={tk} />
@@ -2992,7 +2999,7 @@ export default function TravelBriefingLanding() {
         {/* ══════════════════════════════════════════════════
             14. TESTIMONIALS
            ══════════════════════════════════════════════════ */}
-        <SectionStripe alt={isTestMode ? 1 : 0} darkMode={darkMode}>
+        <SectionStripe alt={isTestMode ? 1 : 0} darkMode={darkMode} icon="star" iconPos="bottom-right">
           <FadeIn>
             <StripeHeader eyebrow="Traveler Reviews" title="Real Gladex Travel Experiences" tk={tk} colored={isTestMode} />
 
