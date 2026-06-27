@@ -233,14 +233,17 @@ export default function Admin() {
 
       {/* Main */}
       <main style={{ flex: 1, minWidth: 0, overflowY: "auto" }}>
-        <div style={{ padding: isMobile ? "12px 16px" : "14px 32px", borderBottom: "1px solid rgba(0,0,0,0.06)", display: "flex", alignItems: "center", gap: "10px", background: "#fff" }}>
+        <div style={{ padding: isMobile ? "12px 16px" : "13px 32px", borderBottom: "1px solid rgba(0,0,0,0.06)", display: "flex", alignItems: "center", gap: "10px", background: "#fff" }}>
           {isMobile && (
             <button onClick={() => setNavOpen((o) => !o)} style={{ background: "none", border: "none", cursor: "pointer", padding: "4px", display: "flex", flexShrink: 0, marginRight: "2px" }}>
               <Menu size={20} color="#666" />
             </button>
           )}
-          <img src={GLADEX_LOGO} alt="Gladex Tours" style={{ height: "26px", objectFit: "contain" }} />
-          <span style={{ fontSize: "11px", fontWeight: 800, color: "#ccc", letterSpacing: "0.1em", textTransform: "uppercase" }}>Admin Panel</span>
+          <span style={{ fontSize: "13px", fontWeight: 800, color: "#111" }}>
+            {NAV.find((n) => location.pathname.startsWith(n.path))?.label ?? "Admin"}
+          </span>
+          <span style={{ fontSize: "11px", color: "#ddd", fontWeight: 400 }}>·</span>
+          <span style={{ fontSize: "11px", color: "#bbb", fontWeight: 600 }}>Gladex Admin</span>
         </div>
         <Routes>
           <Route path="cache"   element={<AdminCache />} />

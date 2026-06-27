@@ -2,7 +2,7 @@
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { useTheme } from "@/lib/ThemeContext";
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
 import DestinationNavbar from "@/components/destination/DestinationNavbar";
 import { getDestination, SUPPORTED_DESTINATIONS } from "@/data/destinationData";
 import TBWelcomeSection from "@/components/travelbriefing/TBWelcomeSection";
@@ -607,30 +607,106 @@ function SectionDivider({ tk }) {
 }
 
 // ── Back to top ──────────────────────────────────────────────────
-function BackToTopButton({ visible, lift, hasNav }) {
+const RING_R = 22;
+const RING_CIRCUMFERENCE = 2 * Math.PI * RING_R;
+
+function BackToTopButton({ visible, lift, hasNav, scrollYProgress }) {
   const baseBottom = 24;
+  const [showLabel, setShowLabel] = useState(false);
+  const strokeDashoffset = useTransform(
+    scrollYProgress,
+    [0, 1],
+    [RING_CIRCUMFERENCE, 0]
+  );
+
+  const labelShown = useRef(false);
+  useMotionValueEvent(scrollYProgress, "change", (v) => {
+    if (v >= 0.5 && !labelShown.current) {
+      labelShown.current = true;
+      setShowLabel(true);
+      setTimeout(() => setShowLabel(false), 2200);
+    }
+  });
+
   return (
     <AnimatePresence>
       {visible && (
-        <motion.button
-          key="btt"
+        <motion.div
+          key="btt-wrapper"
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 12 }}
           transition={{ duration: 0.25 }}
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="fixed right-5 z-50 w-12 h-12 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
           style={{
+            position: "fixed",
+            right: "20px",
             bottom: lift ? `${baseBottom + 60}px` : `${baseBottom}px`,
             transition: "bottom 0.3s cubic-bezier(0.34,1.56,0.64,1)",
-            background: "#ffffff",
-            border: "none",
-            boxShadow: "0 4px 20px rgba(0,0,0,0.18), 0 1px 6px rgba(0,0,0,0.1)",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            gap: "8px",
+            zIndex: 50,
           }}
-          aria-label="Back to top"
         >
-          <ArrowUpToLine className="w-4 h-4" style={{ color: "#ff9913" }} strokeWidth={2.5} />
-        </motion.button>
+          {/* Auto-dismiss tooltip to the left of the button */}
+          <AnimatePresence>
+            {showLabel && (
+              <motion.span
+                key="btt-hint"
+                initial={{ opacity: 0, x: 8 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 8 }}
+                transition={{ duration: 0.3 }}
+                style={{
+                  fontSize: "11px",
+                  fontWeight: 700,
+                  color: "#333",
+                  background: "#fff",
+                  boxShadow: "0 2px 10px rgba(0,0,0,0.12)",
+                  borderRadius: "999px",
+                  padding: "5px 12px",
+                  whiteSpace: "nowrap",
+                  pointerEvents: "none",
+                  userSelect: "none",
+                }}
+              >
+                Back to top
+              </motion.span>
+            )}
+          </AnimatePresence>
+
+          <button
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            className="w-12 h-12 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
+            style={{
+              position: "relative",
+              background: "#ffffff",
+              border: "none",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.18), 0 1px 6px rgba(0,0,0,0.1)",
+              cursor: "pointer",
+              flexShrink: 0,
+            }}
+            aria-label="Back to top"
+          >
+            <svg
+              width="56" height="56" viewBox="0 0 56 56"
+              style={{ position: "absolute", top: "-4px", left: "-4px", transform: "rotate(-90deg)", pointerEvents: "none" }}
+            >
+              <circle cx="28" cy="28" r={RING_R} fill="none" stroke="rgba(0,0,0,0.07)" strokeWidth="3" />
+              <motion.circle
+                cx="28" cy="28" r={RING_R}
+                fill="none"
+                stroke="#ff9913"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeDasharray={RING_CIRCUMFERENCE}
+                style={{ strokeDashoffset }}
+              />
+            </svg>
+            <ArrowUpToLine className="w-4 h-4" style={{ color: "#ff9913" }} strokeWidth={2.5} />
+          </button>
+        </motion.div>
       )}
     </AnimatePresence>
   );
@@ -1639,6 +1715,7 @@ export default function TravelBriefingLanding() {
   // ── Parallax hero ────────────────────────────────────────────────
   const heroRef = useRef(null);
   const { scrollYProgress: heroScroll } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const { scrollYProgress } = useScroll();
   const heroImgY = useTransform(heroScroll, [0, 1], ["0%", "30%"]);
 
   // ── Loading — wait for session check before revealing destination ──
@@ -3260,7 +3337,7 @@ export default function TravelBriefingLanding() {
       </div>
 
       {/* Floating UI */}
-      <BackToTopButton visible={showBackToTop} lift={isTestMode && addOnsCart.length > 0} hasNav={false} />
+      <BackToTopButton visible={showBackToTop} lift={isTestMode && addOnsCart.length > 0} hasNav={false} scrollYProgress={scrollYProgress} />
 
       {/* ── Floating contact circle — appears with back-to-top ── */}
       <AnimatePresence>
