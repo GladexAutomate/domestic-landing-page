@@ -1,7 +1,7 @@
 // @ts-nocheck
 import React, { useState, useEffect } from "react";
 import { Routes, Route, Link, useLocation, useNavigate } from "react-router-dom";
-import { Lock, Eye, EyeOff, LogOut, Database, Star, Info, Menu } from "lucide-react";
+import { Lock, Eye, EyeOff, LogOut, Database, Star, Info, Menu, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import AdminCache from "./AdminCache";
 import AdminReviews from "./AdminReviews";
@@ -56,61 +56,88 @@ function LoginScreen({ onLogin }) {
   const ready = username.trim() && password;
 
   return (
-    <div style={{ minHeight: "100vh", background: "#F5F5F5", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
-      <div style={{ background: "#fff", borderRadius: "20px", padding: "40px 36px", width: "100%", maxWidth: "360px", boxShadow: "0 4px 24px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04)" }}>
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "28px" }}>
-          <img src={GLADEX_LOGO} alt="Gladex Tours" style={{ height: "48px", objectFit: "contain", marginBottom: "16px" }} />
-          <h1 style={{ fontSize: "1.5rem", fontWeight: 900, color: "#111", letterSpacing: "-0.02em", margin: 0 }}>Admin</h1>
-        </div>
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-          <div>
-            <label style={{ fontSize: "10.5px", fontWeight: 700, color: "#888", letterSpacing: "0.08em", textTransform: "uppercase", display: "block", marginBottom: "6px" }}>Username</label>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              autoComplete="username"
-              style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1.5px solid #e5e5e5", fontSize: "0.875rem", color: "#111", outline: "none", boxSizing: "border-box" }}
-            />
+    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px", background: "linear-gradient(145deg, #fff8f0 0%, #fff3e6 50%, #ffecd6 100%)" }}>
+      <motion.div
+        initial={{ opacity: 0, y: 24, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+        style={{ background: "#fff", borderRadius: "24px", padding: "40px 36px", width: "100%", maxWidth: "380px", boxShadow: "0 8px 40px rgba(255,153,19,0.13), 0 2px 8px rgba(0,0,0,0.06)" }}
+      >
+        {/* Header */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "32px" }}>
+          <div style={{ padding: "12px", background: `${ORANGE}15`, borderRadius: "16px", marginBottom: "16px" }}>
+            <img src={GLADEX_LOGO} alt="Gladex Tours" style={{ height: "44px", objectFit: "contain", display: "block" }} />
           </div>
+          <h1 style={{ fontSize: "1.4rem", fontWeight: 900, color: "#111", letterSpacing: "-0.025em", margin: "0 0 4px" }}>Welcome back</h1>
+          <p style={{ fontSize: "12.5px", color: "#aaa", margin: 0, fontWeight: 500 }}>Sign in to your admin panel</p>
+        </div>
+
+        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
           <div>
-            <label style={{ fontSize: "10.5px", fontWeight: 700, color: "#888", letterSpacing: "0.08em", textTransform: "uppercase", display: "block", marginBottom: "6px" }}>Password</label>
+            <label style={{ fontSize: "10.5px", fontWeight: 800, color: "#888", letterSpacing: "0.09em", textTransform: "uppercase", display: "block", marginBottom: "7px" }}>Username</label>
             <div style={{ position: "relative" }}>
+              <Lock size={14} style={{ position: "absolute", left: "13px", top: "50%", transform: "translateY(-50%)", color: "#ccc", pointerEvents: "none" }} />
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => { setUsername(e.target.value); setError(""); }}
+                autoComplete="username"
+                placeholder="Enter username"
+                style={{ width: "100%", padding: "11px 14px 11px 36px", borderRadius: "11px", border: `1.5px solid ${error ? "rgba(220,38,38,0.4)" : "#ebebeb"}`, fontSize: "0.875rem", color: "#111", outline: "none", boxSizing: "border-box", transition: "border-color 0.15s", background: "#fafafa" }}
+                onFocus={(e) => e.target.style.borderColor = ORANGE}
+                onBlur={(e) => e.target.style.borderColor = error ? "rgba(220,38,38,0.4)" : "#ebebeb"}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label style={{ fontSize: "10.5px", fontWeight: 800, color: "#888", letterSpacing: "0.09em", textTransform: "uppercase", display: "block", marginBottom: "7px" }}>Password</label>
+            <div style={{ position: "relative" }}>
+              <Lock size={14} style={{ position: "absolute", left: "13px", top: "50%", transform: "translateY(-50%)", color: "#ccc", pointerEvents: "none" }} />
               <input
                 type={showPass ? "text" : "password"}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => { setPassword(e.target.value); setError(""); }}
                 autoComplete="current-password"
-                style={{ width: "100%", padding: "10px 40px 10px 14px", borderRadius: "10px", border: "1.5px solid #e5e5e5", fontSize: "0.875rem", color: "#111", outline: "none", boxSizing: "border-box" }}
+                placeholder="Enter password"
+                style={{ width: "100%", padding: "11px 40px 11px 36px", borderRadius: "11px", border: `1.5px solid ${error ? "rgba(220,38,38,0.4)" : "#ebebeb"}`, fontSize: "0.875rem", color: "#111", outline: "none", boxSizing: "border-box", transition: "border-color 0.15s", background: "#fafafa" }}
+                onFocus={(e) => e.target.style.borderColor = ORANGE}
+                onBlur={(e) => e.target.style.borderColor = error ? "rgba(220,38,38,0.4)" : "#ebebeb"}
               />
               <button type="button" onClick={() => setShowPass((s) => !s)} style={{ position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "#bbb", display: "flex", padding: 0 }}>
-                {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                {showPass ? <EyeOff size={15} /> : <Eye size={15} />}
               </button>
             </div>
           </div>
+
           <AnimatePresence>
             {error && (
-              <motion.p
-                initial={{ opacity: 0, y: -4 }}
+              <motion.div
+                initial={{ opacity: 0, y: -6 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                style={{ fontSize: "12px", color: "#dc2626", fontWeight: 600, margin: 0 }}
+                style={{ display: "flex", alignItems: "center", gap: "7px", padding: "9px 12px", background: "rgba(220,38,38,0.06)", border: "1px solid rgba(220,38,38,0.18)", borderRadius: "9px" }}
               >
-                {error}
-              </motion.p>
+                <AlertCircle size={13} color="#dc2626" />
+                <p style={{ fontSize: "12px", color: "#dc2626", fontWeight: 600, margin: 0 }}>{error}</p>
+              </motion.div>
             )}
           </AnimatePresence>
-          <button
+
+          <motion.button
             type="submit"
             disabled={!ready || loading}
-            style={{ marginTop: "4px", padding: "12px", borderRadius: "10px", background: !ready ? "#f0f0f0" : ORANGE, color: !ready ? "#bbb" : "#fff", fontWeight: 800, fontSize: "0.875rem", border: "none", cursor: !ready ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", transition: "background 0.2s" }}
+            whileHover={ready && !loading ? { scale: 1.02 } : {}}
+            whileTap={ready && !loading ? { scale: 0.98 } : {}}
+            style={{ marginTop: "4px", padding: "13px", borderRadius: "12px", background: !ready ? "#f0f0f0" : `linear-gradient(135deg, ${ORANGE}, #e07c00)`, color: !ready ? "#bbb" : "#fff", fontWeight: 800, fontSize: "0.9rem", border: "none", cursor: !ready ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", boxShadow: ready ? `0 4px 14px ${ORANGE}40` : "none", transition: "background 0.2s, box-shadow 0.2s" }}
           >
-            {loading ? (
-              <div style={{ width: "16px", height: "16px", border: "2px solid rgba(255,255,255,0.35)", borderTopColor: "#fff", borderRadius: "50%", animation: "spin 0.7s linear infinite" }} />
-            ) : "Sign In"}
-          </button>
+            {loading
+              ? <div style={{ width: "16px", height: "16px", border: "2px solid rgba(255,255,255,0.35)", borderTopColor: "#fff", borderRadius: "50%", animation: "spin 0.7s linear infinite" }} />
+              : "Sign In"
+            }
+          </motion.button>
         </form>
-      </div>
+      </motion.div>
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
