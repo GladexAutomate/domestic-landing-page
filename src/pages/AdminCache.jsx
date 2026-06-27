@@ -85,12 +85,14 @@ function fmtDate(str) {
 
 function StatCard({ label, value, icon: Icon, color }) {
   return (
-    <div style={{ background: "#fff", borderRadius: "14px", padding: "18px 20px", border: "1px solid rgba(0,0,0,0.07)", flex: "1 1 130px" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: "7px", marginBottom: "8px" }}>
-        <Icon size={13} color={color || ORANGE} />
+    <div style={{ background: "#fff", borderRadius: "16px", padding: "20px 22px", border: "1px solid rgba(0,0,0,0.07)", flex: "1 1 140px", borderTop: `3px solid ${color || ORANGE}`, boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
+        <div style={{ width: "28px", height: "28px", borderRadius: "8px", background: `${color || ORANGE}15`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+          <Icon size={13} color={color || ORANGE} />
+        </div>
         <p style={{ fontSize: "10px", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: "#aaa", margin: 0 }}>{label}</p>
       </div>
-      <p style={{ fontSize: "1.75rem", fontWeight: 900, color: "#111", margin: 0, letterSpacing: "-0.03em" }}>{value ?? "—"}</p>
+      <p style={{ fontSize: "1.9rem", fontWeight: 900, color: "#111", margin: 0, letterSpacing: "-0.03em" }}>{value ?? "—"}</p>
     </div>
   );
 }
@@ -179,7 +181,10 @@ function EntriesTable({ entries }) {
           {visible.map((r) => {
             const isUnresolved = !r.slug || r.slug === "unresolved";
             return (
-              <tr key={r.gdx} style={{ borderTop: "1px solid #f5f5f5" }}>
+              <tr key={r.gdx} style={{ borderTop: "1px solid #f5f5f5", transition: "background 0.1s" }}
+                onMouseEnter={(e) => e.currentTarget.style.background = "#fafafa"}
+                onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+              >
                 <td style={{ padding: "9px 14px", fontFamily: "monospace", fontWeight: 700, color: ORANGE, whiteSpace: "nowrap" }}>{r.gdx}</td>
                 <td style={{ padding: "9px 14px", fontWeight: 700, color: "#222", whiteSpace: "nowrap" }}>{lastFirst(r.lead_name)}</td>
                 <td style={{ padding: "9px 14px", whiteSpace: "nowrap" }}>
@@ -281,7 +286,10 @@ function AccordionSection({ dest, rows, isUnresolved, isActive, open, onToggle }
                 </thead>
                 <tbody>
                   {visible.map((r) => (
-                    <tr key={r.gdx} style={{ borderTop: "1px solid #f5f5f5" }}>
+                    <tr key={r.gdx} style={{ borderTop: "1px solid #f5f5f5", transition: "background 0.1s" }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = "#fafafa"}
+                      onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+                    >
                       <td style={{ padding: "7px 14px", fontFamily: "monospace", fontWeight: 700, color: ORANGE, whiteSpace: "nowrap" }}>{r.gdx}</td>
                       <td style={{ padding: "7px 14px", fontWeight: 600, color: "#333", whiteSpace: "nowrap" }}>{lastFirst(r.lead_name)}</td>
                       {isUnresolved && (
@@ -427,27 +435,27 @@ export default function AdminCache() {
           <h1 style={{ fontSize: "1.5rem", fontWeight: 900, color: "#111", margin: 0, letterSpacing: "-0.02em" }}>GDX Cache</h1>
           <p style={{ fontSize: "13px", color: "#999", margin: "4px 0 0" }}>Cache all bookings for fast slug resolution</p>
         </div>
-        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-          <button onClick={() => { loadStats(); loadEntries(); }} style={{ display: "flex", alignItems: "center", gap: "6px", padding: "9px 16px", borderRadius: "10px", border: "1.5px solid #e5e5e5", background: "#fff", cursor: "pointer", fontSize: "0.8rem", fontWeight: 700, color: "#666" }}>
+        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", alignItems: "center" }}>
+          <button onClick={() => { loadStats(); loadEntries(); }} style={{ display: "flex", alignItems: "center", gap: "6px", padding: "9px 16px", borderRadius: "10px", border: "1.5px solid #e5e5e5", background: "#fff", cursor: "pointer", fontSize: "0.8rem", fontWeight: 700, color: "#555", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
             <RefreshCw size={13} /> Refresh
           </button>
           {!deleteConfirm ? (
             <button
               onClick={() => setDeleteConfirm(true)}
               disabled={deleting || orphanedCount === 0}
-              style={{ display: "flex", alignItems: "center", gap: "6px", padding: "9px 16px", borderRadius: "10px", border: "1.5px solid", borderColor: orphanedCount === 0 ? "#e5e5e5" : "rgba(220,38,38,0.3)", background: orphanedCount === 0 ? "#fafafa" : "rgba(220,38,38,0.05)", color: orphanedCount === 0 ? "#ccc" : "#dc2626", cursor: orphanedCount === 0 ? "not-allowed" : "pointer", fontSize: "0.8rem", fontWeight: 700 }}
+              style={{ display: "flex", alignItems: "center", gap: "6px", padding: "9px 16px", borderRadius: "10px", border: "1.5px solid", borderColor: orphanedCount === 0 ? "#e5e5e5" : "rgba(220,38,38,0.25)", background: orphanedCount === 0 ? "#fafafa" : "rgba(220,38,38,0.04)", color: orphanedCount === 0 ? "#ccc" : "#dc2626", cursor: orphanedCount === 0 ? "not-allowed" : "pointer", fontSize: "0.8rem", fontWeight: 700 }}
             >
               <Trash2 size={13} />
               {deleting ? "Deleting…" : `Clean Up${orphanedCount > 0 ? ` (${orphanedCount})` : ""}`}
             </button>
           ) : (
-            <div style={{ display: "flex", gap: "6px", alignItems: "center", padding: "6px 10px", borderRadius: "10px", background: "rgba(220,38,38,0.06)", border: "1.5px solid rgba(220,38,38,0.25)" }}>
-              <span style={{ fontSize: "12px", fontWeight: 700, color: "#dc2626" }}>Remove {orphanedCount} orphaned entries?</span>
-              <button onClick={handleDeleteOrphaned} style={{ padding: "4px 10px", borderRadius: "7px", border: "none", background: "#dc2626", color: "#fff", fontSize: "11px", fontWeight: 800, cursor: "pointer" }}>Yes, delete</button>
-              <button onClick={() => setDeleteConfirm(false)} style={{ padding: "4px 10px", borderRadius: "7px", border: "1.5px solid #e5e5e5", background: "#fff", color: "#666", fontSize: "11px", fontWeight: 700, cursor: "pointer" }}>Cancel</button>
+            <div style={{ display: "flex", gap: "6px", alignItems: "center", padding: "8px 12px", borderRadius: "10px", background: "rgba(220,38,38,0.05)", border: "1.5px solid rgba(220,38,38,0.2)" }}>
+              <span style={{ fontSize: "12px", fontWeight: 700, color: "#dc2626" }}>Remove {orphanedCount} orphaned?</span>
+              <button onClick={handleDeleteOrphaned} style={{ padding: "5px 12px", borderRadius: "7px", border: "none", background: "#dc2626", color: "#fff", fontSize: "11px", fontWeight: 800, cursor: "pointer" }}>Yes</button>
+              <button onClick={() => setDeleteConfirm(false)} style={{ padding: "5px 12px", borderRadius: "7px", border: "1.5px solid #e5e5e5", background: "#fff", color: "#666", fontSize: "11px", fontWeight: 700, cursor: "pointer" }}>Cancel</button>
             </div>
           )}
-          <button onClick={handleBulkCache} disabled={bulking} style={{ display: "flex", alignItems: "center", gap: "6px", padding: "9px 16px", borderRadius: "10px", border: "none", background: bulking ? "#e5e5e5" : ORANGE, color: bulking ? "#aaa" : "#fff", cursor: bulking ? "not-allowed" : "pointer", fontSize: "0.8rem", fontWeight: 800 }}>
+          <button onClick={handleBulkCache} disabled={bulking} style={{ display: "flex", alignItems: "center", gap: "7px", padding: "10px 18px", borderRadius: "10px", border: "none", background: bulking ? "#e5e5e5" : `linear-gradient(135deg, ${ORANGE}, #e07c00)`, color: bulking ? "#aaa" : "#fff", cursor: bulking ? "not-allowed" : "pointer", fontSize: "0.8rem", fontWeight: 800, boxShadow: bulking ? "none" : `0 4px 12px ${ORANGE}40` }}>
             <Zap size={13} />
             {bulking ? `Caching ${bulkProgress.done}/${bulkProgress.total || "…"}` : "Bulk Cache All"}
           </button>
@@ -508,9 +516,9 @@ export default function AdminCache() {
       </div>
 
       {/* Tabs */}
-      <div style={{ display: "inline-flex", gap: "3px", background: "#f0f0f0", padding: "4px", borderRadius: "12px", marginBottom: "20px" }}>
+      <div style={{ display: "flex", gap: "3px", background: "#f0f0f0", padding: "4px", borderRadius: "12px", marginBottom: "24px", width: "fit-content" }}>
         {TABS.map((t) => (
-          <button key={t.key} onClick={() => setTab(t.key)} style={{ padding: "8px 18px", borderRadius: "9px", border: "none", background: tab === t.key ? "#fff" : "transparent", color: tab === t.key ? "#111" : "#999", fontWeight: tab === t.key ? 800 : 600, fontSize: "0.8rem", cursor: "pointer", boxShadow: tab === t.key ? "0 1px 4px rgba(0,0,0,0.08)" : "none", transition: "all 0.12s" }}>
+          <button key={t.key} onClick={() => setTab(t.key)} style={{ padding: "8px 20px", borderRadius: "9px", border: "none", background: tab === t.key ? "#fff" : "transparent", color: tab === t.key ? "#111" : "#999", fontWeight: tab === t.key ? 800 : 600, fontSize: "0.8rem", cursor: "pointer", boxShadow: tab === t.key ? "0 1px 4px rgba(0,0,0,0.08)" : "none", transition: "all 0.12s", whiteSpace: "nowrap" }}>
             {t.label}
           </button>
         ))}
