@@ -49,7 +49,7 @@ export default function SiteLock() {
         <p style={{
           fontSize: "13.5px",
           color: "#999",
-          margin: "0 0 28px",
+          margin: 0,
           lineHeight: 1.6,
           fontWeight: 500,
         }}>
@@ -57,24 +57,6 @@ export default function SiteLock() {
           Please check back later.
         </p>
 
-        <div style={{
-          padding: "12px 16px",
-          background: "#FFF4E5",
-          borderRadius: "12px",
-          border: "1px solid rgba(255,153,19,0.2)",
-        }}>
-          <p style={{
-            fontSize: "12px",
-            color: "#92400e",
-            margin: 0,
-            fontWeight: 600,
-          }}>
-            For inquiries, contact us at{" "}
-            <a href="mailto:info@gladextours.com" style={{ color: "#FF9913", textDecoration: "none", fontWeight: 700 }}>
-              info@gladextours.com
-            </a>
-          </p>
-        </div>
       </div>
     </div>
   );
