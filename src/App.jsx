@@ -8,7 +8,6 @@ import TravelBriefingLanding from "./pages/TravelBriefingLanding";
 import TravelBriefingHome from "./pages/TravelBriefingHome";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentFailed from "./pages/PaymentFailed";
-import Admin from "./pages/Admin";
 import { ThemeProvider } from "@/lib/ThemeContext";
 
 // Lazy-loaded: keeps Base44 SDK out of the public-route bundle entirely.
@@ -18,7 +17,7 @@ const AuthenticatedShell = lazy(() => import('./lib/AuthenticatedShell'));
 const PageNotFound = lazy(() => import('./lib/PageNotFound'));
 
 // Routes that are public (no Base44 auth required)
-const PUBLIC_PREFIXES = ["/destination/", "/preview/", "/payment/", "/admin"];
+const PUBLIC_PREFIXES = ["/destination/", "/preview/", "/payment/"];
 
 const isPublicRoute = (pathname) =>
   PUBLIC_PREFIXES.some((p) => pathname.startsWith(p)) || pathname === "/";
@@ -42,7 +41,6 @@ const AppShell = () => {
           <Route path="/preview/:slug" element={<DestinationPreview />} />
           <Route path="/payment/success" element={<PaymentSuccess />} />
           <Route path="/payment/failed" element={<PaymentFailed />} />
-          <Route path="/admin/*" element={<Admin />} />
           <Route path="*" element={<PageNotFound />} />
         </Routes>
       </Suspense>
