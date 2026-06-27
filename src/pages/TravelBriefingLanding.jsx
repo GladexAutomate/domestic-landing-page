@@ -488,7 +488,7 @@ function StripeHeader({ eyebrow, title, description, tk, colored = false }) {
         </svg>
       </div>
       {eyebrow && (
-        <p className="text-xs font-black uppercase tracking-widest mb-2"
+        <p className="font-poppins text-xs font-black uppercase tracking-widest mb-2"
           style={{ color: colored ? "rgba(255,255,255,0.72)" : "#ff9913" }}>
           {eyebrow}
         </p>

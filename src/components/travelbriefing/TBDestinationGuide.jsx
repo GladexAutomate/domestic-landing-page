@@ -351,9 +351,32 @@ function RestaurantCard({ resto, darkMode, tk, index = 0 }) {
 
 function SubBanner({ title, eyebrow, src, tk }) {
   return (
-    <div className="rounded-xl px-5 py-3.5 mb-4" style={{ background: "linear-gradient(160deg, #ff9913 0%, #e07800 100%)" }}>
-      {eyebrow && <p className="text-xs font-black uppercase tracking-widest mb-0.5" style={{ color: "rgba(255,255,255,0.72)" }}>{eyebrow}</p>}
-      <p className="font-black text-base text-white" style={{ letterSpacing: "-0.01em" }}>{title}</p>
+    <div className="rounded-xl px-5 py-4 mb-4 relative overflow-hidden" style={{ background: "linear-gradient(160deg, #ff9913 0%, #d96800 100%)" }}>
+      {/* diagonal stripe texture — matches page orange sections */}
+      <div aria-hidden="true" style={{ position: "absolute", inset: 0, backgroundImage: "repeating-linear-gradient(-55deg, transparent, transparent 18px, rgba(255,255,255,0.045) 18px, rgba(255,255,255,0.045) 19px)" }} />
+      {/* unique abstract deco per eyebrow */}
+      {eyebrow && (() => {
+        const decos = {
+          "Before You Go":     <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><path d="M24 6 L24 2 M36.5 11.5 L39.4 8.6 M42 24 L46 24 M36.5 36.5 L39.4 39.4 M24 42 L24 46 M11.5 36.5 L8.6 39.4 M6 24 L2 24 M11.5 11.5 L8.6 8.6" stroke="white" strokeWidth="1.2" strokeLinecap="round"/><circle cx="24" cy="24" r="10" stroke="white" strokeWidth="1"/></svg>,
+          "Money Matters":     <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="20" stroke="white" strokeWidth="0.9"/><circle cx="24" cy="24" r="13" stroke="white" strokeWidth="0.9"/><circle cx="24" cy="24" r="6" stroke="white" strokeWidth="0.9"/></svg>,
+          "Insider Knowledge": <svg width="52" height="28" viewBox="0 0 52 28" fill="none"><path d="M0 8 Q13 2 26 8 Q39 14 52 8" stroke="white" strokeWidth="1.1" strokeLinecap="round"/><path d="M0 18 Q13 12 26 18 Q39 24 52 18" stroke="white" strokeWidth="1.1" strokeLinecap="round"/></svg>,
+          "Stay Safe":         <svg width="44" height="44" viewBox="0 0 44 44" fill="none"><path d="M22 4 L6 10 L6 22 C6 31 13 39 22 42 C31 39 38 31 38 22 L38 10 Z" stroke="white" strokeWidth="1"/><path d="M14 22 L19 27 L30 16" stroke="white" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>,
+          "Photography":       <svg width="44" height="44" viewBox="0 0 44 44" fill="none"><circle cx="10" cy="10" r="2" fill="white"/><circle cx="22" cy="10" r="2" fill="white"/><circle cx="34" cy="10" r="2" fill="white"/><circle cx="10" cy="22" r="2" fill="white"/><circle cx="22" cy="22" r="2" fill="white"/><circle cx="34" cy="22" r="2" fill="white"/><circle cx="10" cy="34" r="2" fill="white"/><circle cx="22" cy="34" r="2" fill="white"/><circle cx="34" cy="34" r="2" fill="white"/></svg>,
+          "Must-See Spots":    <svg width="44" height="44" viewBox="0 0 44 44" fill="none"><line x1="4" y1="40" x2="40" y2="4" stroke="white" strokeWidth="1"/><line x1="14" y1="40" x2="40" y2="14" stroke="white" strokeWidth="1"/><line x1="24" y1="40" x2="40" y2="24" stroke="white" strokeWidth="1"/></svg>,
+          "Where to Eat":      <svg width="52" height="36" viewBox="0 0 52 36" fill="none"><path d="M0 6 L9 2 L18 6 L27 2 L36 6 L45 2 L52 5" stroke="white" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round"/><path d="M0 18 L9 14 L18 18 L27 14 L36 18 L45 14 L52 17" stroke="white" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round"/><path d="M0 30 L9 26 L18 30 L27 26 L36 30 L45 26 L52 29" stroke="white" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round"/></svg>,
+        };
+        const deco = decos[eyebrow];
+        return deco ? (
+          <div aria-hidden="true" style={{ position: "absolute", right: "10px", top: "50%", transform: "translateY(-50%)", opacity: 0.2, pointerEvents: "none" }}>
+            {deco}
+          </div>
+        ) : null;
+      })()}
+      {/* text */}
+      <div style={{ position: "relative", zIndex: 1 }}>
+        {eyebrow && <p className="font-poppins text-xs font-medium uppercase tracking-widest mb-1" style={{ color: "rgba(255,255,255,0.75)" }}>{eyebrow}</p>}
+        <p className="font-heading font-semibold text-base text-white" style={{ letterSpacing: "-0.01em" }}>{title}</p>
+      </div>
     </div>
   );
 }
