@@ -236,11 +236,14 @@ export default function TBBriefingVideo({ dest, darkMode, tk }) {
 
           {videoFailed && (
             <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "1.5rem", textAlign: "center", background: "linear-gradient(170deg,#0d0d0d 0%,#1a0800 100%)" }}>
-              <span style={{ fontSize: "3rem", marginBottom: "1.25rem" }}>🎬</span>
-              <p style={{ color: "#fff", fontWeight: 700, fontSize: "1rem", marginBottom: "0.5rem" }}>Briefing Video Unavailable</p>
-              <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.875rem", lineHeight: 1.6 }}>
-                Please refresh the page to load the video.
-              </p>
+              <div style={{ width: "36px", height: "36px", border: "3px solid rgba(255,255,255,0.15)", borderTopColor: "#ff9913", borderRadius: "50%", animation: "spinLoader 0.9s linear infinite", marginBottom: "1.25rem" }} />
+              <p style={{ color: "#fff", fontWeight: 700, fontSize: "1rem", marginBottom: "1rem" }}>Refresh to Watch Your Briefing</p>
+              <button
+                onClick={() => window.location.reload()}
+                style={{ background: "#ff9913", color: "#fff", border: "none", borderRadius: "999px", padding: "10px 24px", fontWeight: 500, fontSize: "0.85rem", cursor: "pointer", letterSpacing: "0.03em" }}
+              >
+                Refresh Now
+              </button>
             </div>
           )}
 
