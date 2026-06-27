@@ -56,7 +56,7 @@ function LoginScreen({ onLogin }) {
   const ready = username.trim() && password;
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px", background: "linear-gradient(145deg, #fff8f0 0%, #fff3e6 50%, #ffecd6 100%)" }}>
+    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px", background: "#F2F2F2" }}>
       <motion.div
         initial={{ opacity: 0, y: 24, scale: 0.97 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
