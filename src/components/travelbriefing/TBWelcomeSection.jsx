@@ -68,7 +68,8 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
       if (!domesticSlug) {
         setRedirecting(true);
         setTimeout(() => {
-          window.location.href = "https://international-landing-page.vercel.app/";
+          const intlBase = "https://international-landing-page.vercel.app/";
+          window.location.href = booking.gdx ? `${intlBase}?gdx=${booking.gdx}` : intlBase;
         }, 2500);
         return;
       }

@@ -25,7 +25,7 @@ const TICKET_TABLE    = "ticket_details_b1d64ca0";
 const TRANSFER_TABLE  = "transfer_details_b9a92c90";
 
 // ── Fusioo destination ID → slug  (VERIFIED against real booking data)
-const FUSIOO_DEST_MAP = {
+export const FUSIOO_DEST_MAP = {
   // BORACAY ✅ confirmed: GDX 11056 = "Private Island Hopping", Henann Regency hotel
   "i4e87aba541a94b98b8fead98d0c809a8": "boracay",
   "ie9eb5d4727a44c3c939cd7077d7991f6": "boracay",
@@ -77,31 +77,14 @@ const supabase = (_supabaseUrl && _supabaseKey)
 // ═══════════════════════════════════════════════════════════════
 // REVIEW SUBMISSION — saves to reviews table
 // ═══════════════════════════════════════════════════════════════
-export const uploadReviewPhoto = async ({ gdx_reference, file }) => {
+export const uploadReviewPhoto = async ({ gdx, file }) => {
   if (!supabase) throw new Error("Not configured.");
   const ext = file.name.split(".").pop() || "jpg";
-  const path = `${gdx_reference}/${Date.now()}.${ext}`;
+  const path = `${gdx}/${Date.now()}.${ext}`;
   const { error } = await supabase.storage.from("review-photos").upload(path, file, { upsert: true, contentType: file.type });
   if (error) throw new Error(error.message);
   const { data } = supabase.storage.from("review-photos").getPublicUrl(path);
   return data.publicUrl;
-};
-
-export const submitReview = async ({ gdx_reference, rating, comment, photo_url }) => {
-  if (!supabase) throw new Error("Review submission is not configured on this deployment.");
-  const { error } = await supabase.from("reviews").insert({
-    gdx_reference,
-    rating,
-    comment: comment || null,
-    photo_url: photo_url || null,
-  });
-  if (error) throw new Error(error.message);
-};
-
-export const deleteReview = async ({ gdx_reference }) => {
-  if (!supabase) throw new Error("Review deletion is not configured on this deployment.");
-  const { error } = await supabase.from("reviews").delete().eq("gdx_reference", gdx_reference);
-  if (error) throw new Error(error.message);
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -243,10 +226,19 @@ export const detectDestinationSlug = (booking) => {
   return "boracay";
 };
 
-// ── Domestic-only slug detection — returns null if destination is not one of
-// our supported domestic packages. Used to reject international GDX entries.
+// ── Domestic-only slug detection — returns null ONLY for known international
+// bookings. Returns a slug string (including "other") for all Philippine bookings
+// so they land on "Your briefing is on its way!" instead of the intl redirect.
 export const detectDomesticSlug = (booking) => {
   const { dest, tourName, tourDesc, transferDesc, rawStr } = _bookingTexts(booking);
+
+  // Check dest field only — rawStr is the full JSON and is too broad
+  const INTL_DEST_KEYS = [
+    "japan", "korea", "china", "taiwan", "singapore", "vietnam",
+    "hongkong", "hong kong", "thailand", "malaysia", "cambodia",
+    "dubai", "macau", "indonesia", "europe", "australia",
+  ];
+  if (INTL_DEST_KEYS.some((kw) => dest.includes(kw))) return null;
 
   if (dest.includes("boracay"))                                              return "boracay";
   if (dest.includes("cebu"))                                                 return "cebu";
@@ -290,7 +282,8 @@ export const detectDomesticSlug = (booking) => {
   if (tourDesc.includes("siargao") || tourDesc.includes("cloud 9") || tourDesc.includes("daku island")) return "siargao";
   if (tourDesc.includes("puerto princesa") || tourDesc.includes("underground river") || tourDesc.includes("honda bay")) return "puertoprincesa";
 
-  return null;
+  // Domestic booking but no page for this destination yet — show "Your briefing is on its way!"
+  return "other";
 };
 
 // ═══════════════════════════════════════════════════════════════

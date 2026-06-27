@@ -11,7 +11,9 @@ import TBItinerary from "@/components/travelbriefing/TBItinerary";
 import TBChecklist from "@/components/travelbriefing/TBChecklist";
 import TBDestinationGuide from "@/components/travelbriefing/TBDestinationGuide";
 import TBFAQs from "@/components/travelbriefing/TBFAQs";
-import { lookupBooking, submitReview, deleteReview, uploadReviewPhoto } from "@/services/supabaseService";
+import { lookupBooking, uploadReviewPhoto } from "@/services/supabaseService";
+import { addReview, deleteReviewByGdx, getPublicReviews, checkReviewByGdx } from "@/services/reviewsService";
+import { useToast } from "@/components/ui/use-toast";
 import { loadDestinationTours } from "@/services/globaltixService";
 import TBAddOnsCheckout from "@/components/travelbriefing/TBAddOnsCheckout";
 import TBInsurance from "@/components/travelbriefing/TBInsurance";
@@ -31,7 +33,7 @@ const TESTIMONIALS = [
     name: "Maria Santos",
     location: "Boracay",
     destination: "boracay",
-    date: "May 2025",
+    date: "May 12, 2025",
     review: "The briefing page had everything we needed — the island hopping schedule, hotel check-in details, and boat transfer instructions were all spot on. Zero stress on arrival!",
     rating: 5,
   },
@@ -39,7 +41,7 @@ const TESTIMONIALS = [
     name: "Jose Reyes",
     location: "Boracay",
     destination: "boracay",
-    date: "March 2025",
+    date: "March 8, 2025",
     review: "Our family of 5 had zero confusion the entire trip. The jetty port instructions and boat transfer timing were explained so clearly. Gladex exceeded our expectations!",
     rating: 5,
   },
@@ -47,7 +49,7 @@ const TESTIMONIALS = [
     name: "Ana Villanueva",
     location: "Boracay",
     destination: "boracay",
-    date: "April 2025",
+    date: "April 3, 2025",
     review: "Best beach trip ever! The pre-trip briefing had everything — even the reef-safe sunscreen reminder. White Beach was stunning and the island hopping tour was the highlight!",
     rating: 5,
   },
@@ -55,7 +57,7 @@ const TESTIMONIALS = [
     name: "Joel T.",
     location: "Boracay",
     destination: "boracay",
-    date: "February 2025",
+    date: "February 21, 2025",
     review: "The portal made our Boracay arrival completely seamless. We knew exactly which port to go to, which boat to take, and what time to be there. No confusion at all!",
     rating: 4,
   },
@@ -63,7 +65,7 @@ const TESTIMONIALS = [
     name: "Christine B.",
     location: "Boracay",
     destination: "boracay",
-    date: "January 2025",
+    date: "January 14, 2025",
     review: "Having all the hotel and tour schedules in one place was so helpful. We referred to the portal several times during the trip and everything matched exactly what happened on the ground.",
     rating: 5,
   },
@@ -71,7 +73,7 @@ const TESTIMONIALS = [
     name: "Raul M.",
     location: "Cebu",
     destination: "cebu",
-    date: "March 2025",
+    date: "March 27, 2025",
     review: "The Cebu briefing was incredibly detailed. Oslob instructions and pick-up reminders saved us — we were ready at 3 AM without any panic. Smooth trip from start to finish!",
     rating: 5,
   },
@@ -79,7 +81,7 @@ const TESTIMONIALS = [
     name: "Liza C.",
     location: "Cebu",
     destination: "cebu",
-    date: "April 2025",
+    date: "April 5, 2025",
     review: "We referred to the briefing page constantly during our Cebu trip. The tour schedule, hotel info, and local tips were all accurate and super helpful. Highly recommended!",
     rating: 5,
   },
@@ -87,7 +89,7 @@ const TESTIMONIALS = [
     name: "Patrick D.",
     location: "El Nido",
     destination: "elnido",
-    date: "February 2025",
+    date: "February 18, 2025",
     review: "The El Nido briefing prepared us perfectly for the long van transfer from Puerto Princesa. We knew what to expect every step of the way. Absolutely worth it!",
     rating: 5,
   },
@@ -95,7 +97,7 @@ const TESTIMONIALS = [
     name: "Sandra L.",
     location: "El Nido",
     destination: "elnido",
-    date: "May 2025",
+    date: "May 30, 2025",
     review: "Island hopping in El Nido was a dream. The briefing page told us exactly what to bring, which tours to expect, and the environmental fee reminders were very helpful!",
     rating: 5,
   },
@@ -103,7 +105,7 @@ const TESTIMONIALS = [
     name: "Rhea Mendoza",
     location: "Bohol",
     destination: "bohol",
-    date: "May 2025",
+    date: "May 7, 2025",
     review: "Ang ganda ng Bohol! The Chocolate Hills talaga are breathtaking in person. Yung briefing page ng Gladex was so complete — hotel details, tour schedule, emergency numbers lahat nandoon. Walang kaming naging problema sa buong trip!",
     rating: 5,
   },
@@ -111,7 +113,7 @@ const TESTIMONIALS = [
     name: "Carlo Fontanilla",
     location: "Bohol",
     destination: "bohol",
-    date: "April 2025",
+    date: "April 22, 2025",
     review: "First time in Bohol and it was perfect. The tarsier sanctuary and Loboc River cruise were the highlights! The pre-departure briefing had all the info we needed — especially the airport pickup instructions at BPH. Highly recommend Gladex!",
     rating: 5,
   },
@@ -119,7 +121,7 @@ const TESTIMONIALS = [
     name: "Donna T.",
     location: "Bohol",
     destination: "bohol",
-    date: "March 2025",
+    date: "March 15, 2025",
     review: "Panglao Beach is absolutely stunning! We checked the briefing page several times during our trip and it had everything — from the tour itinerary down to what to pack. Gladex made our first Bohol trip completely stress-free.",
     rating: 5,
   },
@@ -1129,6 +1131,7 @@ export default function TravelBriefingLanding() {
   const { slug } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const { toast } = useToast();
   const darkMode = false;
 
   // ── Test mode: /destination/siargao-test bypasses Supabase lookup ──
@@ -1206,13 +1209,21 @@ export default function TravelBriefingLanding() {
   const [reviewPhotoFile, setReviewPhotoFile] = useState(null);
   const [reviewPhotoPreview, setReviewPhotoPreview] = useState(null);
   const [reviewUploading, setReviewUploading] = useState(false);
+  const [reviewSaveError, setReviewSaveError] = useState(null);
+  const [dbReviews, setDbReviews] = useState([]);
   const reviewPhotoRef = useRef(null);
   const [myReview, setMyReview] = useState(() => {
     try {
       const gdx = JSON.parse(sessionStorage.getItem("gladex-session") || "{}").gdx;
       if (!gdx) return null;
       const stored = localStorage.getItem(`gladex-review-${gdx}`);
-      return stored ? JSON.parse(stored) : null;
+      if (!stored) return null;
+      const r = JSON.parse(stored);
+      // Upgrade old "Month Year" dates to "Month Day, Year" on load
+      if (r.date && /^[A-Za-z]+ \d{4}$/.test(r.date.trim())) {
+        r.date = new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+      }
+      return r;
     } catch { return null; }
   });
 
@@ -1223,6 +1234,25 @@ export default function TravelBriefingLanding() {
     mq.addEventListener("change", handler);
     return () => mq.removeEventListener("change", handler);
   }, []);
+
+  // Fetch real DB reviews for this destination (public, not hidden, 4–5 stars)
+  useEffect(() => {
+    if (!dest?.name) return;
+    getPublicReviews(dest.name).then(setDbReviews).catch(() => {});
+  }, [dest?.name]);
+
+  // Task 3: If admin deleted the client's review from DB, clear their local copy
+  useEffect(() => {
+    const gdx = activeBooking?.gdx;
+    if (!gdx || !myReview) return;
+    checkReviewByGdx(gdx).then((exists) => {
+      if (!exists) {
+        try { localStorage.removeItem(`gladex-review-${gdx}`); } catch {}
+        setMyReview(null);
+        setReviewSubmitted(false);
+      }
+    });
+  }, [activeBooking?.gdx]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Sync edit form with stored review whenever the edit panel opens
   useEffect(() => {
@@ -1263,13 +1293,14 @@ export default function TravelBriefingLanding() {
     const finalComment = commentParam ?? reviewComment;
     if (finalStars === 0) return;
     const gdx = activeBooking?.gdx ?? "guest";
-    const destination = realSlug ?? "boracay";
+    const SLUG_TO_NAME = { boracay: "Boracay", cebu: "Cebu", elnido: "El Nido", puertoprincesa: "Puerto Princesa", siargao: "Siargao", bohol: "Bohol" };
+    const destination = SLUG_TO_NAME[realSlug] ?? realSlug ?? "Boracay";
     const now = new Date();
-    const monthYear = now.toLocaleString("en-US", { month: "long", year: "numeric" });
+    const monthYear = now.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
 
     let photoUrl = myReview?.photo ?? null;
     if (photoFile) {
-      try { photoUrl = await uploadReviewPhoto({ gdx_reference: gdx, file: photoFile }); } catch {}
+      try { photoUrl = await uploadReviewPhoto({ gdx, file: photoFile }); } catch {}
     }
 
     const review = {
@@ -1289,7 +1320,23 @@ export default function TravelBriefingLanding() {
     setReviewPhotoFile(null);
     setReviewPhotoPreview(null);
     setReviewUploading(false);
-    submitReview({ gdx_reference: gdx, rating: finalStars, comment: String(finalComment).trim(), photo_url: photoUrl }).catch(() => {});
+    setReviewSaveError(null);
+    addReview({ gdx, lead_name: activeBooking?.leadName || "Guest", agent_name: activeBooking?.agentName || null, destination, rating: finalStars, review_text: String(finalComment).trim(), photo_url: photoUrl, package_name: activeBooking?.typeOfPackage || null })
+      .then(() => {
+        toast({
+          title: "Review submitted!",
+          description: "Thank you for sharing your experience with Gladex Tours.",
+        });
+      })
+      .catch((err) => {
+        console.error("[Review] insert failed:", err);
+        setReviewSaveError(err?.message || String(err));
+        toast({
+          title: "Could not save review",
+          description: err?.message || "Your review was recorded locally but couldn't be saved to our database.",
+          variant: "destructive",
+        });
+      });
   };
 
   const handleDeleteReview = () => {
@@ -1300,7 +1347,12 @@ export default function TravelBriefingLanding() {
     setReviewEditing(false);
     setReviewStars(0);
     setReviewComment("");
-    deleteReview({ gdx_reference: gdx }).catch(() => {});
+    setReviewSaveError(null);
+    deleteReviewByGdx(gdx).catch(() => {});
+    toast({
+      title: "Review deleted",
+      description: "Your review has been removed.",
+    });
   };
 
   // ── Restore booking from sessionStorage on page refresh ──────
@@ -1918,12 +1970,6 @@ export default function TravelBriefingLanding() {
                           Your Booking Details
                         </h2>
                         <div className="flex flex-wrap gap-2 mt-2">
-                          <span
-                            className="flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full"
-                            style={getStatusChipStyle(getDisplayStatus(activeBooking.status))}
-                          >
-                            <Check className="w-3 h-3" /> {getDisplayStatus(activeBooking.status)}
-                          </span>
                           {activeBooking.paymentStatus && (
                             <span
                               className="text-xs font-black uppercase tracking-wider px-2.5 py-1 rounded-full"
@@ -1942,7 +1988,6 @@ export default function TravelBriefingLanding() {
                         <div className="px-5 py-4 space-y-4">
                           <BookingRow
                             label1="GDX Number"    value1={`GDX-${activeBooking.gdx}`}
-                            label2="Status"        value2={getDisplayStatus(activeBooking.status)}
                             textPrimary={textPrimary} textMuted={textMuted}
                             copyable1
                           />
@@ -2824,7 +2869,20 @@ export default function TravelBriefingLanding() {
               const filteredTestimonials = TESTIMONIALS.filter(
                 (t) => (!t.destination || t.destination === realSlug) && t.rating >= 3
               );
-              const allTestimonials = myReview ? [myReview, ...filteredTestimonials] : filteredTestimonials;
+              const dbMapped = dbReviews.map((r) => ({
+                name: r.lead_name || "Gladex Client",
+                location: r.destination || "",
+                date: r.created_at ? new Date(r.created_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) : "",
+                review: r.comment || "",
+                rating: r.rating,
+                stars: r.rating,
+                photo: r.photos?.[0] || null,
+              }));
+              const allTestimonials = [
+                ...(myReview ? [myReview] : []),
+                ...dbMapped,
+                ...filteredTestimonials,
+              ];
               const PER = testimonialsMobile ? 1 : 3;
               const totalPages = Math.ceil(allTestimonials.length / PER);
               const safePage = Math.min(testimonialsPage, totalPages - 1);
@@ -3039,6 +3097,12 @@ export default function TravelBriefingLanding() {
                     <p className="text-xs italic" style={{ color: !isTestMode ? "rgba(255,255,255,0.75)" : textMuted }}>"{myReview?.review || reviewComment}"</p>
                   )}
                   <p className="text-xs" style={{ color: !isTestMode ? "rgba(255,255,255,0.65)" : textMuted }}>Your review is visible above in the traveler reviews section.</p>
+                  {reviewSaveError && (
+                    <div style={{ background: "rgba(220,38,38,0.12)", border: "1px solid rgba(220,38,38,0.3)", borderRadius: "10px", padding: "8px 12px", maxWidth: "320px", textAlign: "left" }}>
+                      <p style={{ fontSize: "11px", fontWeight: 700, color: "#dc2626", margin: "0 0 2px" }}>Could not save to database</p>
+                      <p style={{ fontSize: "10.5px", color: "#b91c1c", margin: 0, wordBreak: "break-word" }}>{reviewSaveError}</p>
+                    </div>
+                  )}
                 </div>
               ) : (
                 /* ── Form ── */
@@ -3120,7 +3184,7 @@ export default function TravelBriefingLanding() {
                       await handleSubmitReview(reviewStars, reviewComment, reviewPhotoFile);
                     }}
                     disabled={reviewStars === 0 || reviewUploading}
-                    className="w-full mt-4 py-3 rounded-xl text-sm font-bold transition-all"
+                    className="w-full mt-4 py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2"
                     style={{
                       backgroundColor: !isTestMode
                         ? (reviewStars > 0 ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.1)")
@@ -3129,7 +3193,15 @@ export default function TravelBriefingLanding() {
                       opacity: reviewStars === 0 ? 0.5 : 1,
                     }}
                   >
-                    {reviewUploading ? "Uploading…" : reviewEditing ? "Update Review" : "Submit Review"}
+                    {reviewUploading ? (
+                      <>
+                        <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                        </svg>
+                        {reviewPhotoFile ? "Uploading photo…" : "Saving…"}
+                      </>
+                    ) : reviewEditing ? "Update Review" : "Submit Review"}
                   </button>
                   {reviewEditing && (
                     <button
