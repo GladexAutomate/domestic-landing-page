@@ -2,7 +2,7 @@
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { useTheme } from "@/lib/ThemeContext";
-import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent, useAnimation } from "framer-motion";
 import DestinationNavbar from "@/components/destination/DestinationNavbar";
 import { getDestination, SUPPORTED_DESTINATIONS } from "@/data/destinationData";
 import TBWelcomeSection from "@/components/travelbriefing/TBWelcomeSection";
@@ -1716,7 +1716,34 @@ export default function TravelBriefingLanding() {
   const heroRef = useRef(null);
   const { scrollYProgress: heroScroll } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
   const { scrollYProgress } = useScroll();
-  const heroImgY = useTransform(heroScroll, [0, 1], ["0%", "30%"]);
+  const heroImgY       = useTransform(heroScroll, [0, 1], ["0%", "30%"]);
+  const heroControls   = useAnimation();
+  const [showScrollHint, setShowScrollHint] = useState(true);
+
+  useMotionValueEvent(heroScroll, "change", (v) => {
+    if (v > 0.05) setShowScrollHint(false);
+  });
+
+  // ── Hero intro: cinematic zoom-in → breathing loop ────────────────
+  useEffect(() => {
+    if (!dest) return;
+    // Lock scroll during entrance
+    document.body.style.overflow = "hidden";
+    const run = async () => {
+      await heroControls.start({
+        scale: 1,
+        transition: { duration: 1.6, ease: [0.22, 1, 0.36, 1] },
+      });
+      document.body.style.overflow = "";
+      // Begin breathing
+      heroControls.start({
+        scale: [1, 1.04, 1],
+        transition: { duration: 8, repeat: Infinity, ease: "easeInOut" },
+      });
+    };
+    run();
+    return () => { document.body.style.overflow = ""; };
+  }, [dest, heroControls]);
 
   // ── Loading — wait for session check before revealing destination ──
   if (!sessionChecked) {
@@ -1784,6 +1811,8 @@ export default function TravelBriefingLanding() {
           src={dest.heroImage}
           alt={dest.name}
           className="w-full object-cover"
+          initial={{ scale: 1.08 }}
+          animate={heroControls}
           style={{ position: "absolute", inset: 0, width: "100%", height: "115%", y: heroImgY }}
         />
         <div
@@ -1847,6 +1876,32 @@ export default function TravelBriefingLanding() {
           </svg>
         </div>
 
+        {/* ── Scroll hint ── */}
+        <AnimatePresence>
+          {showScrollHint && (
+            <motion.div
+              key="scroll-hint"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ delay: 1.8, duration: 0.5 }}
+              style={{ position: "absolute", bottom: "14px", left: 0, right: 0, display: "flex", justifyContent: "center", alignItems: "center", pointerEvents: "none", zIndex: 10 }}
+            >
+              <div style={{ position: "relative", width: "44px", height: "44px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                {[0, 1, 2].map((i) => (
+                  <motion.div key={i} animate={{ scale: [1, 2.0], opacity: [0.55, 0] }} transition={{ duration: 2.0, repeat: Infinity, delay: i * 0.65, ease: "easeOut" }}
+                    style={{ position: "absolute", width: "20px", height: "20px", borderRadius: "50%", border: "1.5px solid rgba(255,255,255,0.7)" }} />
+                ))}
+                <motion.div
+                  animate={{ y: [0, 4, 0] }}
+                  transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <ChevronDown size={18} color="rgba(255,255,255,0.95)" strokeWidth={2.5} />
+                </motion.div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <div className="absolute inset-0 flex flex-col items-center justify-end text-center pb-24 px-6">
           <motion.h1
