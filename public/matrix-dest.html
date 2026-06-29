@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gladex — Destination Matrix</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0c0f13;--surf:#141920;--surf2:#1c2330;--border:#252d3a;
+  --text:#dde3ec;--muted:#6b7a93;
+  --orange:#ff9913;--odim:rgba(255,153,19,.12);--oborder:rgba(255,153,19,.28);
+  --green:#34c97a;--red:#f05252;--blue:#5b9cf6;--purple:#a78bfa;
+}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;font-size:14px;min-height:100vh}
+
+/* Header */
+.hdr{border-bottom:1px solid var(--border);padding:18px 28px;display:flex;align-items:center;gap:14px}
+.logo{width:34px;height:34px;border-radius:8px;background:var(--orange);display:grid;place-items:center;flex-shrink:0}
+.hdr-title{font-size:15px;font-weight:600;letter-spacing:-.01em}
+.hdr-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.hdr-badge{margin-left:auto;background:var(--odim);border:1px solid var(--oborder);color:var(--orange);font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:20px}
+
+/* Layout */
+.main{padding:24px 28px;max-width:1600px;margin:0 auto}
+
+/* Filter bar */
+.filter-bar{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.tabs{display:flex;background:var(--surf);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.tab{padding:7px 16px;font-size:12px;font-weight:600;cursor:pointer;color:var(--muted);transition:all .15s;border:none;background:none;letter-spacing:.02em}
+.tab.active{background:var(--orange);color:#000}
+.chips{display:flex;gap:6px}
+.chip{padding:5px 12px;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;border:1px solid var(--border);border-radius:20px;cursor:pointer;color:var(--muted);background:none;transition:all .15s}
+.chip.active{border-color:var(--orange);color:var(--orange);background:var(--odim)}
+.search{margin-left:auto;background:var(--surf);border:1px solid var(--border);border-radius:8px;padding:7px 14px;color:var(--text);font-size:12.5px;width:220px;outline:none}
+.search:focus{border-color:rgba(255,153,19,.5)}
+
+/* KPI row */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.kpi{background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+.kpi-lbl{font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.kpi-val{font-size:22px;font-weight:700;letter-spacing:-.025em;line-height:1;font-variant-numeric:tabular-nums}
+.kpi-val.orange{color:var(--orange)}
+.kpi-val.green{color:var(--green)}
+.kpi-sub{font-size:10.5px;color:var(--muted);margin-top:4px}
+
+/* Table */
+.tbl-wrap{background:var(--surf);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.tbl-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.tbl-title{font-size:13px;font-weight:600}
+.row-count{font-size:11px;color:var(--muted);margin-left:auto}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums;white-space:nowrap}
+thead th{background:var(--surf2);padding:9px 13px;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);cursor:pointer;user-select:none;text-align:left}
+thead th:hover{color:var(--orange)}
+thead th.asc::after{content:" ▲";color:var(--orange)}
+thead th.dsc::after{content:" ▼";color:var(--orange)}
+thead th.num-h{text-align:right}
+tbody tr{border-bottom:1px solid rgba(37,45,58,.7);cursor:pointer;transition:background .1s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--surf2)}
+tbody tr.selected{background:rgba(255,153,19,.07);outline:1px solid rgba(255,153,19,.25) inset}
+td{padding:8px 13px;color:var(--muted)}
+td.name-cell{color:var(--text);font-weight:600;font-size:12.5px;max-width:200px;overflow:hidden;text-overflow:ellipsis}
+td.num-cell{text-align:right}
+td.hi{color:var(--text)}
+
+.pill{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10.5px;font-weight:700;letter-spacing:.02em}
+.pill-dom{background:rgba(91,156,246,.12);color:var(--blue)}
+.pill-intl{background:rgba(167,139,250,.12);color:var(--purple)}
+.pill-strong{background:rgba(52,201,122,.13);color:var(--green)}
+.pill-medium{background:rgba(255,153,19,.12);color:var(--orange)}
+.pill-niche{background:rgba(107,122,147,.12);color:var(--muted)}
+.pill-hi{background:rgba(52,201,122,.1);color:var(--green)}
+.pill-lo{background:rgba(240,82,82,.1);color:var(--red)}
+/* Data quality info icon + tooltip */
+.dq-wrap{display:inline-flex;align-items:center;gap:5px}
+.info-btn{width:14px;height:14px;border-radius:50%;border:1.5px solid rgba(107,122,147,.45);color:var(--muted);font-size:8.5px;font-weight:800;font-style:normal;cursor:help;flex-shrink:0;background:none;display:inline-flex;align-items:center;justify-content:center;padding:0;line-height:1;transition:border-color .15s,color .15s}
+.info-btn:hover{border-color:var(--orange);color:var(--orange)}
+.dq-sup{font-size:8px;color:var(--muted);vertical-align:super;line-height:0;margin-left:1px}
+.viet-tip{position:fixed;background:#192230;border:1px solid var(--border);border-radius:8px;padding:11px 14px;font-size:11px;color:var(--text);line-height:1.65;width:280px;z-index:600;pointer-events:none;box-shadow:0 8px 28px rgba(0,0,0,.6);display:none;font-weight:400}
+
+/* Trend panel */
+.panel{position:fixed;bottom:0;left:0;right:0;background:var(--surf);border-top:1px solid var(--border);padding:0;transform:translateY(100%);transition:transform .25s cubic-bezier(.4,0,.2,1);z-index:100;max-height:340px}
+.panel.open{transform:translateY(0)}
+.panel-hdr{display:flex;align-items:center;gap:12px;padding:14px 24px;border-bottom:1px solid var(--border)}
+.panel-title{font-size:13px;font-weight:600}
+.panel-meta{font-size:11px;color:var(--muted)}
+.panel-close{margin-left:auto;background:var(--surf2);border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:12px}
+.panel-close:hover{color:var(--text)}
+.panel-body{padding:16px 24px;height:260px}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="logo">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#0c0f13" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+  <div>
+    <div class="hdr-title">Destination Frequency &amp; Turnover Matrix</div>
+    <div class="hdr-sub">Gladex Tours · Supabase sync · 21,325 active bookings (Void/Refund excluded, deduped by GDX) · as of 2026-06-29</div>
+  </div>
+  <div class="hdr-badge">51 destinations · ≥10 bk threshold</div>
+</div>
+
+<div class="main">
+
+  <div class="filter-bar">
+    <div class="tabs">
+      <button class="tab active" data-type="All">All</button>
+      <button class="tab" data-type="Domestic">Domestic</button>
+      <button class="tab" data-type="International">International</button>
+    </div>
+    <div class="chips">
+      <button class="chip active" data-str="All">All</button>
+      <button class="chip" data-str="Strong">Strong</button>
+      <button class="chip" data-str="Medium">Medium</button>
+      <button class="chip" data-str="Niche">Niche</button>
+    </div>
+    <input class="search" id="search" placeholder="Search destination…" type="search">
+  </div>
+
+  <div class="kpi-row" id="kpi-row">
+    <div class="kpi"><div class="kpi-lbl">Destinations Shown</div><div class="kpi-val orange" id="k-dest">—</div><div class="kpi-sub" id="k-dest-sub">—</div></div>
+    <div class="kpi"><div class="kpi-lbl">Total Bookings</div><div class="kpi-val" id="k-bk">—</div><div class="kpi-sub" id="k-bk-sub">—</div></div>
+    <div class="kpi"><div class="kpi-lbl">Total SRP Revenue</div><div class="kpi-val" id="k-rev">—</div><div class="kpi-sub" id="k-rev-sub">—</div></div>
+    <div class="kpi"><div class="kpi-lbl">Top Destination</div><div class="kpi-val orange" id="k-top">—</div><div class="kpi-sub" id="k-top-sub">—</div></div>
+  </div>
+
+  <p style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.5">
+    ² <strong style="color:var(--text)">Avg Days to Full Payment</strong> is used as a proxy for turnover speed.
+    No "blocking confirmed date" is available in Fusioo — the Collectives Packages and Cut-off apps are not accessible via the current API token.
+    A shorter value = faster cash conversion = higher sell-through speed.
+  </p>
+
+  <div class="tbl-wrap">
+    <div class="tbl-head">
+      <span class="tbl-title">Destination Breakdown</span>
+      <span class="row-count" id="row-count"></span>
+    </div>
+    <div class="scroll">
+      <table id="tbl">
+        <thead>
+          <tr>
+            <th data-k="name">Destination</th>
+            <th data-k="type">Type</th>
+            <th data-k="total_bk" class="num-h dsc">Total Bk</th>
+            <th data-k="avg_pm" class="num-h">Avg/Month</th>
+            <th data-k="peak_months">Peak Months</th>
+            <th data-k="avg_lead" class="num-h">Lead Time (d)</th>
+            <th data-k="avg_pay" class="num-h" title="Proxy for turnover speed — no blocking date in Fusioo data">Avg Days to Full Payment ²</th>
+            <th data-k="revenue" class="num-h">Revenue (₱)</th>
+            <th data-k="avg_profit" class="num-h">Avg Profit/Bk</th>
+            <th data-k="margin" class="num-h">Margin %</th>
+            <th data-k="paid_pct" class="num-h">Paid %</th>
+            <th data-k="strength">Strength</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <p style="font-size:11px;color:var(--muted);margin-top:14px;line-height:1.7;padding:0 2px">
+    ³ <strong style="color:var(--text)">Vietnam (Multi-city)</strong> — mga bookings na walang specific city na na-tag sa source data (Fusioo). Hindi ito performance issue — data quality flag lamang ito.
+    <span style="opacity:.7">Recommendation: i-require ang sales team na mag-specify ng city (Danang / Sapa / HCMC) sa bawat booking para sa mas accurate na future tracking.</span>
+  </p>
+
+</div>
+
+<!-- Trend panel -->
+<div class="panel" id="panel">
+  <div class="panel-hdr">
+    <div>
+      <div class="panel-title" id="panel-title">—</div>
+      <div class="panel-meta" id="panel-meta">—</div>
+    </div>
+    <button class="panel-close" id="panel-close">✕ Close</button>
+  </div>
+  <div class="panel-body">
+    <canvas id="trend-chart"></canvas>
+  </div>
+</div>
+<div class="viet-tip" id="viet-tip"></div>
+
+<script>
+const MATRIX = [{"name":"Boracay","type":"Domestic","total_bk":10177,"active_mo":47,"avg_pm":216.5,"peak_months":"Jan, May, Mar","first_seen":"2022-08","last_seen":"2026-06","avg_lead":49,"avg_pay":22,"revenue":510276163,"profit":132012391,"avg_profit":12972,"margin":25.9,"paid_pct":97.8,"strength":"Strong","monthly":{"2022-08":2,"2022-09":102,"2022-10":110,"2022-11":102,"2022-12":92,"2023-01":213,"2023-02":158,"2023-03":152,"2023-04":119,"2023-05":181,"2023-06":150,"2023-07":195,"2023-08":186,"2023-09":228,"2023-10":214,"2023-11":198,"2023-12":194,"2024-01":264,"2024-02":303,"2024-03":269,"2024-04":288,"2024-05":332,"2024-06":320,"2024-07":324,"2024-08":274,"2024-09":225,"2024-10":229,"2024-11":199,"2024-12":214,"2025-01":322,"2025-02":219,"2025-03":287,"2025-04":252,"2025-05":289,"2025-06":251,"2025-07":188,"2025-08":257,"2025-09":211,"2025-10":219,"2025-11":254,"2025-12":226,"2026-01":283,"2026-02":231,"2026-03":227,"2026-04":212,"2026-05":228,"2026-06":184}},{"name":"Hong Kong","type":"International","total_bk":2295,"active_mo":43,"avg_pm":53.4,"peak_months":"Jan, May, Apr","first_seen":"2022-12","last_seen":"2026-06","avg_lead":48,"avg_pay":26,"revenue":190873942,"profit":50297461,"avg_profit":21916,"margin":26.4,"paid_pct":96.6,"strength":"Strong","monthly":{"2022-12":1,"2023-01":3,"2023-02":5,"2023-03":6,"2023-04":13,"2023-05":16,"2023-06":11,"2023-07":18,"2023-08":16,"2023-09":36,"2023-10":56,"2023-11":50,"2023-12":48,"2024-01":94,"2024-02":80,"2024-03":62,"2024-04":77,"2024-05":96,"2024-06":94,"2024-07":78,"2024-08":62,"2024-09":54,"2024-10":42,"2024-11":39,"2024-12":50,"2025-01":60,"2025-02":51,"2025-03":52,"2025-04":66,"2025-05":78,"2025-06":67,"2025-07":56,"2025-08":79,"2025-09":80,"2025-10":50,"2025-11":66,"2025-12":87,"2026-01":92,"2026-02":78,"2026-03":70,"2026-04":59,"2026-05":54,"2026-06":43}},{"name":"El Nido","type":"Domestic","total_bk":1919,"active_mo":46,"avg_pm":41.7,"peak_months":"Jan, Mar, Apr","first_seen":"2022-09","last_seen":"2026-06","avg_lead":49,"avg_pay":24,"revenue":100685595,"profit":28459279,"avg_profit":14830,"margin":28.3,"paid_pct":97.6,"strength":"Strong","monthly":{"2022-09":26,"2022-10":11,"2022-11":13,"2022-12":22,"2023-01":30,"2023-02":26,"2023-03":32,"2023-04":22,"2023-05":33,"2023-06":34,"2023-07":30,"2023-08":34,"2023-09":39,"2023-10":39,"2023-11":42,"2023-12":55,"2024-01":65,"2024-02":48,"2024-03":52,"2024-04":59,"2024-05":49,"2024-06":46,"2024-07":35,"2024-08":37,"2024-09":40,"2024-10":42,"2024-11":32,"2024-12":28,"2025-01":40,"2025-02":34,"2025-03":63,"2025-04":68,"2025-05":55,"2025-06":28,"2025-07":65,"2025-08":42,"2025-09":46,"2025-10":77,"2025-11":56,"2025-12":65,"2026-01":73,"2026-02":52,"2026-03":40,"2026-04":28,"2026-05":33,"2026-06":33}},{"name":"Cebu","type":"Domestic","total_bk":1867,"active_mo":46,"avg_pm":40.6,"peak_months":"Jan, Apr, Mar","first_seen":"2022-09","last_seen":"2026-06","avg_lead":39,"avg_pay":22,"revenue":65014180,"profit":17755631,"avg_profit":9510,"margin":27.3,"paid_pct":98.1,"strength":"Strong","monthly":{"2022-09":23,"2022-10":22,"2022-11":21,"2022-12":25,"2023-01":38,"2023-02":25,"2023-03":37,"2023-04":21,"2023-05":32,"2023-06":23,"2023-07":26,"2023-08":33,"2023-09":20,"2023-10":38,"2023-11":37,"2023-12":30,"2024-01":52,"2024-02":44,"2024-03":53,"2024-04":82,"2024-05":64,"2024-06":66,"2024-07":47,"2024-08":55,"2024-09":55,"2024-10":48,"2024-11":35,"2024-12":40,"2025-01":64,"2025-02":38,"2025-03":53,"2025-04":49,"2025-05":55,"2025-06":53,"2025-07":44,"2025-08":60,"2025-09":47,"2025-10":38,"2025-11":33,"2025-12":24,"2026-01":54,"2026-02":36,"2026-03":42,"2026-04":34,"2026-05":34,"2026-06":17}},{"name":"Vietnam (Multi-city)","type":"International","total_bk":1141,"active_mo":26,"avg_pm":43.9,"peak_months":"Jan, Mar, Apr","first_seen":"2024-05","last_seen":"2026-06","avg_lead":77,"avg_pay":40,"revenue":97994335,"profit":27208061,"avg_profit":23846,"margin":27.8,"paid_pct":88.3,"strength":"Medium","monthly":{"2024-05":5,"2024-06":7,"2024-07":10,"2024-08":34,"2024-09":31,"2024-10":56,"2024-11":47,"2024-12":33,"2025-01":51,"2025-02":33,"2025-03":45,"2025-04":34,"2025-05":34,"2025-06":30,"2025-07":20,"2025-08":29,"2025-09":30,"2025-10":33,"2025-11":59,"2025-12":52,"2026-01":91,"2026-02":74,"2026-03":95,"2026-04":100,"2026-05":56,"2026-06":52}},{"name":"Coron","type":"Domestic","total_bk":899,"active_mo":46,"avg_pm":19.5,"peak_months":"May, Jan, Aug","first_seen":"2022-09","last_seen":"2026-06","avg_lead":41,"avg_pay":20,"revenue":42091052,"profit":10090828,"avg_profit":11225,"margin":24,"paid_pct":98.7,"strength":"Strong","monthly":{"2022-09":7,"2022-10":3,"2022-11":8,"2022-12":8,"2023-01":16,"2023-02":7,"2023-03":10,"2023-04":8,"2023-05":4,"2023-06":9,"2023-07":11,"2023-08":24,"2023-09":22,"2023-10":22,"2023-11":23,"2023-12":23,"2024-01":34,"2024-02":22,"2024-03":23,"2024-04":31,"2024-05":38,"2024-06":41,"2024-07":31,"2024-08":49,"2024-09":25,"2024-10":14,"2024-11":14,"2024-12":8,"2025-01":14,"2025-02":11,"2025-03":28,"2025-04":29,"2025-05":28,"2025-06":26,"2025-07":19,"2025-08":19,"2025-09":18,"2025-10":19,"2025-11":14,"2025-12":26,"2026-01":30,"2026-02":10,"2026-03":19,"2026-04":15,"2026-05":25,"2026-06":14}},{"name":"Puerto Princesa","type":"Domestic","total_bk":350,"active_mo":17,"avg_pm":20.6,"peak_months":"Feb, Oct, Mar","first_seen":"2024-10","last_seen":"2026-06","avg_lead":44,"avg_pay":21,"revenue":17016260,"profit":4592470,"avg_profit":13121,"margin":27,"paid_pct":97.1,"strength":"Strong","monthly":{"2024-10":1,"2024-12":2,"2025-04":1,"2025-05":3,"2025-06":9,"2025-07":23,"2025-08":25,"2025-09":21,"2025-10":48,"2025-11":21,"2025-12":9,"2026-01":29,"2026-02":50,"2026-03":41,"2026-04":23,"2026-05":31,"2026-06":13}},{"name":"Manila","type":"Domestic","total_bk":295,"active_mo":45,"avg_pm":6.6,"peak_months":"Jun, Apr, Nov","first_seen":"2022-09","last_seen":"2026-06","avg_lead":22,"avg_pay":18,"revenue":12402423,"profit":3779434,"avg_profit":12812,"margin":30.5,"paid_pct":99,"strength":"Medium","monthly":{"2022-09":2,"2022-10":1,"2022-11":1,"2022-12":1,"2023-01":1,"2023-03":2,"2023-04":1,"2023-05":4,"2023-06":4,"2023-07":1,"2023-08":5,"2023-09":5,"2023-10":7,"2023-11":17,"2023-12":10,"2024-01":9,"2024-02":11,"2024-03":7,"2024-04":12,"2024-05":10,"2024-06":16,"2024-07":13,"2024-08":6,"2024-09":4,"2024-10":5,"2024-11":10,"2024-12":6,"2025-01":4,"2025-02":3,"2025-03":9,"2025-04":13,"2025-05":11,"2025-06":14,"2025-07":5,"2025-08":6,"2025-09":6,"2025-10":8,"2025-11":4,"2025-12":11,"2026-01":4,"2026-02":4,"2026-03":6,"2026-04":7,"2026-05":5,"2026-06":4}},{"name":"Siargao","type":"Domestic","total_bk":279,"active_mo":42,"avg_pm":6.6,"peak_months":"Jul, May, Feb","first_seen":"2022-09","last_seen":"2026-06","avg_lead":43,"avg_pay":22,"revenue":14256809,"profit":3391621,"avg_profit":12156,"margin":23.8,"paid_pct":98.6,"strength":"Medium","monthly":{"2022-09":2,"2022-12":1,"2023-02":4,"2023-03":4,"2023-04":1,"2023-05":2,"2023-06":5,"2023-08":7,"2023-09":6,"2023-10":5,"2023-11":3,"2023-12":6,"2024-01":2,"2024-02":7,"2024-03":7,"2024-04":13,"2024-05":16,"2024-06":9,"2024-07":28,"2024-08":6,"2024-09":7,"2024-10":7,"2024-11":3,"2024-12":9,"2025-01":9,"2025-02":11,"2025-03":9,"2025-04":5,"2025-05":10,"2025-06":8,"2025-07":9,"2025-08":5,"2025-09":3,"2025-10":4,"2025-11":9,"2025-12":7,"2026-01":6,"2026-02":5,"2026-03":7,"2026-04":5,"2026-05":4,"2026-06":3}},{"name":"Japan / Taiwan Cruise","type":"International","total_bk":240,"active_mo":19,"avg_pm":12.6,"peak_months":"Feb, Jan, Sep","first_seen":"2024-09","last_seen":"2026-03","avg_lead":55,"avg_pay":46,"revenue":34118396,"profit":6606475,"avg_profit":27527,"margin":19.4,"paid_pct":96.3,"strength":"Niche","monthly":{"2024-09":1,"2024-10":12,"2024-11":20,"2024-12":9,"2025-01":23,"2025-02":31,"2025-03":12,"2025-04":6,"2025-05":5,"2025-06":6,"2025-07":5,"2025-08":9,"2025-09":30,"2025-10":19,"2025-11":11,"2025-12":5,"2026-01":16,"2026-02":14,"2026-03":6}},{"name":"Hanoi, Vietnam","type":"International","total_bk":170,"active_mo":27,"avg_pm":6.3,"peak_months":"Mar, Jun, Jan","first_seen":"2023-09","last_seen":"2026-06","avg_lead":67,"avg_pay":35,"revenue":17830235,"profit":4357500,"avg_profit":25632,"margin":24.4,"paid_pct":95.9,"strength":"Medium","monthly":{"2023-09":1,"2023-11":1,"2024-05":2,"2024-07":2,"2024-08":1,"2024-09":2,"2024-10":1,"2024-11":5,"2024-12":2,"2025-01":3,"2025-02":2,"2025-03":2,"2025-04":5,"2025-05":4,"2025-06":11,"2025-07":9,"2025-08":11,"2025-09":10,"2025-10":5,"2025-11":10,"2025-12":7,"2026-01":16,"2026-02":13,"2026-03":18,"2026-04":12,"2026-05":6,"2026-06":9}},{"name":"Davao","type":"Domestic","total_bk":116,"active_mo":41,"avg_pm":2.8,"peak_months":"Jan, Nov, Sep","first_seen":"2022-09","last_seen":"2026-06","avg_lead":40,"avg_pay":17,"revenue":4929071,"profit":1103626,"avg_profit":9514,"margin":22.4,"paid_pct":99.1,"strength":"Niche","monthly":{"2022-09":4,"2022-11":4,"2022-12":4,"2023-02":3,"2023-03":1,"2023-04":1,"2023-06":3,"2023-07":1,"2023-08":5,"2023-09":4,"2023-10":3,"2023-11":2,"2023-12":1,"2024-01":5,"2024-02":4,"2024-03":4,"2024-04":2,"2024-05":3,"2024-06":1,"2024-07":6,"2024-08":3,"2024-09":2,"2024-10":4,"2024-11":1,"2024-12":2,"2025-01":6,"2025-02":1,"2025-03":1,"2025-04":3,"2025-05":1,"2025-06":3,"2025-07":1,"2025-08":3,"2025-09":2,"2025-10":2,"2025-11":6,"2025-12":5,"2026-01":4,"2026-02":1,"2026-04":2,"2026-06":2}},{"name":"Batanes","type":"Domestic","total_bk":115,"active_mo":33,"avg_pm":3.5,"peak_months":"Jan, Apr, May","first_seen":"2022-12","last_seen":"2026-06","avg_lead":67,"avg_pay":22,"revenue":5126493,"profit":1267809,"avg_profit":11024,"margin":24.7,"paid_pct":96.5,"strength":"Medium","monthly":{"2022-12":1,"2023-02":1,"2023-08":4,"2023-10":3,"2023-11":1,"2023-12":1,"2024-01":3,"2024-04":4,"2024-05":4,"2024-06":5,"2024-07":4,"2024-08":3,"2024-10":1,"2024-11":2,"2024-12":1,"2025-01":5,"2025-02":2,"2025-03":4,"2025-04":2,"2025-05":4,"2025-06":4,"2025-07":2,"2025-08":3,"2025-09":5,"2025-10":5,"2025-11":4,"2025-12":4,"2026-01":5,"2026-02":7,"2026-03":6,"2026-04":7,"2026-05":5,"2026-06":3}},{"name":"Bali","type":"International","total_bk":112,"active_mo":35,"avg_pm":3.2,"peak_months":"Oct, Jun, Feb","first_seen":"2022-09","last_seen":"2026-05","avg_lead":55,"avg_pay":25,"revenue":6815401,"profit":1655468,"avg_profit":14781,"margin":24.3,"paid_pct":96.4,"strength":"Medium","monthly":{"2022-09":1,"2023-02":1,"2023-06":1,"2023-09":1,"2023-10":9,"2023-11":3,"2023-12":3,"2024-01":2,"2024-02":6,"2024-03":1,"2024-04":1,"2024-05":1,"2024-06":5,"2024-07":1,"2024-08":2,"2024-10":1,"2024-11":2,"2024-12":3,"2025-01":6,"2025-02":3,"2025-03":1,"2025-04":4,"2025-05":3,"2025-06":9,"2025-07":3,"2025-08":6,"2025-09":2,"2025-10":9,"2025-11":3,"2025-12":2,"2026-01":2,"2026-02":3,"2026-03":6,"2026-04":2,"2026-05":4}},{"name":"Twin City (Singapore, Malaysia)","type":"International","total_bk":109,"active_mo":27,"avg_pm":4,"peak_months":"May, Feb, Jul","first_seen":"2024-02","last_seen":"2026-06","avg_lead":55,"avg_pay":32,"revenue":11216884,"profit":2350184,"avg_profit":21561,"margin":21,"paid_pct":97.2,"strength":"Medium","monthly":{"2024-02":8,"2024-03":2,"2024-04":8,"2024-05":10,"2024-06":4,"2024-07":7,"2024-08":2,"2024-09":3,"2024-10":2,"2024-11":3,"2025-01":4,"2025-03":3,"2025-04":1,"2025-05":4,"2025-06":5,"2025-07":6,"2025-08":4,"2025-09":4,"2025-10":4,"2025-11":10,"2025-12":2,"2026-01":2,"2026-02":5,"2026-03":2,"2026-04":2,"2026-05":1,"2026-06":1}},{"name":"Shanghai, China","type":"International","total_bk":96,"active_mo":18,"avg_pm":5.3,"peak_months":"Apr, Jun, May","first_seen":"2024-03","last_seen":"2026-06","avg_lead":97,"avg_pay":38,"revenue":11429791,"profit":3627010,"avg_profit":37781,"margin":31.7,"paid_pct":88.5,"strength":"Niche","monthly":{"2024-03":2,"2025-02":1,"2025-03":2,"2025-04":7,"2025-05":5,"2025-06":5,"2025-07":5,"2025-08":5,"2025-09":1,"2025-10":5,"2025-11":5,"2025-12":6,"2026-01":6,"2026-02":7,"2026-03":6,"2026-04":9,"2026-05":8,"2026-06":11}},{"name":"Dubai","type":"International","total_bk":91,"active_mo":28,"avg_pm":3.3,"peak_months":"May, Oct, Dec","first_seen":"2023-08","last_seen":"2026-02","avg_lead":50,"avg_pay":33,"revenue":12326468,"profit":1705453,"avg_profit":18741,"margin":13.8,"paid_pct":92.3,"strength":"Niche","monthly":{"2023-08":3,"2023-09":2,"2023-10":4,"2023-11":1,"2023-12":6,"2024-01":1,"2024-02":2,"2024-05":2,"2024-06":1,"2024-08":2,"2024-09":1,"2024-10":1,"2024-11":2,"2024-12":3,"2025-01":1,"2025-02":2,"2025-03":1,"2025-04":7,"2025-05":12,"2025-06":1,"2025-07":4,"2025-08":4,"2025-09":3,"2025-10":8,"2025-11":4,"2025-12":3,"2026-01":5,"2026-02":5}},{"name":"Korea","type":"International","total_bk":90,"active_mo":36,"avg_pm":2.5,"peak_months":"Mar, Nov, Jun","first_seen":"2022-10","last_seen":"2026-06","avg_lead":77,"avg_pay":33,"revenue":9946484,"profit":2934658,"avg_profit":32607,"margin":29.5,"paid_pct":83.3,"strength":"Niche","monthly":{"2022-10":2,"2023-03":1,"2023-05":2,"2023-06":1,"2023-10":2,"2023-11":1,"2023-12":2,"2024-01":2,"2024-02":2,"2024-03":2,"2024-04":2,"2024-05":1,"2024-06":1,"2024-07":1,"2024-08":1,"2024-09":3,"2024-10":1,"2024-11":2,"2024-12":2,"2025-01":4,"2025-02":3,"2025-03":6,"2025-04":4,"2025-05":2,"2025-06":4,"2025-08":1,"2025-09":2,"2025-10":2,"2025-11":9,"2025-12":4,"2026-01":3,"2026-02":4,"2026-03":3,"2026-04":1,"2026-05":3,"2026-06":4}},{"name":"Iloilo","type":"Domestic","total_bk":83,"active_mo":36,"avg_pm":2.3,"peak_months":"Apr, May, Nov","first_seen":"2023-01","last_seen":"2026-06","avg_lead":35,"avg_pay":31,"revenue":2812038,"profit":749503,"avg_profit":9030,"margin":26.7,"paid_pct":96.4,"strength":"Niche","monthly":{"2023-01":1,"2023-02":2,"2023-04":1,"2023-05":2,"2023-06":1,"2023-08":3,"2023-09":1,"2023-10":2,"2023-11":5,"2024-01":3,"2024-02":1,"2024-03":1,"2024-04":4,"2024-05":2,"2024-06":2,"2024-07":3,"2024-08":2,"2024-09":1,"2024-10":2,"2024-12":1,"2025-01":2,"2025-02":4,"2025-03":4,"2025-04":3,"2025-05":5,"2025-06":1,"2025-07":2,"2025-08":1,"2025-09":3,"2025-10":4,"2025-11":4,"2025-12":3,"2026-01":1,"2026-03":3,"2026-04":1,"2026-06":2}},{"name":"Kuala Lumpur, Malaysia","type":"International","total_bk":82,"active_mo":36,"avg_pm":2.3,"peak_months":"May, Nov, Oct","first_seen":"2022-10","last_seen":"2026-06","avg_lead":29,"avg_pay":20,"revenue":5577736,"profit":1497417,"avg_profit":18261,"margin":26.8,"paid_pct":98.8,"strength":"Niche","monthly":{"2022-10":2,"2022-11":3,"2022-12":1,"2023-04":1,"2023-05":1,"2023-06":2,"2023-07":2,"2023-08":2,"2023-09":3,"2023-10":3,"2023-11":3,"2024-01":1,"2024-02":5,"2024-03":1,"2024-05":5,"2024-07":3,"2024-08":2,"2024-09":2,"2024-10":1,"2024-11":4,"2025-01":2,"2025-02":1,"2025-04":2,"2025-05":3,"2025-06":1,"2025-07":4,"2025-08":2,"2025-09":1,"2025-10":3,"2025-12":3,"2026-01":3,"2026-02":2,"2026-03":1,"2026-04":2,"2026-05":4,"2026-06":1}},{"name":"Chiang Mai + Chiang Rai","type":"International","total_bk":81,"active_mo":16,"avg_pm":5.1,"peak_months":"Jan, Mar, Sep","first_seen":"2024-11","last_seen":"2026-03","avg_lead":54,"avg_pay":39,"revenue":6230141,"profit":735009,"avg_profit":9074,"margin":11.8,"paid_pct":88.9,"strength":"Niche","monthly":{"2024-11":2,"2024-12":6,"2025-01":11,"2025-02":4,"2025-03":12,"2025-04":3,"2025-05":6,"2025-06":7,"2025-07":3,"2025-08":5,"2025-09":12,"2025-10":5,"2025-11":1,"2026-01":2,"2026-02":1,"2026-03":1}},{"name":"Cagayan de Oro","type":"Domestic","total_bk":64,"active_mo":30,"avg_pm":2.1,"peak_months":"Jul, Apr, Oct","first_seen":"2022-09","last_seen":"2026-06","avg_lead":35,"avg_pay":23,"revenue":2252907,"profit":559143,"avg_profit":8737,"margin":24.8,"paid_pct":96.9,"strength":"Niche","monthly":{"2022-09":1,"2023-03":1,"2023-07":1,"2023-09":1,"2023-10":5,"2023-11":2,"2023-12":1,"2024-04":6,"2024-05":2,"2024-06":3,"2024-07":8,"2024-08":1,"2024-10":2,"2024-11":4,"2024-12":3,"2025-01":2,"2025-02":3,"2025-03":2,"2025-04":1,"2025-06":1,"2025-07":3,"2025-08":1,"2025-09":1,"2025-11":1,"2025-12":1,"2026-01":1,"2026-03":1,"2026-04":1,"2026-05":2,"2026-06":2}},{"name":"China","type":"International","total_bk":55,"active_mo":27,"avg_pm":2,"peak_months":"Jun, Dec, Nov","first_seen":"2023-06","last_seen":"2026-06","avg_lead":72,"avg_pay":45,"revenue":4929628,"profit":1475994,"avg_profit":26836,"margin":29.9,"paid_pct":90.9,"strength":"Niche","monthly":{"2023-06":2,"2023-11":2,"2023-12":2,"2024-01":4,"2024-02":1,"2024-03":2,"2024-05":1,"2024-06":4,"2024-07":2,"2024-08":1,"2024-09":2,"2024-11":1,"2024-12":1,"2025-01":1,"2025-02":1,"2025-04":2,"2025-05":1,"2025-07":1,"2025-08":3,"2025-10":2,"2025-11":4,"2025-12":5,"2026-01":2,"2026-02":2,"2026-03":2,"2026-05":2,"2026-06":2}},{"name":"Indochina (Vietnam, Cambodia, Thailand)","type":"International","total_bk":51,"active_mo":17,"avg_pm":3,"peak_months":"Jul, Jun, Sep","first_seen":"2024-03","last_seen":"2026-03","avg_lead":58,"avg_pay":28,"revenue":4919573,"profit":1591344,"avg_profit":31203,"margin":32.3,"paid_pct":96.1,"strength":"Medium","monthly":{"2024-03":2,"2024-04":1,"2024-05":3,"2024-06":3,"2024-07":9,"2024-08":3,"2024-09":3,"2024-10":3,"2024-11":3,"2024-12":3,"2025-01":6,"2025-03":1,"2025-05":2,"2025-06":4,"2025-09":3,"2025-11":1,"2026-03":1}},{"name":"Dumaguete","type":"Domestic","total_bk":39,"active_mo":19,"avg_pm":2.1,"peak_months":"Jun, Mar, Apr","first_seen":"2022-09","last_seen":"2026-06","avg_lead":31,"avg_pay":23,"revenue":1025743,"profit":325961,"avg_profit":8358,"margin":31.8,"paid_pct":100,"strength":"Niche","monthly":{"2022-09":1,"2024-04":2,"2024-05":1,"2024-06":4,"2024-07":1,"2024-08":3,"2024-09":2,"2024-11":1,"2025-03":2,"2025-04":1,"2025-05":2,"2025-06":3,"2025-07":2,"2025-11":1,"2026-01":1,"2026-03":7,"2026-04":2,"2026-05":1,"2026-06":2}},{"name":"Baguio","type":"Domestic","total_bk":37,"active_mo":25,"avg_pm":1.5,"peak_months":"Apr, Oct, Mar","first_seen":"2022-10","last_seen":"2026-06","avg_lead":28,"avg_pay":29,"revenue":1846958,"profit":366664,"avg_profit":9910,"margin":19.9,"paid_pct":94.6,"strength":"Niche","monthly":{"2022-10":1,"2023-04":1,"2024-01":1,"2024-02":1,"2024-03":1,"2024-05":1,"2024-06":2,"2024-07":1,"2024-09":2,"2024-10":3,"2024-11":1,"2024-12":1,"2025-03":1,"2025-04":2,"2025-05":1,"2025-07":1,"2025-08":1,"2025-10":1,"2025-11":2,"2025-12":2,"2026-02":2,"2026-03":2,"2026-04":4,"2026-05":1,"2026-06":1}},{"name":"Ho Chi Minh, Vietnam","type":"International","total_bk":37,"active_mo":21,"avg_pm":1.8,"peak_months":"Jan, Oct, Jul","first_seen":"2023-01","last_seen":"2026-05","avg_lead":49,"avg_pay":29,"revenue":2446040,"profit":740885,"avg_profit":20024,"margin":30.3,"paid_pct":100,"strength":"Niche","monthly":{"2023-01":1,"2023-03":1,"2023-04":1,"2023-10":1,"2024-05":1,"2024-06":1,"2024-07":3,"2024-11":3,"2024-12":1,"2025-01":3,"2025-02":2,"2025-04":1,"2025-06":1,"2025-07":1,"2025-08":2,"2025-09":2,"2025-10":3,"2025-12":2,"2026-01":4,"2026-04":1,"2026-05":2}},{"name":"Bacolod","type":"Domestic","total_bk":32,"active_mo":21,"avg_pm":1.5,"peak_months":"Feb, Apr, Jan","first_seen":"2022-10","last_seen":"2026-04","avg_lead":27,"avg_pay":14,"revenue":511281,"profit":133081,"avg_profit":4159,"margin":26,"paid_pct":100,"strength":"Niche","monthly":{"2022-10":3,"2023-02":3,"2023-04":2,"2023-12":1,"2024-01":1,"2024-04":1,"2024-05":2,"2024-08":1,"2025-01":2,"2025-02":1,"2025-03":1,"2025-04":1,"2025-05":1,"2025-07":3,"2025-08":1,"2025-09":1,"2025-11":1,"2026-01":1,"2026-02":2,"2026-03":2,"2026-04":1}},{"name":"Bantayan","type":"Domestic","total_bk":31,"active_mo":21,"avg_pm":1.5,"peak_months":"Jan, Mar, Apr","first_seen":"2023-09","last_seen":"2026-04","avg_lead":42,"avg_pay":30,"revenue":1031640,"profit":344471,"avg_profit":11112,"margin":33.4,"paid_pct":100,"strength":"Niche","monthly":{"2023-09":1,"2023-10":1,"2023-12":2,"2024-01":2,"2024-02":2,"2024-03":3,"2024-04":2,"2024-05":1,"2024-06":3,"2024-08":1,"2024-09":1,"2024-11":1,"2025-01":2,"2025-04":1,"2025-05":1,"2025-07":2,"2025-08":1,"2025-09":1,"2026-01":1,"2026-03":1,"2026-04":1}},{"name":"Beijing, China","type":"International","total_bk":29,"active_mo":17,"avg_pm":1.7,"peak_months":"May, Jun, Jan","first_seen":"2024-09","last_seen":"2026-06","avg_lead":89,"avg_pay":43,"revenue":3479182,"profit":1269435,"avg_profit":43774,"margin":36.5,"paid_pct":89.7,"strength":"Niche","monthly":{"2024-09":2,"2024-12":1,"2025-01":1,"2025-03":1,"2025-04":2,"2025-05":4,"2025-06":3,"2025-08":2,"2025-10":2,"2025-11":1,"2025-12":1,"2026-01":2,"2026-02":2,"2026-03":1,"2026-04":1,"2026-05":1,"2026-06":2}},{"name":"Tacloban","type":"Domestic","total_bk":27,"active_mo":19,"avg_pm":1.4,"peak_months":"Jun, Dec, Feb","first_seen":"2022-09","last_seen":"2026-06","avg_lead":39,"avg_pay":13,"revenue":699580,"profit":122518,"avg_profit":4538,"margin":17.5,"paid_pct":100,"strength":"Niche","monthly":{"2022-09":1,"2023-01":1,"2023-04":1,"2023-06":1,"2023-11":2,"2023-12":1,"2024-02":3,"2024-05":1,"2024-06":2,"2025-03":1,"2025-05":1,"2025-06":1,"2025-08":3,"2025-09":1,"2025-12":3,"2026-01":1,"2026-02":1,"2026-05":1,"2026-06":1}},{"name":"Bangkok & Pattaya, Thailand","type":"International","total_bk":25,"active_mo":13,"avg_pm":1.9,"peak_months":"May, Jul, Mar","first_seen":"2024-04","last_seen":"2026-05","avg_lead":82,"avg_pay":57,"revenue":2239167,"profit":642448,"avg_profit":25698,"margin":28.7,"paid_pct":84,"strength":"Niche","monthly":{"2024-04":2,"2024-05":1,"2024-07":1,"2024-11":1,"2025-01":2,"2025-02":3,"2025-03":4,"2025-06":1,"2025-07":3,"2025-08":1,"2025-11":1,"2025-12":2,"2026-05":3}},{"name":"General Santos","type":"Domestic","total_bk":22,"active_mo":14,"avg_pm":1.6,"peak_months":"Apr, May, Sep","first_seen":"2022-09","last_seen":"2026-05","avg_lead":25,"avg_pay":29,"revenue":1944890,"profit":314199,"avg_profit":14282,"margin":16.2,"paid_pct":95.5,"strength":"Niche","monthly":{"2022-09":2,"2023-02":1,"2023-10":1,"2023-12":1,"2024-03":1,"2025-01":1,"2025-04":2,"2025-05":2,"2025-08":1,"2025-09":2,"2026-01":1,"2026-02":1,"2026-04":3,"2026-05":3}},{"name":"TriCity (Singapore, Malaysia, Indonesia)","type":"International","total_bk":22,"active_mo":15,"avg_pm":1.5,"peak_months":"Apr, Jun, May","first_seen":"2023-10","last_seen":"2026-04","avg_lead":55,"avg_pay":23,"revenue":2808352,"profit":534437,"avg_profit":24293,"margin":19,"paid_pct":100,"strength":"Niche","monthly":{"2023-10":1,"2023-11":1,"2024-02":1,"2024-04":2,"2024-05":2,"2024-06":3,"2024-07":1,"2024-11":1,"2025-01":1,"2025-04":2,"2025-05":1,"2025-06":2,"2025-08":2,"2025-10":1,"2026-04":1}},{"name":"Kalibo","type":"Domestic","total_bk":21,"active_mo":17,"avg_pm":1.2,"peak_months":"Mar, Feb, Oct","first_seen":"2023-02","last_seen":"2026-05","avg_lead":25,"avg_pay":12,"revenue":624255,"profit":136495,"avg_profit":6500,"margin":21.9,"paid_pct":95.2,"strength":"Niche","monthly":{"2023-02":1,"2023-03":2,"2023-07":1,"2023-09":1,"2023-10":1,"2023-11":2,"2023-12":2,"2024-02":1,"2024-08":1,"2024-10":1,"2025-03":1,"2025-05":1,"2025-06":1,"2026-02":1,"2026-03":1,"2026-04":2,"2026-05":1}},{"name":"Da Nang, Vietnam","type":"International","total_bk":19,"active_mo":5,"avg_pm":3.8,"peak_months":"Jun, May, Mar","first_seen":"2024-12","last_seen":"2026-06","avg_lead":78,"avg_pay":28,"revenue":1609504,"profit":1391716,"avg_profit":73248,"margin":86.5,"paid_pct":73.7,"strength":"Niche","monthly":{"2024-12":1,"2026-02":2,"2026-03":3,"2026-05":4,"2026-06":9}},{"name":"Legazpi","type":"Domestic","total_bk":18,"active_mo":17,"avg_pm":1.1,"peak_months":"Jan, Oct, Dec","first_seen":"2022-10","last_seen":"2026-03","avg_lead":45,"avg_pay":17,"revenue":309244,"profit":72674,"avg_profit":4037,"margin":23.5,"paid_pct":100,"strength":"Niche","monthly":{"2022-10":1,"2022-11":1,"2022-12":1,"2023-01":1,"2023-02":1,"2024-03":1,"2024-05":1,"2024-08":1,"2024-09":1,"2024-12":1,"2025-02":1,"2025-04":1,"2025-07":1,"2025-09":1,"2025-10":1,"2026-01":2,"2026-03":1}},{"name":"Taiwan - Japan - Korea","type":"International","total_bk":18,"active_mo":6,"avg_pm":3,"peak_months":"Jan, Oct, Nov","first_seen":"2025-10","last_seen":"2026-03","avg_lead":81,"avg_pay":32,"revenue":4108375,"profit":818167,"avg_profit":45454,"margin":19.9,"paid_pct":100,"strength":"Medium","monthly":{"2025-10":4,"2025-11":3,"2025-12":1,"2026-01":7,"2026-02":1,"2026-03":2}},{"name":"Butuan","type":"Domestic","total_bk":17,"active_mo":15,"avg_pm":1.1,"peak_months":"May, Nov, Apr","first_seen":"2022-10","last_seen":"2026-03","avg_lead":52,"avg_pay":18,"revenue":412002,"profit":97546,"avg_profit":5738,"margin":23.7,"paid_pct":100,"strength":"Niche","monthly":{"2022-10":1,"2022-11":1,"2023-04":1,"2023-05":1,"2023-06":1,"2024-04":1,"2024-05":1,"2024-06":1,"2025-05":1,"2025-07":2,"2025-08":1,"2025-11":1,"2025-12":1,"2026-02":2,"2026-03":1}},{"name":"Chiang Mai, Thailand","type":"International","total_bk":16,"active_mo":8,"avg_pm":2,"peak_months":"Mar, Aug, Sep","first_seen":"2024-01","last_seen":"2026-04","avg_lead":49,"avg_pay":31,"revenue":3322417,"profit":134489,"avg_profit":8406,"margin":4,"paid_pct":93.8,"strength":"Niche","monthly":{"2024-01":1,"2025-02":1,"2025-03":3,"2025-06":1,"2025-08":3,"2025-09":2,"2026-03":3,"2026-04":2}},{"name":"Puerto Galera","type":"Domestic","total_bk":15,"active_mo":11,"avg_pm":1.4,"peak_months":"May, Dec, Nov","first_seen":"2022-11","last_seen":"2026-05","avg_lead":15,"avg_pay":22,"revenue":883712,"profit":134640,"avg_profit":8976,"margin":15.2,"paid_pct":93.3,"strength":"Niche","monthly":{"2022-11":2,"2023-12":1,"2024-04":1,"2025-03":1,"2025-05":2,"2025-06":1,"2025-10":1,"2025-12":2,"2026-03":1,"2026-04":1,"2026-05":2}},{"name":"El Nido + Coron","type":"Domestic","total_bk":15,"active_mo":9,"avg_pm":1.7,"peak_months":"Mar, Dec, Feb","first_seen":"2025-10","last_seen":"2026-06","avg_lead":62,"avg_pay":32,"revenue":1172622,"profit":527740,"avg_profit":35183,"margin":45,"paid_pct":100,"strength":"Niche","monthly":{"2025-10":1,"2025-11":1,"2025-12":2,"2026-01":1,"2026-02":2,"2026-03":5,"2026-04":1,"2026-05":1,"2026-06":1}},{"name":"ADORA MESITERRANEA","type":"International","total_bk":14,"active_mo":4,"avg_pm":3.5,"peak_months":"Apr, Jun, May","first_seen":"2026-03","last_seen":"2026-06","avg_lead":235,"avg_pay":null,"revenue":3839331,"profit":2904709,"avg_profit":207479,"margin":75.7,"paid_pct":42.9,"strength":"Niche","monthly":{"2026-03":1,"2026-04":7,"2026-05":2,"2026-06":4}},{"name":"Canada","type":"International","total_bk":13,"active_mo":13,"avg_pm":1,"peak_months":"Dec, Jul, Jun","first_seen":"2022-12","last_seen":"2025-11","avg_lead":44,"avg_pay":27,"revenue":1913614,"profit":170956,"avg_profit":13150,"margin":8.9,"paid_pct":100,"strength":"Niche","monthly":{"2022-12":1,"2023-01":1,"2023-07":1,"2023-10":1,"2023-12":1,"2024-03":1,"2024-06":1,"2024-07":1,"2024-09":1,"2025-05":1,"2025-06":1,"2025-09":1,"2025-11":1}},{"name":"Bukidnon","type":"Domestic","total_bk":13,"active_mo":9,"avg_pm":1.4,"peak_months":"May, Nov, Mar","first_seen":"2025-02","last_seen":"2026-06","avg_lead":45,"avg_pay":18,"revenue":560369,"profit":202273,"avg_profit":15559,"margin":36.1,"paid_pct":92.3,"strength":"Niche","monthly":{"2025-02":1,"2025-05":2,"2025-07":1,"2025-09":1,"2025-11":2,"2026-03":2,"2026-04":2,"2026-05":1,"2026-06":1}},{"name":"Macau","type":"International","total_bk":12,"active_mo":11,"avg_pm":1.1,"peak_months":"Feb, Jun, Jan","first_seen":"2024-01","last_seen":"2026-06","avg_lead":63,"avg_pay":39,"revenue":536652,"profit":171601,"avg_profit":14300,"margin":32,"paid_pct":91.7,"strength":"Niche","monthly":{"2024-01":1,"2024-02":2,"2024-05":1,"2024-06":1,"2024-10":1,"2025-02":1,"2025-07":1,"2025-09":1,"2026-02":1,"2026-04":1,"2026-06":1}},{"name":"Bangkok, Thailand","type":"International","total_bk":12,"active_mo":4,"avg_pm":3,"peak_months":"Jun, Mar, Dec","first_seen":"2025-03","last_seen":"2026-06","avg_lead":58,"avg_pay":29,"revenue":1165921,"profit":871348,"avg_profit":72612,"margin":74.7,"paid_pct":58.3,"strength":"Niche","monthly":{"2025-03":1,"2025-12":1,"2026-03":1,"2026-06":9}},{"name":"Tuguegarao","type":"Domestic","total_bk":11,"active_mo":7,"avg_pm":1.6,"peak_months":"Sep, Apr, Feb","first_seen":"2023-07","last_seen":"2026-04","avg_lead":10,"avg_pay":14,"revenue":409122,"profit":82276,"avg_profit":7480,"margin":20.1,"paid_pct":100,"strength":"Niche","monthly":{"2023-07":1,"2024-02":1,"2024-04":2,"2025-09":4,"2025-10":1,"2026-02":1,"2026-04":1}},{"name":"Brunei","type":"International","total_bk":11,"active_mo":10,"avg_pm":1.1,"peak_months":"Oct, Mar, May","first_seen":"2023-10","last_seen":"2025-02","avg_lead":7,"avg_pay":39,"revenue":302087,"profit":48904,"avg_profit":4446,"margin":16.2,"paid_pct":100,"strength":"Niche","monthly":{"2023-10":1,"2024-03":1,"2024-05":1,"2024-06":1,"2024-07":1,"2024-08":1,"2024-09":1,"2024-10":2,"2024-12":1,"2025-02":1}},{"name":"Maldives","type":"International","total_bk":11,"active_mo":8,"avg_pm":1.4,"peak_months":"Mar, Oct, Feb","first_seen":"2023-11","last_seen":"2026-02","avg_lead":53,"avg_pay":47,"revenue":2414824,"profit":1152513,"avg_profit":104774,"margin":47.7,"paid_pct":100,"strength":"Niche","monthly":{"2023-11":1,"2024-03":1,"2025-03":2,"2025-04":1,"2025-08":1,"2025-10":2,"2026-01":1,"2026-02":2}},{"name":"Japan (Fukuoka)","type":"International","total_bk":11,"active_mo":4,"avg_pm":2.8,"peak_months":"Feb, Nov, Oct","first_seen":"2025-10","last_seen":"2026-02","avg_lead":69,"avg_pay":48,"revenue":1903446,"profit":265600,"avg_profit":24145,"margin":14,"paid_pct":100,"strength":"Niche","monthly":{"2025-10":2,"2025-11":3,"2026-01":2,"2026-02":4}}];
+
+// ── State ──────────────────────────────────────────────────────────────────
+let filterType = "All", filterStr = "All", searchQ = "", sortKey = "total_bk", sortDir = -1;
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+const peso = n => {
+  if (Math.abs(n) >= 1e9) return "₱" + (n/1e9).toFixed(2) + "B";
+  if (Math.abs(n) >= 1e6) return "₱" + (n/1e6).toFixed(1) + "M";
+  if (Math.abs(n) >= 1e3) return "₱" + (n/1e3).toFixed(0) + "K";
+  return "₱" + n.toLocaleString();
+};
+const pct = n => n == null ? "—" : n.toFixed(1) + "%";
+const days = n => n == null ? "—" : n + "d";
+
+function filtered() {
+  const result = MATRIX.filter(d => {
+    if (filterType !== "All" && d.type !== filterType) return false;
+    if (filterStr !== "All" && d.strength !== filterStr) return false;
+    if (searchQ && !d.name.toLowerCase().includes(searchQ.toLowerCase())) return false;
+    return true;
+  }).sort((a, b) => {
+    const av = a[sortKey], bv = b[sortKey];
+    if (typeof av === "number" && typeof bv === "number") return (av - bv) * sortDir;
+    if (av == null) return 1; if (bv == null) return -1;
+    return String(av).localeCompare(String(bv)) * sortDir;
+  });
+  // Vietnam (Multi-city) always stays at the bottom — data quality flag, not a core finding
+  const vi = result.findIndex(d => d.name === "Vietnam (Multi-city)");
+  if (vi > -1) result.push(result.splice(vi, 1)[0]);
+  return result;
+}
+
+// ── KPIs ───────────────────────────────────────────────────────────────────
+function updateKPIs(rows) {
+  const dom = rows.filter(d => d.type === "Domestic").length;
+  const intl = rows.filter(d => d.type === "International").length;
+  document.getElementById("k-dest").textContent = rows.length;
+  document.getElementById("k-dest-sub").textContent = dom + " domestic · " + intl + " intl";
+
+  const bk = rows.reduce((s,d) => s + d.total_bk, 0);
+  document.getElementById("k-bk").textContent = bk.toLocaleString();
+  document.getElementById("k-bk-sub").textContent = "total bookings in view";
+
+  const rev = rows.reduce((s,d) => s + d.revenue, 0);
+  document.getElementById("k-rev").textContent = peso(rev);
+  document.getElementById("k-rev-sub").textContent = "combined SRP";
+
+  const top = rows[0];
+  if (top) {
+    document.getElementById("k-top").textContent = top.name;
+    document.getElementById("k-top-sub").textContent = top.total_bk.toLocaleString() + " bk · " + top.avg_pm + "/mo";
+  }
+}
+
+// ── Table render ───────────────────────────────────────────────────────────
+function renderTable() {
+  const rows = filtered();
+  updateKPIs(rows);
+  document.getElementById("row-count").textContent = rows.length + " destinations";
+
+  const nameCell = d => {
+    if (d.name !== "Vietnam (Multi-city)") return d.name;
+    return '<span class="dq-wrap">' + d.name +
+      '<sup class="dq-sup">³</sup>' +
+      '<button class="info-btn" data-viet-tip aria-label="Data quality info">i</button></span>';
+  };
+
+  const strengthPill = s =>
+    s === "Strong"  ? '<span class="pill pill-strong">Strong</span>' :
+    s === "Medium"  ? '<span class="pill pill-medium">Medium</span>' :
+                      '<span class="pill pill-niche">Niche</span>';
+  const typePill = t =>
+    t === "Domestic" ? '<span class="pill pill-dom">Domestic</span>' :
+                       '<span class="pill pill-intl">Intl</span>';
+  const paidPill = p => {
+    const cls = p >= 95 ? "pill-hi" : p < 85 ? "pill-lo" : "pill-medium";
+    return `<span class="pill ${cls}">${pct(p)}</span>`;
+  };
+  const profitCell = n => {
+    const s = peso(n);
+    return `<span style="color:${n >= 0 ? "var(--green)" : "var(--red)"}">${s}</span>`;
+  };
+
+  document.getElementById("tbody").innerHTML = rows.map(d => `
+    <tr data-name="${d.name.replace(/"/g,'&quot;')}">
+      <td class="name-cell">${nameCell(d)}</td>
+      <td>${typePill(d.type)}</td>
+      <td class="num-cell hi">${d.total_bk.toLocaleString()}</td>
+      <td class="num-cell hi">${d.avg_pm}</td>
+      <td>${d.peak_months}</td>
+      <td class="num-cell">${days(d.avg_lead)}</td>
+      <td class="num-cell">${days(d.avg_pay)}</td>
+      <td class="num-cell">${peso(d.revenue)}</td>
+      <td class="num-cell">${profitCell(d.avg_profit)}</td>
+      <td class="num-cell">${pct(d.margin)}</td>
+      <td class="num-cell">${paidPill(d.paid_pct)}</td>
+      <td>${strengthPill(d.strength)}</td>
+    </tr>
+  `).join("");
+
+  // Re-attach row click events
+  document.querySelectorAll("#tbody tr").forEach(tr => {
+    tr.addEventListener("click", () => {
+      const name = tr.dataset.name;
+      const dest = MATRIX.find(d => d.name === name);
+      if (dest) showTrend(dest, tr);
+    });
+  });
+}
+
+// ── Sorting ────────────────────────────────────────────────────────────────
+document.querySelectorAll("thead th[data-k]").forEach(th => {
+  th.addEventListener("click", () => {
+    const k = th.dataset.k;
+    if (sortKey === k) sortDir *= -1;
+    else { sortKey = k; sortDir = (k === "name" || k === "type" || k === "peak_months" || k === "strength") ? 1 : -1; }
+    document.querySelectorAll("thead th").forEach(h => h.classList.remove("asc","dsc"));
+    th.classList.add(sortDir === 1 ? "asc" : "dsc");
+    renderTable();
+  });
+});
+
+// ── Filters ────────────────────────────────────────────────────────────────
+document.querySelectorAll(".tab").forEach(t => {
+  t.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
+    t.classList.add("active");
+    filterType = t.dataset.type;
+    renderTable();
+  });
+});
+document.querySelectorAll(".chip").forEach(c => {
+  c.addEventListener("click", () => {
+    document.querySelectorAll(".chip").forEach(x => x.classList.remove("active"));
+    c.classList.add("active");
+    filterStr = c.dataset.str;
+    renderTable();
+  });
+});
+document.getElementById("search").addEventListener("input", e => {
+  searchQ = e.target.value;
+  renderTable();
+});
+
+// ── Trend panel ────────────────────────────────────────────────────────────
+Chart.defaults.color = "#6b7a93";
+Chart.defaults.font.family = "-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif";
+Chart.defaults.font.size = 11;
+
+let trendChartInst = null;
+
+function showTrend(dest, tr) {
+  document.querySelectorAll("#tbody tr").forEach(r => r.classList.remove("selected"));
+  tr.classList.add("selected");
+
+  const mons = Object.keys(dest.monthly).sort();
+  const vals = mons.map(m => dest.monthly[m]);
+
+  // Generate full month range from first to last
+  const [fy, fm] = mons[0].split("-").map(Number);
+  const [ly, lm] = mons[mons.length-1].split("-").map(Number);
+  const allMons = [];
+  let cy = fy, cm = fm;
+  while (cy < ly || (cy === ly && cm <= lm)) {
+    allMons.push(`${cy}-${String(cm).padStart(2,"0")}`);
+    cm++; if (cm > 12) { cm = 1; cy++; }
+  }
+  const allVals = allMons.map(m => dest.monthly[m] || 0);
+  const labels  = allMons.map(m => m.slice(2));
+
+  const maxVal = Math.max(...allVals);
+  const colors = allVals.map(v => v === maxVal && maxVal > 0 ? "#ff9913" : "rgba(255,153,19,0.35)");
+
+  document.getElementById("panel-title").textContent = dest.name + " — Monthly Bookings";
+  document.getElementById("panel-meta").textContent =
+    dest.total_bk.toLocaleString() + " total · " + dest.avg_pm + "/mo avg · Peak: " + dest.peak_months +
+    " · Lead time: " + (dest.avg_lead != null ? dest.avg_lead + "d" : "N/A") +
+    " · Pay speed: " + (dest.avg_pay != null ? dest.avg_pay + "d" : "N/A");
+
+  if (trendChartInst) trendChartInst.destroy();
+  trendChartInst = new Chart(document.getElementById("trend-chart"), {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [{
+        data: allVals,
+        backgroundColor: colors,
+        borderColor: colors.map(c => c === "#ff9913" ? "#ff9913" : "rgba(255,153,19,0.6)"),
+        borderWidth: 1, borderRadius: 2,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: {
+        callbacks: { label: ctx => ` ${ctx.parsed.y} bookings` }
+      }},
+      scales: {
+        x: { grid: { color: "rgba(255,255,255,0.04)" }, ticks: { maxRotation: 45, minRotation: 45 } },
+        y: { grid: { color: "rgba(255,255,255,0.04)" }, beginAtZero: true, ticks: { stepSize: 1 } },
+      }
+    }
+  });
+
+  document.getElementById("panel").classList.add("open");
+}
+
+document.getElementById("panel-close").addEventListener("click", () => {
+  document.getElementById("panel").classList.remove("open");
+  document.querySelectorAll("#tbody tr").forEach(r => r.classList.remove("selected"));
+});
+
+// ── Vietnam data-quality tooltip ───────────────────────────────────────────
+const vietTip = document.getElementById("viet-tip");
+const VIET_MSG = 'Mga Vietnam bookings na walang specific city na nai-tag sa Fusioo (general “Vietnam” package lang, hindi nilagay kung Danang o Sapa). Hiwalay na row ito para malinaw sa pag-compute ng performance, pero kasama pa rin ito sa kabuuang Vietnam business.';
+document.addEventListener("mouseover", e => {
+  const btn = e.target.closest("[data-viet-tip]");
+  if (!btn) return;
+  vietTip.textContent = VIET_MSG;
+  vietTip.style.display = "block";
+  const r = btn.getBoundingClientRect(), tw = 280, th = vietTip.offsetHeight || 90;
+  let left = r.right + 10, top = r.top - 4;
+  if (left + tw > window.innerWidth - 10) left = r.left - tw - 10;
+  if (top + th > window.innerHeight - 10) top = window.innerHeight - th - 10;
+  vietTip.style.left = left + "px";
+  vietTip.style.top  = top  + "px";
+});
+document.addEventListener("mouseout", e => {
+  if (e.target.closest("[data-viet-tip]")) vietTip.style.display = "none";
+});
+
+// ── Init ───────────────────────────────────────────────────────────────────
+renderTable();
+document.querySelector("thead th[data-k='total_bk']").classList.add("dsc");
+</script>
+</body>
+</html>
