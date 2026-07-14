@@ -11,7 +11,7 @@ import PaymentFailed from "./pages/PaymentFailed";
 import { ThemeProvider } from "@/lib/ThemeContext";
 import SiteLock from "@/lib/SiteLock";
 
-const Admin = import.meta.env.DEV ? lazy(() => import('./pages/Admin')) : null;
+const Admin = lazy(() => import('./pages/Admin'));
 
 // Blocks -test slugs on production; passes through in local dev
 function DestinationRoute() {
@@ -27,7 +27,7 @@ const AuthenticatedShell = lazy(() => import('./lib/AuthenticatedShell'));
 const PageNotFound = lazy(() => import('./lib/PageNotFound'));
 
 // Routes that are public (no Base44 auth required)
-const PUBLIC_PREFIXES = ["/destination/", "/preview/", "/payment/", ...(import.meta.env.DEV ? ["/admin"] : [])];
+const PUBLIC_PREFIXES = ["/destination/", "/preview/", "/payment/", "/admin"];
 
 const isPublicRoute = (pathname) =>
   PUBLIC_PREFIXES.some((p) => pathname.startsWith(p)) || pathname === "/";
@@ -51,7 +51,7 @@ const AppShell = () => {
           <Route path="/preview/:slug" element={<DestinationPreview />} />
           <Route path="/payment/success" element={<PaymentSuccess />} />
           <Route path="/payment/failed" element={<PaymentFailed />} />
-          {import.meta.env.DEV && Admin && <Route path="/admin/*" element={<Admin />} />}
+          <Route path="/admin/*" element={<Admin />} />
           <Route path="*" element={<PageNotFound />} />
         </Routes>
       </Suspense>
