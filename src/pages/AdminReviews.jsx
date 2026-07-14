@@ -16,6 +16,43 @@ import { getReviewStats, addReview, deleteReview, hideReview, unhideReview, look
 import { toast } from "@/components/ui/use-toast";
 
 const ORANGE = "#FF9913";
+
+function PhotoThumb({ src }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <img
+        src={src} alt="review photo"
+        onClick={() => setOpen(true)}
+        style={{ marginTop: 7, width: 90, height: 70, borderRadius: 8, objectFit: "cover", border: "1px solid #f0f0f0", cursor: "zoom-in", display: "block" }}
+      />
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            onClick={() => setOpen(false)}
+            style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", zIndex: 1000, cursor: "zoom-out", display: "flex", alignItems: "center", justifyContent: "center" }}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.92 }}
+              transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+              onClick={e => e.stopPropagation()}
+              style={{ position: "relative" }}
+            >
+              <img src={src} alt="review photo" style={{ maxWidth: "90vw", maxHeight: "90vh", borderRadius: 12, objectFit: "contain", display: "block" }} />
+              <button
+                onClick={() => setOpen(false)}
+                style={{ position: "absolute", top: -14, right: -14, width: 30, height: 30, borderRadius: "50%", background: "#fff", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 8px rgba(0,0,0,0.3)" }}
+              >
+                <X size={14} color="#333" />
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
 const PALETTE = ["#FF9913", "#3B82F6", "#10B981", "#8B5CF6", "#F43F5E", "#F59E0B", "#06B6D4", "#EC4899"];
 const DEST_OPTIONS = ["Boracay", "Cebu", "El Nido", "Puerto Princesa", "Siargao", "Bohol"];
 const DEST_SLUGS = { "Boracay": "boracay", "Cebu": "cebu", "El Nido": "elnido", "Puerto Princesa": "puertoprincesa", "Siargao": "siargao", "Bohol": "bohol" };
@@ -173,7 +210,7 @@ function ReviewCard({ review, onDelete, onToggleHide }) {
           <StarDisplay rating={review.rating} />
           {(review.comment || review.review_text) && <p style={{ fontSize: "0.8rem", color: "#666", margin: "5px 0 0", lineHeight: 1.5 }}>"{review.comment || review.review_text}"</p>}
           {review.photos?.[0] && (
-            <img src={review.photos[0]} alt="review" style={{ marginTop: "7px", maxWidth: "120px", maxHeight: "90px", borderRadius: "8px", objectFit: "cover", border: "1px solid #f0f0f0" }} />
+            <PhotoThumb src={review.photos[0]} />
           )}
           <p style={{ fontSize: "10.5px", color: "#ccc", marginTop: "4px" }}>
             {review.created_at ? new Date(review.created_at).toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" }) : ""}

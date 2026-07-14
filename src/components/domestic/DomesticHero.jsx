@@ -27,6 +27,7 @@ const PANELS = [
 
 export default function DomesticHero() {
   const [loaded, setLoaded] = useState(false);
+  const [hovered, setHovered] = useState(null);
 
   useEffect(() => {
     const t = setTimeout(() => setLoaded(true), 100);
@@ -55,29 +56,16 @@ export default function DomesticHero() {
               duration: 0.9,
             }}
             style={{
-              flex: 1,
-              transition:
-                "flex 0.5s cubic-bezier(0.4,0,0.2,1)",
+              flex: hovered === i ? 1.8 : 1,
+              transition: "flex 0.5s cubic-bezier(0.4,0,0.2,1)",
             }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.flex = "1.8")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.flex = "1")
-            }
+            onMouseEnter={() => setHovered(i)}
+            onMouseLeave={() => setHovered(null)}
           >
             {/* IMAGE */}
             <div
-              className="
-                absolute inset-0
-                bg-cover bg-center
-                transition-transform duration-[6000ms]
-                ease-out
-                group-hover:scale-110
-              "
-              style={{
-                backgroundImage: `url('${panel.src}')`,
-              }}
+              className="absolute inset-0 bg-cover bg-center transition-transform duration-[6000ms] ease-out group-hover:scale-110"
+              style={{ backgroundImage: `url('${panel.src}')` }}
             />
 
             {/* OVERLAY */}
@@ -85,15 +73,10 @@ export default function DomesticHero() {
 
             {/* HOVER GLOW */}
             <div
-              className="
-                absolute inset-0
-                opacity-0
-                group-hover:opacity-100
-                transition-opacity duration-500
-              "
+              className="absolute inset-0 transition-opacity duration-500"
               style={{
-                background:
-                  "linear-gradient(to top, rgba(255,140,0,0.15), transparent 65%)",
+                background: "linear-gradient(to top, rgba(255,140,0,0.15), transparent 65%)",
+                opacity: hovered === i ? 1 : 0,
               }}
             />
 

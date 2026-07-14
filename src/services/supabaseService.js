@@ -2,27 +2,29 @@
 /*
   supabaseService.js
   ──────────────────
-  Primary table:  bookings_6fbdd6b2     (24,107 records, Fusioo → Supabase sync)
-  Detail tables joined on record_id:
-    hotel_details_a2f30717              (hotel stay info)
-    tour_details_2bf757ca               (tour name, date, description)
-    ticket_details_b1d64ca0             (airline, PNR, flight details)
-    transfer_details_b9a92c90           (transfer type, description)
+  Primary table:  fusioo_booking_transactions  (Fusioo → Supabase auto-sync)
+  Detail tables joined on Fusioo record id (id column):
+    fusioo_hotel_details    (hotel stay info)
+    fusioo_tour_details     (tour name, date, description)
+    fusioo_ticket_details   (airline, PNR, flight details)
+    fusioo_transfer_details (transfer type, description)
 
-  Join fields in main booking:
-    hotel_booking_details → hotel_details_a2f30717.record_id
-    tour_details          → tour_details_2bf757ca.record_id
-    airline_details_1     → ticket_details_b1d64ca0.record_id
-    transfer_details      → transfer_details_b9a92c90.record_id
+  All tables: id (text, Fusioo record ID), data (jsonb), synced_at
+  Array fields in data (unwrap first element): status, destination,
+    hotel_booking_details, tour_details, airline_details_1, transfer_details,
+    hotel_name, payment_type, transaction_type, type_of_package
 */
 
 import { createClient } from "@supabase/supabase-js";
 
-const BOOKING_TABLE   = "bookings_6fbdd6b2";
-const HOTEL_TABLE     = "hotel_details_a2f30717";
-const TOUR_TABLE      = "tour_details_2bf757ca";
-const TICKET_TABLE    = "ticket_details_b1d64ca0";
-const TRANSFER_TABLE  = "transfer_details_b9a92c90";
+const BOOKING_TABLE   = "fusioo_booking_transactions";
+const HOTEL_TABLE     = "fusioo_hotel_details";
+const TOUR_TABLE      = "fusioo_tour_details";
+const TICKET_TABLE    = "fusioo_ticket_details";
+const TRANSFER_TABLE  = "fusioo_transfer_details";
+
+// Unwrap Fusioo array field → first element (or value as-is if not array)
+const unwrap = v => Array.isArray(v) ? (v[0] ?? null) : (v ?? null);
 
 // ── Fusioo destination ID → slug  (VERIFIED against real booking data)
 export const FUSIOO_DEST_MAP = {
@@ -95,12 +97,12 @@ export const lookupBooking = async (gdxCode) => {
   const clean = String(gdxCode).trim().replace(/^gdx[-\s]*/i, "");
   if (!clean) throw new Error("Please enter your GDX Confirmation Number.");
 
-  // 1. Fetch main booking row
-  const { data: row, error } = await supabase
+  // 1. Fetch main booking row (filter on JSONB field data->>gdx)
+  const { data: result, error } = await supabase
     .from(BOOKING_TABLE)
-    .select("*")
-    .eq("gdx", clean)
-    .order("received_at", { ascending: false })
+    .select("id, data, synced_at")
+    .eq("data->>gdx", clean)
+    .order("synced_at", { ascending: false })
     .limit(1)
     .single();
 
@@ -111,52 +113,63 @@ export const lookupBooking = async (gdxCode) => {
     throw new Error(error.message);
   }
 
-  // 2. Fetch all detail tables in parallel (+ all hotel records for this booking to find the primary)
+  // 2. Flatten JSONB, unwrap array fields, remap renamed fields to match normalizer
+  const d = result.data;
+  const row = {
+    ...d,
+    status:                unwrap(d.status),
+    destination:           unwrap(d.destination),
+    hotel_name:            unwrap(d.hotel_name),
+    hotel_booking_details: unwrap(d.hotel_booking_details),
+    tour_details:          unwrap(d.tour_details),
+    airline_details_1:     unwrap(d.airline_details_1),
+    transfer_details:      unwrap(d.transfer_details),
+    payment_type:          unwrap(d.payment_type),
+    transaction_type:      unwrap(d.transaction_type),
+    type_of_package:       unwrap(d.type_of_package),
+    agent_name:            unwrap(d.agent_name),
+    name_of_agent_1:       unwrap(d.name_of_agent_1),
+    arrival_date:          d.arrival,   // renamed field in new DB
+    record_id:             result.id,   // Fusioo record ID is now the `id` column
+    data:                  d,           // preserve raw for destination detection
+  };
+
+  // 3. Fetch all detail tables in parallel
   const isFusiooId = (v) => v && /^i[a-f0-9]{30,}$/i.test(v);
-  const [tourData, ticketData, linkedHotelData, transferData, hotelNameFallback, allHotelRows] = await Promise.all([
+  const [tourData, ticketData, linkedHotelData, transferData, allHotelRows] = await Promise.all([
     fetchDetail(TOUR_TABLE,     row.tour_details),
     fetchDetail(TICKET_TABLE,   row.airline_details_1),
     fetchDetail(HOTEL_TABLE,    row.hotel_booking_details),
     fetchDetail(TRANSFER_TABLE, row.transfer_details),
-    // When hotel_name on the selected row is a Fusioo ID, look for an older row that has the real name
-    isFusiooId(row.hotel_name)
-      ? supabase.from(BOOKING_TABLE).select("hotel_name").eq("gdx", clean)
-          .not("hotel_name", "is", null).not("hotel_name", "ilike", "i%")
-          .order("received_at", { ascending: false }).limit(1).maybeSingle()
-          .then(({ data }) => data?.hotel_name || null)
-      : Promise.resolve(null),
-    // Fetch ALL hotel_details for this booking — hotel_booking_details may point to an add-on row,
-    // not the primary room. Searching by booking_transactions finds all hotel line items.
-    isFusiooId(row.record_id)
-      ? supabase.from(HOTEL_TABLE).select("*").eq("booking_transactions", row.record_id)
-          .order("entry_no", { ascending: true })
-          .then(({ data }) => data || [])
-      : Promise.resolve([]),
+    // Fetch ALL hotel_details using the full hotel_booking_details array from main booking
+    (() => {
+      const ids = Array.isArray(d.hotel_booking_details) ? d.hotel_booking_details.filter(Boolean) : [];
+      return ids.length
+        ? supabase.from(HOTEL_TABLE).select("id, data").in("id", ids)
+            .then(({ data: rows }) => (rows || []).map(r => r.data))
+        : Promise.resolve([]);
+    })(),
   ]);
 
-  // Pick the best hotel record: prefer records that have a named hotel (other_hotel set),
-  // choosing the one with the most nights among named ones, then fall back to linked record.
-  const namedHotels = allHotelRows.filter(h => h.other_hotel);
+  // Pick the best hotel record: prefer records with a named hotel (other_hotel set)
+  const namedHotels = allHotelRows.filter(h => h && h.other_hotel);
   const hotelData = namedHotels.length
     ? namedHotels.reduce((best, h) => ((h.number_of_nights || 0) > (best.number_of_nights || 0) ? h : best))
     : linkedHotelData;
 
-  // Merge fallback hotel name into the main row so normalizeHotel can use it
-  const effectiveRow = hotelNameFallback ? { ...row, hotel_name: hotelNameFallback } : row;
-
-  return normalizeBooking(effectiveRow, { tourData, ticketData, hotelData, transferData });
+  return normalizeBooking(row, { tourData, ticketData, hotelData, transferData });
 };
 
-// ── Fetch a single detail record by Fusioo record_id ─────────────
+// ── Fetch a single detail record by Fusioo id ─────────────
 async function fetchDetail(table, recordId) {
   if (!recordId) return null;
   const { data, error } = await supabase
     .from(table)
-    .select("*")
-    .eq("record_id", recordId)
+    .select("id, data")
+    .eq("id", recordId)
     .limit(1)
     .single();
-  return error ? null : data;
+  return error ? null : (data?.data || null);
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -402,12 +415,13 @@ function normalizeTicket(d) {
   const departingFlight = d.departing_flight_details || null;
   const returningFlight = d.returning_flight_details || null;
   const detectedAirline = detectAirlineFromFlight(departingFlight) || detectAirlineFromFlight(returningFlight);
-  const isFerry = (d.type_of_ticket || "").toLowerCase() === "ferry";
+  const ticketType = unwrap(d.type_of_ticket) || null;
+  const isFerry = (ticketType || "").toLowerCase() === "ferry";
   return {
-    airline:       isFerry ? null : (d.airline || detectedAirline || null),
-    ferry:         isFerry ? (d.ferry || null) : null,
+    airline:       isFerry ? null : (unwrap(d.airline) || detectedAirline || null),
+    ferry:         isFerry ? (unwrap(d.ferry) || null) : null,
     pnr:           d.booking_reference_number_pnr || null,
-    ticketType:    d.type_of_ticket || null,
+    ticketType,
     arrivalDate:   d.arrival_date || null,
     departureDate: d.departure_date || null,
     departingFlight,
@@ -446,12 +460,12 @@ function normalizeHotel(d, raw) {
 function normalizeTransfer(d) {
   if (!d) return null;
   return {
-    transferType:         d.transfer_type || null,
+    transferType:         unwrap(d.transfer_type) || null,
     description:          stripHtml(d.description || ""),
     arrivalDate:          d.transfer_date_arrival || null,
     departureDate:        d.transfer_date_departure || null,
     quantity:             d.quantity || null,
-    supplier:             d.supplier_name || null,
+    supplier:             unwrap(d.supplier_name) || null,
     transferConfirmation: d.confirmation_number || d.transfer_confirmation_number || d.booking_reference || null,
     transferContact:      d.supplier_phone || d.supplier_contact || d.contact || d.supplier_mobile || null,
   };

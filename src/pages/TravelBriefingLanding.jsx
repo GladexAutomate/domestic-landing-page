@@ -13,6 +13,7 @@ import TBDestinationGuide from "@/components/travelbriefing/TBDestinationGuide";
 import TBFAQs from "@/components/travelbriefing/TBFAQs";
 import { lookupBooking, uploadReviewPhoto } from "@/services/supabaseService";
 import { addReview, deleteReviewByGdx, getPublicReviews, checkReviewByGdx } from "@/services/reviewsService";
+import { getVouchers } from "@/services/voucherService";
 import { useToast } from "@/components/ui/use-toast";
 import { loadDestinationTours } from "@/services/globaltixService";
 import TBAddOnsCheckout from "@/components/travelbriefing/TBAddOnsCheckout";
@@ -1265,6 +1266,15 @@ export default function TravelBriefingLanding() {
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [bookingExpanded, setBookingExpanded] = useState(false);
   const [showTripDetails, setShowTripDetails] = useState(true);
+  const [vouchers, setVouchers] = useState([]);
+  const [voucherHighlight, setVoucherHighlight] = useState(false);
+  const voucherRef = useRef(null);
+
+  const scrollToVoucher = () => {
+    voucherRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    setVoucherHighlight(true);
+    setTimeout(() => setVoucherHighlight(false), 1800);
+  };
 
   // ── Testimonials carousel ─────────────────────────────────────
   const [testimonialsPage, setTestimonialsPage] = useState(0);
@@ -1462,6 +1472,12 @@ export default function TravelBriefingLanding() {
       navigate("/");
     }
   }, [sessionChecked, activeBooking]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── Load vouchers when booking is available ───────────────────
+  useEffect(() => {
+    if (!activeBooking?.gdx) return;
+    getVouchers(activeBooking.gdx).then(setVouchers).catch(() => {});
+  }, [activeBooking?.gdx]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Builds day-by-day itinerary from booking data; falls back to dest.itinerary if no dates ──
   const buildItineraryDays = (bk, destData) => {
@@ -2132,6 +2148,95 @@ export default function TravelBriefingLanding() {
                         </div>
                       </BookingSection>
 
+                      {/* VOUCHERS / DOCUMENTS */}
+                      {vouchers.length > 0 && (
+                        <div
+                          ref={voucherRef}
+                          style={{
+                            background: voucherHighlight ? "rgba(255,153,19,0.07)" : "transparent",
+                            transition: "background 0.6s ease",
+                          }}
+                        >
+                        <BookingSection label="Your Voucher" darkMode={darkMode}>
+                          <div className="px-5 py-4" style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                            {vouchers.map((v) => (
+                              <div
+                                key={v.id}
+                                style={{
+                                  display: "flex", alignItems: "center", gap: 12,
+                                  padding: "12px 14px", borderRadius: 12,
+                                  background: darkMode ? "rgba(255,153,19,0.08)" : "rgba(255,153,19,0.06)",
+                                  border: `1.5px solid rgba(255,153,19,0.25)`,
+                                }}
+                              >
+                                <div style={{
+                                  width: 36, height: 36, borderRadius: 9,
+                                  background: "rgba(255,153,19,0.15)",
+                                  display: "flex", alignItems: "center", justifyContent: "center",
+                                  flexShrink: 0,
+                                }}>
+                                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF9913" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+                                  </svg>
+                                </div>
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                  <p style={{ fontSize: "13px", fontWeight: 700, color: textPrimary, margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{v.file_name}</p>
+                                </div>
+                                <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+                                  <a
+                                    href={v.file_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{
+                                      display: "flex", alignItems: "center", gap: 5,
+                                      padding: "6px 12px", borderRadius: 8,
+                                      background: "rgba(255,153,19,0.12)",
+                                      color: "#FF9913", fontWeight: 700, fontSize: "12px",
+                                      textDecoration: "none", whiteSpace: "nowrap",
+                                    }}
+                                  >
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                                    </svg>
+                                    View
+                                  </a>
+                                  <motion.button
+                                    whileTap={{ scale: 0.93 }}
+                                    onClick={async () => {
+                                      try {
+                                        const res = await fetch(v.file_url);
+                                        const blob = await res.blob();
+                                        const url = URL.createObjectURL(blob);
+                                        const a = document.createElement("a");
+                                        a.href = url;
+                                        a.download = v.file_name;
+                                        a.click();
+                                        URL.revokeObjectURL(url);
+                                      } catch {
+                                        window.open(v.file_url, "_blank");
+                                      }
+                                    }}
+                                    style={{
+                                      display: "flex", alignItems: "center", gap: 5,
+                                      padding: "6px 12px", borderRadius: 8,
+                                      background: "#FF9913",
+                                      color: "#fff", fontWeight: 700, fontSize: "12px",
+                                      border: "none", cursor: "pointer", whiteSpace: "nowrap",
+                                    }}
+                                  >
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+                                    </svg>
+                                    Download
+                                  </motion.button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </BookingSection>
+                        </div>
+                      )}
+
                       {/* TRAVELER INFORMATION */}
                       <BookingSection label="Traveler Information" darkMode={darkMode}>
                         <div className="px-5 py-4 space-y-4">
@@ -2280,7 +2385,12 @@ export default function TravelBriefingLanding() {
                               label1="Coordinator"
                               value1={activeBooking.consultantName || activeBooking.agentName || "—"}
                               label2="Contact"
-                              value2={activeBooking.consultantPhone || "Refer to your voucher"}
+                              value2={
+                                activeBooking.consultantPhone ||
+                                (vouchers.length > 0
+                                  ? <button onClick={scrollToVoucher} style={{ background: "none", border: "none", padding: 0, cursor: "pointer", color: "#FF9913", fontWeight: 700, fontSize: "14px", textDecoration: "underline", textUnderlineOffset: 3 }}>Refer to your voucher ↑</button>
+                                  : "Refer to your voucher")
+                              }
                               textPrimary={textPrimary} textMuted={textMuted}
                             />
                           </div>

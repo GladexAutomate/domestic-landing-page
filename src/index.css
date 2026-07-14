@@ -114,11 +114,9 @@
   transition-timing-function: ease;
 }
 
-/* Exclude elements that should NOT transition (animations, transforms) */
+/* Exclude elements that handle their own animation */
 [style*="animation"],
-[class*="animate-"],
-[class*="transition-transform"],
-[class*="motion"] {
+[class*="animate-"] {
   transition-property: background-color, border-color, color, box-shadow;
 }
 

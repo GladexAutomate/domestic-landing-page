@@ -7,9 +7,10 @@ const supabase =
     ? createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY)
     : null;
 
-const BOOKING_TABLE   = "bookings_6fbdd6b2";
-const TOUR_TABLE      = "tour_details_2bf757ca";
-const TRANSFER_TABLE  = "transfer_details_b9a92c90";
+const BOOKING_TABLE   = "fusioo_booking_transactions";
+const TOUR_TABLE      = "fusioo_tour_details";
+const TRANSFER_TABLE  = "fusioo_transfer_details";
+const unwrap = v => Array.isArray(v) ? (v[0] ?? null) : (v ?? null);
 const PAGE = 1000; // Supabase default max per request
 
 // ── Paginated fetch — gets ALL rows regardless of table size ──
@@ -108,7 +109,7 @@ export const getAllCachedEntries = async () => {
   const cacheData = await fetchAllRows("gdx_cache", "*");
   if (cacheData.length === 0) return [];
 
-  // 2. Batch-fetch matching bookings by GDX (500 per request to stay within URL limits)
+  // 2. Batch-fetch matching bookings by GDX via JSONB (500 per request)
   const BATCH_IN = 500;
   const allGdxs = cacheData.map((e) => e.gdx);
   let allBookings = [];
@@ -116,24 +117,25 @@ export const getAllCachedEntries = async () => {
     const batch = allGdxs.slice(i, i + BATCH_IN);
     const { data } = await supabase
       .from(BOOKING_TABLE)
-      .select("gdx, lead_name, type_of_package, transaction_type, date_created, destination")
-      .in("gdx", batch);
+      .select("data->>gdx, data->>lead_name, data->>type_of_package, data->>transaction_type, data->>date_created, data->destination")
+      .in("data->>gdx", batch.map(String));
     if (data) allBookings = allBookings.concat(data);
   }
 
-  // 3. Build GDX → booking map (string-keyed to handle int/text mismatch)
+  // 3. Build GDX → booking map (string-keyed)
   const bkMap = {};
   for (const b of allBookings) bkMap[String(b.gdx)] = b;
 
   return cacheData.map((e) => {
     const bk = bkMap[String(e.gdx)];
     const rawPkg = bk?.transaction_type || bk?.type_of_package || null;
+    const rawDest = bk?.destination;
     return {
       ...e,
       lead_name:       bk?.lead_name    || null,
       package_name:    rawPkg,
       booked_at:       bk?.date_created || null,
-      raw_destination: bk?.destination  || null,
+      raw_destination: unwrap(rawDest),
     };
   });
 };
@@ -142,15 +144,21 @@ export const bulkCacheAllBookings = async (onProgress) => {
   if (!supabase) throw new Error("Supabase not configured.");
 
   // 1. Fetch ALL bookings + tour/transfer join fields (for multi-field slug resolution)
-  const allBookings = await fetchAllRows(BOOKING_TABLE, "gdx, destination, tour_details, transfer_details");
+  const rawBookings = await fetchAllRows(BOOKING_TABLE, "data->>gdx, data->destination, data->tour_details, data->transfer_details");
+  const allBookings = rawBookings.map(r => ({
+    gdx:              r.gdx,
+    destination:      unwrap(r.destination),
+    tour_details:     unwrap(r.tour_details),
+    transfer_details: unwrap(r.transfer_details),
+  }));
 
-  // 2. Fetch tour names: Fusioo hash IDs are useless alone, but tour name has destination text
-  const allTourRows      = await fetchAllRows(TOUR_TABLE,     "record_id, tour_name");
-  const allTransferRows  = await fetchAllRows(TRANSFER_TABLE, "record_id, description");
+  // 2. Fetch tour names and transfer descriptions from new detail tables
+  const allTourRows      = await fetchAllRows(TOUR_TABLE,     "id, data->>tour_name");
+  const allTransferRows  = await fetchAllRows(TRANSFER_TABLE, "id, data->>description");
   const tourNameMap     = {};
   const transferDescMap = {};
-  for (const t of allTourRows)     if (t.record_id) tourNameMap[t.record_id]     = t.tour_name    || "";
-  for (const t of allTransferRows) if (t.record_id) transferDescMap[t.record_id] = t.description  || "";
+  for (const t of allTourRows)     if (t.id) tourNameMap[t.id]     = t.tour_name   || "";
+  for (const t of allTransferRows) if (t.id) transferDescMap[t.id] = t.description || "";
 
   // 3. Deduplicate bookings by GDX (prevents "ON CONFLICT DO UPDATE affects row twice" error)
   const seen = new Set();
@@ -214,7 +222,7 @@ export const deleteOrphanedEntries = async (onProgress) => {
   // Both tables fetched fully (paginated) so we don't miss rows
   const [cacheRows, bookingRows] = await Promise.all([
     fetchAllRows("gdx_cache", "gdx"),
-    fetchAllRows(BOOKING_TABLE, "gdx"),
+    fetchAllRows(BOOKING_TABLE, "data->>gdx"),
   ]);
 
   const bookingSet = new Set(bookingRows.map((b) => String(b.gdx)));

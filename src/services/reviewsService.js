@@ -86,6 +86,13 @@ export const addReview = async ({
     is_hidden: !preApproved,
   });
   if (error) throw new Error(error.message);
+
+  // Fire email notification — don't await, don't fail review if email errors
+  if (!preApproved) {
+    supabase.functions.invoke("notify-review", {
+      body: { gdx_reference: gdx, lead_name, agent_name, destination, rating, comment: review_text },
+    }).catch(() => {});
+  }
 };
 
 // Admin: hide/unhide a review (keeps data, just removes from public)
@@ -134,9 +141,9 @@ export const lookupLeadNameByGdx = async (gdx) => {
   if (!supabase) return null;
   const clean = String(gdx).replace(/^gdx[-\s]*/i, "").trim();
   const { data } = await supabase
-    .from("bookings_6fbdd6b2")
-    .select("lead_name")
-    .eq("gdx", clean)
+    .from("fusioo_booking_transactions")
+    .select("data->>lead_name")
+    .eq("data->>gdx", clean)
     .maybeSingle();
   return data?.lead_name || null;
 };
