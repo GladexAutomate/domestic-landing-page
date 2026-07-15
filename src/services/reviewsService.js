@@ -58,9 +58,43 @@ export const getReviewStats = async () => {
   return { total: rows.length, byAgent };
 };
 
+// ── Profanity filter ─────────────────────────────────────────────────────────
+const BAD_WORDS = [
+  // English
+  "fuck","shit","bitch","asshole","bastard","dick","pussy","cock","cunt","whore",
+  "slut","nigger","faggot","retard","dumbass","jackass","piss","wank","twat",
+  // Filipino
+  "puta","putang","punyeta","gago","gaga","bobo","tanga","ulol","tangina",
+  "tarantado","leche","lintik","hinayupak","pakyu","bwisit","hayop","engot",
+  "inutil","buang","yawa","pakshet","pucha","burat","kantot","jakol","bilat","puke",
+];
+
+const normalize = (text) =>
+  text
+    .toLowerCase()
+    .replace(/[.\-_*\s]+(?=[a-z0-9])/g, "")   // f.u.c.k → fuck
+    .replace(/0/g, "o").replace(/1/g, "i").replace(/3/g, "e")
+    .replace(/4/g, "a").replace(/5/g, "s").replace(/6/g, "g")
+    .replace(/7/g, "t").replace(/8/g, "b").replace(/9/g, "g")
+    .replace(/@/g, "a").replace(/\$/g, "s").replace(/!/g, "i")
+    .replace(/(.)\1{2,}/g, "$1$1")              // fuuuck → fuuck
+    .replace(/[^a-z]/g, "");                    // strip remaining non-letters
+
+const stripVowels = (s) => s.replace(/[aeiou]/g, "");
+
+const hasBadWords = (text) => {
+  if (!text) return false;
+  const norm = normalize(text);
+  const normNoVowels = stripVowels(norm);
+  return BAD_WORDS.some(w => {
+    const wn = normalize(w);
+    return norm.includes(wn) || normNoVowels.includes(stripVowels(wn));
+  });
+};
+
 // Insert a new review.
-// agent_name and package_name are stored only if the columns exist in the table.
-// If missing, those fields are quietly omitted so the core review still saves.
+// Auto-approves if rating >= 4 AND no bad/offensive words detected.
+// Otherwise goes to admin pending queue for manual review.
 export const addReview = async ({
   gdx,
   lead_name,
@@ -70,9 +104,12 @@ export const addReview = async ({
   review_text,
   photo_url,
   package_name,
-  preApproved = false,   // admin-added reviews are pre-approved; client submissions start hidden
+  preApproved = false,
 }) => {
   if (!supabase) throw new Error("Supabase not configured.");
+
+  const flagged = !preApproved && (rating <= 3 || hasBadWords(review_text));
+  const is_hidden = preApproved ? false : flagged;
 
   const { error } = await supabase.from("reviews").insert({
     gdx_reference: gdx || null,
@@ -83,12 +120,11 @@ export const addReview = async ({
     comment: review_text || null,
     photos: photo_url ? [photo_url] : null,
     package_name: package_name || null,
-    is_hidden: !preApproved,
+    is_hidden,
   });
   if (error) throw new Error(error.message);
 
-  // Fire email notification — don't await, don't fail review if email errors
-  if (!preApproved) {
+  if (flagged) {
     supabase.functions.invoke("notify-review", {
       body: { gdx_reference: gdx, lead_name, agent_name, destination, rating, comment: review_text },
     }).catch(() => {});
