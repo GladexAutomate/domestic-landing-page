@@ -67,6 +67,9 @@ const BAD_WORDS = [
   "puta","putang","punyeta","gago","gaga","bobo","tanga","ulol","tangina",
   "tarantado","leche","lintik","hinayupak","pakyu","bwisit","hayop","engot",
   "inutil","buang","yawa","pakshet","pucha","burat","kantot","jakol","bilat","puke",
+  // Bisaya / Cebuano
+  "atay","bogo","kayat","bigtason","takaron","amaw","pisti","lawon","bugo",
+  "yutang","ungaw","animal ka","hudas","pating","ukininam","iyot",
 ];
 
 const normalize = (text) =>
