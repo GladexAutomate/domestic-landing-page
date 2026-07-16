@@ -60,7 +60,7 @@ export default function TBAddOnsCheckout({ isOpen, onClose, addOnsCart, booking,
         payerName:   name.trim(),
         payerEmail:  email.trim() || undefined,
         items,
-        successRedirectUrl: `${window.location.origin}/payment/success?bookingCode=${encodeURIComponent(externalId)}&type=addons`,
+        successRedirectUrl: `${window.location.origin}/payment/success?bookingCode=${encodeURIComponent(externalId)}&type=addons&slug=${encodeURIComponent(slug || "")}`,
         failureRedirectUrl: `${window.location.origin}/payment/failed?bookingCode=${encodeURIComponent(externalId)}`,
       });
 

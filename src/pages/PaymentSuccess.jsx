@@ -29,6 +29,9 @@ export default function PaymentSuccess() {
   const invoiceId   = params.get("id");
   const bookingCode = params.get("bookingCode") || params.get("code") || "—";
   const externalId  = params.get("code") || params.get("bookingCode");
+  const slug = params.get("slug") || (() => {
+    try { return JSON.parse(sessionStorage.getItem("gladex-session") || "{}").slug || ""; } catch { return ""; }
+  })();
 
   const [step, setStep]     = useState("verifying"); // verifying | processing | done | failed
   const [invoice, setInvoice]       = useState(null);
@@ -221,7 +224,7 @@ export default function PaymentSuccess() {
             </div>
 
             <button
-              onClick={() => navigate(`/destination/bohol`)}
+              onClick={() => navigate(slug ? `/destination/${slug}` : "/")}
               className="w-full py-3 rounded-xl text-sm font-bold"
               style={{ background: "linear-gradient(135deg, #f97316, #b45309)", color: "#fff" }}
             >

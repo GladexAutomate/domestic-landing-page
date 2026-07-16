@@ -135,6 +135,23 @@ export const addReview = async ({
   }
 };
 
+// Client: update own review by GDX (edit path — avoids duplicate inserts)
+export const updateReview = async (gdx, { rating, review_text, photo_url }) => {
+  if (!supabase) throw new Error("Supabase not configured.");
+  const flagged = rating <= 3 || hasBadWords(review_text);
+  const { error } = await supabase
+    .from("reviews")
+    .update({
+      rating,
+      comment: review_text || null,
+      photos: photo_url ? [photo_url] : null,
+      is_hidden: flagged,
+      needs_approval: flagged,
+    })
+    .eq("gdx_reference", String(gdx));
+  if (error) throw new Error(error.message);
+};
+
 // Admin: hide/unhide a review (keeps data, just removes from public)
 export const hideReview = async (id) => {
   if (!supabase) throw new Error("Supabase not configured.");

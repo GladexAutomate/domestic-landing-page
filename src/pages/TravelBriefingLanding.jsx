@@ -12,7 +12,7 @@ import TBChecklist from "@/components/travelbriefing/TBChecklist";
 import TBDestinationGuide from "@/components/travelbriefing/TBDestinationGuide";
 import TBFAQs from "@/components/travelbriefing/TBFAQs";
 import { lookupBooking, uploadReviewPhoto } from "@/services/supabaseService";
-import { addReview, deleteReviewByGdx, getPublicReviews, checkReviewByGdx } from "@/services/reviewsService";
+import { addReview, updateReview, deleteReviewByGdx, getPublicReviews, checkReviewByGdx } from "@/services/reviewsService";
 import { getVouchers } from "@/services/voucherService";
 import { useToast } from "@/components/ui/use-toast";
 import { loadDestinationTours } from "@/services/globaltixService";
@@ -1382,7 +1382,9 @@ export default function TravelBriefingLanding() {
 
     let photoUrl = myReview?.photo ?? null;
     if (photoFile) {
-      try { photoUrl = await uploadReviewPhoto({ gdx, file: photoFile }); } catch {}
+      try { photoUrl = await uploadReviewPhoto({ gdx, file: photoFile }); } catch {
+        toast({ title: "Photo upload failed", description: "Review will be saved without the photo.", variant: "destructive" });
+      }
     }
 
     const review = {
@@ -1397,13 +1399,17 @@ export default function TravelBriefingLanding() {
     setMyReview(review);
     setReviewStars(finalStars);
     setReviewComment(String(finalComment).trim());
+    const wasEditing = reviewEditing;
     setReviewSubmitted(true);
     setReviewEditing(false);
     setReviewPhotoFile(null);
     setReviewPhotoPreview(null);
     setReviewUploading(false);
     setReviewSaveError(null);
-    addReview({ gdx, lead_name: activeBooking?.leadName || "Guest", agent_name: activeBooking?.agentName || null, destination, rating: finalStars, review_text: String(finalComment).trim(), photo_url: photoUrl, package_name: activeBooking?.typeOfPackage || null })
+    const reviewOp = wasEditing
+      ? updateReview(gdx, { rating: finalStars, review_text: String(finalComment).trim(), photo_url: photoUrl })
+      : addReview({ gdx, lead_name: activeBooking?.leadName || "Guest", agent_name: activeBooking?.agentName || null, destination, rating: finalStars, review_text: String(finalComment).trim(), photo_url: photoUrl, package_name: activeBooking?.typeOfPackage || null });
+    reviewOp
       .then(() => {
         toast({
           title: "Review submitted!",
@@ -1476,7 +1482,7 @@ export default function TravelBriefingLanding() {
   // ── Load vouchers when booking is available ───────────────────
   useEffect(() => {
     if (!activeBooking?.gdx) return;
-    getVouchers(activeBooking.gdx).then(setVouchers).catch(() => {});
+    getVouchers(activeBooking.gdx).then(setVouchers).catch(() => setVouchers([]));
   }, [activeBooking?.gdx]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Builds day-by-day itinerary from booking data; falls back to dest.itinerary if no dates ──
