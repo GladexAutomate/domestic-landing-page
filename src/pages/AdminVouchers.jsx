@@ -216,13 +216,13 @@ export default function AdminVouchers() {
     setUploading(true); setUploadErr(""); setSuccess("");
     try {
       await uploadVoucher({
-        gdx: cleanGdx(gdxInput),
+        gdx: booking.gdx,
         file,
         uploadedBy: session?.user || null,
       });
       setSuccess(`"${file.name}" uploaded successfully.`);
       addToast(`"${file.name}" uploaded successfully.`);
-      const updated = await getVouchers(cleanGdx(gdxInput));
+      const updated = await getVouchers(booking.gdx);
       setVouchers(updated);
     } catch (e) {
       setUploadErr(e.message || "Upload failed.");

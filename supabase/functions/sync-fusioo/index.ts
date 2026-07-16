@@ -83,9 +83,16 @@ serve(async () => {
   }
 
   try {
-    // 1. Fetch latest 100 bookings from Fusioo
-    const records = await fetchBookingsPage(1) as Record<string, unknown>[];
-    log.push(`Fusioo returned ${records.length} booking records`);
+    // 1. Fetch ALL bookings from Fusioo (paginate until last page)
+    const records: Record<string, unknown>[] = [];
+    let page = 1;
+    while (true) {
+      const batch = await fetchBookingsPage(page) as Record<string, unknown>[];
+      records.push(...batch);
+      if (batch.length < 100) break;
+      page++;
+    }
+    log.push(`Fusioo returned ${records.length} booking records (${page} page${page > 1 ? "s" : ""})`);
 
     if (records.length === 0) {
       return new Response(JSON.stringify({ ok: true, log }), {

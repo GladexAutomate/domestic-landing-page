@@ -3,7 +3,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Search, User, ArrowRight, BadgeCheck, Loader, AlertCircle, ExternalLink } from "lucide-react";
-import { lookupBooking, detectDestinationSlug, detectDomesticSlug } from "@/services/supabaseService";
+import { lookupBooking, detectDomesticSlug } from "@/services/supabaseService";
 
 // Normalize accents + lowercase so "Castañeda" matches "Castaneda"
 function normStr(s) {
@@ -248,7 +248,7 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
             whileHover={{ scale: loading ? 1 : 1.02 }}
             whileTap={{ scale: loading ? 1 : 0.97 }}
             onClick={handleViewTrip}
-            disabled={loading}
+            disabled={loading || redirecting}
             className="w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all"
             style={{
               background: "linear-gradient(135deg, #f97316, #b45309)",
