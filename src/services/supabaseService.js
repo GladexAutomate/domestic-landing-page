@@ -52,7 +52,8 @@ export const FUSIOO_DEST_MAP = {
 
   // PUERTO PRINCESA (additional) ✅ confirmed by agent: transfer "PPS AIRPORT", tour "Honda Bay Island Hopping"
   "i5e2b9bbc0c7f48008ab3e94ccd9754c1": "puertoprincesa",
-  "i67f5adf04bfc41d78c3102ed8226d317": "puertoprincesa",
+  // i67f5adf04bfc41d78c3102ed8226d317 REMOVED — shared ID used by Boracay (via Kalibo), PPS, and Bohol bookings.
+  // Cannot use map — rely on hotel name / ticket detection below.
 
   // DAVAO ✅ confirmed by agent: transfer "FRANCISCO BANGOY INTL AIRPORT - GRAND REGAL HOTEL"
   "ib5ba0a50ceef472da434d0f73277a03d": "davao",
@@ -183,12 +184,15 @@ function _bookingTexts(booking) {
     tourName:     (booking.tour?.tourName || "").toLowerCase(),
     tourDesc:     stripHtml(booking.tour?.description || "").toLowerCase(),
     transferDesc: stripHtml(booking.transfer?.description || "").toLowerCase(),
+    hotelName:    (booking.hotel?.hotelName || "").toLowerCase(),
+    flightInfo:   ((booking.ticket?.departingFlight || "") + " " + (booking.ticket?.returningFlight || "")).toLowerCase(),
     rawStr:       JSON.stringify(booking.rawData || {}).toLowerCase(),
   };
 }
 
 export const detectDestinationSlug = (booking) => {
-  const { dest, tourName, tourDesc, transferDesc, rawStr } = _bookingTexts(booking);
+  if (booking.gdx && DEST_OVERRIDES[String(booking.gdx)]) return DEST_OVERRIDES[String(booking.gdx)];
+  const { dest, tourName, tourDesc, transferDesc, hotelName, flightInfo, rawStr } = _bookingTexts(booking);
 
   // 1. Destination field text — most reliable when it's human-readable
   if (dest.includes("boracay"))                                              return "boracay";
@@ -212,10 +216,23 @@ export const detectDestinationSlug = (booking) => {
   if (transferDesc.includes("siargao") || transferDesc.includes("general luna") || transferDesc.includes("cloud 9")) return "siargao";
   if (transferDesc.includes("pps") || transferDesc.includes("puerto princesa")) return "puertoprincesa";
 
-  // 3. Fusioo ID map (after ambiguous text checks)
+  // 3. Hotel name + flight checks (for bookings with NULL tour/transfer text)
+  if (hotelName.includes("boracay") || hotelName.includes("henann") || hotelName.includes("la carmela") ||
+      hotelName.includes("crimson") || hotelName.includes("movenpick") || hotelName.includes("two seasons") ||
+      hotelName.includes("bamboo beach") || hotelName.includes("shangri-la boracay")) return "boracay";
+  if (hotelName.includes("panglao") || hotelName.includes("alona") || hotelName.includes("bohol beach")) return "bohol";
+  if (hotelName.includes("villa simprosa") || hotelName.includes("puerto princesa")) return "puertoprincesa";
+  if (hotelName.includes("cebu") || hotelName.includes("mactan") || hotelName.includes("parklane")) return "cebu";
+  if (hotelName.includes("siargao") || hotelName.includes("cloud 9") || hotelName.includes("daku")) return "siargao";
+  // Kalibo (KLO) and Caticlan (MPH) airports both serve Boracay
+  if (flightInfo.includes("klo") || flightInfo.includes("kalibo") || flightInfo.includes("mph") || flightInfo.includes("caticlan")) return "boracay";
+  // Fallback: scan full raw JSON for airport/place-specific keywords — safe because these are unique to Boracay routes
+  if (rawStr.includes("kalibo") || rawStr.includes("caticlan")) return "boracay";
+
+  // 4. Fusioo ID map (after all text/hotel checks)
   if (FUSIOO_DEST_MAP[booking.destination]) return FUSIOO_DEST_MAP[booking.destination];
 
-  // 4. Transfer description for other destinations
+  // 5. Transfer description for other destinations
   if (transferDesc.includes("caticlan") || transferDesc.includes("boracay"))       return "boracay";
   if (transferDesc.includes("cebu") || transferDesc.includes("mactan"))            return "cebu";
   if (transferDesc.includes("pps") || transferDesc.includes("puerto princesa"))    return "puertoprincesa";
@@ -239,11 +256,18 @@ export const detectDestinationSlug = (booking) => {
   return "boracay";
 };
 
+// Manual overrides for bookings where text detection is impossible
+// (flight-number-only tickets, NULL tour/transfer, unresolvable hotel IDs)
+const DEST_OVERRIDES = {
+  "21780": "boracay", // Flordeliza Caindoy — Boracay via Kalibo, Z2 711/716, no airport text in data
+};
+
 // ── Domestic-only slug detection — returns null ONLY for known international
 // bookings. Returns a slug string (including "other") for all Philippine bookings
 // so they land on "Your briefing is on its way!" instead of the intl redirect.
 export const detectDomesticSlug = (booking) => {
-  const { dest, tourName, tourDesc, transferDesc, rawStr } = _bookingTexts(booking);
+  if (booking.gdx && DEST_OVERRIDES[String(booking.gdx)]) return DEST_OVERRIDES[String(booking.gdx)];
+  const { dest, tourName, tourDesc, transferDesc, hotelName, flightInfo, rawStr } = _bookingTexts(booking);
 
   // Check dest field only — rawStr is the full JSON and is too broad
   const INTL_DEST_KEYS = [
@@ -274,6 +298,19 @@ export const detectDomesticSlug = (booking) => {
   if (tourDesc.includes("puerto princesa") || tourDesc.includes("underground river") || tourDesc.includes("honda bay")) return "puertoprincesa";
   if (transferDesc.includes("siargao") || transferDesc.includes("general luna") || transferDesc.includes("cloud 9")) return "siargao";
   if (transferDesc.includes("pps") || transferDesc.includes("puerto princesa")) return "puertoprincesa";
+
+  // Hotel name + flight checks — for bookings with NULL tour/transfer (e.g. Boracay via Kalibo)
+  if (hotelName.includes("boracay") || hotelName.includes("henann") || hotelName.includes("la carmela") ||
+      hotelName.includes("crimson") || hotelName.includes("movenpick") || hotelName.includes("two seasons") ||
+      hotelName.includes("bamboo beach") || hotelName.includes("shangri-la boracay")) return "boracay";
+  if (hotelName.includes("panglao") || hotelName.includes("alona") || hotelName.includes("bohol beach")) return "bohol";
+  if (hotelName.includes("villa simprosa") || hotelName.includes("puerto princesa")) return "puertoprincesa";
+  if (hotelName.includes("cebu") || hotelName.includes("mactan") || hotelName.includes("parklane")) return "cebu";
+  if (hotelName.includes("siargao") || hotelName.includes("cloud 9") || hotelName.includes("daku")) return "siargao";
+  // Kalibo (KLO) and Caticlan (MPH) airports both serve Boracay
+  if (flightInfo.includes("klo") || flightInfo.includes("kalibo") || flightInfo.includes("mph") || flightInfo.includes("caticlan")) return "boracay";
+  // Fallback: scan full raw JSON for Boracay-specific airport keywords
+  if (rawStr.includes("kalibo") || rawStr.includes("caticlan")) return "boracay";
 
   if (FUSIOO_DEST_MAP[booking.destination]) return FUSIOO_DEST_MAP[booking.destination];
 
