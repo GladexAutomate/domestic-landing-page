@@ -531,7 +531,7 @@ export default function AdminReviews() {
     ...DEST_OPTIONS.filter((d) => !byDestMap[d]?.length),
   ].map((d) => ({ name: d, reviews: byDestMap[d] || [] }));
 
-  const pendingReviews = allReviews.filter((r) => r.is_hidden);
+  const pendingReviews = allReviews.filter((r) => r.needs_approval);
 
   const TABS = [
     { key: "pending", label: `Pending${pendingReviews.length ? ` (${pendingReviews.length})` : ""}` },

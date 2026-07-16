@@ -124,6 +124,7 @@ export const addReview = async ({
     photos: photo_url ? [photo_url] : null,
     package_name: package_name || null,
     is_hidden,
+    needs_approval: flagged,
   });
   if (error) throw new Error(error.message);
 
@@ -143,7 +144,7 @@ export const hideReview = async (id) => {
 
 export const unhideReview = async (id) => {
   if (!supabase) throw new Error("Supabase not configured.");
-  const { error } = await supabase.from("reviews").update({ is_hidden: false }).eq("id", id);
+  const { error } = await supabase.from("reviews").update({ is_hidden: false, needs_approval: false }).eq("id", id);
   if (error) throw new Error(error.message);
 };
 
@@ -171,7 +172,7 @@ export const deleteReviewByGdx = async (gdx) => {
 // Count reviews pending admin approval (is_hidden = true) — used for sidebar badge
 export const getPendingReviewsCount = async () => {
   if (!supabase) return 0;
-  const { data } = await supabase.from("reviews").select("id").eq("is_hidden", true);
+  const { data } = await supabase.from("reviews").select("id").eq("needs_approval", true);
   return data?.length || 0;
 };
 

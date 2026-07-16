@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS public.reviews (
   comment        text,
   photos         text[],
   is_hidden      boolean     NOT NULL DEFAULT true,
+  needs_approval boolean     NOT NULL DEFAULT false,
   package_name   text,
   created_at     timestamptz NOT NULL DEFAULT now()
 );
