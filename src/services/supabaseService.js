@@ -26,6 +26,12 @@ const TRANSFER_TABLE  = "fusioo_transfer_details";
 // Unwrap Fusioo array field → first element (or value as-is if not array)
 const unwrap = v => Array.isArray(v) ? (v[0] ?? null) : (v ?? null);
 
+// Manual overrides — for bookings where auto-detection is impossible
+// (flight-number-only tickets, NULL tour/transfer, unresolvable hotel IDs)
+const DEST_OVERRIDES = {
+  "21780": "boracay", // Flordeliza Caindoy — Boracay via Kalibo, Z2 711/716, no airport text in data
+};
+
 // ── Fusioo destination ID → slug  (VERIFIED against real booking data)
 export const FUSIOO_DEST_MAP = {
   // BORACAY ✅ confirmed: GDX 11056 = "Private Island Hopping", Henann Regency hotel
@@ -254,12 +260,6 @@ export const detectDestinationSlug = (booking) => {
   if (tourDesc.includes("puerto princesa") || tourDesc.includes("underground river") || tourDesc.includes("honda bay")) return "puertoprincesa";
 
   return "boracay";
-};
-
-// Manual overrides for bookings where text detection is impossible
-// (flight-number-only tickets, NULL tour/transfer, unresolvable hotel IDs)
-const DEST_OVERRIDES = {
-  "21780": "boracay", // Flordeliza Caindoy — Boracay via Kalibo, Z2 711/716, no airport text in data
 };
 
 // ── Domestic-only slug detection — returns null ONLY for known international
