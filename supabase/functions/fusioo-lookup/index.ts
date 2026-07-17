@@ -19,7 +19,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const FUSIOO_BASE    = "https://api.fusioo.com";
 const FUSIOO_TOKEN   = Deno.env.get("FUSIOO_TOKEN") ?? "";
-const BOOKING_APP_ID = Deno.env.get("FUSIOO_BOOKING_APP_ID") ?? "";
+const BOOKING_APP_ID = "if7fc4b38878b4c2db947d582004ce3b7";
 
 const supabase = createClient(
   Deno.env.get("SUPABASE_URL")!,

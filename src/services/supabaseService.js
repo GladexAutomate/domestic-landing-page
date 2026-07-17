@@ -151,8 +151,14 @@ export const lookupBooking = async (gdxCode) => {
 
   if (error) throw new Error(error.message);
   if (!result) {
-    // Supabase miss — try Fusioo API directly (catches bookings not yet synced)
-    return await lookupFromFusioo(canonical);
+    const notFound = new Error(
+      `We couldn't find a booking for ${canonical}. ` +
+      `If you just booked, please wait a few minutes and try again — ` +
+      `or ask your travel consultant to re-save the booking in Fusioo.`
+    );
+    notFound.code = "GDX_NOT_FOUND";
+    notFound.gdx = canonical;
+    throw notFound;
   }
 
   // 2. Flatten JSONB, unwrap array fields, remap renamed fields to match normalizer
