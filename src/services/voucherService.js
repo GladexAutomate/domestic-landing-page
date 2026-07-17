@@ -45,12 +45,13 @@ export const getVouchers = async (gdx) => {
 
 export const deleteVoucher = async (id, storagePath) => {
   if (!supabase) throw new Error("Supabase not configured.");
-  if (storagePath) {
-    const { error: storageErr } = await supabase.storage.from("vouchers").remove([storagePath]);
-    if (storageErr) throw new Error(`Storage delete failed: ${storageErr.message}`);
-  }
+  // Delete DB row first — if this fails, storage is untouched and the user can retry safely
   const { error } = await supabase.from("vouchers").delete().eq("id", id);
   if (error) throw new Error(error.message);
+  // Then remove from storage — a storage failure here leaves an orphaned file but the UI stays consistent
+  if (storagePath) {
+    await supabase.storage.from("vouchers").remove([storagePath]);
+  }
 };
 
 export const hasVoucher = async (gdx) => {

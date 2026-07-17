@@ -144,7 +144,7 @@ export const lookupBooking = async (gdxCode) => {
   };
 
   // 3. Fetch all detail tables in parallel
-  const isFusiooId = (v) => v && /^i[a-f0-9]{30,}$/i.test(v);
+  const isFusiooId = (v) => v && /^i[a-f0-9]{30,}$/i.test(String(v));
   const [tourData, ticketData, linkedHotelData, transferData, allHotelRows] = await Promise.all([
     fetchDetail(TOUR_TABLE,     row.tour_details),
     fetchDetail(TICKET_TABLE,   row.airline_details_1),
@@ -155,7 +155,7 @@ export const lookupBooking = async (gdxCode) => {
       const ids = Array.isArray(d.hotel_booking_details) ? d.hotel_booking_details.filter(Boolean) : [];
       return ids.length
         ? supabase.from(HOTEL_TABLE).select("id, data").in("id", ids)
-            .then(({ data: rows }) => (rows || []).map(r => r.data))
+            .then(({ data: rows, error: err }) => err ? [] : (rows || []).map(r => r.data))
         : Promise.resolve([]);
     })(),
   ]);
@@ -238,7 +238,7 @@ export const detectDestinationSlug = (booking) => {
   if (rawStr.includes("kalibo") || rawStr.includes("caticlan")) return "boracay";
 
   // 4. Fusioo ID map (after all text/hotel checks)
-  if (FUSIOO_DEST_MAP[booking.destination]) return FUSIOO_DEST_MAP[booking.destination];
+  if (FUSIOO_DEST_MAP[(booking.destination || "").toLowerCase()]) return FUSIOO_DEST_MAP[(booking.destination || "").toLowerCase()];
 
   // 5. Transfer description for other destinations
   if (transferDesc.includes("caticlan") || transferDesc.includes("boracay"))       return "boracay";
@@ -261,7 +261,7 @@ export const detectDestinationSlug = (booking) => {
   if (tourDesc.includes("siargao") || tourDesc.includes("cloud 9") || tourDesc.includes("daku island")) return "siargao";
   if (tourDesc.includes("puerto princesa") || tourDesc.includes("underground river") || tourDesc.includes("honda bay")) return "puertoprincesa";
 
-  return "boracay";
+  return null;
 };
 
 // ── Domestic-only slug detection — returns null ONLY for known international
@@ -314,7 +314,7 @@ export const detectDomesticSlug = (booking) => {
   // Fallback: scan full raw JSON for Boracay-specific airport keywords
   if (rawStr.includes("kalibo") || rawStr.includes("caticlan")) return "boracay";
 
-  if (FUSIOO_DEST_MAP[booking.destination]) return FUSIOO_DEST_MAP[booking.destination];
+  if (FUSIOO_DEST_MAP[(booking.destination || "").toLowerCase()]) return FUSIOO_DEST_MAP[(booking.destination || "").toLowerCase()];
 
   if (transferDesc.includes("caticlan") || transferDesc.includes("boracay"))       return "boracay";
   if (transferDesc.includes("cebu") || transferDesc.includes("mactan"))            return "cebu";
