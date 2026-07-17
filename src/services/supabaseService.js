@@ -144,7 +144,6 @@ export const lookupBooking = async (gdxCode) => {
   };
 
   // 3. Fetch all detail tables in parallel
-  const isFusiooId = (v) => v && /^i[a-f0-9]{30,}$/i.test(String(v));
   const [tourData, ticketData, linkedHotelData, transferData, allHotelRows] = await Promise.all([
     fetchDetail(TOUR_TABLE,     row.tour_details),
     fetchDetail(TICKET_TABLE,   row.airline_details_1),
