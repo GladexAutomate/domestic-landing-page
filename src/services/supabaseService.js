@@ -97,27 +97,56 @@ export const uploadReviewPhoto = async ({ gdx, file }) => {
 };
 
 // ═══════════════════════════════════════════════════════════════
+// GDX NORMALIZATION
+// ═══════════════════════════════════════════════════════════════
+// Records are stored in canonical "GDX-<number>" form (e.g. "GDX-22437").
+// Guests may type it any way — "22437", "gdx-22437", "GDX 22437", "GDX22437".
+// Strip any leading prefix/separator to the core, then rebuild the canonical form.
+export const normalizeGdx = (input) => {
+  const core = String(input ?? "").trim().replace(/^gdx[-\s]*/i, "").trim();
+  return core ? `GDX-${core}` : "";
+};
+
+// Every stored form a given GDX input could match, canonical first.
+// Use with .in("data->>gdx", gdxCandidates(input)) so lookups resolve whether
+// the row was synced as "GDX-22437" or as a legacy bare "22437".
+export const gdxCandidates = (input) => {
+  const canonical = normalizeGdx(input);
+  if (!canonical) return [];
+  const core = canonical.slice(4);   // digits after "GDX-"
+  return Array.from(new Set([
+    canonical,        // "GDX-22437"  (canonical stored form)
+    `gdx-${core}`,    // lowercase prefix
+    `GDX${core}`,     // no dash
+    core,             // bare number (legacy rows)
+  ]));
+};
+
+// ═══════════════════════════════════════════════════════════════
 // PRIMARY LOOKUP — GDX code → full booking with all details
 // ═══════════════════════════════════════════════════════════════
 export const lookupBooking = async (gdxCode) => {
   if (!supabase) throw new Error("Booking lookup is not configured on this deployment.");
-  const clean = String(gdxCode).trim().replace(/^gdx[-\s]*/i, "");
-  if (!clean) throw new Error("Please enter your GDX Confirmation Number.");
+
+  const canonical = normalizeGdx(gdxCode);   // "22437" or "GDX-22437" → "GDX-22437"
+  if (!canonical) throw new Error("Please enter your GDX Confirmation Number.");
+  const candidates = gdxCandidates(gdxCode);
 
   // 1. Fetch main booking row (filter on JSONB field data->>gdx)
   const { data: result, error } = await supabase
     .from(BOOKING_TABLE)
     .select("id, data, synced_at")
-    .eq("data->>gdx", clean)
+    .in("data->>gdx", candidates)
     .order("synced_at", { ascending: false })
     .limit(1)
-    .single();
+    .maybeSingle();
 
-  if (error) {
-    if (error.code === "PGRST116") {
-      throw new Error(`No booking found for GDX ${clean}. Please check the number and try again.`);
-    }
-    throw new Error(error.message);
+  if (error) throw new Error(error.message);
+  if (!result) {
+    const notFound = new Error(`No booking found for ${canonical}. Please check your GDX Confirmation Number and try again.`);
+    notFound.code = "GDX_NOT_FOUND";
+    notFound.gdx = canonical;
+    throw notFound;
   }
 
   // 2. Flatten JSONB, unwrap array fields, remap renamed fields to match normalizer

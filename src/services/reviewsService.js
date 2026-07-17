@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { createClient } from "@supabase/supabase-js";
+import { gdxCandidates } from "@/services/supabaseService";
 
 const supabase =
   import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY
@@ -193,14 +194,17 @@ export const getPendingReviewsCount = async () => {
   return count || 0;
 };
 
-// Look up a lead name from the bookings table via GDX
+// Look up a lead name from the bookings table via GDX.
+// Accepts "22437" or "GDX-22437" — bookings are stored in canonical "GDX-<number>" form.
 export const lookupLeadNameByGdx = async (gdx) => {
   if (!supabase) return null;
-  const clean = String(gdx).replace(/^gdx[-\s]*/i, "").trim();
+  const candidates = gdxCandidates(gdx);
+  if (!candidates.length) return null;
   const { data } = await supabase
     .from("fusioo_booking_transactions")
     .select("data->>lead_name")
-    .eq("data->>gdx", clean)
+    .in("data->>gdx", candidates)
+    .limit(1)
     .maybeSingle();
   return data?.lead_name || null;
 };
