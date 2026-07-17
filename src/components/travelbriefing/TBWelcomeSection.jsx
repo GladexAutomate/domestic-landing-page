@@ -3,26 +3,38 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Search, User, ArrowRight, BadgeCheck, Loader, AlertCircle, ExternalLink } from "lucide-react";
-import { lookupBooking, detectDomesticSlug } from "@/services/supabaseService";
+import { lookupBooking, detectDomesticSlug, normalizeGdx } from "@/services/supabaseService";
 
 // Normalize accents + lowercase so "Castañeda" matches "Castaneda"
 function normStr(s) {
   return String(s).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
 }
 
-// Returns true if `entered` matches any word in `fullName`, or is a multi-word substring (e.g. "de villa")
+// Returns true if `entered` matches the guest's surname in `fullName`.
+// Handles single-word ("Villa") and multi-word ("de Villa", "de la Cruz",
+// "San Juan") surnames — the entered value is split into words too, so a
+// compound last name is matched as a contiguous run of name words.
 function lastNameMatches(fullName, entered) {
   if (!fullName || !entered) return false;
-  const needle = normStr(entered);
-  if (!needle) return false;
-  const normFull = normStr(fullName);
-  const words = normFull.split(/[\s,.\-/]+/).filter(Boolean);
-  if (words.some((w) => w === needle)) return true;
-  // Compound last name: "de villa" won't match a single word, but will match as a substring
-  return normFull.includes(needle);
+  const nameWords   = normStr(fullName).split(/[\s,.\-/]+/).filter(Boolean);
+  const needleWords = normStr(entered).split(/[\s,.\-/]+/).filter(Boolean);
+  if (!needleWords.length || !nameWords.length) return false;
+
+  // Single word entered — match any word in the name exactly (e.g. "villa", "cruz")
+  if (needleWords.length === 1) return nameWords.includes(needleWords[0]);
+
+  // Multi-word surname — match as a contiguous run of words anywhere in the name
+  for (let i = 0; i + needleWords.length <= nameWords.length; i++) {
+    if (needleWords.every((w, j) => w === nameWords[i + j])) return true;
+  }
+  // Fallback — every entered word appears somewhere in the name (order-independent)
+  return needleWords.every((w) => nameWords.includes(w));
 }
 
-const SECURITY_ERROR = "Booking not found. Please verify your GDX Number and Lead Guest Last Name.";
+const NAME_MISMATCH_ERROR =
+  "That last name doesn't match this booking. Please enter the Lead Guest's last name exactly as it appears on your confirmation.";
+const GENERIC_ERROR =
+  "Something went wrong while verifying your booking. Please try again, or contact your travel consultant if this keeps happening.";
 
 export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
   const navigate = useNavigate();
@@ -59,11 +71,13 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
     setError(null);
 
     try {
+      // Throws with code "GDX_NOT_FOUND" if the confirmation number doesn't exist
       const booking = await lookupBooking(trimmedCode);
 
-      // Security check — last name must match a word in the lead name
+      // GDX exists — now verify the lead guest's last name
       if (!lastNameMatches(booking.leadName, trimmedLastName)) {
-        throw new Error(SECURITY_ERROR);
+        setError(NAME_MISMATCH_ERROR);
+        return;
       }
 
       const domesticSlug = detectDomesticSlug(booking);
@@ -85,8 +99,11 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
 
       navigate(`/destination/${slug}`, { state: { booking } });
     } catch (err) {
-      // Always surface the same message regardless of GDX-not-found vs last-name-mismatch
-      setError(SECURITY_ERROR);
+      if (err?.code === "GDX_NOT_FOUND") {
+        setError(`We couldn't find a booking for ${normalizeGdx(trimmedCode)}. Please double-check your GDX Confirmation Number.`);
+      } else {
+        setError(err?.message || GENERIC_ERROR);
+      }
     } finally {
       setLoading(false);
     }
