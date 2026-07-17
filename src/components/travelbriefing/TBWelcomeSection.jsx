@@ -10,13 +10,16 @@ function normStr(s) {
   return String(s).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
 }
 
-// Returns true if `entered` exactly matches any space/hyphen-separated word in `fullName`
+// Returns true if `entered` matches any word in `fullName`, or is a multi-word substring (e.g. "de villa")
 function lastNameMatches(fullName, entered) {
   if (!fullName || !entered) return false;
   const needle = normStr(entered);
   if (!needle) return false;
-  const words = normStr(fullName).split(/[\s,.\-/]+/).filter(Boolean);
-  return words.some((w) => w === needle);
+  const normFull = normStr(fullName);
+  const words = normFull.split(/[\s,.\-/]+/).filter(Boolean);
+  if (words.some((w) => w === needle)) return true;
+  // Compound last name: "de villa" won't match a single word, but will match as a substring
+  return normFull.includes(needle);
 }
 
 const SECURITY_ERROR = "Booking not found. Please verify your GDX Number and Lead Guest Last Name.";
