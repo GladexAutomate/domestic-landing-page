@@ -6,6 +6,8 @@ const supabase =
     ? createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY)
     : null;
 
+const DOMESTIC_DESTINATIONS = ["Boracay", "Cebu", "El Nido", "Puerto Princesa", "Siargao", "Bohol"];
+
 // All reviews — admin use
 export const getReviews = async () => {
   if (!supabase) return [];
@@ -26,15 +28,13 @@ export const getPublicReviews = async (destinationName) => {
     .select("id, lead_name, destination, rating, comment, photos, created_at")
     .gte("rating", 4)
     .eq("is_hidden", false)
-    .order("created_at", { ascending: false });
-  if (destinationName) q = q.ilike("destination", `%${destinationName}%`);
+    .order("created_at", { ascending: false })
+    .limit(100);
+  if (destinationName) q = q.eq("destination", destinationName);
   const { data, error } = await q;
   if (error) throw new Error(error.message);
   return data || [];
 };
-
-// Stats grouped by agent — admin use
-const DOMESTIC_DESTINATIONS = ["Boracay", "Cebu", "El Nido", "Puerto Princesa", "Siargao", "Bohol"];
 
 export const getReviewStats = async () => {
   if (!supabase) return { total: 0, byAgent: [] };
@@ -182,15 +182,15 @@ export const deleteReview = async (id) => {
 // Client: delete own review by GDX number
 export const deleteReviewByGdx = async (gdx) => {
   if (!supabase) throw new Error("Supabase not configured.");
-  const { error } = await supabase.from("reviews").delete().eq("gdx_reference", gdx);
+  const { error } = await supabase.from("reviews").delete().eq("gdx_reference", String(gdx));
   if (error) throw new Error(error.message);
 };
 
 // Count reviews pending admin approval (is_hidden = true) — used for sidebar badge
 export const getPendingReviewsCount = async () => {
   if (!supabase) return 0;
-  const { data } = await supabase.from("reviews").select("id").eq("needs_approval", true);
-  return data?.length || 0;
+  const { count } = await supabase.from("reviews").select("id", { count: "exact", head: true }).eq("needs_approval", true);
+  return count || 0;
 };
 
 // Look up a lead name from the bookings table via GDX

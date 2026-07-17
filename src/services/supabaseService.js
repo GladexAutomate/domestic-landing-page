@@ -136,7 +136,9 @@ export const lookupBooking = async (gdxCode) => {
     type_of_package:       unwrap(d.type_of_package),
     agent_name:            unwrap(d.agent_name),
     name_of_agent_1:       unwrap(d.name_of_agent_1),
-    arrival_date:          d.arrival,   // renamed field in new DB
+    name_of_agent:         unwrap(d.name_of_agent),
+    domestic_voucher:      unwrap(d.domestic_voucher),
+    arrival_date:          d.arrival || d.arrival_date,   // 'arrival' in new DB, 'arrival_date' in old
     record_id:             result.id,   // Fusioo record ID is now the `id` column
     data:                  d,           // preserve raw for destination detection
   };
@@ -399,9 +401,9 @@ function normalizeBooking(raw, { tourData, ticketData, hotelData, transferData }
 
     // Agent — raw.agent_name = "Commission Accomplished" (Fusioo commission status, NOT a name)
     // raw.name_of_agent = "Kams Valenzuela" (actual coordinator's name — verified against live data)
-    agentName:        raw.name_of_agent || null,
-    salesAgent:       raw.name_of_agent || null,
-    consultantName:   raw.consultant_name || raw.name_of_agent || null,
+    agentName:        raw.name_of_agent || raw.name_of_agent_1 || null,
+    salesAgent:       raw.name_of_agent || raw.name_of_agent_1 || null,
+    consultantName:   raw.consultant_name || raw.name_of_agent || raw.name_of_agent_1 || null,
     consultantPhone:  raw.consultant_phone || raw.consultant_mobile || null,
 
     // Raw data for destination detection
