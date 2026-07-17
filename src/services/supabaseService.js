@@ -127,6 +127,9 @@ export const gdxCandidates = (input) => {
   ]));
 };
 
+// Generic tour names that aren't the main activity (used in both lookup paths)
+const GENERIC_TOUR = /^(pick.?up|drop.?off|transfer|ferry fee|service charge|transport fee)/i;
+
 // ═══════════════════════════════════════════════════════════════
 // PRIMARY LOOKUP — GDX code → full booking with all details
 // ═══════════════════════════════════════════════════════════════
@@ -148,10 +151,8 @@ export const lookupBooking = async (gdxCode) => {
 
   if (error) throw new Error(error.message);
   if (!result) {
-    const notFound = new Error(`No booking found for ${canonical}. Please check your GDX Confirmation Number and try again.`);
-    notFound.code = "GDX_NOT_FOUND";
-    notFound.gdx = canonical;
-    throw notFound;
+    // Supabase miss — try Fusioo API directly (catches bookings not yet synced)
+    return await lookupFromFusioo(canonical);
   }
 
   // 2. Flatten JSONB, unwrap array fields, remap renamed fields to match normalizer
@@ -209,12 +210,83 @@ export const lookupBooking = async (gdxCode) => {
 
   // Pick the best tour record: skip generic service names (pick-up/drop-off/transfer fees)
   // so the main tour activity shows instead (e.g. "Cebu City Tour" over "PICK-UP & DROP-OFF")
-  const GENERIC_TOUR = /^(pick.?up|drop.?off|transfer|ferry fee|service charge|transport fee)/i;
+  // GENERIC_TOUR is module-level — also used by lookupFromFusioo fallback
   const meaningfulTours = allTourRows.filter(t => t?.tour_name && !GENERIC_TOUR.test(t.tour_name));
   const tourData = meaningfulTours.length ? meaningfulTours[0] : mainTourData;
 
   return normalizeBooking(row, { tourData, ticketData, hotelData, transferData });
 };
+
+// ── Fusioo API fallback — called when booking is not in Supabase yet ──────
+// Calls the fusioo-lookup edge function which scans Fusioo, upserts to
+// Supabase, and returns the raw booking + all linked detail data.
+async function lookupFromFusioo(canonical) {
+  const edgeFnUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/fusioo-lookup`;
+  let res;
+  try {
+    res = await fetch(edgeFnUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ gdx: canonical }),
+    });
+  } catch {
+    // Network error — edge function unreachable, fall through to not-found
+    const err = new Error(`No booking found for ${canonical}. Please check your GDX Confirmation Number and try again.`);
+    err.code = "GDX_NOT_FOUND";
+    err.gdx = canonical;
+    throw err;
+  }
+
+  if (res.status === 404) {
+    const err = new Error(`No booking found for ${canonical}. Please check your GDX Confirmation Number and try again.`);
+    err.code = "GDX_NOT_FOUND";
+    err.gdx = canonical;
+    throw err;
+  }
+  if (!res.ok) throw new Error("Booking lookup service temporarily unavailable. Please try again.");
+
+  const edge = await res.json();
+  const d = edge.booking;
+
+  // Build the same row structure as the Supabase-sourced path
+  const row = {
+    ...d,
+    status:                unwrap(d.status),
+    destination:           unwrap(d.destination),
+    hotel_name:            unwrap(d.hotel_name),
+    hotel_booking_details: unwrap(d.hotel_booking_details),
+    tour_details:          unwrap(d.tour_details),
+    airline_details_1:     unwrap(d.airline_details_1),
+    transfer_details:      unwrap(d.transfer_details),
+    payment_type:          unwrap(d.payment_type),
+    transaction_type:      unwrap(d.transaction_type),
+    type_of_package:       unwrap(d.type_of_package),
+    agent_name:            unwrap(d.agent_name),
+    name_of_agent_1:       unwrap(d.name_of_agent_1),
+    name_of_agent:         unwrap(d.name_of_agent),
+    domestic_voucher:      unwrap(d.domestic_voucher),
+    arrival_date:          d.arrival || d.arrival_date,
+    record_id:             edge.bookingId,
+    data:                  d,
+  };
+
+  // Best-hotel selection (same logic as main path)
+  const namedHotels = (edge.allHotelData || []).filter(h => h?.other_hotel);
+  const hotelData = namedHotels.length
+    ? namedHotels.reduce((best, h) => ((h.number_of_nights || 0) > (best.number_of_nights || 0) ? h : best))
+    : edge.hotelData;
+
+  // Best-tour selection (same logic as main path)
+  const meaningfulTours = (edge.allTourData || []).filter(t => t?.tour_name && !GENERIC_TOUR.test(t.tour_name));
+  const tourData = meaningfulTours.length ? meaningfulTours[0] : edge.tourData;
+
+  return normalizeBooking(row, {
+    tourData,
+    ticketData:   edge.ticketData,
+    hotelData,
+    transferData: edge.transferData,
+  });
+}
 
 // ── Fetch a single detail record by Fusioo id ─────────────
 async function fetchDetail(table, recordId) {
