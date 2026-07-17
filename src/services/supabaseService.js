@@ -30,6 +30,8 @@ const unwrap = v => Array.isArray(v) ? (v[0] ?? null) : (v ?? null);
 // (flight-number-only tickets, NULL tour/transfer, unresolvable hotel IDs)
 const DEST_OVERRIDES = {
   "21780": "boracay", // Flordeliza Caindoy — Boracay via Kalibo, Z2 711/716, no airport text in data
+  "21954": "boracay", // Shirley Burlat — Boracay Tour Only; PPS keyword in transfer desc triggers false PPS detection
+  "21851": "cebu",    // Marion Chua — Cebu All-In, no tour; ie9eb5... dest ID maps to boracay without text signals
 };
 
 // ── Fusioo destination ID → slug  (VERIFIED against real booking data)
@@ -58,8 +60,11 @@ export const FUSIOO_DEST_MAP = {
 
   // PUERTO PRINCESA (additional) ✅ confirmed by agent: transfer "PPS AIRPORT", tour "Honda Bay Island Hopping"
   "i5e2b9bbc0c7f48008ab3e94ccd9754c1": "puertoprincesa",
-  // i67f5adf04bfc41d78c3102ed8226d317 REMOVED — shared ID used by Boracay (via Kalibo), PPS, and Bohol bookings.
-  // Cannot use map — rely on hotel name / ticket detection below.
+  // i67f5adf04bfc41d78c3102ed8226d317 — shared by Boracay-via-Kalibo, PPS, and Bohol bookings.
+  // Safe to map to PPS because: Bohol bookings are caught by prior Bohol text checks, and Boracay-via-Kalibo
+  // bookings are caught by the rawStr.includes("kalibo"/"caticlan") check before this map lookup fires.
+  // QA-confirmed: all 7 PPS bookings (GDX 19384, 19395, 19481, 19817, 20146, 20985, 21285) use this ID.
+  "i67f5adf04bfc41d78c3102ed8226d317": "puertoprincesa",
 
   // DAVAO ✅ confirmed by agent: transfer "FRANCISCO BANGOY INTL AIRPORT - GRAND REGAL HOTEL"
   "ib5ba0a50ceef472da434d0f73277a03d": "davao",
@@ -173,7 +178,7 @@ export const lookupBooking = async (gdxCode) => {
   };
 
   // 3. Fetch all detail tables in parallel
-  const [tourData, ticketData, linkedHotelData, transferData, allHotelRows] = await Promise.all([
+  const [mainTourData, ticketData, linkedHotelData, transferData, allHotelRows, allTourRows] = await Promise.all([
     fetchDetail(TOUR_TABLE,     row.tour_details),
     fetchDetail(TICKET_TABLE,   row.airline_details_1),
     fetchDetail(HOTEL_TABLE,    row.hotel_booking_details),
@@ -186,6 +191,14 @@ export const lookupBooking = async (gdxCode) => {
             .then(({ data: rows, error: err }) => err ? [] : (rows || []).map(r => r.data))
         : Promise.resolve([]);
     })(),
+    // Fetch ALL tour_details — some bookings have multiple (e.g. "PICK-UP & DROP-OFF" + "Cebu City Tour")
+    (() => {
+      const ids = Array.isArray(d.tour_details) ? d.tour_details.filter(Boolean) : [];
+      return ids.length > 1
+        ? supabase.from(TOUR_TABLE).select("id, data").in("id", ids)
+            .then(({ data: rows, error: err }) => err ? [] : (rows || []).map(r => r.data))
+        : Promise.resolve([]);
+    })(),
   ]);
 
   // Pick the best hotel record: prefer records with a named hotel (other_hotel set)
@@ -193,6 +206,12 @@ export const lookupBooking = async (gdxCode) => {
   const hotelData = namedHotels.length
     ? namedHotels.reduce((best, h) => ((h.number_of_nights || 0) > (best.number_of_nights || 0) ? h : best))
     : linkedHotelData;
+
+  // Pick the best tour record: skip generic service names (pick-up/drop-off/transfer fees)
+  // so the main tour activity shows instead (e.g. "Cebu City Tour" over "PICK-UP & DROP-OFF")
+  const GENERIC_TOUR = /^(pick.?up|drop.?off|transfer|ferry fee|service charge|transport fee)/i;
+  const meaningfulTours = allTourRows.filter(t => t?.tour_name && !GENERIC_TOUR.test(t.tour_name));
+  const tourData = meaningfulTours.length ? meaningfulTours[0] : mainTourData;
 
   return normalizeBooking(row, { tourData, ticketData, hotelData, transferData });
 };
@@ -276,7 +295,7 @@ export const detectDestinationSlug = (booking) => {
   if (transferDesc.includes("siargao") || transferDesc.includes("general luna") || transferDesc.includes("cloud 9")) return "siargao";
 
   // 5. Tour name for other destinations
-  if (tourName.includes("island hop"))                                        return "boracay";
+  // NOTE: "island hop" removed — too broad (Cebu, PPS, El Nido all have island hopping tours)
   if (tourName.includes("kawasan") || tourName.includes("oslob") || tourName.includes("cebu")) return "cebu";
   if (tourName.includes("el nido") || tourName.includes("lagoon"))           return "elnido";
   if (tourName.includes("siargao") || tourName.includes("cloud 9") || tourName.includes("magpupungko") || tourName.includes("sohoton") || tourName.includes("daku") || tourName.includes("naked island")) return "siargao";
@@ -350,7 +369,7 @@ export const detectDomesticSlug = (booking) => {
   if (transferDesc.includes("el nido"))                                            return "elnido";
   if (transferDesc.includes("siargao") || transferDesc.includes("general luna") || transferDesc.includes("cloud 9")) return "siargao";
 
-  if (tourName.includes("island hop"))                                        return "boracay";
+  // "island hop" removed — too broad (Cebu, PPS, El Nido all have island hopping tours)
   if (tourName.includes("kawasan") || tourName.includes("oslob") || tourName.includes("cebu")) return "cebu";
   if (tourName.includes("el nido") || tourName.includes("lagoon"))           return "elnido";
   if (tourName.includes("siargao") || tourName.includes("cloud 9") || tourName.includes("magpupungko") || tourName.includes("sohoton") || tourName.includes("daku") || tourName.includes("naked island")) return "siargao";

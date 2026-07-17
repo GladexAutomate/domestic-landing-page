@@ -130,7 +130,7 @@ export default function TBBookingVerification({ booking, dest, darkMode, tk, onC
 
               {/* ── TRAVEL INFORMATION ────────────────────────────────── */}
               <Section title="Travel Information" icon={<MapPin className="w-4 h-4" />} borderColor={borderColor} cardBg={cardBg} cardShadow={cardShadow} textPrimary={textPrimary}>
-                <Row label="Travel Date"    value={booking.travelDate    || "—"} textPrimary={textPrimary} textMuted={textMuted} />
+                <Row label="Travel Date"    value={booking.arrivalDate || booking.travelDate    || "—"} textPrimary={textPrimary} textMuted={textMuted} />
                 <Row label="Arrival Date"   value={booking.arrivalDate   || "—"} textPrimary={textPrimary} textMuted={textMuted} />
                 <Row label="Departure Date" value={booking.departureDate || "—"} textPrimary={textPrimary} textMuted={textMuted} />
                 {booking.duration           && <Row label="Duration" value={booking.duration} textPrimary={textPrimary} textMuted={textMuted} />}

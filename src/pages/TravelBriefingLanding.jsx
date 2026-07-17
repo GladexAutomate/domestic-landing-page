@@ -2063,7 +2063,7 @@ export default function TravelBriefingLanding() {
                   <div className="grid grid-cols-2 gap-2">
                     {[
                       { label: "Destination", value: dest.name },
-                      { label: "Travel Date",  value: activeBooking.travelDate || "—" },
+                      { label: "Travel Date",  value: formatDate(activeBooking.arrivalDate || activeBooking.travelDate) || "—" },
                       {
                         label: "Hotel",
                         value: activeBooking.hotel?.hotelName
@@ -2270,7 +2270,7 @@ export default function TravelBriefingLanding() {
                         <div className="px-5 py-4 space-y-4">
                           <BookingRow
                             label1="Destination"   value1={dest.name}
-                            label2="Travel Date"   value2={formatDate(activeBooking.travelDate) || "—"}
+                            label2="Travel Date"   value2={formatDate(activeBooking.arrivalDate || activeBooking.travelDate) || "—"}
                             textPrimary={textPrimary} textMuted={textMuted}
                           />
                           <BookingRow
