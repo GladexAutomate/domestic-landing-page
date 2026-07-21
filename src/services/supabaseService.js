@@ -489,7 +489,7 @@ function normalizeBooking(raw, { tourData, ticketData, hotelData, transferData }
 
     // Booking
     status:           raw.status || "—",
-    transactionType:  raw.transaction_type || raw.customer_type || null,
+    transactionType:  raw.transaction_type || null,
     typeOfPackage:    raw.type_of_package || null,
     dateCreated:      raw.date_created || raw.created || null,
     bookingDate:      raw.date_created || raw.created || raw.received_at || raw.transaction_date || null,
