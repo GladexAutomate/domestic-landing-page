@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { Search, User, ArrowRight, BadgeCheck, Loader, AlertCircle, ExternalLink } from "lucide-react";
+import { Search, User, ArrowRight, BadgeCheck, Loader, AlertCircle, ExternalLink, Clock } from "lucide-react";
 import { lookupBooking, detectDomesticSlug, normalizeGdx } from "@/services/supabaseService";
 
 // Normalize accents + lowercase so "Castañeda" matches "Castaneda"
@@ -40,8 +40,9 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
   const navigate = useNavigate();
   const [code, setCode]         = useState("");
   const [lastName, setLastName] = useState("");
-  const [loading, setLoading]     = useState(false);
-  const [error, setError]         = useState(null);
+  const [loading, setLoading]       = useState(false);
+  const [error, setError]           = useState(null);
+  const [notFound, setNotFound]     = useState(false);
   const [redirecting, setRedirecting] = useState(false);
 
   const bg          = tk?.bg          ?? (darkMode ? "#0c0c0c" : "#f4f3f1");
@@ -100,8 +101,10 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
       navigate(`/destination/${slug}`, { state: { booking } });
     } catch (err) {
       if (err?.code === "GDX_NOT_FOUND") {
-        setError(`We couldn't find a booking for ${normalizeGdx(trimmedCode)}. Please double-check your GDX Confirmation Number.`);
+        setNotFound(true);
+        setError(null);
       } else {
+        setNotFound(false);
         setError(err?.message || GENERIC_ERROR);
       }
     } finally {
@@ -113,7 +116,7 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
     if (e.key === "Enter") handleViewTrip();
   };
 
-  const clearAll = () => { setCode(""); setLastName(""); setError(null); };
+  const clearAll = () => { setCode(""); setLastName(""); setError(null); setNotFound(false); };
 
   return (
     <section
@@ -243,6 +246,25 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
                   </p>
                 </div>
                 <Loader className="w-3.5 h-3.5 shrink-0 mt-0.5 animate-spin ml-auto" style={{ color: "#f59e0b" }} />
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Booking not yet synced — warm "preparing" state */}
+          <AnimatePresence>
+            {notFound && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="rounded-xl px-3 py-2.5 text-xs flex items-start gap-2"
+                style={{ background: "rgba(251,146,60,0.10)", border: "1px solid rgba(251,146,60,0.25)", color: "#c2600a" }}
+              >
+                <Clock className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                <span>
+                  <strong>Your travel briefing is being prepared.</strong><br />
+                  If you just booked, please wait a few minutes and try again. Still not showing? Ask your Gladex consultant to re-save your booking.
+                </span>
               </motion.div>
             )}
           </AnimatePresence>
