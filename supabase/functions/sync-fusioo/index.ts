@@ -1,34 +1,27 @@
-// Supabase Edge Function — Fusioo → Supabase sync
-// Fetches the latest booking records from Fusioo and upserts them into
-// fusioo_booking_transactions + all linked detail tables.
+// Supabase Edge Function — Full Fusioo → Supabase batch sync
 //
-// Deploy:
-//   supabase functions deploy sync-fusioo
+// Fetches ALL records from the Booking Transactions app in Fusioo,
+// then upserts them (plus all linked detail records) into Supabase.
 //
-// Secrets required (supabase secrets set KEY=value):
-//   FUSIOO_TOKEN          — the Bearer JWT from .env.local (VITE_FUSIOO_TOKEN)
-//   FUSIOO_BOOKING_APP_ID — the Fusioo App ID for Booking Transactions
-//                           Find it in: gladex.fusioo.com → Booking Transactions → App Settings → App ID
+// DEPLOY: Supabase dashboard → Edge Functions → New function → paste this code
+//         Enable "No JWT verification"
 //
-// Schedule via pg_cron (run once in Supabase SQL editor):
-//   select cron.schedule(
-//     'sync-fusioo-every-30min',
-//     '*/30 * * * *',
-//     $$
-//       select net.http_post(
-//         url     := 'https://<YOUR_PROJECT_REF>.supabase.co/functions/v1/sync-fusioo',
-//         headers := '{"Content-Type":"application/json","Authorization":"Bearer <SUPABASE_ANON_KEY>"}'::jsonb,
-//         body    := '{}'::jsonb
-//       );
-//     $$
-//   );
+// TRIGGER (one-time or after deploy):
+//   curl -X POST https://snploarndnyuxapqpegi.supabase.co/functions/v1/sync-fusioo \
+//     -H "x-sync-secret: <FUSIOO_WEBHOOK_SECRET value>"
+//
+// Secrets required (set in Supabase dashboard → Edge Functions → Secrets):
+//   FUSIOO_TOKEN             — already set
+//   FUSIOO_WEBHOOK_SECRET    — already set (reused as the trigger auth key)
+//   FUSIOO_BOOKING_APP_ID    — ADD THIS: i037d30cf902f409f81339ce75c1fa930
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const FUSIOO_BASE      = "https://api.fusioo.com";
-const FUSIOO_TOKEN     = Deno.env.get("FUSIOO_TOKEN") ?? "";
-const BOOKING_APP_ID   = Deno.env.get("FUSIOO_BOOKING_APP_ID") ?? "";
+const FUSIOO_BASE    = "https://api.fusioo.com";
+const FUSIOO_TOKEN   = Deno.env.get("FUSIOO_TOKEN") ?? "";
+const BOOKING_APP_ID = Deno.env.get("FUSIOO_BOOKING_APP_ID") ?? "";
+const SYNC_SECRET    = Deno.env.get("FUSIOO_WEBHOOK_SECRET") ?? "";
 
 const supabase = createClient(
   Deno.env.get("SUPABASE_URL")!,
@@ -40,7 +33,6 @@ const fusiooHeaders = {
   "Content-Type": "application/json",
 };
 
-// Maps a booking field name → its Supabase detail table
 const DETAIL_FIELD_TABLE: Record<string, string> = {
   hotel_booking_details: "fusioo_hotel_details",
   tour_details:          "fusioo_tour_details",
@@ -51,7 +43,6 @@ const DETAIL_FIELD_TABLE: Record<string, string> = {
 const isFusiooId = (v: unknown): v is string =>
   typeof v === "string" && /^i[a-f0-9]{30,}$/i.test(v);
 
-// Fetch one page of booking records from Fusioo
 async function fetchBookingsPage(page: number): Promise<unknown[]> {
   const res = await fetch(`${FUSIOO_BASE}/v1/apps/${BOOKING_APP_ID}/records/search`, {
     method: "POST",
@@ -63,7 +54,6 @@ async function fetchBookingsPage(page: number): Promise<unknown[]> {
   return json.data?.records ?? [];
 }
 
-// Fetch a single Fusioo record by ID
 async function fetchRecord(id: string): Promise<Record<string, unknown> | null> {
   const res = await fetch(`${FUSIOO_BASE}/v1/records/${id}`, { headers: fusiooHeaders });
   if (!res.ok) return null;
@@ -71,15 +61,24 @@ async function fetchRecord(id: string): Promise<Record<string, unknown> | null> 
   return json.data ?? null;
 }
 
-serve(async () => {
+function resp(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+
+serve(async (req: Request) => {
+  const incoming = req.headers.get("x-sync-secret");
+  if (!SYNC_SECRET || incoming !== SYNC_SECRET) {
+    return resp({ ok: false, error: "Unauthorized" }, 401);
+  }
+
   const now = new Date().toISOString();
   const log: string[] = [];
 
   if (!FUSIOO_TOKEN || !BOOKING_APP_ID) {
-    return new Response(
-      JSON.stringify({ ok: false, error: "FUSIOO_TOKEN or FUSIOO_BOOKING_APP_ID secret not set" }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
+    return resp({ ok: false, error: "FUSIOO_TOKEN or FUSIOO_BOOKING_APP_ID secret not set" }, 500);
   }
 
   try {
@@ -95,9 +94,7 @@ serve(async () => {
     log.push(`Fusioo returned ${records.length} booking records (${page} page${page > 1 ? "s" : ""})`);
 
     if (records.length === 0) {
-      return new Response(JSON.stringify({ ok: true, log }), {
-        headers: { "Content-Type": "application/json" },
-      });
+      return resp({ ok: true, log });
     }
 
     // 2. Upsert booking records into fusioo_booking_transactions
@@ -162,15 +159,10 @@ serve(async () => {
     log.push(`Upserted ${synced} detail records`);
     log.push("Sync complete");
 
-    return new Response(JSON.stringify({ ok: true, log }), {
-      headers: { "Content-Type": "application/json" },
-    });
+    return resp({ ok: true, log });
 
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    return new Response(JSON.stringify({ ok: false, error: msg, log }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return resp({ ok: false, error: msg, log }, 500);
   }
 });
