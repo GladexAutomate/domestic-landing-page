@@ -484,7 +484,7 @@ function normalizeBooking(raw, { tourData, ticketData, hotelData, transferData }
     facebookName:     raw.facebook_name || null,
     email:            raw.email_1 || null,
     phone:            raw.mobile_1 || null,
-    totalGuests:      Number(raw.no_of_person) || Number(raw.total_number_of_guests) || guestList.length || 1,
+    totalGuests:      Math.max(guestList.length, Number(raw.total_number_of_guests) || 0) || Number(raw.no_of_person) || 1,
     guestList,
 
     // Booking
