@@ -63,8 +63,16 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
       setError("Please enter your GDX Confirmation Number.");
       return;
     }
+    if (!/\d/.test(trimmedCode)) {
+      setError("GDX Confirmation Number should contain digits (e.g. 22536 or GDX-22536). Please check and try again.");
+      return;
+    }
     if (!trimmedLastName) {
       setError("Please enter the Lead Guest Last Name.");
+      return;
+    }
+    if (!/[a-zA-Z]/.test(trimmedLastName)) {
+      setError("Last name should contain letters. Did you accidentally swap the two fields?");
       return;
     }
 

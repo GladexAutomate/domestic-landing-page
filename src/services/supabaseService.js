@@ -484,7 +484,7 @@ function normalizeBooking(raw, { tourData, ticketData, hotelData, transferData }
     facebookName:     raw.facebook_name || null,
     email:            raw.email_1 || null,
     phone:            raw.mobile_1 || null,
-    totalGuests:      guestList.length || Number(raw.no_of_person) || 1,
+    totalGuests:      Number(raw.no_of_person) || Number(raw.total_number_of_guests) || guestList.length || 1,
     guestList,
 
     // Booking
@@ -698,6 +698,9 @@ function stripHtml(html) {
   if (!html) return "";
   const stripped = html
     .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/p>/gi, "\n")
+    .replace(/<\/div>/gi, "\n")
+    .replace(/<\/li>/gi, "\n")
     .replace(/<[^>]*>/g, "");
   // Use browser's native HTML entity decoder — handles &Ntilde; → Ñ, &amp; → &, etc.
   let decoded = stripped;
