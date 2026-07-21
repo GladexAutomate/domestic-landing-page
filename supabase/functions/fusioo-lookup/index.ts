@@ -1,42 +1,32 @@
-// Supabase Edge Function — Fusioo direct lookup (fallback for un-synced bookings)
+// Supabase Edge Function — Booking lookup by GDX number
 //
-// Called when a GDX lookup fails in Supabase (booking exists in Fusioo but not yet
-// synced). Scans Fusioo pages for the booking, upserts it + all linked detail records
-// into Supabase (so the next lookup hits cache), then returns the raw data for
-// client-side normalization via normalizeBooking().
+// Searches fusioo_booking_transactions by the 'gdx' field in the JSONB data,
+// then assembles and returns full booking + detail records.
+//
+// This is the fallback called when the client can't find the booking itself.
+// It does NOT call the Fusioo API — all data must already be in Supabase
+// (synced by fusioo-webhook on every save event in Fusioo).
 //
 // Deploy (--no-verify-jwt — GDX code is the only access control needed):
 //   supabase functions deploy fusioo-lookup --no-verify-jwt
 //
-// Secrets required (same set as sync-fusioo / fusioo-webhook):
-//   FUSIOO_TOKEN
-//   FUSIOO_BOOKING_APP_ID   (= if7fc4b38878b4c2db947d582004ce3b7)
-//   SUPABASE_URL            (auto-injected by Supabase)
+// Secrets required:
+//   SUPABASE_URL              (auto-injected by Supabase)
 //   SUPABASE_SERVICE_ROLE_KEY
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-const FUSIOO_BASE    = "https://api.fusioo.com";
-const FUSIOO_TOKEN   = Deno.env.get("FUSIOO_TOKEN") ?? "";
-const BOOKING_APP_ID = "if7fc4b38878b4c2db947d582004ce3b7";
 
 const supabase = createClient(
   Deno.env.get("SUPABASE_URL")!,
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
 );
 
-const fusiooHeaders = {
-  Authorization: `Bearer ${FUSIOO_TOKEN}`,
-  "Content-Type": "application/json",
-};
-
 const CORS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Same table map as sync-fusioo / fusioo-webhook
 const DETAIL_FIELD_TABLE: Record<string, string> = {
   hotel_booking_details: "fusioo_hotel_details",
   tour_details:          "fusioo_tour_details",
@@ -47,10 +37,9 @@ const DETAIL_FIELD_TABLE: Record<string, string> = {
 const isFusiooId = (v: unknown): v is string =>
   typeof v === "string" && /^i[a-f0-9]{30,}$/i.test(v);
 
-function gdxCandidates(input: string): string[] {
-  const core = input.trim().replace(/^gdx[-\s]*/i, "").trim();
-  if (!core) return [];
-  return Array.from(new Set([`GDX-${core}`, `gdx-${core}`, `GDX${core}`, core]));
+function normalizeGdx(input: string): string {
+  // Strip "GDX-" / "GDX " prefix — the `gdx` field in Fusioo stores just the number
+  return input.trim().replace(/^gdx[-\s]*/i, "").trim();
 }
 
 function respond(body: unknown, status = 200): Response {
@@ -58,36 +47,6 @@ function respond(body: unknown, status = 200): Response {
     status,
     headers: { ...CORS, "Content-Type": "application/json" },
   });
-}
-
-async function fetchRecord(id: string): Promise<Record<string, unknown> | null> {
-  const res = await fetch(`${FUSIOO_BASE}/v1/records/${id}`, { headers: fusiooHeaders });
-  if (!res.ok) return null;
-  const body = await res.json() as { data?: Record<string, unknown> };
-  return body.data ?? null;
-}
-
-// Scan Fusioo pages (newest-to-oldest assumption: page 1 first) for a matching GDX.
-// Falls back to scanning every page up to MAX_PAGES if not found early.
-async function findInFusioo(
-  candidates: string[]
-): Promise<{ id: string; data: Record<string, unknown> } | null> {
-  const MAX_PAGES = 20; // 2,000 records max scan — more than enough for Gladex volume
-  for (let page = 1; page <= MAX_PAGES; page++) {
-    const res = await fetch(`${FUSIOO_BASE}/v1/apps/${BOOKING_APP_ID}/records/search`, {
-      method: "POST",
-      headers: fusiooHeaders,
-      body: JSON.stringify({ paging: { page, per_page: 100 } }),
-    });
-    if (!res.ok) throw new Error(`Fusioo search failed: ${res.status}`);
-    const body = await res.json() as { data?: { records?: Record<string, unknown>[] } };
-    const records = body.data?.records ?? [];
-
-    const match = records.find((r) => candidates.includes((r.gdx ?? "") as string));
-    if (match) return { id: match.id as string, data: match };
-    if (records.length < 100) break; // reached last page
-  }
-  return null;
 }
 
 serve(async (req: Request) => {
@@ -98,14 +57,25 @@ serve(async (req: Request) => {
     const gdxRaw = body.gdx || new URL(req.url).searchParams.get("gdx") || "";
     if (!gdxRaw) return respond({ error: "gdx required" }, 400);
 
-    const candidates = gdxCandidates(gdxRaw);
-    const found = await findInFusioo(candidates);
-    if (!found) return respond({ error: "not_found" }, 404);
+    const gdxNum = normalizeGdx(gdxRaw);
+    if (!gdxNum) return respond({ error: "invalid gdx" }, 400);
 
+    // Search Supabase for the booking by numeric GDX stored in JSONB data
+    const { data: rows, error } = await supabase
+      .from("fusioo_booking_transactions")
+      .select("id, data")
+      .eq("data->>gdx", gdxNum)
+      .limit(1);
+
+    if (error) throw new Error(error.message);
+    if (!rows || rows.length === 0) {
+      return respond({ error: "not_found" }, 404);
+    }
+
+    const found = rows[0] as { id: string; data: Record<string, unknown> };
     const d = found.data;
-    const now = new Date().toISOString();
 
-    // Collect all unique detail record IDs across all linked fields
+    // Collect all unique detail record IDs from the booking
     const allDetailIds = new Map<string, { table: string; field: string }>();
     for (const [field, table] of Object.entries(DETAIL_FIELD_TABLE)) {
       const raw = d[field];
@@ -115,30 +85,20 @@ serve(async (req: Request) => {
       }
     }
 
-    // Fetch all detail records from Fusioo in parallel
+    // Fetch all detail records from Supabase in parallel
     const detailRecords = new Map<string, Record<string, unknown>>();
     await Promise.all(
-      Array.from(allDetailIds.keys()).map(async (id) => {
-        const record = await fetchRecord(id);
-        if (record) detailRecords.set(id, record);
+      Array.from(allDetailIds.entries()).map(async ([id, { table }]) => {
+        const { data: detail } = await supabase
+          .from(table)
+          .select("id, data")
+          .eq("id", id)
+          .single();
+        if (detail) detailRecords.set(id, (detail as { data: Record<string, unknown> }).data);
       })
     );
 
-    // Upsert main booking to Supabase (caches for future lookups)
-    await supabase
-      .from("fusioo_booking_transactions")
-      .upsert([{ id: found.id, data: d, synced_at: now }], { onConflict: "id" });
-
-    // Upsert all linked detail records
-    await Promise.all(
-      Array.from(allDetailIds.entries()).map(([id, { table }]) => {
-        const data = detailRecords.get(id);
-        if (!data) return;
-        return supabase.from(table).upsert([{ id, data, synced_at: now }], { onConflict: "id" });
-      })
-    );
-
-    // Group fetched records by field (preserving array order from booking data)
+    // Group by field (preserving array order from booking data)
     const byField: Record<string, Record<string, unknown>[]> = {};
     for (const [id, { field }] of allDetailIds.entries()) {
       const record = detailRecords.get(id);
@@ -151,13 +111,12 @@ serve(async (req: Request) => {
     return respond({
       bookingId:    found.id,
       booking:      d,
-      // First record + full array for each detail type (client picks "best" for hotels/tours)
-      tourData:     byField.tour_details?.[0]           ?? null,
+      tourData:     byField.tour_details?.[0]          ?? null,
       allTourData:  byField.tour_details               ?? [],
-      ticketData:   byField.airline_details_1?.[0]      ?? null,
-      hotelData:    byField.hotel_booking_details?.[0]  ?? null,
-      allHotelData: byField.hotel_booking_details       ?? [],
-      transferData: byField.transfer_details?.[0]       ?? null,
+      ticketData:   byField.airline_details_1?.[0]     ?? null,
+      hotelData:    byField.hotel_booking_details?.[0] ?? null,
+      allHotelData: byField.hotel_booking_details      ?? [],
+      transferData: byField.transfer_details?.[0]      ?? null,
     });
 
   } catch (err: unknown) {
