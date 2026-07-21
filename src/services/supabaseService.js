@@ -489,10 +489,10 @@ function normalizeBooking(raw, { tourData, ticketData, hotelData, transferData }
 
     // Booking
     status:           raw.status || "—",
-    transactionType:  raw.transaction_type || null,
+    transactionType:  raw.transaction_type || raw.customer_type || null,
     typeOfPackage:    raw.type_of_package || null,
     dateCreated:      raw.date_created || raw.created || null,
-    bookingDate:      raw.date_created || raw.created || raw.received_at || null,
+    bookingDate:      raw.date_created || raw.created || raw.received_at || raw.transaction_date || null,
     lastModified:     raw.last_modified || raw.updated_at || raw.modified_at || null,
 
     // Travel (from main booking)
@@ -511,7 +511,7 @@ function normalizeBooking(raw, { tourData, ticketData, hotelData, transferData }
     // Payment
     packagePrice:     raw.total_package_price_srp || null,
     amountPaid:       parseAmountString(raw.total_amount_paid),
-    paymentStatus:    raw.formula_1 || null,
+    paymentStatus:    raw.formula_1 || raw.status || null,
     paymentMethod:    raw.mop_used_by_customer || null,
     paymentType:      raw.payment_type || null,
 
