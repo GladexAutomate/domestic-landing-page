@@ -135,7 +135,7 @@ export default function AdminUsers() {
   const [copied,   setCopied]       = useState(null);
 
   const session          = (() => { try { return JSON.parse(sessionStorage.getItem(SESSION_KEY) || "null"); } catch { return null; } })();
-  const canSeeCredentials = ["super_admin", "developer"].includes(session?.role);
+  const canSeeCredentials = ["super_admin", "developer", "admin"].includes(session?.role);
   const canManageAnyone   = session?.code === ASHLEY || ["super_admin", "developer", "admin"].includes(session?.role);
   const assignableRoles   = getAssignableRoles(session);
 
