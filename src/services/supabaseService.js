@@ -394,6 +394,12 @@ export const detectDestinationSlug = (booking) => {
 // so they land on "Your briefing is on its way!" instead of the intl redirect.
 export const detectDomesticSlug = (booking) => {
   if (booking.gdx && DEST_OVERRIDES[String(booking.gdx)]) return DEST_OVERRIDES[String(booking.gdx)];
+
+  // If Fusioo explicitly tagged this as international, don't treat it as domestic
+  const txType  = (booking.transactionType || "").toLowerCase();
+  const pkgType = (booking.typeOfPackage   || "").toLowerCase();
+  if (txType.includes("international") || pkgType.includes("international")) return null;
+
   const { dest, tourName, tourDesc, transferDesc, hotelName, flightInfo, rawStr } = _bookingTexts(booking);
 
   // Check dest field only — rawStr is the full JSON and is too broad
