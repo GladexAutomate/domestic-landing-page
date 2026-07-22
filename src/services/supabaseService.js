@@ -330,7 +330,8 @@ function _bookingTexts(booking) {
 }
 
 export const detectDestinationSlug = (booking) => {
-  if (booking.gdx && DEST_OVERRIDES[String(booking.gdx)]) return DEST_OVERRIDES[String(booking.gdx)];
+  const _gdxCore = booking.gdx ? String(booking.gdx).replace(/^GDX-?/i, "") : null;
+  if (_gdxCore && DEST_OVERRIDES[_gdxCore]) return DEST_OVERRIDES[_gdxCore];
   const { dest, tourName, tourDesc, transferDesc, hotelName, flightInfo, rawStr } = _bookingTexts(booking);
 
   // 1. Destination field text — most reliable when it's human-readable
@@ -399,9 +400,11 @@ export const detectDestinationSlug = (booking) => {
 // bookings. Returns a slug string (including "other") for all Philippine bookings
 // so they land on "Your briefing is on its way!" instead of the intl redirect.
 export const detectDomesticSlug = (booking) => {
-  const gdxStr = booking.gdx ? String(booking.gdx) : null;
-  if (gdxStr && INTL_OVERRIDES.has(gdxStr)) return null;
-  if (gdxStr && DEST_OVERRIDES[gdxStr]) return DEST_OVERRIDES[gdxStr];
+  const gdxStr  = booking.gdx ? String(booking.gdx) : null;
+  // Strip "GDX-" prefix so overrides match regardless of stored form ("22433" or "GDX-22433")
+  const gdxCore = gdxStr ? gdxStr.replace(/^GDX-?/i, "") : null;
+  if (gdxCore && INTL_OVERRIDES.has(gdxCore)) return null;
+  if (gdxCore && DEST_OVERRIDES[gdxCore]) return DEST_OVERRIDES[gdxCore];
 
   // If Fusioo explicitly tagged this as international, don't treat it as domestic
   const txType  = (booking.transactionType || "").toLowerCase();
