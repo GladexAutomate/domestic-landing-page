@@ -83,12 +83,8 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
       // Throws with code "GDX_NOT_FOUND" if the confirmation number doesn't exist
       const booking = await lookupBooking(trimmedCode);
 
-      // GDX exists — now verify the lead guest's last name
-      if (!lastNameMatches(booking.leadName, trimmedLastName)) {
-        setError(NAME_MISMATCH_ERROR);
-        return;
-      }
-
+      // Check destination BEFORE last name — international bookings redirect
+      // to the international portal without requiring domestic last name match.
       const domesticSlug = detectDomesticSlug(booking);
 
       if (!domesticSlug) {
@@ -97,6 +93,12 @@ export default function TBWelcomeSection({ darkMode, tk, compact = false }) {
           const intlBase = "https://international-landing-page.vercel.app/";
           window.location.href = booking.gdx ? `${intlBase}?gdx=${booking.gdx}` : intlBase;
         }, 2500);
+        return;
+      }
+
+      // Domestic booking — now verify last name
+      if (!lastNameMatches(booking.leadName, trimmedLastName)) {
+        setError(NAME_MISMATCH_ERROR);
         return;
       }
 
