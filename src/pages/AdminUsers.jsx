@@ -14,16 +14,11 @@ const RANK = { agent: 0, team_leader: 1, admin: 2, super_admin: 3, developer: 3 
 
 function canManageTarget(session, emp) {
   if (!session) return false;
-  // Ashley (main developer) manages everyone
   if (session.code === ASHLEY) return true;
-  // agent / team_leader manage nobody
   if (!["super_admin", "developer", "admin"].includes(session.role)) return false;
-  // Nobody else can touch Ashley
   if (emp.employee_code === ASHLEY) return false;
   const targetRank = RANK[emp.role] ?? 0;
-  // admin can manage same level (admin) and below
   if (session.role === "admin") return targetRank <= 2;
-  // super_admin / developer can only manage strictly below (not peers, not developers)
   return targetRank < 3;
 }
 
@@ -34,25 +29,21 @@ function getAssignableRoles(session) {
   return [];
 }
 
+// Role is derived purely from job title in boss's system.
+function resolveRole(account) {
+  const t = (account.job_title || "").toUpperCase();
+  if (["CEO","COO","CTO","CHIEF","PRESIDENT","OWNER","FOUNDER","GENERAL MANAGER","CORPORATE MANAGER"].some(x => t.includes(x))) return "super_admin";
+  if (["MANAGER","SUPERVISOR","DIRECTOR","OFFICER","AUDITOR","EXECUTIVE ASSISTANT","EXECUTIVE SECRETARY","CORPORATE TRAINOR","SUBJECT MATTER EXPERT","PARTNER ONBOARDING COACH","BUSINESS DEVELOPMENT COACH","BUSINESS DEVELOPMENT ACQUISITION","PARTNER SUCCESS ENABLEMENT","SALES HEAD","SALES SKILLS","ONBOARDING COACH"].some(x => t.includes(x))) return "admin";
+  if (t === "HR" || t.startsWith("HR ") || t.includes("HUMAN RESOURCE") || ["RECRUITER","RECRUITMENT","TALENT ACQUISITION","TALENT MANAGEMENT","PAYROLL","COMPENSATION AND BENEFITS","LEARNING AND DEVELOPMENT","TRAINING AND DEVELOPMENT"].some(x => t.includes(x))) return "admin";
+  if (["TEAM LEADER","TEAM LEAD","TL DOMESTIC","TL INTERNATIONAL","CHAT SUPPORT TEAM LEAD","CUSTOMER RESPONSE LEADER","PARTNER SUCCESS LEAD","ROB TEAM LEADER","ADMIN TEAM LEADER"].some(x => t.includes(x)) || t === "TL" || t.startsWith("TL ")) return "team_leader";
+  return "agent";
+}
+
 function toTitleCase(str) {
   if (!str) return "—";
   return str.toLowerCase().replace(/\b\w/g, c => c.toUpperCase()).trim();
 }
 
-function resolveRole(account) {
-  // Manual override wins first
-  if (account.role_override) return account.role_override;
-  // Hardcoded named overrides
-  if (account.employee_code === "POTB2026-0364") return "developer";   // Ashley
-  if (account.employee_code === "GDX2022-0004")  return "super_admin"; // Kevin
-  if (account.employee_code === "POTB2026-0365") return "developer";   // Jferson
-  const t = (account.job_title || "").toUpperCase();
-  if (["CEO","COO","CTO","CHIEF","PRESIDENT","OWNER","FOUNDER","GENERAL MANAGER","CORPORATE MANAGER"].some(x => t.includes(x))) return "super_admin";
-  if (["MANAGER","SUPERVISOR","DIRECTOR","OFFICER","AUDITOR","EXECUTIVE ASSISTANT","EXECUTIVE SECRETARY","CORPORATE TRAINOR","SUBJECT MATTER EXPERT","PARTNER ONBOARDING COACH","BUSINESS DEVELOPMENT COACH","BUSINESS DEVELOPMENT ACQUISITION","PARTNER SUCCESS ENABLEMENT","SALES HEAD","SALES SKILLS","ONBOARDING COACH"].some(x => t.includes(x))) return "admin";
-  if (t === "HR" || t.startsWith("HR ") || t.includes("HUMAN RESOURCE") || ["RECRUITER","RECRUITMENT","TALENT ACQUISITION","TALENT MANAGEMENT","PAYROLL","COMPENSATION AND BENEFITS","LEARNING AND DEVELOPMENT","TRAINING AND DEVELOPMENT"].some(x => t.includes(x))) return "admin";
-  if (["TEAM LEADER","TEAM LEAD","TL ","TL DOMESTIC","TL INTERNATIONAL","CHAT SUPPORT TEAM LEAD","CUSTOMER RESPONSE LEADER","PARTNER SUCCESS LEAD","ROB TEAM LEADER","ADMIN TEAM LEADER"].some(x => t.includes(x)) || t === "TL" || t.startsWith("TL ") || t === "TL DOMESTIC" || t === "TL INTERNATIONAL") return "team_leader";
-  return "agent";
-}
 
 const ROLE_STYLE = {
   super_admin: { bg: "#FFF3E0", color: "#E65100", label: "Super Admin" },
@@ -140,8 +131,8 @@ export default function AdminUsers() {
   const [sortKey, setSortKey]     = useState("full_name");
   const [sortDir, setSortDir]     = useState("asc");
   const [updating, setUpdating]     = useState(new Set());
-  const [revealed, setRevealed]     = useState(new Set()); // employee _ids with password shown
-  const [copied,   setCopied]       = useState(null);      // _id of last copied row
+  const [revealed, setRevealed]     = useState(new Set());
+  const [copied,   setCopied]       = useState(null);
 
   const session          = (() => { try { return JSON.parse(sessionStorage.getItem(SESSION_KEY) || "null"); } catch { return null; } })();
   const canSeeCredentials = ["super_admin", "developer"].includes(session?.role);
