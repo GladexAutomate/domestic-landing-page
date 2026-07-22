@@ -3,7 +3,7 @@ import React, { useState, useRef, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Upload, FileText, Trash2, Download, AlertCircle, CheckCircle, X, FileImage, File, FileWarning } from "lucide-react";
 import { createClient } from "@supabase/supabase-js";
-import { lookupBooking, FUSIOO_DEST_MAP } from "@/services/supabaseService";
+import { lookupBooking, FUSIOO_DEST_MAP, normalizeGdx } from "@/services/supabaseService";
 import { uploadVoucher, getVouchers, deleteVoucher } from "@/services/voucherService";
 
 const ORANGE = "#FF9913";
@@ -332,7 +332,7 @@ export default function AdminVouchers() {
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <p style={{ fontSize: "13px", fontWeight: 800, color: "#111", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{b.lead_name || "—"}</p>
-                      <p style={{ fontSize: "11px", color: "#bbb", margin: 0 }}>GDX-{b.gdx} · {DEST_LABEL[b.destSlug] || b.destSlug} · booked {formatAgo(b.synced_at)}</p>
+                      <p style={{ fontSize: "11px", color: "#bbb", margin: 0 }}>{normalizeGdx(b.gdx)} · {DEST_LABEL[b.destSlug] || b.destSlug} · booked {formatAgo(b.synced_at)}</p>
                     </div>
                     <span style={{ fontSize: "10px", fontWeight: 800, color: "#f97316", background: "rgba(249,115,22,0.08)", padding: "3px 8px", borderRadius: 6, flexShrink: 0 }}>Upload</span>
                   </motion.button>
@@ -361,7 +361,7 @@ export default function AdminVouchers() {
               {/* Booking info */}
               <div style={{ padding: "14px 18px", borderBottom: "1px solid #f0ece7", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
                 <div>
-                  <p style={{ fontSize: "11px", color: "#aaa", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", margin: "0 0 2px" }}>GDX-{booking.gdx}</p>
+                  <p style={{ fontSize: "11px", color: "#aaa", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", margin: "0 0 2px" }}>{booking.gdx}</p>
                   <p style={{ fontSize: "14px", fontWeight: 900, color: "#111", margin: "0 0 2px" }}>{booking.leadName}</p>
                   <p style={{ fontSize: "12px", color: "#888", margin: 0 }}>{booking.destination} · {booking.typeOfPackage || "—"}</p>
                 </div>

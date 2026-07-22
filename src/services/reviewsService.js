@@ -156,7 +156,8 @@ export const updateReview = async (gdx, { rating, review_text, photo_url }) => {
 // Admin: hide/unhide a review (keeps data, just removes from public)
 export const hideReview = async (id) => {
   if (!supabase) throw new Error("Supabase not configured.");
-  const { error } = await supabase.from("reviews").update({ is_hidden: true }).eq("id", id);
+  // Also set needs_approval so the review reappears in the Pending tab for the admin to find and re-approve.
+  const { error } = await supabase.from("reviews").update({ is_hidden: true, needs_approval: true }).eq("id", id);
   if (error) throw new Error(error.message);
 };
 

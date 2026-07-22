@@ -100,7 +100,7 @@ export default function TBBookingVerification({ booking, dest, darkMode, tk, onC
 
               {/* ── BOOKING SUMMARY ───────────────────────────────────── */}
               <Section title="Booking Summary" icon={<FileText className="w-4 h-4" />} borderColor={borderColor} cardBg={cardBg} cardShadow={cardShadow} textPrimary={textPrimary}>
-                <Row label="Booking Reference" value={`GDX-${booking.gdx}`} highlight textPrimary={textPrimary} textMuted={textMuted} />
+                <Row label="Booking Reference" value={booking.gdx} highlight textPrimary={textPrimary} textMuted={textMuted} />
                 <Row label="Booking Status" value={displayStatus} badge={isConfirmed ? "green" : "orange"} textPrimary={textPrimary} textMuted={textMuted} />
                 {booking.transactionType && <Row label="Transaction Type" value={booking.transactionType} textPrimary={textPrimary} textMuted={textMuted} />}
                 {booking.typeOfPackage    && <Row label="Package Type" value={booking.typeOfPackage} textPrimary={textPrimary} textMuted={textMuted} />}

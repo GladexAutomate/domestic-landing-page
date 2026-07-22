@@ -308,7 +308,7 @@ async function fetchDetail(table, recordId) {
     .select("id, data")
     .eq("id", recordId)
     .limit(1)
-    .single();
+    .maybeSingle();
   return error ? null : (data?.data || null);
 }
 
@@ -498,7 +498,7 @@ function normalizeBooking(raw, { tourData, ticketData, hotelData, transferData }
     // Identity
     id:               raw.id,
     recordId:         raw.record_id,
-    gdx:              raw.gdx,
+    gdx:              normalizeGdx(raw.gdx),
 
     // Guest
     leadName:         raw.lead_name || "—",

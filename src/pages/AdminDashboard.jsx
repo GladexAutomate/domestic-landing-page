@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { FileText, Star, Clock, CheckCircle, Upload, AlertTriangle, FileWarning } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { createClient } from "@supabase/supabase-js";
-import { FUSIOO_DEST_MAP } from "@/services/supabaseService";
+import { FUSIOO_DEST_MAP, normalizeGdx } from "@/services/supabaseService";
 
 const supabase =
   import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY
@@ -184,7 +184,7 @@ export default function AdminDashboard() {
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <p style={{ fontSize: "12px", fontWeight: 700, color: "#111", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{v.file_name}</p>
-                    <p style={{ fontSize: "11px", color: "#bbb", margin: 0 }}>GDX-{v.gdx} · {formatDate(v.created_at)}</p>
+                    <p style={{ fontSize: "11px", color: "#bbb", margin: 0 }}>{normalizeGdx(v.gdx)} · {formatDate(v.created_at)}</p>
                   </div>
                 </motion.div>
               ))}
@@ -255,7 +255,7 @@ export default function AdminDashboard() {
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <p style={{ fontSize: "12px", fontWeight: 700, color: "#111", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{b.lead_name || "—"}</p>
-                  <p style={{ fontSize: "11px", color: "#bbb", margin: 0 }}>GDX-{b.gdx} · booked {formatDate(b.synced_at)}</p>
+                  <p style={{ fontSize: "11px", color: "#bbb", margin: 0 }}>{normalizeGdx(b.gdx)} · booked {formatDate(b.synced_at)}</p>
                 </div>
                 <span style={{ fontSize: "10px", fontWeight: 800, color: "#f97316", background: "rgba(249,115,22,0.1)", padding: "3px 8px", borderRadius: 6, flexShrink: 0 }}>No voucher</span>
               </motion.div>

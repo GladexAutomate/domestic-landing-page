@@ -1596,7 +1596,7 @@ export default function TravelBriefingLanding() {
     doc.text("TRAVEL ITINERARY", 150, 10, { align: "right" });
     y = 25;
 
-    line(`GDX-${bk?.gdx || ""}`, 16, OG, true);
+    line(bk?.gdx || "", 16, OG, true);
     if (bk?.leadName) line(bk.leadName, 13, BK, true);
     spacer(3);
 
@@ -1669,7 +1669,7 @@ export default function TravelBriefingLanding() {
     line("Thank you for choosing Gladex Travel and Tours Corp.", 9, GY);
     line("Gladex Customer Care: +63 917 875 2200  |  7:00 AM – 9:00 PM", 9, GY);
 
-    doc.save(`GDX-${bk?.gdx || "itinerary"}-Itinerary.pdf`);
+    doc.save(`${bk?.gdx || "itinerary"}-Itinerary.pdf`);
   };
 
   useEffect(() => {
@@ -1999,7 +1999,7 @@ export default function TravelBriefingLanding() {
               <div className="text-left flex-1 min-w-0">
                 <p className="font-black text-sm leading-tight" style={{ color: "#ff9913" }}>View Booking Details</p>
                 <p className="text-xs truncate mt-0.5" style={{ color: textMuted }}>
-                  GDX-{activeBooking.gdx} · {activeBooking.leadName}
+                  {activeBooking.gdx} · {activeBooking.leadName}
                 </p>
                 <p className="text-xs mt-1" style={{ color: textMuted }}>
                   Tap to view your complete booking details
@@ -2137,7 +2137,7 @@ export default function TravelBriefingLanding() {
                       <BookingSection label="Booking Summary" darkMode={darkMode}>
                         <div className="px-5 py-4 space-y-4">
                           <BookingRow
-                            label1="GDX Number"    value1={`GDX-${activeBooking.gdx}`}
+                            label1="GDX Number"    value1={activeBooking.gdx}
                             textPrimary={textPrimary} textMuted={textMuted}
                             copyable1
                           />
