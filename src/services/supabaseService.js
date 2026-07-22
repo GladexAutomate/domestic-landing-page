@@ -34,6 +34,12 @@ const DEST_OVERRIDES = {
   "21851": "cebu",    // Marion Chua — Cebu All-In, no tour; ie9eb5... dest ID maps to boracay without text signals
 };
 
+// International booking overrides — known international GDX numbers that
+// can't be auto-detected (no destination text / non-standard Fusioo fields)
+const INTL_OVERRIDES = new Set([
+  "22433", // Pineda-Reyes — international booking, dest field not in INTL_DEST_KEYS
+]);
+
 // ── Fusioo destination ID → slug  (VERIFIED against real booking data)
 export const FUSIOO_DEST_MAP = {
   // BORACAY ✅ confirmed: GDX 11056 = "Private Island Hopping", Henann Regency hotel
@@ -393,22 +399,28 @@ export const detectDestinationSlug = (booking) => {
 // bookings. Returns a slug string (including "other") for all Philippine bookings
 // so they land on "Your briefing is on its way!" instead of the intl redirect.
 export const detectDomesticSlug = (booking) => {
-  if (booking.gdx && DEST_OVERRIDES[String(booking.gdx)]) return DEST_OVERRIDES[String(booking.gdx)];
+  const gdxStr = booking.gdx ? String(booking.gdx) : null;
+  if (gdxStr && INTL_OVERRIDES.has(gdxStr)) return null;
+  if (gdxStr && DEST_OVERRIDES[gdxStr]) return DEST_OVERRIDES[gdxStr];
 
   // If Fusioo explicitly tagged this as international, don't treat it as domestic
   const txType  = (booking.transactionType || "").toLowerCase();
   const pkgType = (booking.typeOfPackage   || "").toLowerCase();
-  if (txType.includes("international") || pkgType.includes("international")) return null;
+  if (txType.includes("international") || txType.includes("outbound") ||
+      pkgType.includes("international") || pkgType.includes("outbound")) return null;
 
   const { dest, tourName, tourDesc, transferDesc, hotelName, flightInfo, rawStr } = _bookingTexts(booking);
 
-  // Check dest field only — rawStr is the full JSON and is too broad
+  // Check dest + tourName — rawStr is too broad (airline names cause false positives)
   const INTL_DEST_KEYS = [
     "japan", "korea", "china", "taiwan", "singapore", "vietnam",
     "hongkong", "hong kong", "thailand", "malaysia", "cambodia",
     "dubai", "macau", "indonesia", "europe", "australia",
+    "maldives", "india", "nepal", "sri lanka", "new zealand",
+    "usa", "america", "canada", "uk", "england", "france",
+    "italy", "spain", "germany", "turkey", "egypt", "bali",
   ];
-  if (INTL_DEST_KEYS.some((kw) => dest.includes(kw))) return null;
+  if (INTL_DEST_KEYS.some((kw) => dest.includes(kw) || tourName.includes(kw))) return null;
 
   if (dest.includes("boracay"))                                              return "boracay";
   if (dest.includes("cebu"))                                                 return "cebu";
