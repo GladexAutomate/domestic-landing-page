@@ -56,7 +56,7 @@ export default function TBAddOnsCheckout({ isOpen, onClose, addOnsCart, booking,
       const invoice = await createInvoice({
         externalId,
         amount:      totalAmount,
-        description: `Gladex Optional Add-Ons${gdx ? ` — GDX-${gdx}` : ""}`,
+        description: `Gladex Optional Add-Ons${gdx ? ` — ${gdx}` : ""}`,
         payerName:   name.trim(),
         payerEmail:  email.trim() || undefined,
         items,

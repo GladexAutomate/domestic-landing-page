@@ -203,7 +203,7 @@ export default function AdminVouchers() {
       const bk = await lookupBooking(gdx);
       if (!bk) { setSearchErr("No booking found for that GDX number."); setSearching(false); return; }
       setBooking(bk);
-      const existing = await getVouchers(gdx);
+      const existing = await getVouchers(bk.gdx);
       setVouchers(existing);
     } catch (e) {
       setSearchErr(e.message || "Lookup failed.");
@@ -432,11 +432,22 @@ export default function AdminVouchers() {
                           <p style={{ fontSize: "12.5px", fontWeight: 700, color: "#111", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{v.file_name}</p>
                           <p style={{ fontSize: "11px", color: "#bbb", margin: 0 }}>{formatBytes(v.file_size)} · {formatDate(v.created_at)} {v.uploaded_by ? `· by ${v.uploaded_by}` : ""}</p>
                         </div>
-                        <a href={v.file_url} target="_blank" rel="noopener noreferrer"
-                          style={{ display: "flex", alignItems: "center", gap: 4, padding: "5px 10px", borderRadius: 7, background: `${ORANGE}12`, color: ORANGE, fontWeight: 700, fontSize: "11px", textDecoration: "none", flexShrink: 0 }}
+                        <button
+                          onClick={async () => {
+                            try {
+                              const res = await fetch(v.file_url);
+                              const blob = await res.blob();
+                              const url = URL.createObjectURL(blob);
+                              window.open(url, "_blank");
+                              setTimeout(() => URL.revokeObjectURL(url), 60000);
+                            } catch {
+                              window.open(v.file_url, "_blank");
+                            }
+                          }}
+                          style={{ display: "flex", alignItems: "center", gap: 4, padding: "5px 10px", borderRadius: 7, background: `${ORANGE}12`, color: ORANGE, fontWeight: 700, fontSize: "11px", border: "none", cursor: "pointer", flexShrink: 0 }}
                         >
                           <Download size={12} /> View
-                        </a>
+                        </button>
                         <button
                           onClick={() => setDeleteTarget(v)}
                           style={{ display: "flex", padding: "5px 7px", borderRadius: 7, border: "1px solid rgba(220,38,38,0.2)", background: "rgba(220,38,38,0.04)", color: "#dc2626", cursor: "pointer", flexShrink: 0 }}

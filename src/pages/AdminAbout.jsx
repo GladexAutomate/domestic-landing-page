@@ -137,7 +137,7 @@ export default function AdminAbout() {
             Reviews are submitted by clients directly from their travel briefing page after their trip. Only 4–5 star reviews display publicly. Reviews rated 1–3 stars are visible to admins only and never shown to clients.
           </p>
           <p style={{ margin: 0 }}>
-            Use the <strong>By Destination</strong> tab to see reviews per destination and the <strong>By Agent</strong> tab for per-agent performance tracking.
+            Use the <strong>By Destination</strong> tab to see reviews grouped per destination.
           </p>
         </Section>
 

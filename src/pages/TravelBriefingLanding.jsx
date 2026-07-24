@@ -3189,7 +3189,7 @@ export default function TravelBriefingLanding() {
                                   setReviewComment(myReview?.review ?? myReview?.comment ?? "");
                                   setReviewSubmitted(false);
                                   setReviewEditing(true);
-                                  setReviewError(null);
+                                  setReviewSaveError(null);
                                   setTimeout(() => {
                                     document.getElementById("review-edit-inline")?.scrollIntoView({ behavior: "smooth", block: "center" });
                                   }, 80);
