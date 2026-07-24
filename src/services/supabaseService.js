@@ -348,6 +348,13 @@ export const detectDestinationSlug = (booking) => {
   if (tourDesc.includes("bohol") || tourDesc.includes("panglao"))   return "bohol";
   if (transferDesc.includes("bohol") || transferDesc.includes("tagbilaran") || transferDesc.includes("panglao")) return "bohol";
 
+  // Boracay via tour/transfer text — must fire BEFORE FUSIOO_DEST_MAP because destination ID
+  // i67f5adf... is shared with PPS bookings (see comment on FUSIOO_DEST_MAP entry).
+  // GDX 22533 (Oria) confirmed: tour_name = "Standard Boracay Island Hopping..." but dest is Fusioo ID.
+  if (tourName.includes("boracay")) return "boracay";
+  if (tourDesc.includes("boracay")) return "boracay";
+  if (transferDesc.includes("boracay") || transferDesc.includes("caticlan")) return "boracay";
+
   // PPS & Siargao: their Fusioo IDs overlap with Boracay/El Nido — must detect via text first
   if (tourName.includes("siargao") || tourName.includes("cloud 9") || tourName.includes("sohoton") || tourName.includes("magpupungko") || tourName.includes("daku") || tourName.includes("naked island")) return "siargao";
   if (tourName.includes("puerto princesa") || tourName.includes("underground river") || tourName.includes("honda bay") || tourName.includes("firefly")) return "puertoprincesa";
