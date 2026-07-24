@@ -84,16 +84,10 @@ const normalize = (text) =>
     .replace(/(.)\1{2,}/g, "$1$1")              // fuuuck → fuuck
     .replace(/[^a-z]/g, "");                    // strip remaining non-letters
 
-const stripVowels = (s) => s.replace(/[aeiou]/g, "");
-
 const hasBadWords = (text) => {
   if (!text) return false;
   const norm = normalize(text);
-  const normNoVowels = stripVowels(norm);
-  return BAD_WORDS.some(w => {
-    const wn = normalize(w);
-    return norm.includes(wn) || normNoVowels.includes(stripVowels(wn));
-  });
+  return BAD_WORDS.some(w => norm.includes(normalize(w)));
 };
 
 // Insert a new review.

@@ -275,6 +275,7 @@ async function lookupFromFusioo(canonical) {
 
   const edge = await res.json();
   const d = edge.booking;
+  if (!d) throw new Error("Edge function returned incomplete booking data.");
 
   // Build the same row structure as the Supabase-sourced path
   const row = {
