@@ -470,6 +470,15 @@ export const detectDomesticSlug = (booking) => {
   if (transferDesc.includes("siargao") || transferDesc.includes("general luna") || transferDesc.includes("cloud 9")) return "siargao";
   if (transferDesc.includes("pps") || transferDesc.includes("puerto princesa")) return "puertoprincesa";
 
+  // Tour/transfer text for Boracay — must fire BEFORE FUSIOO_DEST_MAP because i67f5adf... is shared
+  // with PPS and Bohol. detectDestinationSlug already had these; detectDomesticSlug was missing them.
+  if (tourName.includes("boracay")) return "boracay";
+  if (tourDesc.includes("boracay")) return "boracay";
+  if (transferDesc.includes("boracay") || transferDesc.includes("caticlan")) return "boracay";
+  // Cebu tour text — moved before FUSIOO_DEST_MAP (Cebu IDs aren't shared but safer to detect early)
+  if (tourName.includes("cebu") || tourName.includes("kawasan") || tourName.includes("oslob")) return "cebu";
+  if (tourDesc.includes("cebu")) return "cebu";
+
   // Hotel name + flight checks — for bookings with NULL tour/transfer (e.g. Boracay via Kalibo)
   if (hotelName.includes("boracay") || hotelName.includes("henann") || hotelName.includes("la carmela") ||
       hotelName.includes("crimson") || hotelName.includes("movenpick") || hotelName.includes("two seasons") ||
