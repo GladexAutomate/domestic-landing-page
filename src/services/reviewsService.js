@@ -2,10 +2,11 @@
 import { createClient } from "@supabase/supabase-js";
 import { gdxCandidates } from "@/services/supabaseService";
 
-const supabase =
-  import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY
-    ? createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY)
-    : null;
+// Reviews live in the dedicated reviews/vouchers database (flight-emails Supabase project)
+const supabase = createClient(
+  "https://bhgmghwhwoltbbzbooxg.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJoZ21naHdod29sdGJiemJvb3hnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzNDAzMjgsImV4cCI6MjA5ODkxNjMyOH0.Zctvjd3d4MzdlkROKvxseIVnIUm1nj_6fPkm94GipTk"
+);
 
 const DOMESTIC_DESTINATIONS = ["Boracay", "Cebu", "El Nido", "Puerto Princesa", "Siargao", "Bohol"];
 
