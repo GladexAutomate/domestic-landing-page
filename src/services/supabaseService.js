@@ -32,6 +32,7 @@ const DEST_OVERRIDES = {
   "21780": "boracay", // Flordeliza Caindoy — Boracay via Kalibo, Z2 711/716, no airport text in data
   "21954": "boracay", // Shirley Burlat — Boracay Tour Only; PPS keyword in transfer desc triggers false PPS detection
   "21851": "cebu",    // Marion Chua — Cebu All-In, no tour; ie9eb5... dest ID maps to boracay without text signals
+  "22533": "boracay", // Myrene Jane Oria — Boracay via Kalibo; dest stored as i67f5adf... (shared PPS ID); "kalibo" not in raw JSONB
 };
 
 // International booking overrides — known international GDX numbers that
