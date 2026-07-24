@@ -68,8 +68,10 @@ export const FUSIOO_DEST_MAP = {
   // PUERTO PRINCESA (additional) ✅ confirmed by agent: transfer "PPS AIRPORT", tour "Honda Bay Island Hopping"
   "i5e2b9bbc0c7f48008ab3e94ccd9754c1": "puertoprincesa",
   // i67f5adf04bfc41d78c3102ed8226d317 — shared by Boracay-via-Kalibo, PPS, and Bohol bookings.
-  // Safe to map to PPS because: Bohol bookings are caught by prior Bohol text checks, and Boracay-via-Kalibo
-  // bookings are caught by the rawStr.includes("kalibo"/"caticlan") check before this map lookup fires.
+  // Maps to PPS as the majority case. Bohol bookings are caught by prior text checks (panglao/tarsier).
+  // Boracay-via-Kalibo bookings are caught by tour_name text check ("boracay") when detail tables are
+  // populated — the Fusioo fallback in lookupBooking ensures this for webhook-stored bookings.
+  // Manual DEST_OVERRIDES remain the last resort for bookings where text signals are absent.
   // QA-confirmed: all 7 PPS bookings (GDX 19384, 19395, 19481, 19817, 20146, 20985, 21285) use this ID.
   "i67f5adf04bfc41d78c3102ed8226d317": "puertoprincesa",
 
@@ -226,6 +228,19 @@ export const lookupBooking = async (gdxCode) => {
   // GENERIC_TOUR is module-level — also used by lookupFromFusioo fallback
   const meaningfulTours = allTourRows.filter(t => t?.tour_name && !GENERIC_TOUR.test(t.tour_name));
   const tourData = meaningfulTours.length ? meaningfulTours[0] : mainTourData;
+
+  // Webhook-stored bookings arrive with only main JSONB — detail tables (tour, hotel, transfer, ticket)
+  // are NOT populated until the Fusioo edge function runs. Without detail data, destination detection
+  // falls through to FUSIOO_DEST_MAP which fails for shared IDs (e.g. i67f5adf... used by PPS, Boracay,
+  // and Bohol). Fix: if all detail lookups returned null, call the edge function to get full linked data.
+  const hasDetailData = tourData !== null || ticketData !== null || hotelData !== null || transferData !== null;
+  if (!hasDetailData) {
+    try {
+      return await lookupFromFusioo(canonical);
+    } catch {
+      // Edge function unavailable — continue with Supabase-only data
+    }
+  }
 
   return normalizeBooking(row, { tourData, ticketData, hotelData, transferData });
 };
